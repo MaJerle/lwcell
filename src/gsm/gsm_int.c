@@ -518,6 +518,15 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
         gsm_cmd_t n_cmd = GSM_CMD_IDLE;
         switch (msg->cmd) {                     /* Check current command */
             case GSM_CMD_RESET: {
+#if ESP_CFG_AT_ECHO
+                n_cmd = GSM_CMD_ATE1;           /* Enable ECHO mode */
+#else          
+                n_cmd = GSM_CMD_ATE0;           /* Disable ECHO mode */
+#endif /* !ESP_CFG_AT_ECHO */
+                break;
+            }
+            case GSM_CMD_ATE0:
+            case GSM_CMD_ATE1: {
 #if GSM_CFG_CONN
                 n_cmd = GSM_CMD_CIPSHUT;        /* Shutdown any connection */
                 break;
