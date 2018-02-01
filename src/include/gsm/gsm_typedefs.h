@@ -42,18 +42,20 @@ extern "C" {
 #include "string.h"
 #include "stdio.h"
 
+
 /**
  * \addtogroup      GSM
- * \{
- */
- 
-/**
  * \defgroup        GSM_TYPEDEFS Structures and enumerations
  * \brief           List of core structures and enumerations
  * \{
  */
+    
+/**
+ * \}
+ */
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           Result enumeration used across application functions
  */
 typedef enum {
@@ -75,6 +77,7 @@ typedef enum {
 } gsmr_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           List of encryptions of access point
  */
 typedef enum {
@@ -87,6 +90,7 @@ typedef enum {
 } gsm_ecn_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           IP structure
  */
 typedef struct {
@@ -94,11 +98,13 @@ typedef struct {
 } gsm_ip_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           Port variable
  */
 typedef uint16_t    gsm_port_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           MAC address
  */
 typedef struct {
@@ -106,6 +112,7 @@ typedef struct {
 } gsm_mac_t;
 
 /**
+ * \ingroup         GSM_AP
  * \brief           Access point data structure
  */
 typedef struct {
@@ -119,6 +126,7 @@ typedef struct {
 } gsm_ap_t;
 
 /**
+ * \ingroup         GSM_STA
  * \brief           Station data structure
  */
 typedef struct {
@@ -127,6 +135,7 @@ typedef struct {
 } gsm_sta_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           Date and time structure
  */
 typedef struct {
@@ -140,6 +149,7 @@ typedef struct {
 } gsm_datetime_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           List of possible WiFi modes
  */
 typedef enum {
@@ -155,6 +165,7 @@ typedef enum {
 } gsm_mode_t;
 
 /**
+ * \ingroup         GSM_CONN
  * \brief           List of possible connection types
  */
 typedef enum {
@@ -169,16 +180,19 @@ struct gsm_conn_t;
 struct gsm_pbuf_t;
 
 /**
+ * \ingroup         GSM_CONN
  * \brief           Pointer to \ref gsm_conn_t structure
  */
 typedef struct gsm_conn_t* gsm_conn_p;
 
 /**
+ * \ingroup         GSM_PBUF
  * \brief           Pointer to \ref gsm_pbuf_t structure
  */
 typedef struct gsm_pbuf_t* gsm_pbuf_p;
 
 /**
+ * \ingroup         GSM_EVT
  * \brief           Event function prototype
  * \param[in]       cb: Callback event data
  * \return          gsmOK on success, member of \ref gsmr_t otherwise
@@ -186,6 +200,7 @@ typedef struct gsm_pbuf_t* gsm_pbuf_p;
 typedef gsmr_t  (*gsm_cb_fn)(struct gsm_cb_t* cb);
 
 /**
+ * \ingroup         GSM_EVT
  * \brief           List of possible callback types received to user
  */
 typedef enum gsm_cb_type_t {
@@ -216,6 +231,7 @@ typedef enum gsm_cb_type_t {
 } gsm_cb_type_t;
 
 /**
+ * \ingroup         GSM_EVT
  * \brief           Global callback structure to pass as parameter to callback function
  */
 typedef struct gsm_cb_t {
@@ -276,17 +292,9 @@ typedef struct gsm_cb_t {
 } gsm_cb_t;
 
 #define GSM_SIZET_MAX                           ((size_t)(-1))  /*!< Maximal value of size_t variable type */
-
-/**
- * \}
- */
  
 /**
- * \addtogroup      GSM_LL
- * \{
- */
- 
-/**
+ * \ingroup         GSM_LL
  * \brief           Function prototype for AT output data
  * \param[in]       data: Pointer to data to send
  * \param[in]       len: Number of bytes to send
@@ -295,6 +303,7 @@ typedef struct gsm_cb_t {
 typedef uint16_t (*gsm_ll_send_fn)(const void* data, uint16_t len);
 
 /**
+ * \ingroup         GSM_LL
  * \brief           Low level user specific functions
  */
 typedef struct {
@@ -302,40 +311,22 @@ typedef struct {
 } gsm_ll_t;
 
 /**
- * \}
+ * \ingroup         GSM_TIMEOUT
+ * \brief           Timeout callback function prototype
  */
+typedef void (*gsm_timeout_fn_t)(void *);
 
 /**
- * \}
+ * \ingroup         GSM_TIMEOUT
+ * \brief           Timeout structure
  */
+typedef struct gsm_timeout_t {
+    struct gsm_timeout_t* next;                 /*!< Pointer to next timeout entry */
+    uint32_t time;                              /*!< Time difference from previous entry */
+    void* arg;                                  /*!< Argument to pass to callback function */
+    gsm_timeout_fn_t fn;                        /*!< Callback function for timeout */
+} gsm_timeout_t;
 
-#if defined(GSM_INTERNAL) || __DOXYGEN__
-
-#if 0
-#define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t name
-#define GSM_MSG_VAR_ALLOC(name)                  
-#define GSM_MSG_VAR_REF(name)                   name
-#define GSM_MSG_VAR_FREE(name)                      
-#else /* 1 */
-#define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
-#define GSM_MSG_VAR_ALLOC(name)                 do {\
-    (name) = gsm_mem_alloc(sizeof(*(name)));          \
-    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "MSG VAR: Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
-    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "MSG VAR: Error allocating %d bytes\r\n", sizeof(*(name))); \
-    if (!(name)) {                                  \
-        return gsmERRMEM;                           \
-    }                                               \
-    memset(name, 0x00, sizeof(*(name)));            \
-} while (0)
-#define GSM_MSG_VAR_REF(name)                   (*(name))
-#define GSM_MSG_VAR_FREE(name)                  do {\
-    GSM_DEBUGF(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, "MSG VAR: Free memory: %p\r\n", (name)); \
-    gsm_mem_free(name);                             \
-    (name) = NULL;                                  \
-} while (0)
-#endif /* !1 */
-
-#endif /* defined(GSM_INTERNAL) || __DOXYGEN__ */
 
 #ifdef __cplusplus
 }

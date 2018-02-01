@@ -81,7 +81,7 @@
 
 /**
  * \brief           Maximal number of connections AT software can support on GSM device
- * \note            In case of official AT software, leave this on default value (5)
+ *
  */
 #ifndef GSM_CFG_MAX_CONNS
 #define GSM_CFG_MAX_CONNS                   5
@@ -96,7 +96,7 @@
  *                  to optimize speed performance of sending data
  */
 #ifndef GSM_CFG_CONN_MAX_DATA_LEN
-#define GSM_CFG_CONN_MAX_DATA_LEN           2048
+#define GSM_CFG_CONN_MAX_DATA_LEN           1460
 #endif
 
 /**
@@ -125,24 +125,6 @@
  */
 #ifndef GSM_CFG_AT_PORT_BAUDRATE
 #define GSM_CFG_AT_PORT_BAUDRATE            115200
-#endif
-
-/**
- * \brief           Enables (1) or disables (1) GSM acting as station
- * 
- * \note            When device is in station mode, it can connect to other access points
- */
-#ifndef GSM_CFG_MODE_STATION
-#define GSM_CFG_MODE_STATION                1
-#endif
-
-/**
- * \brief           Enables (1) or disables (1) GSM acting as access point
- * 
- * \note            When device is in access point mode, it can accept connections from other stations
- */
-#ifndef GSM_CFG_MODE_ACCESS_POINT
-#define GSM_CFG_MODE_ACCESS_POINT           1
 #endif
 
 /**
@@ -249,15 +231,6 @@
 #endif
 
 /**
- * \brief           Set debug level for netconn sequential API
- *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
- */
-#ifndef GSM_CFG_DBG_NETCONN
-#define GSM_CFG_DBG_NETCONN                 GSM_DBG_OFF
-#endif
-
-/**
  * \brief           Set debug level for packet buffer manager
  *
  *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
@@ -349,89 +322,23 @@
  * \{
  */
 
-/**
- * \defgroup        GSM_CONF_MODULES_NETCONN Netconn module
- * \brief           Configuration of netconn API module
- * \{
- */
- 
-/**
- * \brief           Enables (1) or disables (0) NETCONN sequential API support for OS systems
- *
- * \note            To use this feature, OS support is mandatory. 
- * \sa              GSM_CFG_OS
- */
-#ifndef GSM_CFG_NETCONN
-#define GSM_CFG_NETCONN                     0
+#ifndef GSM_CFG_SMS
+#define GSM_CFG_SMS                         0
 #endif
-
-/**
- * \brief           Accept and put a new connection to receive message queue immediately when connections starts
- *
- *                  If this parameter is set to 0, a new connection info will be written 
- *                  to accept mbox only when first data packet arrives to device,
- *                  otherwise it will be immediately written to receive mbox.
- */
-#ifndef GSM_CFG_NETCONN_ACCEPT_ON_CONNECT
-#define GSM_CFG_NETCONN_ACCEPT_ON_CONNECT   1
+#ifndef GSM_CFG_CALL
+#define GSM_CFG_CALL                        0
 #endif
-
-/**
- * \brief           Enables (1) or disables (0) receive timeout feature
- *
- *                  When this option is enabled, user will get an option
- *                  to set timeout value for receive data on netconn,
- *                  before function returns timeout error.
- *
- * \note            Even if this option is enabled, user must still manually set timeout, 
- *                  by default time will be set to 0 which means no timeout.
- */
-#ifndef GSM_CFG_NETCONN_RECEIVE_TIMEOUT
-#define GSM_CFG_NETCONN_RECEIVE_TIMEOUT     0
+#ifndef GSM_CFG_PHONEBOOK
+#define GSM_CFG_PHONEBOOK                   0
 #endif
-
-/**
- * \}
- */
- 
-/**
- * \brief           Enables (1) or disables (0) support for DNS functions
- *
- */
-#ifndef GSM_CFG_DNS
-#define GSM_CFG_DNS                         0
+#ifndef GSM_CFG_HTTP
+#define GSM_CFG_HTTP                        0
 #endif
- 
-/**
- * \brief           Enables (1) or disables (0) support for ping functions
- *
- */
+#ifndef GSM_CFG_FTP
+#define GSM_CFG_FTP                         0
+#endif
 #ifndef GSM_CFG_PING
 #define GSM_CFG_PING                        0
-#endif
- 
-/**
- * \brief           Enables (1) or disables (0) support for WPS functions
- *
- */
-#ifndef GSM_CFG_WPS
-#define GSM_CFG_WPS                         0
-#endif
-
-/**
- * \brief           Enables (1) or disables (0) support for SNTP protocol with AT commands
- *
- */
-#ifndef GSM_CFG_SNTP
-#define GSM_CFG_SNTP                        0
-#endif
-
-/**
- * \brief           Enables (1) or disables (0) support for SNTP protocol with AT commands
- *
- */
-#ifndef GSM_CFG_HOSTNAME
-#define GSM_CFG_HOSTNAME                    0
 #endif
 
 /**
@@ -455,24 +362,11 @@
  
 #if !__DOXYGEN__
 
-/* Define group mode value */
-#define GSM_CFG_MODE_STATION_ACCESS_POINT   (GSM_CFG_MODE_STATION && GSM_CFG_MODE_ACCESS_POINT)
-
-/* At least one of them must be enabled */
-#if !GSM_CFG_MODE_STATION && !GSM_CFG_MODE_ACCESS_POINT
-#error "Invalid GSM configuration. GSM_CFG_MODE_STATION and GSM_CFG_MODE_STATION cannot be disabled at the same time!"
-#endif
-
 #if !GSM_CFG_OS
     #if GSM_CFG_INPUT_USE_PROCESS
     #error "GSM_CFG_INPUT_USE_PROCESS may only be enabled when OS is used!"
     #endif /* GSM_CFG_INPUT_USE_PROCESS */
 #endif /* !GSM_CFG_OS */
-
-/* Check for WPS functionality */
-#if GSM_CFG_WPS && !GSM_CFG_MODE_STATION
-#error "WPS function may only be used when station mode is enabled!"
-#endif /* GSM_CFG_WPS && !GSM_CFG_MODE_STATION */
 
 #endif /* !__DOXYGEN__ */
 

@@ -30,7 +30,6 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#define GSM_INTERNAL
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_timeout.h"
 #include "gsm/gsm_mem.h"

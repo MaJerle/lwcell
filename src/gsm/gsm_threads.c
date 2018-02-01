@@ -1,5 +1,5 @@
 /**
- * \file            gsm_threads.h
+ * \file            gsm_threads.c
  * \brief           OS threads implementations
  */
 
@@ -30,7 +30,6 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#define GSM_INTERNAL
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_threads.h"
 #include "gsm/gsm_parser.h"
@@ -41,7 +40,7 @@
 #include "system/gsm_sys.h"
 
 /**
- * \brief           User input thread to process inputs packets from API functions
+ * \brief           User thread to process input packets from API functions
  */
 void
 gsm_thread_producer(void* const arg) {

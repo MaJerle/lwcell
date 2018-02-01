@@ -30,7 +30,6 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#define GSM_INTERNAL
 #include "gsm/gsm_private.h"
 #include "gsm/gsm.h"
 #include "gsm/gsm_input.h"

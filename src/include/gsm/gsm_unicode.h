@@ -1,6 +1,6 @@
 /**	
- * \file            gsm_debug.c
- * \brief           Debugging inside GSM stack
+ * \file            gsm_unicode.h
+ * \brief           Unicode support
  */
  
 /*
@@ -30,20 +30,41 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#include "gsm/gsm_private.h"
-#include "gsm/gsm_debug.h"
-#include "gsm/gsm.h"
+#ifndef __GSM_UNICODE_H
+#define __GSM_UNICODE_H
 
-#if GSM_CFG_DBG || __DOXYGEN__
+/* C++ detection */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "gsm/gsm.h"
+#include "gsm_private.h"
+
+/**
+ * \addtogroup      GSM
+ * \{
+ */
     
-const char *
-gsmi_dbg_msg_to_string(gsm_cmd_t cmd) {
-    static char tmp_arr[100];
-    if (cmd) {
-        sprintf(tmp_arr, "%d", (int)cmd);
-        return tmp_arr;
-    }
-    return "";
+/**
+ * \defgroup        GSM_UNICODE Unicode support
+ * \brief           Unicode manager
+ * \{
+ */
+    
+gsmr_t          gsmi_unicode_decode(gsm_unicode_t* uni, uint8_t ch);
+    
+/**
+ * \}
+ */
+    
+/**
+ * \}
+ */
+
+/* C++ detection */
+#ifdef __cplusplus
 }
-    
-#endif /* GSM_CFG_DBG || __DOXYGEN__ */
+#endif
+
+#endif /* __GSM_UNICODE_H */

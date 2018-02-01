@@ -53,38 +53,10 @@ extern "C" {
 #include "gsm/gsm_debug.h"
 #include "gsm/gsm_utilities.h"
 #include "gsm/gsm_pbuf.h"
-#include "gsm/gsm_conn.h"
-#if GSM_CFG_MODE_STATION
-#include "gsm/gsm_sta.h"
-#endif /* GSM_CFG_MODE_STATION */
-#if GSM_CFG_MODE_ACCESS_POINT
-#include "gsm/gsm_ap.h"
-#endif /* GSM_CFG_MODE_ACCESS_POINT */
-#if GSM_CFG_OS
-#include "gsm/gsm_netconn.h"
-#endif /* GSM_CFG_OS */
-#if GSM_CFG_PING
-#include "gsm/gsm_ping.h"
-#endif /* GSM_CFG_PING */
-#if GSM_CFG_WPS
-#include "gsm/gsm_wps.h"
-#endif /* GSM_CFG_WPS */
-#if GSM_CFG_SNTP
-#include "gsm/gsm_sntp.h"
-#endif /* GSM_CFG_SNTP */
-#if GSM_CFG_HOSTNAME
-#include "gsm/gsm_hostname.h"
-#endif /* GSM_CFG_HOSTNAME */
 
 gsmr_t      gsm_init(gsm_cb_fn cb_func);
 gsmr_t      gsm_reset(uint32_t blocking);
 gsmr_t      gsm_set_at_baudrate(uint32_t baud, uint32_t blocking);
-gsmr_t      gsm_set_wifi_mode(gsm_mode_t mode, uint32_t blocking);
-gsmr_t      gsm_set_mux(uint8_t mux, uint32_t blocking);
-
-gsmr_t      gsm_set_server(gsm_port_t port, uint16_t max_conn, uint16_t timeout, gsm_cb_fn cb, uint32_t blocking);
-
-gsmr_t      gsm_dns_getbyhostname(const char* host, gsm_ip_t* ip, uint32_t blocking);
 
 gsmr_t      gsm_core_lock(void);
 gsmr_t      gsm_core_unlock(void);

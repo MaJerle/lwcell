@@ -37,12 +37,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#ifdef GSM_INTERNAL
-
-#include "gsm_private.h"
-    
-#endif /* GSM_INTERNAL */
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

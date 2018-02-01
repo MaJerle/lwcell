@@ -30,7 +30,6 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#define GSM_INTERNAL
 #include "gsm/gsm_private.h"
 #include "gsm/gsm.h"
 #include "gsm/gsm_mem.h"
@@ -89,7 +88,6 @@ gsm_init(gsm_cb_fn cb_func) {
      * Call reset command and call default
      * AT commands to prepare basic setup for device
      */
-    gsmi_conn_init();                           /* Init connection module */
     gsm_reset(1);
     gsmi_send_cb(GSM_CB_INIT_FINISH);           /* Call user callback function */
     
@@ -97,7 +95,7 @@ gsm_init(gsm_cb_fn cb_func) {
 }
 
 /**
- * \brief           Sets WiFi mode to either station only, access point only or both
+ * \brief           Execute reset and send default commands
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
@@ -126,30 +124,6 @@ gsm_set_at_baudrate(uint32_t baud, uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.uart.baudrate = baud;
     
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
-}
-
-/**
- * \brief           Enables or disables server mode
- * \param[in]       port: Set port number to enable server on. Use 0 to disable server mode
- * \param[in]       max_conn: Number of maximal connections populated by server
- * \param[in]       timeout: Time used to automatically close the connection in units of seconds. Use 0 to disable timeout feature (not recommended)
- * \param[in]       cb: Connection callback function
- * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
- */
-gsmr_t
-gsm_set_server(gsm_port_t port, uint16_t max_conn, uint16_t timeout, gsm_cb_fn cb, uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
-    
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_TCPIP_CIPSERVER;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_TCPIP_CIPSERVERMAXCONN;  /* First command is to set maximal number of connections for server */
-    GSM_MSG_VAR_REF(msg).msg.tcpip_server.port = port;
-    GSM_MSG_VAR_REF(msg).msg.tcpip_server.max_conn = max_conn;
-    GSM_MSG_VAR_REF(msg).msg.tcpip_server.timeout = timeout;
-    GSM_MSG_VAR_REF(msg).msg.tcpip_server.cb = cb;
-    
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);    /* Send message to producer queue */
 }
 
 /**

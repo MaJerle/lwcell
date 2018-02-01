@@ -51,25 +51,6 @@ extern "C" {
  * \{
  */
 
-/**
- * \brief           Timeout callback function prototype
- */
-typedef void (*gsm_timeout_fn_t)(void *);
-
-/**
- * \brief           Timeout structure
- */
-typedef struct gsm_timeout_t {
-    struct gsm_timeout_t* next;                 /*!< Pointer to next timeout entry */
-    uint32_t time;                              /*!< Time difference from previous entry */
-    void* arg;                                  /*!< Argument to pass to callback function */
-    gsm_timeout_fn_t fn;                        /*!< Callback function for timeout */
-} gsm_timeout_t;
-
-#ifdef GSM_INTERNAL
-uint32_t        gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
-#endif /* GSM_INTERNAL */
-
 gsmr_t          gsm_timeout_add(uint32_t time, void (*cb)(void *), void* arg);
 gsmr_t          gsm_timeout_remove(gsm_timeout_fn_t fn);
     
