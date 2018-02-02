@@ -30,6 +30,7 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
+#include "gsm/gsm_private.h"
 #include "gsm/gsm_buff.h"
 #include "gsm/gsm_mem.h"
 
@@ -166,7 +167,7 @@ gsm_buff_read(gsm_buff_t* buff, void* data, size_t count) {
 /**
  * \brief           Read from buffer but do not change read and write pointers
  * \param[in]       buff: Pointer to buffer structure
- * \param[in]       skip: Number of bytes to skip before reading peek data
+ * \param[in]       skip_count: Number of bytes to skip before reading peek data
  * \param[out]      data: Pointer to data to save read memory
  * \param[in]       count: Number of bytes to peek
  * \return          Number of bytes written to data array

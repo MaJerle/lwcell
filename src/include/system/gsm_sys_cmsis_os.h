@@ -44,11 +44,7 @@ extern "C" {
 #include "gsm_sys.h"
 
 /**
- * \addtogroup      GSM_PORT
- * \{
- */
- 
-/**
+ * \ingroup         GSM_PORT
  * \defgroup        GSM_SYS System functions
  * \brief           System based function for OS management, timings, etc
  * \{
@@ -158,10 +154,6 @@ uint8_t     gsm_sys_mbox_invalid(gsm_sys_mbox_t* b);
 uint8_t     gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, gsm_sys_thread_prio_t prio);
 uint8_t     gsm_sys_thread_terminate(gsm_sys_thread_t* t);
 uint8_t     gsm_sys_thread_yield(void);
- 
-/**
- * \}
- */
  
 /**
  * \}

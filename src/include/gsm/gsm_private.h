@@ -37,10 +37,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "stdint.h"
-#include "stdlib.h"
-#include "string.h"
-
 #include "gsm/gsm.h"
 #include "gsm/gsm_typedefs.h"
 #include "gsm/gsm_debug.h"
@@ -62,10 +58,55 @@ typedef enum {
     GSM_CMD_RESET,                              /*!< Reset device */
     GSM_CMD_ATE0,                               /*!< Disable ECHO mode on AT commands */
     GSM_CMD_ATE1,                               /*!< Enable ECHO mode on AT commands */
-    GSM_CMD_GMR,                                /*!< Get AT commands version */
     GSM_CMD_GSLP,                               /*!< Set GSM to sleep mode */
     GSM_CMD_RESTORE,                            /*!< Restore GSM internal settings to default values */
     GSM_CMD_UART,
+
+    /*
+     * AT commands according to the V.25TER
+     */
+    GSM_CMD_A,                                  /*!< Re-issues the Last Command Given */
+    GSM_CMD_ATA,                                /*!< Answer an Incoming Call */
+    GSM_CMD_ATD,                                /*!< Mobile Originated Call to Dial A Number */
+    GSM_CMD_ATD_N,                              /*!< Originate Call to Phone Number in Current Memory: ATD<n> */
+    GSM_CMD_ATD_STR,                            /*!< Originate Call to Phone Number in Memory Which Corresponds to Field <str>: ATD><str> */
+    GSM_CMD_ATDL,                               /*!< Redial Last Telephone Number Used */
+    GSM_CMD_ATE,                                /*!< Set Command Echo Mode */
+    GSM_CMD_ATH,                                /*!< Disconnect Existing */
+    GSM_CMD_ATI,                                /*!< Display Product Identification Information */
+    GSM_CMD_ATL,                                /*!< Set Monitor speaker */
+    GSM_CMD_ATM,                                /*!< Set Monitor Speaker Mode */
+    GSM_CMD_PPP,                                /*!< Switch from Data Mode or PPP Online Mode to Command Mode, "+++" originally */
+    GSM_CMD_ATO,                                /*!< Switch from Command Mode to Data Mode */
+    GSM_CMD_ATP,                                /*!< Select Pulse Dialing */
+    GSM_CMD_ATQ,                                /*!< Set Result Code Presentation Mode */
+    GSM_CMD_ATS0,                               /*!< Set Number of Rings before Automatically Answering the Call */
+    GSM_CMD_ATS3,                               /*!< Set Command Line Termination Character */
+    GSM_CMD_ATS4,                               /*!< Set Response Formatting Character */
+    GSM_CMD_ATS5,                               /*!< Set Command Line Editing Character */
+    GSM_CMD_ATS6,                               /*!< Pause Before Blind */
+    GSM_CMD_ATS7,                               /*!< Set Number of Seconds to Wait for Connection Completion */
+    GSM_CMD_ATS8,                               /*!< Set Number of Seconds to Wait for Comma Dial Modifier Encountered in Dial String of D Command */
+    GSM_CMD_ATS10,                              /*!< Set Disconnect Delay after Indicating the Absence of Data Carrier */
+    GSM_CMD_ATT,                                /*!< Select Tone Dialing */
+    GSM_CMD_ATV,                                /*!< TA Response Format */
+    GSM_CMD_ATX,                                /*!< Set CONNECT Result Code Format and Monitor Call Progress */
+    GSM_CMD_ATZ,                                /*!< Reset Default Configuration */
+    GSM_CMD_AT_C,                               /*!< Set DCD Function Mode, AT&C */
+    GSM_CMD_AT_D,                               /*!< Set DTR Function, AT&D */
+    GSM_CMD_AT_F,                               /*!< Factory Defined Configuration, AT&F */
+    GSM_CMD_AT_V,                               /*!< Display Current Configuration, AT&V */
+    GSM_CMD_AT_W,                               /*!< Store Active Profile, AT&W */
+    GSM_CMD_GCAP,                               /*!< Request Complete TA Capabilities List */
+    GSM_CMD_GMI,                                /*!< Request Manufacturer Identification */
+    GSM_CMD_GMM,                                /*!< Request TA Model Identification */
+    GSM_CMD_GMR,                                /*!< Request TA Revision Identification of Software Release */
+    GSM_CMD_GOI,                                /*!< Request Global Object Identification */
+    GSM_CMD_GSN,                                /*!< Request TA Serial Number Identification (IMEI) */
+    GSM_CMD_ICF,                                /*!< Set TE-TA Control Character Framing */
+    GSM_CMD_IFC,                                /*!< Set TE-TA Local Data Flow Control */
+    GSM_CMD_IPR,                                /*!< Set TE-TA Fixed Local Rate */
+    GSM_CMD_HVOIC,                              /*!< Disconnect Voice Call Only */
 
     /*
      * AT commands according to 3GPP TS 27.007
@@ -99,7 +140,8 @@ typedef enum {
     GSM_CMD_CPBS,                               /*!< Select Phonebook Memory Storage */
     GSM_CMD_CPBW,                               /*!< Write Phonebook Entry */
 #endif /* GSM_CMD_PHONEBOOK || __DOXYGEN__ */
-    GSM_CMD_CPIN,                               /*!< Enter PIN */
+    GSM_CMD_CPIN_SET,                           /*!< Enter PIN */
+    GSM_CMD_CPIN_READ,                          /*!< Read current SIM status */
     GSM_CMD_CPWD,                               /*!< Change Password */
     GSM_CMD_CR,                                 /*!< Service Reporting Control */
     GSM_CMD_CRC,                                /*!< Set Cellular Result Codes for Incoming Call Indication */
@@ -232,6 +274,8 @@ typedef enum {
 #endif /* GSM_CMD_SMS || __DOXYGEN__ */
 } gsm_cmd_t;
 
+#if GSM_CFG_CONN || __DOXYGEN__
+
 /**
  * \brief           Connection structure
  */
@@ -263,6 +307,8 @@ typedef struct gsm_conn_t {
     } status;                                   /*!< Connection status union with flag bits */
 } gsm_conn_t;
 
+#endif /* GSM_CFG_CONN || __DOXYGEN__ */
+
 /**
  * \ingroup         GSM_PBUF
  * \brief           Packet buffer structure
@@ -293,6 +339,10 @@ typedef struct gsm_msg {
         struct {
             uint32_t baudrate;                  /*!< Baudrate for AT port */
         } uart;
+
+        struct {
+            const char* pin;                    /*!< Pin code to write */
+        } cpin;                                 /*!< CPIN command */
     } msg;                                      /*!< Group of different possible message contents */
 } gsm_msg_t;
 
@@ -386,7 +436,7 @@ typedef struct gsm_unicode_t {
 
 #if !__DOXYGEN__
 /**
- * \addtogroup      GSM
+ * \ingroup         GSM
  * \defgroup        GSM_PRIVATE Internal functions
  * \brief           functions, structures and enumerations
  * \{

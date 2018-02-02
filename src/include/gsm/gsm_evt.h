@@ -39,13 +39,9 @@ extern "C" {
 #endif
 
 #include "gsm/gsm.h"
-
-/**
- * \addtogroup      GSM
- * \{
- */
     
 /**
+ * \ingroup         GSM
  * \defgroup        GSM_EVT Event helpers
  * \brief           Event helper functions
  * \{
@@ -53,10 +49,6 @@ extern "C" {
 
 uint8_t     gsm_evt_reset_is_forced(gsm_cb_t* cb);
  
-/**
- * \}
- */
-    
 /**
  * \}
  */

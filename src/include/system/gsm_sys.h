@@ -51,6 +51,7 @@ typedef void (*gsm_sys_thread_fn)(void *);
 
 /**
  * \name            GSM_SYS_PORTS System ports
+ * \anchor          GSM_SYS_PORTS
  * \{
  *
  * List of already available system ports. 

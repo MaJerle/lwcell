@@ -1,6 +1,6 @@
 /**	
- * \file            gsm_mem.h
- * \brief           Memory manager
+ * \file            gsm_ping.h
+ * \brief           PING API
  */
  
 /*
@@ -26,49 +26,26 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of ESP-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_MEM_H
-#define __GSM_MEM_H
+#ifndef __GSM_PING_H
+#define __GSM_PING_H
 
 /* C++ detection */
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif
 
 #include "gsm/gsm.h"
 
 /**
  * \ingroup         GSM
- * \defgroup        GSM_MEM Memory manager
- * \brief           Dynamic memory manager
+ * \defgroup        GSM_PING PING API
+ * \brief           PING manager
  * \{
  */
-
-/**
- * \brief           Single memory region descriptor
- */
-typedef struct mem_region_t {
-    void* StartAddress;                 /*!< Start address of region */
-    size_t Size;                        /*!< Size in units of bytes of region */
-} mem_region_t;
-
-/**
- * \brief           Wrapper for memory region for GSM
- */
-typedef mem_region_t gsm_mem_region_t;
-
-void*   gsm_mem_alloc(uint32_t size);
-void*   gsm_mem_realloc(void* ptr, size_t size);
-void*   gsm_mem_calloc(size_t num, size_t size);
-void    gsm_mem_free(void* ptr);
-size_t  gsm_mem_getfree(void);
-size_t  gsm_mem_getfull(void);
-size_t  gsm_mem_getminfree(void);
-
-uint8_t gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t size);
     
 /**
  * \}
@@ -77,6 +54,6 @@ uint8_t gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t size);
 /* C++ detection */
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif
 
-#endif /* __GSM_MEM_H */
+#endif /* __GSM_PING_H */

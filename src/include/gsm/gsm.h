@@ -37,26 +37,20 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* Get most important include files */
+#include "gsm/gsm_includes.h"
+
 /**
- * \defgroup        GSM GSM AT lib
+ * \defgroup        GSM GSM-AT Lib
  * \brief           GSM stack
  * \{
  */
- 
-/* Setup config file */
-#include "gsm_config.h"
-
-#include "gsm/gsm_typedefs.h"
-#include "gsm/gsm_buff.h"
-#include "gsm/gsm_input.h"
-#include "system/gsm_sys.h"
-#include "gsm/gsm_debug.h"
-#include "gsm/gsm_utilities.h"
-#include "gsm/gsm_pbuf.h"
 
 gsmr_t      gsm_init(gsm_cb_fn cb_func);
 gsmr_t      gsm_reset(uint32_t blocking);
 gsmr_t      gsm_set_at_baudrate(uint32_t baud, uint32_t blocking);
+
+gsmr_t      gsm_set_pin(const char* pin, uint32_t blocking);
 
 gsmr_t      gsm_core_lock(void);
 gsmr_t      gsm_core_unlock(void);

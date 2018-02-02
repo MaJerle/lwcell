@@ -39,24 +39,15 @@ extern "C" {
 #endif
 
 #include "gsm/gsm.h"
-#include "gsm_private.h"
-
-/**
- * \addtogroup      GSM
- * \{
- */
     
 /**
+ * \ingroup         GSM
  * \defgroup        GSM_UNICODE Unicode support
  * \brief           Unicode manager
  * \{
  */
     
 gsmr_t          gsmi_unicode_decode(gsm_unicode_t* uni, uint8_t ch);
-    
-/**
- * \}
- */
     
 /**
  * \}

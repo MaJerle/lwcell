@@ -38,19 +38,14 @@
 extern "C" {
 #endif
 
-#include "stdint.h"
-#include "string.h"
-    
+#include "gsm/gsm.h"
+
 /**
- * \brief           Buffer structure
+ * \ingroup         GSM
+ * \defgroup        GSM_BUFF Ring buffer
+ * \brief           Generic ring buffer
+ * \{
  */
-typedef struct gsm_buff {
-	size_t size;                                /*!< Size of buffer in units of bytes */
-	size_t in;                                  /*!< Input pointer to save next value */
-	size_t out;                                 /*!< Output pointer to read next value */
-	uint8_t* buff;                              /*!< Pointer to buffer data array */
-	uint8_t flags;                              /*!< Flags for buffer */
-} gsm_buff_t;
 
 uint8_t     gsm_buff_init(gsm_buff_t* buff, size_t len);
 void        gsm_buff_free(gsm_buff_t* buff);
@@ -63,6 +58,10 @@ size_t      gsm_buff_peek(gsm_buff_t* buff, size_t skip_count, void* data, size_
 void *      gsm_buff_get_linear_block_address(gsm_buff_t* buff);
 size_t      gsm_buff_get_linear_block_length(gsm_buff_t* buff);
 size_t      gsm_buff_skip(gsm_buff_t* buff, size_t len);
+
+/**
+ * \}
+ */
 
 /* C++ detection */
 #ifdef __cplusplus

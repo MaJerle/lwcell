@@ -39,13 +39,9 @@ extern "C" {
 #endif
 
 #include "gsm/gsm.h"
-
-/**
- * \addtogroup      GSM
- * \{
- */
     
 /**
+ * \ingroup         GSM
  * \defgroup        GSM_UTILITIES Utilities
  * \brief           Utilities
  * \{
@@ -65,7 +61,7 @@ extern "C" {
 } while (0)
 
 /**
- * \brief           Align x value to specific number of bytes, provided from \ref GSM_CFG_MEM_ALIGNMENT configuration
+ * \brief           Align `x` value to specific number of bytes, provided by \ref GSM_CFG_MEM_ALIGNMENT configuration
  * \param[in]       x: Input value to align
  * \return          Input value aligned to specific number of bytes
  * \hideinitializer
@@ -73,19 +69,19 @@ extern "C" {
 #define GSM_MEM_ALIGN(x)                    ((x + (GSM_CFG_MEM_ALIGNMENT - 1)) & ~(GSM_CFG_MEM_ALIGNMENT - 1))
 
 /**
- * \brief           Get minimal value between x and y inputs
+ * \brief           Get minimal value between `x` and `y` inputs
  * \param[in]       x: First input to test
  * \param[in]       y: Second input to test
- * \return          Minimal value between x and y parameters
+ * \return          Minimal value between `x` and `y` parameters
  * \hideinitializer
  */
 #define GSM_MIN(x, y)                       ((x) < (y) ? (x) : (y))
 
 /**
- * \brief           Get maximal value between x and y inputs
+ * \brief           Get maximal value between `x` and `y` inputs
  * \param[in]       x: First input to test
  * \param[in]       y: Second input to test
- * \return          Maximal value between x and y parameters
+ * \return          Maximal value between `x` and `y` parameters
  * \hideinitializer
  */
 #define GSM_MAX(x, y)                       ((x) > (y) ? (x) : (y))
@@ -101,44 +97,40 @@ extern "C" {
 /**
  * \brief           Unused argument in a function call
  * \note            Use this on all parameters in a function which are not used to prevent
- *                  compiler warnings saying "unused variables"
+ *                  compiler warnings complaining about "unused variables"
  * \param[in]       x: Variable which is not used
  * \hideinitializer
  */
 #define GSM_UNUSED(x)                       ((void)(x))
 
 /**
- * \brief           Get input value casted to unsigned 32-bit value
+ * \brief           Get input value casted to `unsigned 32-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
 #define GSM_U32(x)                          ((uint32_t)(x))
 
 /**
- * \brief           Get input value casted to unsigned 16-bit value
+ * \brief           Get input value casted to `unsigned 16-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
 #define GSM_U16(x)                          ((uint16_t)(x))
 
 /**
- * \brief           Get input value casted to unsigned 8-bit value
+ * \brief           Get input value casted to `unsigned 8-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
 #define GSM_U8(x)                           ((uint8_t)(x))
 
 /**
- * \brief           Get input value casted to size_t value
+ * \brief           Get input value casted to `size_t` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
 #define GSM_SZ(x)                           ((size_t)(x))
 
-/**
- * \}
- */
-    
 /**
  * \}
  */

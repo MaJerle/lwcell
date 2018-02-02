@@ -40,13 +40,9 @@ extern "C" {
 
 #include "stdint.h"
 #include "string.h"
-
-/**
- * \addtogroup      GSM
- * \{
- */
  
 /**
+ * \ingroup         GSM
  * \defgroup        GSM_DEBUG Debugging support
  * \brief           Debugging support module to track stack
  * \{
@@ -118,10 +114,6 @@ extern "C" {
 #define GSM_DEBUGF(c, fmt, ...)
 #define GSM_DEBUGW(c, cond, fmt, ...)
 #endif /* (GSM_CFG_DBG && defined(GSM_CFG_DBG_OUT)) || __DOXYGEN__ */
-
-/**
- * \}
- */
 
 /**
  * \}

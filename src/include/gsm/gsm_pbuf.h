@@ -41,11 +41,7 @@ extern "C" {
 #include "gsm/gsm.h"
 
 /**
- * \addtogroup      GSM
- * \{
- */
-    
-/**
+ * \ingroup         GSM
  * \defgroup        GSM_PBUF Packet buffer
  * \brief           Packet buffer manager
  * \{
@@ -74,10 +70,6 @@ gsm_pbuf_p      gsm_pbuf_skip(gsm_pbuf_p pbuf, size_t offset, size_t* new_offset
 const void *    gsm_pbuf_get_linear_addr(const gsm_pbuf_p pbuf, size_t offset, size_t* new_len);
 
 void            gsm_pbuf_set_ip(gsm_pbuf_p pbuf, const gsm_ip_t* ip, gsm_port_t port);
-    
-/**
- * \}
- */
     
 /**
  * \}

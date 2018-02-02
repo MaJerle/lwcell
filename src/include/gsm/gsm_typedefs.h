@@ -42,9 +42,8 @@ extern "C" {
 #include "string.h"
 #include "stdio.h"
 
-
 /**
- * \addtogroup      GSM
+ * \ingroup         GSM
  * \defgroup        GSM_TYPEDEFS Structures and enumerations
  * \brief           List of core structures and enumerations
  * \{
@@ -327,6 +326,17 @@ typedef struct gsm_timeout_t {
     gsm_timeout_fn_t fn;                        /*!< Callback function for timeout */
 } gsm_timeout_t;
 
+/**
+ * \ingroup         GSM_BUFF
+ * \brief           Buffer structure
+ */
+typedef struct gsm_buff {
+    size_t size;                                /*!< Size of buffer in units of bytes */
+    size_t in;                                  /*!< Input pointer to save next value */
+    size_t out;                                 /*!< Output pointer to read next value */
+    uint8_t* buff;                              /*!< Pointer to buffer data array */
+    uint8_t flags;                              /*!< Flags for buffer */
+} gsm_buff_t;
 
 #ifdef __cplusplus
 }

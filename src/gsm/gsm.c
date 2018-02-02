@@ -102,11 +102,29 @@ gsm_init(gsm_cb_fn cb_func) {
 gsmr_t
 gsm_reset(uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
-    
+
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
-    
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 5000);    /* Send message to producer queue */
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Set pin code to make card ready
+ * \param[in]       pin: Pin code in string format
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_set_pin(const char* pin, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_READ;
+    GSM_MSG_VAR_REF(msg).msg.cpin.pin = pin;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
 }
 
 /**

@@ -38,24 +38,15 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "gsm/gsm.h"
-#include "gsm/gsm_mem.h"
 
 /**
- * \addtogroup      GSM_PORT
- * \{
- */
-
-/**
+ * \ingroup         GSM_PORT
  * \defgroup        GSM_LL Low level communication
  * \brief           Low-level, platform dependant communication module
  * \{
  */
     
 gsmr_t      gsm_ll_init(gsm_ll_t* ll, uint32_t baudrate);
- 
-/**
- * \}
- */
 
 /**
  * \}

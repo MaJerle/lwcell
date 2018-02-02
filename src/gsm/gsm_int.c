@@ -339,7 +339,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     uint8_t is_ok = 0, is_error = 0, is_ready = 0;
 
     /* Try to remove non-parsable strings */
-    if ((rcv->len == 2 && rcv->data[0] == '\r' && rcv->data[1] == '\n') {
+    if (rcv->len == 2 && rcv->data[0] == '\r' && rcv->data[1] == '\n') {
         return;
     }
     
@@ -440,7 +440,6 @@ gsmi_process(const void* data, size_t data_len) {
         ch = *d++;                              /* Get next character */
         d_len--;                                /* Decrease remaining length */
         
- 
         if (0) {
         /*
          * We are in command mode where we have to process byte by byte
@@ -503,15 +502,20 @@ gsmi_process(const void* data, size_t data_len) {
  */
 static gsmr_t
 gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is_ready) {
+    gsm_cmd_t n_cmd = GSM_CMD_IDLE;
     if (msg->cmd_def == GSM_CMD_RESET) {
-        gsm_cmd_t n_cmd = GSM_CMD_IDLE;
         switch (msg->cmd) {                     /* Check current command */
             case GSM_CMD_RESET: {
                 n_cmd = GSM_CFG_AT_ECHO ? GSM_CMD_ATE1 : GSM_CMD_ATE0;  /* Set ECHO mode */
+                gsm_delay(3000);                /* Delay for some time before we can continue after reset */
                 break;
             }
             case GSM_CMD_ATE0:
             case GSM_CMD_ATE1: {
+                n_cmd = GSM_CMD_CFUN;           /* Shutdown any connection */
+                break;
+            }
+            case GSM_CMD_CFUN: {
 #if GSM_CFG_CONN
                 n_cmd = GSM_CMD_CIPSHUT;        /* Shutdown any connection */
                 break;
@@ -525,13 +529,31 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
                 break;
             }
             case GSM_CMD_CIPHEAD: {
+                n_cmd = GSM_CMD_CIPSRIP;        /* Enable IP and port in receive data */
+                break;
+            }
+            case GSM_CMD_CIPSRIP: {
 #endif /* GSM_CFG_CONN */
             }
             default: break;
         }
-    } else
-    {
+    } else if (msg->cmd_def == GSM_CMD_CPIN_SET) {  /* Set PIN code */
+        if (msg->cmd == GSM_CMD_CPIN_READ && is_ok) {
+            /**
+             * \todo: Check if pin already OK, then decide what to do next
+             */
+            n_cmd = GSM_CMD_CPIN_SET;           /* Set command to write PIN */
+        }
+    }
 
+    /*
+     * Check if new command was set for execution
+     */
+    if (n_cmd != GSM_CMD_IDLE) {
+        msg->cmd = n_cmd;
+        if (gsmi_initiate_cmd(msg) == gsmOK) {
+            return gsmCONT;
+        }
     }
     return is_ok || is_ready ? gsmOK : gsmERR;
 }
@@ -545,9 +567,57 @@ gsmr_t
 gsmi_initiate_cmd(gsm_msg_t* msg) {
     switch (msg->cmd) {                         /* Check current message we want to send over AT */
         case GSM_CMD_RESET: {                   /* Reset MCU with AT commands */
-            GSM_AT_PORT_SEND_STR("AT+RST" CRLF);
+            GSM_AT_PORT_SEND_STR("AT+CFUN=1,1" CRLF);   /* Second "1" means reset */
             break;
         }
+        case GSM_CMD_ATE0:
+        case GSM_CMD_ATE1: {
+            GSM_AT_PORT_SEND_STR("ATE");
+            if (msg->cmd == GSM_CMD_ATE0) {
+                GSM_AT_PORT_SEND_STR("0");
+            } else {
+                GSM_AT_PORT_SEND_STR("1");
+            }
+            GSM_AT_PORT_SEND_STR(CRLF);
+            break;
+        }
+        case GSM_CMD_CFUN: {
+            GSM_AT_PORT_SEND_STR("AT+CFUN=");
+            /**
+             * \todo: If CFUN command forced, check value
+             */
+            if (msg->cmd_def == GSM_CMD_RESET /* || */) {
+                GSM_AT_PORT_SEND_STR("1");
+            } else {
+                GSM_AT_PORT_SEND_STR("0");
+            }
+            GSM_AT_PORT_SEND_STR(CRLF);
+            break;
+        }
+        case GSM_CMD_CPIN_READ: {               /* Read current SIM status */
+            GSM_AT_PORT_SEND_STR("AT+CPIN?" CRLF);
+            break;
+        }
+        case GSM_CMD_CPIN_SET: {                /* Set SIM pin code */
+            GSM_AT_PORT_SEND_STR("AT+CPIN=");
+            send_string(msg->msg.cpin.pin, 0, 1);   /* Send pin with quotes */
+            GSM_AT_PORT_SEND_STR(CRLF);
+            break;
+        }
+#if GSM_CFG_CONN
+        case GSM_CMD_CIPSHUT: {                 /* Shut down network connection and put to reset state */
+            GSM_AT_PORT_SEND_STR("AT+CIPSHUT" CRLF);
+            break;
+        }
+        case GSM_CMD_CIPMUX: {                  /* Enable multiple connections */
+            GSM_AT_PORT_SEND_STR("AT+CIPMUX=1" CRLF);
+            break;
+        }
+        case GSM_CMD_CIPHEAD: {                 /* Enable information on receive data about connection and length */
+            GSM_AT_PORT_SEND_STR("AT+CIPHEAD=1" CRLF);
+            break;
+        }
+#endif /* GSM_CFG_CONN */
         default: 
             return gsmERR;                      /* Invalid command */
     }

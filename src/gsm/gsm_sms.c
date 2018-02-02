@@ -1,6 +1,6 @@
 /**	
- * \file            gsm_mem.h
- * \brief           Memory manager
+ * \file            gsm_sms.c
+ * \brief           SMS API
  */
  
 /*
@@ -30,53 +30,10 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_MEM_H
-#define __GSM_MEM_H
+#include "gsm/gsm_private.h"
+#include "gsm/gsm_sms.h"
+#include "gsm/gsm_mem.h"
 
-/* C++ detection */
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#if GSM_CFG_SMS || __DOXYGEN__
 
-#include "gsm/gsm.h"
-
-/**
- * \ingroup         GSM
- * \defgroup        GSM_MEM Memory manager
- * \brief           Dynamic memory manager
- * \{
- */
-
-/**
- * \brief           Single memory region descriptor
- */
-typedef struct mem_region_t {
-    void* StartAddress;                 /*!< Start address of region */
-    size_t Size;                        /*!< Size in units of bytes of region */
-} mem_region_t;
-
-/**
- * \brief           Wrapper for memory region for GSM
- */
-typedef mem_region_t gsm_mem_region_t;
-
-void*   gsm_mem_alloc(uint32_t size);
-void*   gsm_mem_realloc(void* ptr, size_t size);
-void*   gsm_mem_calloc(size_t num, size_t size);
-void    gsm_mem_free(void* ptr);
-size_t  gsm_mem_getfree(void);
-size_t  gsm_mem_getfull(void);
-size_t  gsm_mem_getminfree(void);
-
-uint8_t gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t size);
-    
-/**
- * \}
- */
-
-/* C++ detection */
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /* __GSM_MEM_H */
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */

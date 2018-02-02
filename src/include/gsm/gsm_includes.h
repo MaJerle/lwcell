@@ -1,8 +1,8 @@
-/**	
- * \file            gsm_mem.h
- * \brief           Memory manager
+/**
+ * \file            esp_includes.h
+ * \brief           All main includes
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
  *  
@@ -26,57 +26,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of ESP-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_MEM_H
-#define __GSM_MEM_H
+#ifndef __ESP_INCLUDES_H
+#define __ESP_INCLUDES_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gsm/gsm.h"
+#include "gsm_config.h"
+#include "gsm/gsm_typedefs.h"
+#include "gsm/gsm_buff.h"
+#include "gsm/gsm_input.h"
+#include "system/gsm_sys.h"
+#include "gsm/gsm_debug.h"
+#include "gsm/gsm_utilities.h"
+#include "gsm/gsm_pbuf.h"
 
-/**
- * \ingroup         GSM
- * \defgroup        GSM_MEM Memory manager
- * \brief           Dynamic memory manager
- * \{
- */
-
-/**
- * \brief           Single memory region descriptor
- */
-typedef struct mem_region_t {
-    void* StartAddress;                 /*!< Start address of region */
-    size_t Size;                        /*!< Size in units of bytes of region */
-} mem_region_t;
-
-/**
- * \brief           Wrapper for memory region for GSM
- */
-typedef mem_region_t gsm_mem_region_t;
-
-void*   gsm_mem_alloc(uint32_t size);
-void*   gsm_mem_realloc(void* ptr, size_t size);
-void*   gsm_mem_calloc(size_t num, size_t size);
-void    gsm_mem_free(void* ptr);
-size_t  gsm_mem_getfree(void);
-size_t  gsm_mem_getfull(void);
-size_t  gsm_mem_getminfree(void);
-
-uint8_t gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t size);
-    
-/**
- * \}
- */
-
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_MEM_H */
+#endif /* __ESP_INCLUDES_H */

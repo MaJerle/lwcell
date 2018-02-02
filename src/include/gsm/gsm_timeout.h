@@ -39,13 +39,9 @@ extern "C" {
 #endif
 
 #include "gsm/gsm.h"
-
+ 
 /**
- * \addtogroup      GSM
- * \{
- */
-    
-/**
+ * \ingroup         GSM
  * \defgroup        GSM_TIMEOUT Timeout manager
  * \brief           Timeout manager
  * \{
@@ -53,10 +49,6 @@ extern "C" {
 
 gsmr_t          gsm_timeout_add(uint32_t time, void (*cb)(void *), void* arg);
 gsmr_t          gsm_timeout_remove(gsm_timeout_fn_t fn);
-    
-/**
- * \}
- */
     
 /**
  * \}
