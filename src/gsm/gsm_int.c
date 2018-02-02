@@ -339,22 +339,11 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     uint8_t is_ok = 0, is_error = 0, is_ready = 0;
 
     /* Try to remove non-parsable strings */
-    if ((rcv->len == 2 && rcv->data[0] == '\r' && rcv->data[1] == '\n')
-        /*
-         * Condition below can only be used if AT echo is disabled
-         * otherwise it may happen that some message is inserted in between AT command echo, such as:
-         *
-         * AT+CIPCLOSE=0+LINK_CONN:0,2,"TCP",1,"192.168.0.14",57551,80\r\n\r\n
-         *
-         * Instead of:
-         * AT+CIPCLOSE=0\r\n
-         * +LINK_CONN:0,2,"TCP",1,"192.168.0.14",57551,80\r\n
-         */
-        /* || (rcv->len > 3 && rcv->data[0] == 'A' && rcv->data[1] == 'T' && rcv->data[2] == '+') */) {
+    if ((rcv->len == 2 && rcv->data[0] == '\r' && rcv->data[1] == '\n') {
         return;
     }
     
-    /* Detect most common rgsmonses from device */
+    /* Detect most common responses from device */
     is_ok = !strcmp(rcv->data, "OK" CRLF);      /* Check if received string is OK */
     if (!is_ok) {
         is_error = !strcmp(rcv->data, "ERROR" CRLF) || !strcmp(rcv->data, "FAIL" CRLF); /* Check if received string is error */
@@ -518,11 +507,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
         gsm_cmd_t n_cmd = GSM_CMD_IDLE;
         switch (msg->cmd) {                     /* Check current command */
             case GSM_CMD_RESET: {
-#if ESP_CFG_AT_ECHO
-                n_cmd = GSM_CMD_ATE1;           /* Enable ECHO mode */
-#else          
-                n_cmd = GSM_CMD_ATE0;           /* Disable ECHO mode */
-#endif /* !ESP_CFG_AT_ECHO */
+                n_cmd = GSM_CFG_AT_ECHO ? GSM_CMD_ATE1 : GSM_CMD_ATE0;  /* Set ECHO mode */
                 break;
             }
             case GSM_CMD_ATE0:
