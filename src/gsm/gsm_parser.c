@@ -289,14 +289,13 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             uint8_t ccd:1;                      /*!< 2 consecutive commas detected in a row (Comma Comma Detected) */
             uint8_t tn:2;                       /*!< Term number in response, 2 bits for 4 diff values */
             uint8_t tp;                         /*!< Current term character position */
+            uint8_t ch_prev;                    /*!< Previous character */
         } f;
-        uint16_t d;                             /*!< Dummy value */
     } u;
-    static uint8_t ch_prev;
 
     if (reset) {                                /* Check for reset status */
         memset(&u, 0x00, sizeof(u));            /* Reset everything */
-        ch_prev = 0;
+        u.f.ch_prev = 0;
         return 1;
     }
 
@@ -348,13 +347,45 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     } else {
         if (ch == '(') {                        /* Check for opening bracket */
             u.f.bo = 1;
-        } else if (ch == ',' && ch_prev == ',') {
+        } else if (ch == ',' && u.f.ch_prev == ',') {
             u.f.ccd = 1;                        /* 2 commas in a row */
         }
     }
-    ch_prev = ch;
+    u.f.ch_prev = ch;
     return 1;
 }
+
+#if GSM_CFG_CALL || __DOXYGEN__
+
+/**
+ * \brief           Parse received +CLCC with call status info
+ * \param[in]       str: Input string
+ * \param[in]       send_evt: Send event about new CPIN status
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_clcc(const char* str, uint8_t send_evt) {
+    if (*str == '+') {
+        str += 7;
+    }
+
+    gsm.call.id = gsmi_parse_number(&str);
+    gsm.call.dir = (gsm_call_dir_t)gsmi_parse_number(&str);
+    gsm.call.state = (gsm_call_state_t)gsmi_parse_number(&str);
+    gsm.call.type = (gsm_call_type_t)gsmi_parse_number(&str);
+    gsm.call.is_multipart = (gsm_call_type_t)gsmi_parse_number(&str);
+    gsmi_parse_string(&str, gsm.call.number, sizeof(gsm.call.number), 1);
+    gsm.call.addr_type = gsmi_parse_number(&str);
+    gsmi_parse_string(&str, gsm.call.name, sizeof(gsm.call.name), 1);
+
+    if (send_evt) {
+        gsm.cb.cb.call_changed.call = &gsm.call;
+        gsmi_send_cb(GSM_CB_CALL_CHANGED);
+    }
+    return 1;
+}
+
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */
 
 #if GSM_CFG_SMS || __DOXYGEN__
 

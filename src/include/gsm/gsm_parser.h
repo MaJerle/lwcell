@@ -52,6 +52,7 @@ uint8_t     gsmi_parse_cmti(const char* str, uint8_t send_evt);
 uint8_t     gsmi_parse_at_sdk_version(const char* str, uint32_t* version_out);
 
 uint8_t     gsmi_parse_cops_scan(uint8_t ch, uint8_t reset);
+uint8_t     gsmi_parse_clcc(const char* str, uint8_t send_evt);
 
 #if defined(__cplusplus)
 }

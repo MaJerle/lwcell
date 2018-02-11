@@ -443,7 +443,10 @@ typedef struct {
     gsm_cb_t            cb;                     /*!< Callback processing structure */
     
     gsm_cb_func_t*      cb_func;                /*!< Callback function linked list */
-    
+
+#if GSM_CFG_CALL || __DOXYGEN__
+    gsm_call_t          call;                   /*!< Call information */
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */ 
     union {
         struct {
             uint8_t     initialized:1;          /*!< Flag indicating GSM library is initialized */
@@ -456,14 +459,13 @@ typedef struct {
         } f;                                    /*!< Flags structure */
     } status;                                   /*!< Status structure */
     
-    uint8_t conn_val_id;                        /*!< Validation ID increased each time device connects to wifi network or on reset.
-                                                    it is used for connections */
+    uint8_t conn_val_id;                        /*!< Validation ID increased each time device connects to network */
 } gsm_t;
 
 /**
  * \brief           Unicode support structure
  */
-typedef struct gsm_unicode_t {
+typedef struct {
     uint8_t ch[4];                              /*!< UTF-8 max characters */
     uint8_t t;                                  /*!< Total expected length in UTF-8 sequence */
     uint8_t r;                                  /*!< Remaining bytes in UTF-8 sequence */

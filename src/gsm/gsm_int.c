@@ -51,6 +51,7 @@ static gsm_recv_t recv_buff;
 #endif /* !__DOXYGEN__ */
 
 #define CRLF                "\r\n"
+#define CRLF_LEN            2
 
 #define RECV_ADD(ch)        do { recv_buff.data[recv_buff.len++] = ch; recv_buff.data[recv_buff.len] = 0; } while (0)
 #define RECV_RESET()        do { recv_buff.len = 0; recv_buff.data[0] = 0; } while (0)
@@ -370,18 +371,19 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         return;
     }
 
-    /* Detect most common rgsmonses from device */
-    is_ok = !strcmp(rcv->data, "OK" CRLF);      /* Check if received string is OK */
+    /* Detect most common responses from device */
+    is_ok = rcv->len == 4 && !strcmp(rcv->data, "OK" CRLF);   /* Check if received string is OK */
     if (!is_ok) {
         is_error = !strcmp(rcv->data, "ERROR" CRLF) || !strcmp(rcv->data, "FAIL" CRLF); /* Check if received string is error */
         if (!is_error) {
-            is_ready = !strcmp(rcv->data, "ready" CRLF);    /* Check if received string is ready */
+            is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 9);
+            if (!is_error) {
+                is_ready = !strcmp(rcv->data, "ready" CRLF);    /* Check if received string is ready */
+            }
         }
     }
 
-    /*
-     * Scan received strings which starts with '+'
-     */
+    /* Scan received strings which start with '+' */
     if (rcv->data[0] == '+') {
         if (!strncmp(rcv->data, "+CPIN", 5)) {  /* Check for +CPIN indication for SIM */
             gsmi_parse_cpin(rcv->data, 1);      /* Parse +CPIN response */
@@ -391,18 +393,24 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         } else if (!strncmp(rcv->data, "+CMTI", 5)) {   /* SMS receive notification */
             gsmi_parse_cmti(rcv->data, 1);      /* Parse +CMTI response with received SMS */
 #endif /* GSM_CFG_SMS */
+#if GSM_CFG_CALL
+        } else if (!strncmp(rcv->data, "+CLCC", 5)) {
+            gsmi_parse_clcc(rcv->data, 1);      /* Parse +CLCC response with call info change */
+#endif /* GSM_CFG_CALL */
         }
     } else {
 #if GSM_CFG_SMS
-        if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready", 9)) {
+        if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready" CRLF, 9 + CRLF_LEN)) {
             gsm.status.f.sms_ready = 1;         /* SMS ready flag */
             gsmi_send_cb(GSM_CB_SMS_READY);     /* Send SMS ready event */
         }
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CALL
-        if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready", 10)) {
+        if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
             gsm.status.f.call_ready = 1;        /* Call ready flag */
             gsmi_send_cb(GSM_CB_CALL_READY);    /* Send SMS ready event */
+        } else if (rcv->data[0] == 'R' && !strncmp(rcv->data, "RING" CRLF, 4 + CRLF_LEN)) {
+            gsmi_send_cb(GSM_CB_CALL_RING);     /* Send SMS ready event */
         }
 #endif /* GSM_CFG_CALL */
     }
@@ -631,6 +639,12 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             }
             case GSM_CMD_CIPSRIP: {
 #endif /* GSM_CFG_CONN */
+#if GSM_CFG_CALL
+                n_cmd = GSM_CMD_CLCC;           /* Enable call info notification */
+                break;
+            }
+            case GSM_CMD_CLCC: {
+#endif /* GSM_CFG_CALL */
             }
             default: break;
         }
@@ -771,6 +785,12 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
+        case GSM_CMD_CIPSRIP: {
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CIPSRIP=1");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
 #endif /* GSM_CFG_CONN */
 #if GSM_CFG_SMS
         case GSM_CMD_CMGF: {                    /* Select SMS message format */
@@ -810,6 +830,12 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_ATH: {                     /* Disconnect existing connection (hang-up phone call) */
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             GSM_AT_PORT_SEND_STR("H");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CLCC: {                    /* Enable auto notification on received call */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CLCC=1");
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }

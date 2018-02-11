@@ -189,6 +189,51 @@ typedef struct {
     uint32_t num;                               /*!< Operator numeric value */
 } gsm_operator_t;
 
+/**
+ * \brief           List of call directions
+ */
+typedef enum {
+    GSM_CALL_DIR_MO = 0x00,                     /*!< Mobile originated, outgoing call */
+    GSM_CALL_DIR_MT,                            /*!< Mobile Terminated, incoming call */
+} gsm_call_dir_t;
+
+/**
+ * \brief           List of call states
+ */
+typedef enum {
+    GSM_CALL_STATE_ACTIVE = 0x00,               /*!< Call is active */
+    GSM_CALL_STATE_HELD,                        /*!< Call is held */
+    GSM_CALL_STATE_DIALING,                     /*!< Call is dialing */
+    GSM_CALL_STATE_ALERGING,                    /*!< Call is alerting */
+    GSM_CALL_STATE_INCOMING,                    /*!< Call is incoming */
+    GSM_CALL_STATE_WAITING,                     /*!< Call is waiting */
+    GSM_CALL_STATE_DISCONNECT,                  /*!< Call disconnected, call finished */
+} gsm_call_state_t;
+
+/**
+ * \brief           List of call types
+ */
+typedef enum {
+    GSM_CALL_TYPE_VOICE = 0x00,
+    GSM_CALL_TYPE_DATA,
+    GSM_CALL_TYPE_FAX,
+} gsm_call_type_t;
+
+/**
+ * \brief           Call information
+ * \note            Data received on `+CLCC` info
+ */
+typedef struct {
+    uint8_t id;                                 /*!< Call identification number, 0-7 */
+    gsm_call_dir_t dir;                         /*!< Call direction */
+    gsm_call_state_t state;                     /*!< Call state */
+    gsm_call_type_t type;                       /*!< Call type */
+    char number[20];                            /*!< Phone number */
+    char is_multipart;                          /*!< Multipart status */
+    uint8_t addr_type;                          /*!< Address type */
+    char name[20];                              /*!< Phone book name if exists for current number */
+} gsm_call_t;
+
 /* Forward declarations */
 struct gsm_cb_t;
 struct gsm_conn_t;
@@ -240,6 +285,8 @@ typedef enum gsm_cb_type_t {
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
     GSM_CB_CALL_READY,                          /*!< Call ready event */
+    GSM_CB_CALL_CHANGED,                        /*!< Call info changed, `+CLCK` statement received */
+    GSM_CB_CALL_RING,                           /*!< Call is ringing event */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 } gsm_cb_type_t;
 
@@ -261,7 +308,12 @@ typedef struct gsm_cb_t {
             gsm_mem_t mem;                      /*!< SMS memory */
             uint16_t num;                       /*!< Received number in memory for sent SMS*/
         } sms_recv;                             /*!< SMS received info. Use with \ref GSM_CB_SMS_RECV event */
-#endif
+#endif /* GSM_CFG_SMS */
+#if GSM_CFG_CALL
+        struct {
+            const gsm_call_t* call;             /*!< Call information */
+        } call_changed;                         /*!< Call changed info. Use with \ref GSM_CB_CALL_CHANGED event */
+#endif /* GSM_CFG_CALL */
         struct {
             gsm_conn_p conn;                    /*!< Connection where data were received */
             gsm_pbuf_p buff;                    /*!< Pointer to received data */
