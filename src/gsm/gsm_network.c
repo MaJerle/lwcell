@@ -1,6 +1,6 @@
 /**	
- * \file            gsm_call.h
- * \brief           Call API
+ * \file            gsm_network.c
+ * \brief           Network API
  */
  
 /*
@@ -26,38 +26,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of ESP-AT.
+ * This file is part of GSM-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_CALL_H
-#define __GSM_CALL_H
+#include "gsm/gsm_private.h"
+#include "gsm/gsm_network.h"
+#include "gsm/gsm_mem.h"
 
-/* C++ detection */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#if GSM_CFG_NETWORK || __DOXYGEN__
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_CALL Call API
- * \brief           Call manager
- * \{
+ * \brief           Attach to network
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
-   
-gsmr_t      gsm_call_start(const char* number, uint32_t blocking);
-gsmr_t      gsm_call_answer(uint32_t blocking);
-gsmr_t      gsm_call_hangup(uint32_t blocking);
+gsmr_t
+gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
-/**
- * \}
- */
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
 
-/* C++ detection */
-#ifdef __cplusplus
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
-#endif
 
-#endif /* __GSM_CALL_H */
+/**
+ * \brief           Detach from network
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_network_detach(uint32_t blocking) {
+    return gsmERR;
+}
+
+#endif /* GSM_CFG_NETWORK || __DOXYGEN__ */

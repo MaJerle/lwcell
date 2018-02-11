@@ -38,7 +38,9 @@
 #include "gsm/gsm_unicode.h"
 #include "system/gsm_ll.h"
 
-#define IS_CURR_CMD(c)        (gsm.msg != NULL && gsm.msg->cmd == (c))
+#define IS_CURR_CMD(c)      (gsm.msg != NULL && gsm.msg->cmd == (c))
+#define CH_CTRL_Z           (0x1A)
+#define CH_ESC              (0x1A)
 
 #if !__DOXYGEN__
 typedef struct {
@@ -55,9 +57,21 @@ static gsm_recv_t recv_buff;
 #define RECV_LEN()          recv_buff.len
 #define RECV_IDX(index)     recv_buff.data[index]
 
+#define GSM_AT_PORT_SEND_BEGIN()        do { GSM_AT_PORT_SEND_STR("AT"); } while (0)
+#define GSM_AT_PORT_SEND_END()          do { GSM_AT_PORT_SEND_STR(CRLF); } while (0)
+
 #define GSM_AT_PORT_SEND_STR(str)       gsm.ll.send_fn((const uint8_t *)(str), (uint16_t)strlen(str))
-#define GSM_AT_PORT_SEND_CHR(str)       gsm.ll.send_fn((const uint8_t *)(str), (uint16_t)1)
-#define GSM_AT_PORT_SEND(d, l)          gsm.ll.send_fn((const uint8_t *)(d), (uint16_t)l)
+#define GSM_AT_PORT_SEND_CHR(ch)        gsm.ll.send_fn((const uint8_t *)(ch), (uint16_t)1)
+#define GSM_AT_PORT_SEND(d, l)          gsm.ll.send_fn((const uint8_t *)(d), (uint16_t)(l))
+
+#define GSM_AT_PORT_SEND_QUOTE_COND(q)  do { if ((q)) { GSM_AT_PORT_SEND_STR("\""); } } while (0)
+#define GSM_AT_PORT_SEND_COMMA_COND(c)  do { if ((c)) { GSM_AT_PORT_SEND_STR(","); } } while (0)
+#define GSM_AT_PORT_SEND_EQUAL_COND(e)  do { if ((e)) { GSM_AT_PORT_SEND_STR("="); } } while (0)
+
+#define GSM_AT_PORT_SEND_CTRL_Z()       GSM_AT_PORT_SEND_STR("\x1A")
+#define GSM_AT_PORT_SEND_ESC()          GSM_AT_PORT_SEND_STR("\x1B")
+
+#define GSM_PORT2NUM(port)              ((uint32_t)(port))
 
 static gsmr_t gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is_ready);
 
@@ -106,51 +120,50 @@ signed_number_to_str(int32_t num, char* str) {
 /**
  * \brief           Send IP or MAC address to AT port
  * \param[in]       d: Pointer to IP or MAC address
- * \param[in]       is_ip: Set to 1 when sending IP, or 0 when MAC
- * \param[in]       q: Set to 1 to include start and ending quotes
+ * \param[in]       is_ip: Set to `1` when sending IP, `0` when MAC
+ * \param[in]       q: Set to `1` to include start and ending quotes
+ * \param[in]       c: Set to `1` to include comma before string
  */
 static void
-send_ip_mac(const void* d, uint8_t is_ip, uint8_t q) {
+send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     uint8_t i, ch;
     char str[4];
     const gsm_mac_t* mac = d;
     const gsm_ip_t* ip = d;
-    
+
+    GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     if (d == NULL) {
         return;
     }
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");             /* Send starting quote character */
-    }
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     ch = is_ip ? '.' : ':';                     /* Get delimiter character */
     for (i = 0; i < (is_ip ? 4 : 6); i++) {     /* Process byte by byte */
         if (is_ip) {                            /* In case of IP ... */
-            number_to_str(is_ip ? ip->ip[i] : mac->mac[i], str);    /* ... go to decimal format ... */
+            number_to_str(ip->ip[i], str);      /* ... go to decimal format ... */
         } else {                                /* ... in case of MAC ... */
-            byte_to_str(is_ip ? ip->ip[i] : mac->mac[i], str);  /* ... go to HEX format */
+            byte_to_str(mac->mac[i], str);      /* ... go to HEX format */
         }
         GSM_AT_PORT_SEND_STR(str);              /* Send str */
         if (i < (is_ip ? 4 : 6) - 1) {          /* Check end if characters */
             GSM_AT_PORT_SEND_CHR(&ch);          /* Send character */
         }
     }
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");             /* Send ending quote character */
-    }
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
 }
 
 /**
  * \brief           Send string to AT port, either plain or escaped
  * \param[in]       str: Pointer to input string to string
- * \param[in]       e: Value to indicate string send format, escaped (1) or plain (0)
- * \param[in]       q: Value to indicate starting and ending quotes, enabled (1) or disabled (0)
+ * \param[in]       e: Value to indicate string send format, escaped (`1`) or plain (`0`)
+ * \param[in]       q: Value to indicate starting and ending quotes, enabled (`1`) or disabled (`0`)
+ * \param[in]       c: Set to `1` to include comma before string
  */
 static void
-send_string(const char* str, uint8_t e, uint8_t q) {
+send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
     char special = '\\';
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");
-    }
+    
+    GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     if (str != NULL) {
         if (e) {                                /* Do we have to escape string? */
             while (*str) {                      /* Go through string */
@@ -164,47 +177,61 @@ send_string(const char* str, uint8_t e, uint8_t q) {
             GSM_AT_PORT_SEND_STR(str);          /* Send plain string */
         }
     }
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");
-    }
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
 }
 
 /**
  * \brief           Send number (decimal) to AT port
  * \param[in]       num: Number to send to AT port
- * \param[in]       q: Value to indicate starting and ending quotes, enabled (1) or disabled (0)
+ * \param[in]       q: Value to indicate starting and ending quotes, enabled (`1`) or disabled (`0`)
+ * \param[in]       c: Set to `1` to include comma before string
  */
 static void
-send_number(uint32_t num, uint8_t q) {
+send_number(uint32_t num, uint8_t q, uint8_t c) {
     char str[11];
-    
+
     number_to_str(num, str);                    /* Convert digit to decimal string */
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");
-    }
+    
+    GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     GSM_AT_PORT_SEND_STR(str);                  /* Send string with number */
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");
-    }
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
+}
+
+/**
+ * \brief           Send port number to AT port
+ * \param[in]       port: Port number to send
+ * \param[in]       q: Value to indicate starting and ending quotes, enabled (`1`) or disabled (`0`)
+ * \param[in]       c: Set to `1` to include comma before string
+ */
+static void
+send_port(gsm_port_t port, uint8_t q, uint8_t c) {
+    char str[6];
+
+    number_to_str(GSM_PORT2NUM(port), str);     /* Convert digit to decimal string */
+    
+    GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
+    GSM_AT_PORT_SEND_STR(str);                  /* Send string with number */
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
 }
 
 /**
  * \brief           Send signed number to AT port
  * \param[in]       num: Number to send to AT port
- * \param[in]       q: Value to indicate starting and ending quotes, enabled (1) or disabled (0)
+ * \param[in]       q: Value to indicate starting and ending quotes, enabled (`1`) or disabled (`0`)
+ * \param[in]       c: Set to `1` to include comma before string
  */
 void
-send_signed_number(int32_t num, uint8_t q) {
+send_signed_number(int32_t num, uint8_t q, uint8_t c) {
     char str[11];
     
     signed_number_to_str(num, str);             /* Convert digit to decimal string */
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");
-    }
+    
+    GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     GSM_AT_PORT_SEND_STR(str);                  /* Send string with number */
-    if (q) {
-        GSM_AT_PORT_SEND_STR("\"");
-    }
+    GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
 }
 
 /**
@@ -214,20 +241,20 @@ send_signed_number(int32_t num, uint8_t q) {
  */
 static void
 reset_connections(uint8_t forced) {
-    size_t i;
-    
-    gsm.cb.type = GSM_CB_CONN_CLOSED;
-    gsm.cb.cb.conn_active_closed.forced = forced;
-    
-    for (i = 0; i < GSM_CFG_MAX_CONNS; i++) {   /* Check all connections */
-        if (gsm.conns[i].status.f.active) {
-            gsm.conns[i].status.f.active = 0;
-            
-            gsm.cb.cb.conn_active_closed.conn = &gsm.conns[i];
-            gsm.cb.cb.conn_active_closed.client = gsm.conns[i].status.f.client;
-            gsmi_send_conn_cb(&gsm.conns[i], NULL); /* Send callback function */
-        }
-    }
+    //size_t i;
+    //
+    //gsm.cb.type = GSM_CB_CONN_CLOSED;
+    //gsm.cb.cb.conn_active_closed.forced = forced;
+    //
+    //for (i = 0; i < GSM_CFG_MAX_CONNS; i++) {   /* Check all connections */
+    //    if (gsm.conns[i].status.f.active) {
+    //        gsm.conns[i].status.f.active = 0;
+    //        
+    //        gsm.cb.cb.conn_active_closed.conn = &gsm.conns[i];
+    //        gsm.cb.cb.conn_active_closed.client = gsm.conns[i].status.f.client;
+    //        gsmi_send_conn_cb(&gsm.conns[i], NULL); /* Send callback function */
+    //    }
+    //}
 }
 
 /**
@@ -331,7 +358,7 @@ gsmi_send_cb(gsm_cb_type_t type) {
 //}
 
 /**
- * \brief           Process received string from GSM 
+ * \brief           Process received string from GSM
  * \param[in]       recv: Pointer to \ref gsm_rect_t structure with input string
  */
 static void
@@ -342,14 +369,55 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     if (rcv->len == 2 && rcv->data[0] == '\r' && rcv->data[1] == '\n') {
         return;
     }
-    
-    /* Detect most common responses from device */
+
+    /* Detect most common rgsmonses from device */
     is_ok = !strcmp(rcv->data, "OK" CRLF);      /* Check if received string is OK */
     if (!is_ok) {
         is_error = !strcmp(rcv->data, "ERROR" CRLF) || !strcmp(rcv->data, "FAIL" CRLF); /* Check if received string is error */
         if (!is_error) {
             is_ready = !strcmp(rcv->data, "ready" CRLF);    /* Check if received string is ready */
         }
+    }
+
+    /*
+     * Scan received strings which starts with '+'
+     */
+    if (rcv->data[0] == '+') {
+        if (!strncmp(rcv->data, "+CPIN", 5)) {  /* Check for +CPIN indication for SIM */
+            gsmi_parse_cpin(rcv->data, 1);      /* Parse +CPIN response */
+#if GSM_CFG_SMS
+        } else if (IS_CURR_CMD(GSM_CMD_CMGS) && !strncmp(rcv->data, "+CMGS", 5)) {
+            gsmi_parse_cmgs(rcv->data, 1);      /* Parse +CMGS response */
+        } else if (!strncmp(rcv->data, "+CMTI", 5)) {   /* SMS receive notification */
+            gsmi_parse_cmti(rcv->data, 1);      /* Parse +CMTI response with received SMS */
+#endif /* GSM_CFG_SMS */
+        }
+    } else {
+#if GSM_CFG_SMS
+        if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready", 9)) {
+            gsm.status.f.sms_ready = 1;         /* SMS ready flag */
+            gsmi_send_cb(GSM_CB_SMS_READY);     /* Send SMS ready event */
+        }
+#endif /* GSM_CFG_SMS */
+#if GSM_CFG_CALL
+        if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready", 10)) {
+            gsm.status.f.call_ready = 1;        /* Call ready flag */
+            gsmi_send_cb(GSM_CB_CALL_READY);    /* Send SMS ready event */
+        }
+#endif /* GSM_CFG_CALL */
+    }
+
+    /*
+     * Check general responses for active commands
+     */
+    if (gsm.msg != NULL) {
+#if GSM_CFG_SMS
+        if (IS_CURR_CMD(GSM_CMD_CMGS) && is_ok) {
+            /* At this point we have to wait for "> " to send data */
+        } else if (IS_CURR_CMD(GSM_CMD_CMGS) && is_error) {
+            gsmi_send_cb(GSM_CB_SMS_SEND_ERROR);    /* SIM card event */
+        }
+#endif /* GSM_CFG_SMS */
     }
     
     /*
@@ -440,7 +508,16 @@ gsmi_process(const void* data, size_t data_len) {
         ch = *d++;                              /* Get next character */
         d_len--;                                /* Decrease remaining length */
         
-        if (0) {
+        /*
+         * Check if operators scan command is active
+         * and if we are ready to read the incoming data
+         */
+        if (IS_CURR_CMD(GSM_CMD_COPS_GET_OPT) && gsm.msg->msg.cops_scan.read) {
+            if (ch == '\n') {
+                gsm.msg->msg.cops_scan.read = 0;
+            } else {
+                gsmi_parse_cops_scan(ch, 0);    /* Parse character by character */
+            }
         /*
          * We are in command mode where we have to process byte by byte
          * Simply check for ASCII and unicode format and process data accordingly
@@ -469,6 +546,26 @@ gsmi_process(const void* data, size_t data_len) {
                         default:
                             RECV_ADD(ch);       /* Any ASCII valid character */
                             break;
+                    }
+
+                    /*
+                     * Do we have a special sequence "> "?
+                     *
+                     * Check if any command active which may expect that kind of rgsmonse
+                     */
+                    if (ch_prev2 == '\n' && ch_prev1 == '>' && ch == ' ') {
+#if GSM_CFG_SMS
+                        if (IS_CURR_CMD(GSM_CMD_CMGS)) {    /* Send SMS? */
+                            GSM_AT_PORT_SEND(gsm.msg->msg.sms_send.text, strlen(gsm.msg->msg.sms_send.text));
+                            GSM_AT_PORT_SEND_CTRL_Z();
+                        }
+#endif /* GSM_CFG_SMS */
+                    } else if (IS_CURR_CMD(GSM_CMD_COPS_GET_OPT)) {
+                        if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+COPS:", 5)) {
+                            RECV_RESET();       /* Reset incoming buffer */
+                            gsmi_parse_cops_scan(0, 1); /* Reset parser state */
+                            gsm.msg->msg.cops_scan.read = 1;    /* Start reading incoming bytes */
+                        }
                     }
                 } else {                        /* We have sequence of unicode characters */
                     /*
@@ -512,10 +609,10 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             }
             case GSM_CMD_ATE0:
             case GSM_CMD_ATE1: {
-                n_cmd = GSM_CMD_CFUN;           /* Shutdown any connection */
+                n_cmd = GSM_CMD_CFUN_SET;       /* Set full functionality */
                 break;
             }
-            case GSM_CMD_CFUN: {
+            case GSM_CMD_CFUN_SET: {
 #if GSM_CFG_CONN
                 n_cmd = GSM_CMD_CIPSHUT;        /* Shutdown any connection */
                 break;
@@ -538,12 +635,43 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             default: break;
         }
     } else if (msg->cmd_def == GSM_CMD_CPIN_SET) {  /* Set PIN code */
-        if (msg->cmd == GSM_CMD_CPIN_READ && is_ok) {
+        if (msg->cmd == GSM_CMD_CPIN_GET && is_ok) {
             /**
              * \todo: Check if pin already OK, then decide what to do next
              */
             n_cmd = GSM_CMD_CPIN_SET;           /* Set command to write PIN */
         }
+#if GSM_CFG_NETWORK
+    } else if (msg->cmd_def == GSM_CMD_NETWORK_ATTACH) {
+        switch (msg->cmd) {
+            case GSM_CMD_CGACT_SET_0: {
+                n_cmd = GSM_CMD_CGACT_SET_1;
+                break;
+            }
+            case GSM_CMD_CGACT_SET_1: {
+                if (is_ok) {
+                    n_cmd = GSM_CMD_CGATT_SET_0;
+                }
+                break;
+            }
+            case GSM_CMD_CGATT_SET_0: {
+                n_cmd = GSM_CMD_CGATT_SET_1;
+                break;
+            }
+            case GSM_CMD_CGATT_SET_1: {
+                if (is_ok) {
+                    n_cmd = GSM_CMD_CGATT_SET_0;
+                }
+                break;
+            }
+        }
+#endif /* GSM_CFG_NETWORK */
+#if GSM_CFG_SMS
+    } else if (msg->cmd_def == GSM_CMD_CMGS) {  /* Send SMS default command */
+        if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
+            n_cmd = GSM_CMD_CMGS;               /* Now send actual message */
+        }
+#endif /* GSM_CFG_SMS */
     }
 
     /*
@@ -551,7 +679,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
      */
     if (n_cmd != GSM_CMD_IDLE) {
         msg->cmd = n_cmd;
-        if (gsmi_initiate_cmd(msg) == gsmOK) {
+        if (msg->fn(msg) == gsmOK) {
             return gsmCONT;
         }
     }
@@ -560,64 +688,132 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
 
 /**
  * \brief           Function to initialize every AT command
+ * \note            Never call this function directly. Set as initialization function for command and use `msg->fn(msg)`
  * \param[in]       msg: Pointer to \ref gsm_msg_t with data
  * \return          Member of \ref gsmr_t enumeration
  */
 gsmr_t
 gsmi_initiate_cmd(gsm_msg_t* msg) {
     switch (msg->cmd) {                         /* Check current message we want to send over AT */
-        case GSM_CMD_RESET: {                   /* Reset MCU with AT commands */
-            GSM_AT_PORT_SEND_STR("AT+CFUN=1,1" CRLF);   /* Second "1" means reset */
+        case GSM_CMD_RESET: {                   /* Reset modem with AT commands */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CFUN=1,1");  /* Second "1" means reset */
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
         case GSM_CMD_ATE0:
         case GSM_CMD_ATE1: {
-            GSM_AT_PORT_SEND_STR("ATE");
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             if (msg->cmd == GSM_CMD_ATE0) {
-                GSM_AT_PORT_SEND_STR("0");
+                GSM_AT_PORT_SEND_STR("E0");
             } else {
-                GSM_AT_PORT_SEND_STR("1");
+                GSM_AT_PORT_SEND_STR("E1");
             }
-            GSM_AT_PORT_SEND_STR(CRLF);
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
-        case GSM_CMD_CFUN: {
-            GSM_AT_PORT_SEND_STR("AT+CFUN=");
+        case GSM_CMD_CFUN_SET: {
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CFUN=");
             /**
              * \todo: If CFUN command forced, check value
              */
-            if (msg->cmd_def == GSM_CMD_RESET /* || */) {
+            if (msg->cmd_def == GSM_CMD_RESET || 
+                (msg->cmd_def == GSM_CMD_CFUN_SET && msg->msg.cfun.mode)) {
                 GSM_AT_PORT_SEND_STR("1");
             } else {
                 GSM_AT_PORT_SEND_STR("0");
             }
-            GSM_AT_PORT_SEND_STR(CRLF);
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
-        case GSM_CMD_CPIN_READ: {               /* Read current SIM status */
-            GSM_AT_PORT_SEND_STR("AT+CPIN?" CRLF);
+        case GSM_CMD_CPIN_GET: {                /* Read current SIM status */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPIN?");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
         case GSM_CMD_CPIN_SET: {                /* Set SIM pin code */
-            GSM_AT_PORT_SEND_STR("AT+CPIN=");
-            send_string(msg->msg.cpin.pin, 0, 1);   /* Send pin with quotes */
-            GSM_AT_PORT_SEND_STR(CRLF);
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPIN=");
+            send_string(msg->msg.cpin.pin, 0, 1, 0);    /* Send pin with quotes */
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_COPS_GET: {                /* Get current operator */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+COPS?");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_COPS_GET_OPT: {            /* Get list of available operators */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+COPS=?");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
 #if GSM_CFG_CONN
         case GSM_CMD_CIPSHUT: {                 /* Shut down network connection and put to reset state */
-            GSM_AT_PORT_SEND_STR("AT+CIPSHUT" CRLF);
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CIPSHUT");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
         case GSM_CMD_CIPMUX: {                  /* Enable multiple connections */
-            GSM_AT_PORT_SEND_STR("AT+CIPMUX=1" CRLF);
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CIPMUX=1");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
         case GSM_CMD_CIPHEAD: {                 /* Enable information on receive data about connection and length */
-            GSM_AT_PORT_SEND_STR("AT+CIPHEAD=1" CRLF);
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CIPHEAD=1");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
 #endif /* GSM_CFG_CONN */
+#if GSM_CFG_SMS
+        case GSM_CMD_CMGF: {                    /* Select SMS message format */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CMGF=");
+            if (msg->cmd_def == GSM_CMD_CMGF) {
+                send_number(!!msg->msg.sms_send.format, 0, 0);
+            } else {
+                GSM_AT_PORT_SEND_STR("1");      /* Force text mode */
+            }
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CMGS: {                    /* Send SMS */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CMGS=");
+            send_string(msg->msg.sms_send.num, 0, 1, 0);
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+#endif /* GSM_CFG_SMS */
+#if GSM_CFG_CALL
+        case GSM_CMD_ATD: {                     /* Start new call */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("D");
+            send_string(msg->msg.call_start.number, 0, 0, 0);
+            GSM_AT_PORT_SEND_STR(";");          /* Voice call includes semicolon at the end */
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_ATA: {                     /* Answer phone call */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("A");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_ATH: {                     /* Disconnect existing connection (hang-up phone call) */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("H");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+#endif /* GSM_CFG_CALL */
         default: 
             return gsmERR;                      /* Invalid command */
     }
@@ -663,9 +859,10 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     msg->block_time = max_block_time;           /* Set blocking status if necessary */
     msg->fn = process_fn;                       /* Save processing function to be called as callback */
     if (block) {
-        gsm_sys_mbox_put(&gsm.mbox_producer, msg);  /* Write message to producer queue and wait forever */
+        gsm_sys_mbox_put(&gsm.mbox_producer, msg);  /* Write message to producer queue and wait until written */
     } else {
         if (!gsm_sys_mbox_putnow(&gsm.mbox_producer, msg)) {    /* Write message to producer queue immediatelly */
+            GSM_MSG_VAR_FREE(msg);              /* Release message */
             res = gsmERR;
         }
     }

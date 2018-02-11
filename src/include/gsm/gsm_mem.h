@@ -50,15 +50,10 @@ extern "C" {
 /**
  * \brief           Single memory region descriptor
  */
-typedef struct mem_region_t {
-    void* StartAddress;                 /*!< Start address of region */
-    size_t Size;                        /*!< Size in units of bytes of region */
-} mem_region_t;
-
-/**
- * \brief           Wrapper for memory region for GSM
- */
-typedef mem_region_t gsm_mem_region_t;
+typedef struct gsm_mem_region {
+    void* start_addr;                           /*!< Start address of region */
+    size_t size;                                /*!< Size in units of bytes of region */
+} gsm_mem_region_t;
 
 void*   gsm_mem_alloc(uint32_t size);
 void*   gsm_mem_realloc(void* ptr, size_t size);

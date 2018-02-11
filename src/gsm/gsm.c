@@ -67,8 +67,6 @@ gsm_init(gsm_cb_fn cb_func) {
     def_cb_link.fn = cb_func ? cb_func : def_callback;
     gsm.cb_func = &def_cb_link;                 /* Set callback function */
     
-    gsm.cb_server = NULL;                       /* Set default server callback function */
-    
     gsm_sys_init();                             /* Init low-level system */
     gsm_ll_init(&gsm.ll, GSM_CFG_AT_PORT_BAUDRATE); /* Init low-level communication */
     
@@ -107,54 +105,6 @@ gsm_reset(uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
-}
-
-/**
- * \brief           Set pin code to make card ready
- * \param[in]       pin: Pin code in string format
- * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
- */
-gsmr_t
-gsm_set_pin(const char* pin, uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
-
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_READ;
-    GSM_MSG_VAR_REF(msg).msg.cpin.pin = pin;
-
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
-}
-
-/**
- * \brief           Sets baudrate of AT port (usually UART)
- * \param[in]       baud: Baudrate in units of bits per second
- * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
- */
-gsmr_t
-gsm_set_at_baudrate(uint32_t baud, uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
-    
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_UART;
-    GSM_MSG_VAR_REF(msg).msg.uart.baudrate = baud;
-    
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
-}
-
-/**
- * \brief           Set default callback function for incoming server connections
- * \param[in]       cb_func: Callback function. Set to NULL to use default GSM callback function
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
- */
-gsmr_t
-gsm_set_default_server_callback(gsm_cb_fn cb_func) {
-    GSM_CORE_PROTECT();                         /* Protect system */
-    gsm.cb_server = cb_func != NULL ? cb_func : gsm.cb_func->fn;/* Set default callback */
-    GSM_CORE_UNPROTECT();                       /* Unprotect system */
-    return gsmOK;
 }
 
 /**
@@ -257,4 +207,93 @@ gsm_delay(uint32_t ms) {
         gsm_sys_sem_release(&sem);              /* Release semaphore */
         gsm_sys_sem_delete(&sem);               /* Delete semaphore */
     }
+}
+
+/**
+ * \brief           Set modem function mode
+ * \note            Use this function to set modem to normal or low-power mode
+ * \param[in]       mode: Mode status. Set to 1 for full functionality or 0 for low-power mode (no functionality)
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_set_func_mode(uint8_t mode, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CFUN_SET;
+    GSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Set pin code to make card ready
+ * \param[in]       pin: Pin code in string format
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_set_pin(const char* pin, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
+    GSM_MSG_VAR_REF(msg).msg.cpin.pin = pin;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
+}
+
+/**
+* \brief           Sets baudrate of AT port (usually UART)
+* \param[in]       baud: Baudrate in units of bits per second
+* \param[in]       blocking: Status whether command should be blocking or not
+* \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+*/
+gsmr_t
+gsm_set_at_baudrate(uint32_t baud, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_UART;
+    GSM_MSG_VAR_REF(msg).msg.uart.baudrate = baud;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
+}
+
+/**
+ * \brief           Get current operator name
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_operator_get(uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
+}
+
+/**
+ * \brief           Get current operator name
+ * \param[in]       ops: Pointer to array to write found operators
+ * \param[in]       opsl: Length of input array in units of elements
+ * \param[out]      opf: Pointer to ouput variable to save number of operators found
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET_OPT;
+    GSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
+    GSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
+    GSM_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);  /* Send message to producer queue */
 }

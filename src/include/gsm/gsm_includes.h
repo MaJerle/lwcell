@@ -46,6 +46,13 @@ extern "C" {
 #include "gsm/gsm_utilities.h"
 #include "gsm/gsm_pbuf.h"
 
+#if GSM_CFG_SMS
+#include "gsm/gsm_sms.h"
+#endif /* GSM_CFG_SMS */
+#if GSM_CFG_CALL
+#include "gsm/gsm_call.h"
+#endif /* GSM_CFG_CALL */
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

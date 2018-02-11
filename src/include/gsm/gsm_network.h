@@ -1,6 +1,6 @@
 /**	
- * \file            gsm_call.h
- * \brief           Call API
+ * \file            gsm_network.h
+ * \brief           Network API
  */
  
 /*
@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_CALL_H
-#define __GSM_CALL_H
+#ifndef __GSM_NETWORK_H
+#define __GSM_NETWORK_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -42,14 +42,13 @@ extern "C" {
 
 /**
  * \ingroup         GSM
- * \defgroup        GSM_CALL Call API
- * \brief           Call manager
+ * \defgroup        GSM_NETWORK Network API
+ * \brief           Network manager
  * \{
  */
-   
-gsmr_t      gsm_call_start(const char* number, uint32_t blocking);
-gsmr_t      gsm_call_answer(uint32_t blocking);
-gsmr_t      gsm_call_hangup(uint32_t blocking);
+
+gsmr_t      gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t blocking);
+gsmr_t      gsm_network_detach(uint32_t blocking);
 
 /**
  * \}
@@ -60,4 +59,4 @@ gsmr_t      gsm_call_hangup(uint32_t blocking);
 }
 #endif
 
-#endif /* __GSM_CALL_H */
+#endif /* __GSM_NETWORK_H */

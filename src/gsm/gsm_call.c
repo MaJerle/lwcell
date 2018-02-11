@@ -36,4 +36,27 @@
 
 #if GSM_CFG_CALL || __DOXYGEN__
 
+gsmr_t
+gsm_call_start(const char* number, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);
+
+    GSM_ASSERT("number != NULL", number != NULL);   /* Assert input parameters */
+                                                    
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;
+    GSM_MSG_VAR_REF(msg).msg.call_start.number = number;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+}
+
+gsmr_t
+gsm_call_answer(uint32_t blocking) {
+
+}
+
+gsmr_t
+gsm_call_hangup(uint32_t blocking) {
+
+}
+
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */

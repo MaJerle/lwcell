@@ -46,7 +46,10 @@ extern "C" {
  * \brief           SMS manager
  * \{
  */
-    
+
+gsmr_t      gsm_sms_send(const char* num, const char* text, uint32_t blocking);
+gsmr_t      gsm_sms_read(gsm_mem_t mem, uint16_t pos, gsm_sms_entry_t* sms_entry, uint8_t update, uint32_t blocking);
+
 /**
  * \}
  */

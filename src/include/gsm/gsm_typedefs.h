@@ -76,17 +76,18 @@ typedef enum {
 } gsmr_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
- * \brief           List of encryptions of access point
+ * \brief           SIM state
  */
 typedef enum {
-    GSM_ECN_OPEN = 0x00,                        /*!< No encryption on access point */
-    GSM_ECN_WEP,                                /*!< WEP (Wired Equivalent Privacy) encryption */
-    GSM_ECN_WPA_PSK,                            /*!< WPA (Wifi Protected Access) encryption */
-    GSM_ECN_WPA2_PSK,                           /*!< WPA2 (Wifi Protected Access 2) encryption */
-    GSM_ECN_WPA_WPA2_PSK,                       /*!< WPA/2 (Wifi Protected Access 1/2) encryption */
-    GSM_ECN_WPA2_Enterprise                     /*!< Enterprise encryption. \note GSM is currently not able to connect to access point of this encryption type */
-} gsm_ecn_t;
+    GSM_SIM_STATE_NOT_INSERTED,                 /*!< SIM is not inserted in socket */
+    GSM_SIM_STATE_READY,                        /*!< SIM is ready for operations */
+    GSM_SIM_STATE_NOT_READY,                    /*!< SIM is not ready for any operation */
+    GSM_SIM_STATE_PIN,                          /*!< SIM is waiting for SIM to be given */
+    GSM_SIM_STATE_PUK,                          /*!< SIM is waiting for PUT to be given */
+    GSM_SIM_STATE_PH_PIN,
+    GSM_SIM_STATE_PH_PUK,
+} gsm_sim_state_t;
+
 
 /**
  * \ingroup         GSM_TYPEDEFS
@@ -111,29 +112,6 @@ typedef struct {
 } gsm_mac_t;
 
 /**
- * \ingroup         GSM_AP
- * \brief           Access point data structure
- */
-typedef struct {
-    gsm_ecn_t ecn;                              /*!< Encryption mode */
-    char ssid[21];                              /*!< Access point name */
-    int16_t rssi;                               /*!< Received signal strength indicator */
-    gsm_mac_t mac;                              /*!< MAC physical address */
-    uint8_t ch;                                 /*!< WiFi channel used on access point */
-    int8_t offset;                              /*!< Access point offset */
-    uint8_t cal;                                /*!< Calibration value */
-} gsm_ap_t;
-
-/**
- * \ingroup         GSM_STA
- * \brief           Station data structure
- */
-typedef struct {
-    gsm_ip_t ip;                                /*!< IP address of connected station */
-    gsm_mac_t mac;                              /*!< MAC address of connected station */
-} gsm_sta_t;
-
-/**
  * \ingroup         GSM_TYPEDEFS
  * \brief           Date and time structure
  */
@@ -148,30 +126,68 @@ typedef struct {
 } gsm_datetime_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
- * \brief           List of possible WiFi modes
- */
-typedef enum {
-#if GSM_CFG_MODE_STATION || __DOXYGEN__
-    GSM_MODE_STA = 1,                           /*!< Set WiFi mode to station only */
-#endif /* GSM_CFG_MODE_STATION || __DOXYGEN__ */
-#if GSM_CFG_MODE_ACCESS_POINT || __DOXYGEN__
-    GSM_MODE_AP = 2,                            /*!< Set WiFi mode to access point only */
-#endif /* GSM_CFG_MODE_ACCESS_POINT || __DOXYGEN__ */
-#if (GSM_CFG_MODE_STATION_ACCESS_POINT) || __DOXYGEN__
-    GSM_MODE_STA_AP = 3,                        /*!< Set WiFi mode to station and access point */
-#endif /* (GSM_CFG_MODE_STATION_ACCESS_POINT) || __DOXYGEN__ */
-} gsm_mode_t;
-
-/**
  * \ingroup         GSM_CONN
  * \brief           List of possible connection types
  */
 typedef enum {
     GSM_CONN_TYPE_TCP,                          /*!< Connection type is TCP */
     GSM_CONN_TYPE_UDP,                          /*!< Connection type is UDP */
-    GSM_CONN_TYPE_SSL,                          /*!< Connection type is SSL */
 } gsm_conn_type_t;
+
+/**
+* \brief           Available memories
+*/
+typedef enum {
+    GSM_MEM_UNKNOWN,
+    GSM_MEM_SM,
+    GSM_MEM_ME,
+    GSM_MEM_MT,
+    GSM_MEM_BM,
+    GSM_MEM_SR,
+} gsm_mem_t;
+
+/**
+ * \brief           SMS status in current memory
+ */
+typedef enum {
+    GSM_SMS_STATUS_ALL,                         /*!< Process all SMS, used for mass delete or SMS list */
+    GSM_SMS_STATUS_READ,                        /*!< SMS status is read */
+    GSM_SMS_STATUS_UNREAD,                      /*!< SMS status is unread */
+    GSM_SMS_STATUS_SENT,                        /*!< SMS status is sent */
+    GSM_SMS_STATUS_UNSENT,                      /*!< SMS status is unsent */
+} gsm_sms_status_t;
+
+/**
+ * \brief           Operator status value
+ */
+typedef enum {
+    GSM_OPERATOR_STATUS_UNKNOWN = 0x00,         /*!< Unknown operator */
+    GSM_OPERATOR_STATUS_AVAILABLE,              /*!< Operator is available */
+    GSM_OPERATOR_STATUS_CURRENT,                /*!< Operator is currently active */
+    GSM_OPERATOR_STATUS_FORBIDDEN               /*!< Operator is forbidden */
+} gsm_operator_status_t;
+
+/**
+* \brief           SMS entry structure
+*/
+typedef struct {
+    gsm_datetime_t datetime;                    /*!< Date and time */
+    size_t pos;                                 /*!< Memory position */
+    gsm_sms_status_t status;                    /*!< Message status */
+    char number[26];                            /*!< Phone number */
+    char data[161];                             /*!< Data memory */
+    size_t length;                              /*!< Length of SMS data */
+} gsm_sms_entry_t;
+
+/**
+ * \brief           Operator details for scan
+ */
+typedef struct {
+    gsm_operator_status_t stat;                 /*!< Operator status */
+    char long_name[20];                         /*!< Operator long name */
+    char short_name[20];                        /*!< Operator short name */
+    uint32_t num;                               /*!< Operator numeric value */
+} gsm_operator_t;
 
 /* Forward declarations */
 struct gsm_cb_t;
@@ -214,19 +230,17 @@ typedef enum gsm_cb_type_t {
     GSM_CB_CONN_ERROR,                          /*!< Client connection start was not successful */
     GSM_CB_CONN_CLOSED,                         /*!< Connection was just closed */
     GSM_CB_CONN_POLL,                           /*!< Poll for connection if there are any changes */
-    
-#if GSM_CFG_MODE_STATION || __DOXYGEN__
-    GSM_CB_WIFI_CONNECTED,                      /*!< Station just connected to AP */
-    GSM_CB_WIFI_GOT_IP,                         /*!< Station has valid IP */
-    GSM_CB_WIFI_DISCONNECTED,                   /*!< Station just disconnected from AP */
-  
-    GSM_CB_STA_LIST_AP,                         /*!< Station listed APs event */
-#endif /* GSM_CFG_MODE_STATION || __DOXYGEN__ */
-#if GSM_CFG_MODE_ACCESS_POINT || __DOXYGEN__
-    GSM_CB_AP_CONNECTED_STA,                    /*!< New station just connected to GSM's access point */
-    GSM_CB_AP_DISCONNECTED_STA,                 /*!< New station just disconnected from GSM's access point */
-    GSM_CB_AP_IP_STA,                           /*!< New station just received IP from GSM's access point */
-#endif /* GSM_CFG_MODE_ACCESS_POINT || __DOXYGEN__ */
+
+    GSM_CB_CPIN,                                /*!< SIM event */
+#if GSM_CFG_SMS || __DOXYGEN__
+    GSM_CB_SMS_READY,                           /*!< SMS ready event */
+    GSM_CB_SMS_SENT,                            /*!< SMS sent successfully */
+    GSM_CB_SMS_SEND_ERROR,                      /*!< SMS sent successfully */
+    GSM_CB_SMS_RECV,                            /*!< SMS received */
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */
+#if GSM_CFG_CALL || __DOXYGEN__
+    GSM_CB_CALL_READY,                          /*!< Call ready event */
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */
 } gsm_cb_type_t;
 
 /**
@@ -236,6 +250,18 @@ typedef enum gsm_cb_type_t {
 typedef struct gsm_cb_t {
     gsm_cb_type_t type;                         /*!< Callback type */
     union {
+        struct {
+            gsm_sim_state_t state;              /*!< SIM state */
+        } cpin;                                 /*!< CPIN event */
+#if GSM_CFG_SMS
+        struct {
+            uint16_t num;                       /*!< Received number in memory for sent SMS*/
+        } sms_sent;                             /*!< SMS sent info. Use with \ref GSM_CB_SMS_SENT event */
+        struct {
+            gsm_mem_t mem;                      /*!< SMS memory */
+            uint16_t num;                       /*!< Received number in memory for sent SMS*/
+        } sms_recv;                             /*!< SMS received info. Use with \ref GSM_CB_SMS_RECV event */
+#endif
         struct {
             gsm_conn_p conn;                    /*!< Connection where data were received */
             gsm_pbuf_p buff;                    /*!< Pointer to received data */
@@ -253,36 +279,7 @@ typedef struct gsm_cb_t {
             gsm_port_t port;                    /*!< Remote port used for connection */
             gsm_conn_type_t type;               /*!< Connection type */
             void* arg;                          /*!< Connection argument used on connection */
-            /**
-             * \todo: Implement error reason:
-             *  - No free connection to start
-             *  - Remote host is not rgsmonding
-             *  - ...
-             */
         } conn_error;                           /*!< Client connection start error */
-        struct {
-            gsm_conn_p conn;                    /*!< Pointer to connection */
-            uint8_t client;                     /*!< Set to 1 if connection is/was client mode */
-            uint8_t forced;                     /*!< Set to 1 if connection action was forced (when active, 1 = CLIENT, 0 = SERVER; when closed, 1 = CMD, 0 = REMOTE) */
-        } conn_active_closed;                   /*!< Process active and closed statuses at the same time. Use with \ref GSM_CB_CONN_ACTIVE or \ref GSM_CB_CONN_CLOSED events */
-        struct {
-            gsm_conn_p conn;                    /*!< Set connection pointer */
-        } conn_poll;                            /*!< Polling active connection to check for timeouts. Use with \ref GSM_CB_CONN_POLL event */
-        struct {
-            gsmr_t status;                      /*!< Status of command */
-            gsm_ap_t* aps;                      /*!< Pointer to access points */
-            size_t len;                         /*!< Number of access points found */
-        } sta_list_ap;
-        
-#if GSM_CFG_MODE_ACCESS_POINT
-        struct {
-            gsm_mac_t* mac;                     /*!< Station MAC address */
-        } ap_conn_disconn_sta;                  /*!< A new station connected or disconnected to GSM's access point. Use with \ref GSM_CB_AP_CONNECTED_STA or \ref GSM_CB_AP_DISCONNECTED_STA events */
-        struct {
-            gsm_mac_t* mac;                     /*!< Station MAC address */
-            gsm_ip_t* ip;                       /*!< Station IP address */
-        } ap_ip_sta;                            /*!< Station got IP address from GSM's access point. Use with \ref GSM_CB_AP_IP_STA */
-#endif /* GSM_CFG_MODE_ACCESS_POINT */
 
         struct {
             uint8_t forced;                     /*!< Set to 1 if reset forced by user */
@@ -319,8 +316,8 @@ typedef void (*gsm_timeout_fn_t)(void *);
  * \ingroup         GSM_TIMEOUT
  * \brief           Timeout structure
  */
-typedef struct gsm_timeout_t {
-    struct gsm_timeout_t* next;                 /*!< Pointer to next timeout entry */
+typedef struct gsm_timeout {
+    struct gsm_timeout* next;                   /*!< Pointer to next timeout entry */
     uint32_t time;                              /*!< Time difference from previous entry */
     void* arg;                                  /*!< Argument to pass to callback function */
     gsm_timeout_fn_t fn;                        /*!< Callback function for timeout */

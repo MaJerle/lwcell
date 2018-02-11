@@ -52,6 +52,8 @@ gsmr_t      gsm_set_at_baudrate(uint32_t baud, uint32_t blocking);
 
 gsmr_t      gsm_set_pin(const char* pin, uint32_t blocking);
 
+gsmr_t      gsm_set_func_mode(uint8_t mode, uint32_t blocking);
+
 gsmr_t      gsm_core_lock(void);
 gsmr_t      gsm_core_unlock(void);
 
@@ -59,6 +61,9 @@ gsmr_t      gsm_cb_register(gsm_cb_fn cb_fn);
 gsmr_t      gsm_cb_unregister(gsm_cb_fn cb_fn);
 
 void        gsm_delay(uint32_t ms);
+
+gsmr_t      gsm_operator_get(uint32_t blocking);
+gsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, uint32_t blocking);
 
 /**
  * \}

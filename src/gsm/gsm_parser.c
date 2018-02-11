@@ -130,7 +130,7 @@ gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
             p++;
             break;
         }
-        if (dst) {
+        if (dst != NULL) {
             if (i < dst_len) {
                 *dst++ = *p;
                 i++;
@@ -140,7 +140,7 @@ gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
         }
         p++;
     }
-    if (dst) {
+    if (dst != NULL) {
         *dst = 0;
     }
     *src = p;
@@ -200,3 +200,205 @@ gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
     *src = p;                                   /* Set new pointer */
     return 1;
 }
+
+/**
+ * \brief           Parse memory string, ex. "SM", "ME", "MT", etc
+ * \param[in,out]   src: Pointer to pointer to string to parse from
+ * \return          Parsed memory
+ */
+gsm_mem_t
+gsmi_parse_memory(const char** src) {
+    gsm_mem_t mem;
+    const char* s = *src;
+    if (*s == ',') {
+        s++;
+    }
+    if (*s == '"') {
+        s++;
+    }
+
+    if (!strncmp(s, "SM", 2)) {
+        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_SM;
+        s += 2;
+    } else if (!strncmp(s, "ME", 2)) {
+        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_ME;
+        s += 2;
+    } else if (!strncmp(s, "MT", 2)) {
+        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_MT;
+        s += 2;
+    } else if (!strncmp(s, "BM", 2)) {
+        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_BM;
+        s += 2;
+    } else if (!strncmp(s, "SR", 2)) {
+        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_SR;
+        s += 2;
+    } else {
+        mem = GSM_MEM_UNKNOWN;
+    }
+    if (*s == '"') {
+        s++;
+    }
+    *src = s;
+    return mem;
+}
+
+/**
+ * \brief           Parse received +CPIN status value
+ * \param[in]       str: Input string
+ * \param[in]       send_evt: Send event about new CPIN status
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cpin(const char* str, uint8_t send_evt) {
+    if (*str == '+') {
+        str += 7;
+    }
+    if (!strncmp(str, "READY", 5)) {
+        gsm.sim_state = GSM_SIM_STATE_READY;
+    } else if (!strncmp(str, "NOT READY", 9)) {
+        gsm.sim_state = GSM_SIM_STATE_NOT_READY;
+    } else if (!strncmp(str, "NOT INSERTED", 14)) {
+        gsm.sim_state = GSM_SIM_STATE_NOT_INSERTED;
+    } else if (!strncmp(str, "SIM PIN", 7)) {
+        gsm.sim_state = GSM_SIM_STATE_PIN;
+    } else if (!strncmp(str, "PIN PUK", 7)) {
+        gsm.sim_state = GSM_SIM_STATE_PUK;
+    } else {
+        gsm.sim_state = GSM_SIM_STATE_NOT_READY;
+    }
+
+    if (send_evt) {
+        gsm.cb.cb.cpin.state = gsm.sim_state;
+        gsmi_send_cb(GSM_CB_CPIN);              /* SIM card event */
+    }
+    return 1;
+}
+
+/**
+ * \brief           Parse +COPS received statement byte by byte
+ * \note            Command must be active and message set to use this function
+ * \param[in]       ch: New character to parse
+ * \param[in]       reset: Flag to reset state machine
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
+    static union {
+        struct {
+            uint8_t bo:1;                       /*!< Bracket open flag (Bracket Open) */
+            uint8_t ccd:1;                      /*!< 2 consecutive commas detected in a row (Comma Comma Detected) */
+            uint8_t tn:2;                       /*!< Term number in response, 2 bits for 4 diff values */
+            uint8_t tp;                         /*!< Current term character position */
+        } f;
+        uint16_t d;                             /*!< Dummy value */
+    } u;
+    static uint8_t ch_prev;
+
+    if (reset) {                                /* Check for reset status */
+        memset(&u, 0x00, sizeof(u));            /* Reset everything */
+        ch_prev = 0;
+        return 1;
+    }
+
+    if (u.f.ccd ||                              /* Ignore data after 2 commas in a row */
+        gsm.msg->msg.cops_scan.opsi >= gsm.msg->msg.cops_scan.opsl) {   /* or if array is full */
+        return 1;
+    }
+
+    if (u.f.bo) {                               /* Bracket already open */
+        if (ch == ')') {                        /* Close bracket check */
+            u.f.bo = 0;                         /* Clear bracket open flag */
+            u.f.tn = 0;                         /* Go to next term */
+            u.f.tp = 0;                         /* Go to beginning of next term */
+            gsm.msg->msg.cops_scan.opsi++;      /* Increase index */
+            if (gsm.msg->msg.cops_scan.opf != NULL) {
+                *gsm.msg->msg.cops_scan.opf = gsm.msg->msg.cops_scan.opsi;
+            }
+        } else if (ch == ',') {
+            u.f.tn++;                           /* Go to next term */
+            u.f.tp = 0;                         /* Go to beginning of next term */
+        } else if (ch != '"') {                 /* We have valid data */
+            size_t i = gsm.msg->msg.cops_scan.opsi;
+            switch (u.f.tn) {
+                case 0: {                       /* Parse status info */
+                    gsm.msg->msg.cops_scan.ops[i].stat = (gsm_operator_status_t)(10 * (size_t)gsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
+                    break;
+                }
+                case 1: {                       /*!< Parse long name */
+                    if (u.f.tp < sizeof(gsm.msg->msg.cops_scan.ops[i].long_name) - 1) {
+                        gsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp++] = ch;
+                        gsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = 0;
+                    }
+                    break;
+                }
+                case 2: {                       /*!< Parse short name */
+                    if (u.f.tp < sizeof(gsm.msg->msg.cops_scan.ops[i].short_name) - 1) {
+                        gsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp++] = ch;
+                        gsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = 0;
+                    }
+                    break;
+                }
+                case 3: {                       /*!< Parse number */
+                    gsm.msg->msg.cops_scan.ops[i].num = (10 * gsm.msg->msg.cops_scan.ops[i].num) + (ch - '0');
+                    break;
+                }
+                default: break;
+            }
+        }
+    } else {
+        if (ch == '(') {                        /* Check for opening bracket */
+            u.f.bo = 1;
+        } else if (ch == ',' && ch_prev == ',') {
+            u.f.ccd = 1;                        /* 2 commas in a row */
+        }
+    }
+    ch_prev = ch;
+    return 1;
+}
+
+#if GSM_CFG_SMS || __DOXYGEN__
+
+/**
+ * \brief           Parse received +CMGS with last sent SMS memory info
+ * \param[in]       str: Input string
+ * \param[in]       send_evt: Send event about new CPIN status
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cmgs(const char* str, uint8_t send_evt) {
+    uint16_t num;
+    if (*str == '+') {
+        str += 7;
+    }
+
+    num = gsmi_parse_number(&str);              /* Parse number */
+
+    if (send_evt) {
+        gsm.cb.cb.sms_sent.num = num;
+        gsmi_send_cb(GSM_CB_SMS_SENT);          /* SIM card event */
+    }
+    return 1;
+}
+
+/**
+ * \brief           Parse received +CMTI with received SMS info
+ * \param[in]       str: Input string
+ * \param[in]       send_evt: Send event about new CPIN status
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cmti(const char* str, uint8_t send_evt) {
+    if (*str == '+') {
+        str += 7;
+    }
+
+    gsm.cb.cb.sms_recv.mem = gsmi_parse_memory(&str);   /* Parse memory string */
+    gsm.cb.cb.sms_recv.num = gsmi_parse_number(&str);   /* Parse number */
+
+    if (send_evt) {
+        gsmi_send_cb(GSM_CB_SMS_RECV);          /* SIM card event */
+    }
+    return 1;
+}
+
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */

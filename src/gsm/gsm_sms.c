@@ -36,4 +36,25 @@
 
 #if GSM_CFG_SMS || __DOXYGEN__
 
+/**
+ * \brief           Send SMS text to phone number
+ * \param[in]       num: String number
+ * \param[in]       text: Text to send. Maximal 160 characters
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_sms_send(const char* num, const char* text, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGS;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;
+    GSM_MSG_VAR_REF(msg).msg.sms_send.num = num;
+    GSM_MSG_VAR_REF(msg).msg.sms_send.text = text;
+    GSM_MSG_VAR_REF(msg).msg.sms_send.format = 1;   /* Send as plain text */
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */

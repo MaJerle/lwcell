@@ -322,6 +322,10 @@
  * \{
  */
 
+#ifndef GSM_CFG_NETWORK
+#define GSM_CFG_NETWORK                     1
+#endif
+
 #ifndef GSM_CFG_SMS
 #define GSM_CFG_SMS                         0
 #endif

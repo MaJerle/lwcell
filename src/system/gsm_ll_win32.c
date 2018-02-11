@@ -53,6 +53,7 @@ static uint16_t
 send_data(const void* data, uint16_t len) {
 	if (comPort != NULL) {
 		WriteFile(comPort, data, len, NULL, NULL);
+        FlushFileBuffers(comPort);
 		return len;
 	}
     return 0;
