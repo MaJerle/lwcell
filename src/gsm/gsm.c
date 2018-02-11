@@ -289,6 +289,10 @@ gsmr_t
 gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
+    if (opf != NULL) {
+        *opf = 0;
+    }
+
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET_OPT;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
