@@ -78,7 +78,7 @@ typedef enum {
     GSM_CMD_ATA,                                /*!< Answer an Incoming Call */
     GSM_CMD_ATD,                                /*!< Mobile Originated Call to Dial A Number */
     GSM_CMD_ATD_N,                              /*!< Originate Call to Phone Number in Current Memory: ATD<n> */
-    GSM_CMD_ATD_STR,                            /*!< Originate Call to Phone Number in Memory Which Corresponds to Field <str>: ATD><str> */
+    GSM_CMD_ATD_STR,                            /*!< Originate Call to Phone Number in Memory Which Corresponds to Field "str": ATD>str */
     GSM_CMD_ATDL,                               /*!< Redial Last Telephone Number Used */
     GSM_CMD_ATE,                                /*!< Set Command Echo Mode */
     GSM_CMD_ATH,                                /*!< Disconnect Existing */

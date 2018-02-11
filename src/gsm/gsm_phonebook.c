@@ -31,7 +31,7 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
 #include "gsm/gsm_private.h"
-#include "gsm/gsm_pbuf.h"
+#include "gsm/gsm_phonebook.h"
 #include "gsm/gsm_mem.h"
 
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
