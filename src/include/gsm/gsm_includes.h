@@ -45,6 +45,7 @@ extern "C" {
 #include "gsm/gsm_debug.h"
 #include "gsm/gsm_utilities.h"
 #include "gsm/gsm_pbuf.h"
+#include "gsm/gsm_operator.h"
 
 #if GSM_CFG_SMS
 #include "gsm/gsm_sms.h"

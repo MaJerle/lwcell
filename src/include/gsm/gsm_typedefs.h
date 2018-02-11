@@ -135,8 +135,8 @@ typedef enum {
 } gsm_conn_type_t;
 
 /**
-* \brief           Available memories
-*/
+ * \brief           Available memories
+ */
 typedef enum {
     GSM_MEM_UNKNOWN,
     GSM_MEM_SM,
@@ -147,6 +147,7 @@ typedef enum {
 } gsm_mem_t;
 
 /**
+ * \ingroup         GSM_SMS
  * \brief           SMS status in current memory
  */
 typedef enum {
@@ -158,18 +159,9 @@ typedef enum {
 } gsm_sms_status_t;
 
 /**
- * \brief           Operator status value
+ * \ingroup         GSM_SMS
+ * \brief           SMS entry structure
  */
-typedef enum {
-    GSM_OPERATOR_STATUS_UNKNOWN = 0x00,         /*!< Unknown operator */
-    GSM_OPERATOR_STATUS_AVAILABLE,              /*!< Operator is available */
-    GSM_OPERATOR_STATUS_CURRENT,                /*!< Operator is currently active */
-    GSM_OPERATOR_STATUS_FORBIDDEN               /*!< Operator is forbidden */
-} gsm_operator_status_t;
-
-/**
-* \brief           SMS entry structure
-*/
 typedef struct {
     gsm_datetime_t datetime;                    /*!< Date and time */
     size_t pos;                                 /*!< Memory position */
@@ -180,6 +172,18 @@ typedef struct {
 } gsm_sms_entry_t;
 
 /**
+ * \ingroup         GSM_OPERATOR
+ * \brief           Operator status value
+ */
+typedef enum {
+    GSM_OPERATOR_STATUS_UNKNOWN = 0x00,         /*!< Unknown operator */
+    GSM_OPERATOR_STATUS_AVAILABLE,              /*!< Operator is available */
+    GSM_OPERATOR_STATUS_CURRENT,                /*!< Operator is currently active */
+    GSM_OPERATOR_STATUS_FORBIDDEN               /*!< Operator is forbidden */
+} gsm_operator_status_t;
+
+/**
+ * \ingroup         GSM_OPERATOR
  * \brief           Operator details for scan
  */
 typedef struct {
@@ -190,6 +194,7 @@ typedef struct {
 } gsm_operator_t;
 
 /**
+ * \ingroup         GSM_CALL
  * \brief           List of call directions
  */
 typedef enum {
@@ -198,6 +203,7 @@ typedef enum {
 } gsm_call_dir_t;
 
 /**
+ * \ingroup         GSM_CALL
  * \brief           List of call states
  */
 typedef enum {
@@ -211,6 +217,7 @@ typedef enum {
 } gsm_call_state_t;
 
 /**
+ * \ingroup         GSM_CALL
  * \brief           List of call types
  */
 typedef enum {
@@ -220,6 +227,7 @@ typedef enum {
 } gsm_call_type_t;
 
 /**
+ * \ingroup         GSM_CALL
  * \brief           Call information
  * \note            Data received on `+CLCC` info
  */
@@ -255,7 +263,7 @@ typedef struct gsm_pbuf_t* gsm_pbuf_p;
  * \ingroup         GSM_EVT
  * \brief           Event function prototype
  * \param[in]       cb: Callback event data
- * \return          gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 typedef gsmr_t  (*gsm_cb_fn)(struct gsm_cb_t* cb);
 

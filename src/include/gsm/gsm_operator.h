@@ -1,8 +1,8 @@
-/**
- * \file            gsm.h
- * \brief           GSM AT commands parser
+/**	
+ * \file            gsm_operator.h
+ * \brief           Operator API
  */
-
+ 
 /*
  * Copyright (c) 2018 Tilen Majerle
  *  
@@ -26,48 +26,37 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of ESP-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_H
-#define __GSM_H
+#ifndef __GSM_OPERATOR_H
+#define __GSM_OPERATOR_H
 
+/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif
 
-/* Get most important include files */
-#include "gsm/gsm_includes.h"
+#include "gsm/gsm.h"
 
 /**
- * \defgroup        GSM GSM-AT Lib
- * \brief           GSM stack
+ * \ingroup         GSM
+ * \defgroup        GSM_OPERATOR Operator API
+ * \brief           Operator API
  * \{
  */
 
-gsmr_t      gsm_init(gsm_cb_fn cb_func);
-gsmr_t      gsm_reset(uint32_t blocking);
-gsmr_t      gsm_set_at_baudrate(uint32_t baud, uint32_t blocking);
-
-gsmr_t      gsm_set_pin(const char* pin, uint32_t blocking);
-
-gsmr_t      gsm_set_func_mode(uint8_t mode, uint32_t blocking);
-
-gsmr_t      gsm_core_lock(void);
-gsmr_t      gsm_core_unlock(void);
-
-gsmr_t      gsm_cb_register(gsm_cb_fn cb_fn);
-gsmr_t      gsm_cb_unregister(gsm_cb_fn cb_fn);
-
-void        gsm_delay(uint32_t ms);
+gsmr_t      gsm_operator_get(uint32_t blocking);
+gsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, uint32_t blocking);
 
 /**
  * \}
  */
 
+/* C++ detection */
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif
 
-#endif /* __GSM_H */
+#endif /* __GSM_OPERATOR_H */
