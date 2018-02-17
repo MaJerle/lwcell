@@ -182,7 +182,7 @@ uint8_t
 gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
     const char* p = *src;
     
-    if (*p == '"') {                            /* Go to next entry if possible */
+    if (*p == '"') {
         p++;
     }
     mac->mac[0] = gsmi_parse_hexnumber(&p); p++;
@@ -191,13 +191,13 @@ gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
     mac->mac[3] = gsmi_parse_hexnumber(&p); p++;
     mac->mac[4] = gsmi_parse_hexnumber(&p); p++;
     mac->mac[5] = gsmi_parse_hexnumber(&p);
-    if (*p == '"') {                            /* Skip quotes if possible */
+    if (*p == '"') {
         p++;
     }
-    if (*p == ',') {                            /* Go to next entry if possible */
+    if (*p == ',') {
         p++;
     }
-    *src = p;                                   /* Set new pointer */
+    *src = p;
     return 1;
 }
 
@@ -208,8 +208,10 @@ gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
  */
 gsm_mem_t
 gsmi_parse_memory(const char** src) {
-    gsm_mem_t mem;
+    size_t i, sl;
+    gsm_mem_t mem = GSM_MEM_UNKNOWN;
     const char* s = *src;
+
     if (*s == ',') {
         s++;
     }
@@ -217,29 +219,54 @@ gsmi_parse_memory(const char** src) {
         s++;
     }
 
-    if (!strncmp(s, "SM", 2)) {
-        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_SM;
-        s += 2;
-    } else if (!strncmp(s, "ME", 2)) {
-        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_ME;
-        s += 2;
-    } else if (!strncmp(s, "MT", 2)) {
-        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_MT;
-        s += 2;
-    } else if (!strncmp(s, "BM", 2)) {
-        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_BM;
-        s += 2;
-    } else if (!strncmp(s, "SR", 2)) {
-        mem = gsm.cb.cb.sms_recv.mem = GSM_MEM_SR;
-        s += 2;
-    } else {
-        mem = GSM_MEM_UNKNOWN;
+    /* Scan all memories available for modem */
+    for (i = 0; i < gsm_dev_mem_map_size; i++) {
+        sl = strlen(gsm_dev_mem_map[i].mem_str);
+        if (!strncmp(s, gsm_dev_mem_map[i].mem_str, sl)) {
+            mem = gsm_dev_mem_map[i].mem;
+            s += sl;
+            break;
+        }
+    }
+
+    if (mem == GSM_MEM_UNKNOWN) {
+        gsmi_parse_string(&s, NULL, 0, 1);      /* Skip string */
     }
     if (*s == '"') {
         s++;
     }
     *src = s;
     return mem;
+}
+
+
+/**
+ * \brief           Parse a string of memories in format "M1","M2","M3","M4",...
+ * \param[in,out]   src: Pointer to pointer to string to parse from
+ * \param[out]      mem_dst: Output result with memory list as bit field
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
+    const char* str = *src;
+    gsm_mem_t mem;
+
+    *mem_dst = 0;
+    if (*str == ',') {
+        str++;
+    }
+    if (*str == '(') {
+        str++;
+    }
+    do {
+        mem = gsmi_parse_memory(&str);          /* Parse memory string */
+        *mem_dst |= GSM_U32(1 << GSM_U32(mem)); /* Set as bit field */
+    } while (*str && *str != ')');
+    if (*str == ')') {
+        str++;
+    }
+    *src = str;
+    return 1;
 }
 
 /**
@@ -265,6 +292,14 @@ gsmi_parse_cpin(const char* str, uint8_t send_evt) {
         gsm.sim_state = GSM_SIM_STATE_PUK;
     } else {
         gsm.sim_state = GSM_SIM_STATE_NOT_READY;
+    }
+
+    /*
+     * In case SIM is ready,
+     * start with basic info about SIM
+     */
+    if (gsm.sim_state == GSM_SIM_STATE_READY) {
+        gsmi_get_sim_info(0);
     }
 
     if (send_evt) {
@@ -390,9 +425,39 @@ gsmi_parse_clcc(const char* str, uint8_t send_evt) {
 #if GSM_CFG_SMS || __DOXYGEN__
 
 /**
+ * \brief           Parse string and check for type of SMS state
+ * \param[in]       src: Pointer to pointer to string to parse
+ * \param[out]      stat: Output status variable
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_sms_status(const char** src, gsm_sms_status_t* stat) {
+    gsm_sms_status_t s;
+    char t[11];
+
+    gsmi_parse_string(src, t, sizeof(t), 1);    /* Parse string and advance */
+    if (!strcmp(t, "REC UNREAD")) {
+        s = GSM_SMS_STATUS_UNREAD;
+    } else if (!strcmp(t, "REC READ")) {
+        s = GSM_SMS_STATUS_READ;
+    } else if (!strcmp(t, "STO UNSENT")) {
+        s = GSM_SMS_STATUS_UNSENT;
+    } else if (!strcmp(t, "REC SENT")) {
+        s = GSM_SMS_STATUS_SENT;
+    } else {
+        s = GSM_SMS_STATUS_ALL;                 /* Error! */
+    }
+    if (s != GSM_SMS_STATUS_ALL) {
+        *stat = s;
+        return 1;
+    }
+    return 0;
+}
+
+/**
  * \brief           Parse received +CMGS with last sent SMS memory info
  * \param[in]       str: Input string
- * \param[in]       send_evt: Send event about new CPIN status
+ * \param[in]       send_evt: Send event to user
  * \return          1 on success, 0 otherwise
  */
 uint8_t
@@ -412,6 +477,28 @@ gsmi_parse_cmgs(const char* str, uint8_t send_evt) {
 }
 
 /**
+ * \brief           Parse +CMGR statement
+ * \todo            Parse date and time from SMS entry
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cmgr(const char* str) {
+    gsm_sms_entry_t* e;
+    if (*str == '+') {
+        str += 7;
+    }
+    
+    e = gsm.msg->msg.sms_read.entry;
+    gsmi_parse_sms_status(&str, &e->status);
+    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    gsmi_parse_string(&str, NULL, 0, 1);
+    //gsmi_parse_datetime(&str, &e->datetime);
+
+    return 1;
+}
+
+/**
  * \brief           Parse received +CMTI with received SMS info
  * \param[in]       str: Input string
  * \param[in]       send_evt: Send event about new CPIN status
@@ -424,7 +511,7 @@ gsmi_parse_cmti(const char* str, uint8_t send_evt) {
     }
 
     gsm.cb.cb.sms_recv.mem = gsmi_parse_memory(&str);   /* Parse memory string */
-    gsm.cb.cb.sms_recv.num = gsmi_parse_number(&str);   /* Parse number */
+    gsm.cb.cb.sms_recv.pos = gsmi_parse_number(&str);   /* Parse number */
 
     if (send_evt) {
         gsmi_send_cb(GSM_CB_SMS_RECV);          /* SIM card event */
@@ -432,4 +519,43 @@ gsmi_parse_cmti(const char* str, uint8_t send_evt) {
     return 1;
 }
 
+/**
+ * \brief           Parse +CPMS statement
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cpms(const char* str) {
+    uint8_t res, i;
+    if (*str == '+') {
+        str += 7;
+    }
+    for (i = 0; i < 3; i++) {
+        res = gsmi_parse_memories_string(&str, &gsm.mem_list_sms[i]);
+        if (!res) {
+            break;
+        }
+    }
+    return res;
+}
+
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
+
+#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+
+/**
+ * \brief           Parse +CPBS statement
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cpbs(const char* str) {
+    uint8_t res;
+    if (*str == '+') {
+        str += 7;
+    }
+    res = gsmi_parse_memories_string(&str, &gsm.mem_list_pb);
+    return res;
+}
+
+#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */

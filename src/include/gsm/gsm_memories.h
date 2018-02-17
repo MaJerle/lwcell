@@ -1,6 +1,6 @@
 /**
- * \file            esp_includes.h
- * \brief           All main includes
+ * \file            gsm_memories.h
+ * \brief           Supported GSM device memories
  */
 
 /*
@@ -26,37 +26,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of ESP-AT.
+ * This file is part of GSM-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __ESP_INCLUDES_H
-#define __ESP_INCLUDES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+GSM_DEV_MEMORY_ENTRY(SM_P, "SM_P")
+GSM_DEV_MEMORY_ENTRY(ME_P, "ME_P")
+GSM_DEV_MEMORY_ENTRY(SM, "SM")
+GSM_DEV_MEMORY_ENTRY(ME, "ME")
+GSM_DEV_MEMORY_ENTRY(MT, "MT")
+GSM_DEV_MEMORY_ENTRY(BM, "BM")
+GSM_DEV_MEMORY_ENTRY(SR, "SR")
+GSM_DEV_MEMORY_ENTRY(ON, "ON")
+GSM_DEV_MEMORY_ENTRY(FD, "FD")
 
-#include "gsm_config.h"
-#include "gsm/gsm_typedefs.h"
-#include "gsm/gsm_buff.h"
-#include "gsm/gsm_input.h"
-#include "gsm/gsm_debug.h"
-#include "gsm/gsm_utilities.h"
-#include "gsm/gsm_pbuf.h"
-#include "gsm/gsm_operator.h"
-
-#include "system/gsm_sys.h"
-
-#if GSM_CFG_SMS
-#include "gsm/gsm_sms.h"
-#endif /* GSM_CFG_SMS */
-#if GSM_CFG_CALL
-#include "gsm/gsm_call.h"
-#endif /* GSM_CFG_CALL */
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /* __ESP_INCLUDES_H */
+#undef GSM_DEV_MEMORY_ENTRY

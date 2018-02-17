@@ -148,8 +148,11 @@ typedef enum {
     GSM_CMD_CPBF,                               /*!< Find Phonebook Entries */
     GSM_CMD_CPBR,                               /*!< Read Current Phonebook Entries  */
     GSM_CMD_CPBS,                               /*!< Select Phonebook Memory Storage */
+    GSM_CMD_CPBS_GET,                           /*!< Get current Phonebook Memory Storage */
+    GSM_CMD_CPBS_GET_OPT,                       /*!< Get available Phonebook Memory Storages */
     GSM_CMD_CPBW,                               /*!< Write Phonebook Entry */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+    GSM_CMD_SIM_PROCESS_BASIC_CMDS,             /*!< Command setup, executed when SIM is in READY state */
     GSM_CMD_CPIN_SET,                           /*!< Enter PIN */
     GSM_CMD_CPIN_GET,                           /*!< Read current SIM status */
     GSM_CMD_CPWD,                               /*!< Change Password */
@@ -274,7 +277,9 @@ typedef enum {
     GSM_CMD_CMGW,                               /*!< Write SMS Message to Memory */
     GSM_CMD_CMSS,                               /*!< Send SMS Message from Storage */
     GSM_CMD_CNMI,                               /*!< New SMS Message Indications */
-    GSM_CMD_CPMS,                               /*!< Preferred SMS Message Storage */
+    GSM_CMD_CPMS_SET,                           /*!< Set preferred SMS Message Storage */
+    GSM_CMD_CPMS_GET,                           /*!< Get preferred SMS Message Storage */
+    GSM_CMD_CPMS_GET_OPT,                       /*!< Get optional SMS message storages */
     GSM_CMD_CRES,                               /*!< Restore SMS Settings */
     GSM_CMD_CSAS,                               /*!< Save SMS Settings */
     GSM_CMD_CSCA,                               /*!< SMS Service Center Address */
@@ -372,6 +377,14 @@ typedef struct gsm_msg {
             const char* text;                   /*!< SMS content to send */
             uint8_t format;                     /*!< SMS format, 0 = PDU, 1 = text */
         } sms_send;                             /*!< Send SMS */
+        struct {
+            gsm_mem_t mem;                      /*!< Memory to read from */
+            uint16_t pos;                       /*!< SMS position in memory */
+            gsm_sms_entry_t* entry;             /*!< Pointer to entry to write info */
+            uint8_t update;                     /*!< Update SMS status after read operation */
+            uint8_t format;                     /*!< SMS format, 0 = PDU, 1 = text */
+            uint8_t read;                       /*!< Read the data flag */
+        } sms_read;                             /*!< Read single SMS */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
         struct {
@@ -444,6 +457,12 @@ typedef struct {
     
     gsm_cb_func_t*      cb_func;                /*!< Callback function linked list */
 
+#if GSM_CFG_SMS || __DOXYGEN__
+    uint32_t            mem_list_sms[3];        /*!< Available memories for SMS */
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */ 
+#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+    uint32_t            mem_list_pb;            /*!< Available memories for phonebook */
+#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
     gsm_call_t          call;                   /*!< Call information */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */ 
@@ -461,6 +480,14 @@ typedef struct {
     
     uint8_t conn_val_id;                        /*!< Validation ID increased each time device connects to network */
 } gsm_t;
+
+/**
+ * \brief           Memory mapping structure between string and value in app
+ */
+typedef struct {
+    gsm_mem_t mem;                              /*!< Mem indication */
+    const char* mem_str;                        /*!< Memory string */
+} gsm_dev_mem_map_t;
 
 /**
  * \brief           Unicode support structure
@@ -485,6 +512,8 @@ typedef struct {
  */
 
 extern gsm_t gsm;
+extern gsm_dev_mem_map_t gsm_dev_mem_map[];
+extern size_t gsm_dev_mem_map_size;
 
 #define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
 #define GSM_MSG_VAR_ALLOC(name)                 do {\
@@ -529,6 +558,8 @@ gsmr_t      gsmi_send_conn_cb(gsm_conn_t* conn, gsm_cb_fn cb);
 void        gsmi_conn_init(void);
 gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t block, uint32_t max_block_time);
 uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
+
+gsmr_t      gsmi_get_sim_info(uint32_t blocking);
 
 /**
  * \}

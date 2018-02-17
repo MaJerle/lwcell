@@ -138,12 +138,10 @@ typedef enum {
  * \brief           Available memories
  */
 typedef enum {
-    GSM_MEM_UNKNOWN,
-    GSM_MEM_SM,
-    GSM_MEM_ME,
-    GSM_MEM_MT,
-    GSM_MEM_BM,
-    GSM_MEM_SR,
+#define GSM_DEV_MEMORY_ENTRY(name, str_code)    GSM_MEM_ ## name,
+#include "gsm/gsm_memories.h"
+    GSM_MEM_END,                                /*!< End of memory list */
+    GSM_MEM_UNKNOWN = 0x1F,                     /*!< Unknown memory */
 } gsm_mem_t;
 
 /**
@@ -290,6 +288,7 @@ typedef enum gsm_cb_type_t {
     GSM_CB_SMS_SENT,                            /*!< SMS sent successfully */
     GSM_CB_SMS_SEND_ERROR,                      /*!< SMS sent successfully */
     GSM_CB_SMS_RECV,                            /*!< SMS received */
+    GSM_CB_SMS_READ,                            /*!< SMS read */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
     GSM_CB_CALL_READY,                          /*!< Call ready event */
@@ -313,9 +312,12 @@ typedef struct gsm_cb_t {
             uint16_t num;                       /*!< Received number in memory for sent SMS*/
         } sms_sent;                             /*!< SMS sent info. Use with \ref GSM_CB_SMS_SENT event */
         struct {
-            gsm_mem_t mem;                      /*!< SMS memory */
-            uint16_t num;                       /*!< Received number in memory for sent SMS*/
+            gsm_mem_t mem;                      /*!< Memory of received message */
+            uint16_t pos;                       /*!< Received position in memory for sent SMS */
         } sms_recv;                             /*!< SMS received info. Use with \ref GSM_CB_SMS_RECV event */
+        struct {
+            gsm_sms_entry_t* entry;             /*!< SMS entry */
+        } sms_read;                             /*!< SMS read. Use with \ref GSM_CB_SMS_READ event */
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CALL
         struct {
