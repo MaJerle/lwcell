@@ -141,6 +141,7 @@ typedef enum {
 #define GSM_DEV_MEMORY_ENTRY(name, str_code)    GSM_MEM_ ## name,
 #include "gsm/gsm_memories.h"
     GSM_MEM_END,                                /*!< End of memory list */
+    GSM_MEM_CURRENT,                            /*!< Use current memory for read/delete operation */
     GSM_MEM_UNKNOWN = 0x1F,                     /*!< Unknown memory */
 } gsm_mem_t;
 

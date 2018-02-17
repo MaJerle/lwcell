@@ -800,11 +800,11 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             n_cmd = GSM_CMD_CMGS;               /* Now send actual message */
         }
     } else if (msg->cmd_def == GSM_CMD_CMGR) {
-        if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
-            n_cmd = GSM_CMD_CPMS_SET;           /* Set memory to read */
-        } else if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
-            n_cmd = GSM_CMD_CMGR;               /* Start with read operation */
-        }
+        if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
+            n_cmd = GSM_CMD_CMGF;               /* Set text mode */
+        } else if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
+            n_cmd = GSM_CMD_CMGR;               /* Start message read */
+        } 
 #endif /* GSM_CFG_SMS */
     }
 

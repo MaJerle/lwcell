@@ -43,14 +43,15 @@
 /**
  * \brief           Check if input memory is available in modem
  * \param[in]       mem: Memory to test
+ * \param[in]       can_curr: Flag indicates if \ref GSM_MEM_CURRENT option can be used
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 static gsmr_t
-check_sms_mem(gsm_mem_t mem) {
+check_sms_mem(gsm_mem_t mem, uint8_t can_curr) {
     gsmr_t res = gsmERRMEM;
     GSM_CORE_PROTECT();
-    if (mem < GSM_MEM_END &&
-            gsm.mem_list_sms[GSM_SMS_READ_IDX] & (1 << (uint32_t)mem)) {
+    if ((mem < GSM_MEM_END && gsm.mem_list_sms[GSM_SMS_READ_IDX] & (1 << (uint32_t)mem)) ||
+        (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
     GSM_CORE_UNPROTECT();
@@ -96,13 +97,17 @@ gsm_sms_read(gsm_mem_t mem, uint16_t pos, gsm_sms_entry_t* sms_entry, uint8_t up
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("sms_entry != NULL", sms_entry != NULL); /* Assert input parameters */
-    GSM_ASSERT("sms_mem", check_sms_mem(mem) == gsmOK); /* Assert input parameters */
+    GSM_ASSERT("sms_mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     memset(sms_entry, 0x00, sizeof(*sms_entry));/* Reset data structure */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGR;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;
+    if (mem != GSM_MEM_CURRENT) {
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_SET;    /* First set memory */
+    } else {
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;/* Start with text mode option */
+    }
     GSM_MSG_VAR_REF(msg).msg.sms_read.mem = mem;
     GSM_MSG_VAR_REF(msg).msg.sms_read.pos = pos;
     GSM_MSG_VAR_REF(msg).msg.sms_read.entry = sms_entry;
