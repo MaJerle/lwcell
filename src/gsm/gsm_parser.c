@@ -532,7 +532,7 @@ gsmi_parse_cmgr(const char* str) {
     e = gsm.msg->msg.sms_read.entry;
     gsmi_parse_sms_status(&str, &e->status);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
-    gsmi_parse_string(&str, NULL, 0, 1);
+    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
     gsmi_parse_datetime(&str, &e->datetime);
 
     return 1;
@@ -563,7 +563,7 @@ gsmi_parse_cmgl(const char* str) {
     e->pos = gsmi_parse_number(&str);           /* Scan position */
     gsmi_parse_sms_status(&str, &e->status);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
-    gsmi_parse_string(&str, NULL, 0, 1);
+    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
     gsmi_parse_datetime(&str, &e->datetime);
 
     return 1;
@@ -628,7 +628,6 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
         }
         default: break;
     }
-
     return 1;
 }
 
@@ -639,16 +638,31 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
 /**
  * \brief           Parse +CPBS statement
  * \param[in]       str: Input string
+ * \param[in]       opt: Expected input: 0 = CPBS_OPT, 1 = CPBS_GET, 2 = CPBS_SET
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cpbs(const char* str) {
-    uint8_t res;
+gsmi_parse_cpbs(const char* str, uint8_t opt) {
     if (*str == '+') {
         str += 7;
     }
-    res = gsmi_parse_memories_string(&str, &gsm.mem_list_pb);
-    return res;
+    switch (opt) {                              /* Check expected input string */
+        case 0: {                               /* Get list of CPBS options: ("M1","M2","M3",...) */
+            return gsmi_parse_memories_string(&str, &gsm.pb.mem.mem_available);
+        }
+        case 1: {                               /* Received statement of current info: +CPBS: "ME",10,20 */
+            gsm.pb.mem.current = gsmi_parse_memory(&str);   /* Parse memory string and save it as current */
+            gsm.pb.mem.used = gsmi_parse_number(&str);  /* Get used memory size */
+            gsm.pb.mem.total = gsmi_parse_number(&str); /* Get total memory size */
+            break;
+        }
+        case 2: {                               /* Received statement of set info: +CPBS: 10,20 */
+            gsm.pb.mem.used = gsmi_parse_number(&str);  /* Get used memory size */
+            gsm.pb.mem.total = gsmi_parse_number(&str); /* Get total memory size */
+            break;
+        }
+    }
+    return 1;
 }
 
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */

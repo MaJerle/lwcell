@@ -146,6 +146,14 @@ typedef enum {
 } gsm_mem_t;
 
 /**
+ * \brief           GSM number type
+ */
+typedef enum {
+    GSM_NUMBER_TYPE_NATIONAL = 129,             /*!< Number is national */
+    GSM_NUMBER_TYPE_INTERNATIONAL = 145,        /*!< Number is international */
+} gsm_number_type_t;
+
+/**
  * \ingroup         GSM_SMS
  * \brief           SMS status in current memory
  */
@@ -167,9 +175,22 @@ typedef struct {
     gsm_datetime_t datetime;                    /*!< Date and time */
     gsm_sms_status_t status;                    /*!< Message status */
     char number[26];                            /*!< Phone number */
+    char name[20];                              /*!< Name in phonebook if exists */
     char data[161];                             /*!< Data memory */
     size_t length;                              /*!< Length of SMS data */
 } gsm_sms_entry_t;
+
+/**
+ * \ingroup         GSM_PB
+ * \brief           Phonebook entry structure
+ */
+typedef struct {
+    gsm_mem_t mem;                              /*!< Memory position */
+    size_t pos;                                 /*!< Position in memory */
+    char name[20];                              /*!< Name of phonebook entry */
+    char number[26];                            /*!< Phone number */
+    gsm_number_type_t type;                     /*!< Phone number type */
+} gsm_pb_entry_t;
 
 /**
  * \ingroup         GSM_OPERATOR

@@ -495,7 +495,11 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #endif /* GSM_CFG_CALL */
 #if GSM_CFG_PHONEBOOK
         } else if (IS_CURR_CMD(GSM_CMD_CPBS_GET_OPT) && !strncmp(rcv->data, "+CPBS", 5)) {
-            gsmi_parse_cpbs(rcv->data);         /* Parse +CPBS response */
+            gsmi_parse_cpbs(rcv->data, 0);      /* Parse +CPBS response */
+        } else if (IS_CURR_CMD(GSM_CMD_CPBS_GET) && !strncmp(rcv->data, "+CPBS", 5)) {
+            gsmi_parse_cpbs(rcv->data, 1);      /* Parse +CPBS response */
+        } else if (IS_CURR_CMD(GSM_CMD_CPBS_SET) && !strncmp(rcv->data, "+CPBS", 5)) {
+            gsmi_parse_cpbs(rcv->data, 2);      /* Parse +CPBS response */
 #endif /* GSM_CFG_PHONEBOOK */
         }
     } else {
@@ -858,21 +862,23 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
         if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
             n_cmd = GSM_CMD_CMGS;               /* Now send actual message */
         }
-    } else if (msg->cmd_def == GSM_CMD_CMGR) {
+    } else if (msg->cmd_def == GSM_CMD_CMGR) {  /* Read SMS message */
         if (msg->cmd == GSM_CMD_CPMS_GET && is_ok) {
             n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
         } else if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
             n_cmd = GSM_CMD_CMGF;               /* Set text mode */
         } else if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
             n_cmd = GSM_CMD_CMGR;               /* Start message read */
+        } else if (n_cmd == GSM_CMD_CMGR && is_ok) {
+            msg->msg.sms_read.mem = gsm.sms.mem[0].current; /* Set current memory */
         }
-    } else if (msg->cmd_def == GSM_CMD_CMGD) {
+    } else if (msg->cmd_def == GSM_CMD_CMGD) {  /* Delete SMS message*/
         if (msg->cmd == GSM_CMD_CPMS_GET && is_ok) {
             n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
         } else if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
             n_cmd = GSM_CMD_CMGD;               /* Delete message */
         }
-    } else if (msg->cmd_def == GSM_CMD_CMGL) {
+    } else if (msg->cmd_def == GSM_CMD_CMGL) {  /* List SMS messages */
         if (msg->cmd == GSM_CMD_CPMS_GET && is_ok) {
             n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
         } else if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
@@ -890,6 +896,14 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             n_cmd = GSM_CMD_CPMS_SET;           /* Now set the command */
         }
 #endif /* GSM_CFG_SMS */
+#if GSM_CFG_PHONEBOOK
+    } else if (msg->cmd_def == GSM_CMD_CPBW_SET) {  /* Write phonebook entry */
+        if (msg->cmd == GSM_CMD_CPBS_GET && is_ok) {/* Get current memory */
+            n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */
+        } else if (msg->cmd == GSM_CMD_CPBS_SET && is_ok) {
+            n_cmd = GSM_CMD_CPBW_SET;           /* Write entry to phonebook */
+        }
+#endif /* GSM_CFG_PHONEBOOK */
     }
 
     /*
@@ -1111,6 +1125,33 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CPBS_GET_OPT: {            /* Get available phonebook storages */
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             GSM_AT_PORT_SEND_STR("+CPBS=?");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CPBS_GET: {                /* Get current memory info */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPBS?");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CPBS_SET: {                /* Get current memory info */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPBS=");
+            send_dev_memory(msg->msg.pb_write.mem == GSM_MEM_CURRENT ? gsm.pb.mem.current : msg->msg.pb_write.mem, 1, 0);
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CPBW_SET: {                /* Write/Delete new/old entry */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPBW=");
+            if (msg->msg.pb_write.pos) {        /* Write number if more than 0 */
+                send_number(GSM_U32(msg->msg.pb_write.pos), 0, 0);
+            }
+            if (!msg->msg.pb_write.del) {
+                send_string(msg->msg.pb_write.num, 0, 1, 1);
+                send_number(GSM_U32(msg->msg.pb_write.type), 0, 1);
+                send_string(msg->msg.pb_write.name, 0, 1, 1);
+            }
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }

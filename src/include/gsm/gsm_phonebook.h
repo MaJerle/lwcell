@@ -46,7 +46,14 @@ extern "C" {
  * \brief           Phonebook manager
  * \{
  */
-    
+   
+gsmr_t      gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking);
+gsmr_t      gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking);
+gsmr_t      gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking);
+gsmr_t      gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, uint32_t blocking);
+gsmr_t      gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking);
+gsmr_t      gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking);
+
 /**
  * \}
  */

@@ -54,6 +54,9 @@ extern "C" {
 #if GSM_CFG_CALL
 #include "gsm/gsm_call.h"
 #endif /* GSM_CFG_CALL */
+#if GSM_CFG_PHONEBOOK
+#include "gsm/gsm_phonebook.h"
+#endif /* GSM_CFG_PHONEBOOK */
 
 #ifdef __cplusplus
 }

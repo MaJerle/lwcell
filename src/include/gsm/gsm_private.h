@@ -147,10 +147,11 @@ typedef enum {
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
     GSM_CMD_CPBF,                               /*!< Find Phonebook Entries */
     GSM_CMD_CPBR,                               /*!< Read Current Phonebook Entries  */
-    GSM_CMD_CPBS,                               /*!< Select Phonebook Memory Storage */
+    GSM_CMD_CPBS_SET,                           /*!< Select Phonebook Memory Storage */
     GSM_CMD_CPBS_GET,                           /*!< Get current Phonebook Memory Storage */
     GSM_CMD_CPBS_GET_OPT,                       /*!< Get available Phonebook Memory Storages */
-    GSM_CMD_CPBW,                               /*!< Write Phonebook Entry */
+    GSM_CMD_CPBW_SET,                           /*!< Write Phonebook Entry */
+    GSM_CMD_CPBW_GET_OPT,                       /*!< Get options for write Phonebook Entry */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
     GSM_CMD_SIM_PROCESS_BASIC_CMDS,             /*!< Command setup, executed when SIM is in READY state */
     GSM_CMD_CPIN_SET,                           /*!< Enter PIN */
@@ -409,6 +410,16 @@ typedef struct gsm_msg {
             const char* number;                 /*!< Phone number to dial */
         } call_start;                           /*!< Start a new call */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
+#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+        struct {
+            gsm_mem_t mem;                      /*!< Memory to use */
+            size_t pos;                         /*!< Memory position. Set to 0 to use new one or SIZE_T MAX to delete entry */
+            const char* name;                   /*!< Entry name */
+            const char* num;                    /*!< Entry number */
+            gsm_number_type_t type;             /*!< Entry phone number type */
+            uint8_t del;                        /*!< Flag indicates delete */
+        } pb_write;
+#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
     } msg;                                      /*!< Group of different possible message contents */
 } gsm_msg_t;
 
@@ -461,6 +472,23 @@ typedef struct {
 } gsm_sms_t;
 
 /**
+ * \brief           SMS memory information
+ */
+typedef struct {
+    uint32_t mem_available;                     /*!< Bit field of available memories */
+    gsm_mem_t current;                          /*!< Current memory choice */
+    size_t total;                               /*!< Size of memory in units of entries */
+    size_t used;                                /*!< Number of used entries */
+} gsm_pb_mem_t;
+
+/**
+ * \brief           Phonebook structure
+ */
+typedef struct {
+    gsm_pb_mem_t mem;                           /*!< Memory information */
+} gsm_pb_t;
+
+/**
  * \brief           GSM global structure
  */
 typedef struct {    
@@ -496,7 +524,7 @@ typedef struct {
     gsm_sms_t           sms;                    /*!< SMS information */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */ 
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
-    uint32_t            mem_list_pb;            /*!< Available memories for phonebook */
+    gsm_pb_t            pb;                     /*!< Phonebook information */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
     gsm_call_t          call;                   /*!< Call information */
