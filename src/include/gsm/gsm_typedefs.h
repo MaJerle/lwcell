@@ -116,13 +116,13 @@ typedef struct {
  * \brief           Date and time structure
  */
 typedef struct {
-    uint8_t date;                               /*!< Day in a month, from 1 to up to 31 */
-    uint8_t month;                              /*!< Month in a year, from 1 to 12 */
+    uint8_t date;                               /*!< Day in a month, from `1` to up to `31` */
+    uint8_t month;                              /*!< Month in a year, from `1` to `12` */
     uint16_t year;                              /*!< Year */
-    uint8_t day;                                /*!< Day in a week, from 1 to 7 */
-    uint8_t hours;                              /*!< Hours in a day, from 0 to 23 */
-    uint8_t minutes;                            /*!< Minutes in a hour, from 0 to 59 */
-    uint8_t seconds;                            /*!< Seconds in a minute, from 0 to 59 */
+    uint8_t day;                                /*!< Day in a week, from `1` to `7`, 0 = invalid */
+    uint8_t hours;                              /*!< Hours in a day, from `0` to `23` */
+    uint8_t minutes;                            /*!< Minutes in a hour, from `0` to `59` */
+    uint8_t seconds;                            /*!< Seconds in a minute, from `0` to `59` */
 } gsm_datetime_t;
 
 /**
@@ -135,7 +135,7 @@ typedef enum {
 } gsm_conn_type_t;
 
 /**
- * \brief           Available memories
+ * \brief           Available device memories
  */
 typedef enum {
 #define GSM_DEV_MEMORY_ENTRY(name, str_code)    GSM_MEM_ ## name,
@@ -162,8 +162,9 @@ typedef enum {
  * \brief           SMS entry structure
  */
 typedef struct {
-    gsm_datetime_t datetime;                    /*!< Date and time */
+    gsm_mem_t mem;                              /*!< Memory storage */
     size_t pos;                                 /*!< Memory position */
+    gsm_datetime_t datetime;                    /*!< Date and time */
     gsm_sms_status_t status;                    /*!< Message status */
     char number[26];                            /*!< Phone number */
     char data[161];                             /*!< Data memory */
@@ -290,6 +291,7 @@ typedef enum gsm_cb_type_t {
     GSM_CB_SMS_SEND_ERROR,                      /*!< SMS sent successfully */
     GSM_CB_SMS_RECV,                            /*!< SMS received */
     GSM_CB_SMS_READ,                            /*!< SMS read */
+    GSM_CB_SMS_LIST,                            /*!< SMS list */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
     GSM_CB_CALL_READY,                          /*!< Call ready event */
@@ -310,15 +312,21 @@ typedef struct gsm_cb_t {
         } cpin;                                 /*!< CPIN event */
 #if GSM_CFG_SMS
         struct {
-            uint16_t num;                       /*!< Received number in memory for sent SMS*/
+            size_t num;                         /*!< Received number in memory for sent SMS*/
         } sms_sent;                             /*!< SMS sent info. Use with \ref GSM_CB_SMS_SENT event */
         struct {
             gsm_mem_t mem;                      /*!< Memory of received message */
-            uint16_t pos;                       /*!< Received position in memory for sent SMS */
+            size_t pos;                         /*!< Received position in memory for sent SMS */
         } sms_recv;                             /*!< SMS received info. Use with \ref GSM_CB_SMS_RECV event */
         struct {
             gsm_sms_entry_t* entry;             /*!< SMS entry */
         } sms_read;                             /*!< SMS read. Use with \ref GSM_CB_SMS_READ event */
+        struct {
+            gsm_mem_t mem;                      /*!< Memory used for scan */
+            gsm_sms_entry_t* entries;           /*!< Pointer to entries */
+            size_t size;                        /*!< Number of valid entries */
+            gsmr_t err;                         /*!< Error message if exists */
+        } sms_list;                             /*!< SMS list. Use with \ref GSM_CB_SMS_LIST event */
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CALL
         struct {

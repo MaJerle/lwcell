@@ -55,6 +55,15 @@ gsmi_parse_number(const char** str) {
     if (*p == '"') {                            /* Skip leading quotes */
         p++;
     }
+    if (*p == '/') {                            /* Skip '/' character, used in datetime */
+        p++;
+    }
+    if (*p == ':') {                            /* Skip ':' character, used in datetime */
+        p++;
+    }
+    if (*p == '+') {                            /* Skip '+' character, used in datetime */
+        p++;
+    }
     if (*p == '-') {                            /* Check negative number */
         minus = 1;
         p++;
@@ -145,6 +154,18 @@ gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
     }
     *src = p;
     return 1;
+}
+
+/**
+ * \brief           Check current string position and trim to the next entry
+ * \param[in]       src: Pointer to pointer to input string
+ */
+void
+gsmi_check_and_trim(const char** src) {
+    const char* t = *src;
+    if (*t != '"' && *t != '\r' && *t != ',') { /* Check if trim required */
+        gsmi_parse_string(src, NULL, 0, 1);     /* Trim to the end */
+    }
 }
 
 /**
@@ -390,6 +411,25 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     return 1;
 }
 
+/**
+ * \brief           Parse datetime in format dd/mm/yy,hh:mm:ss
+ * \param[in]       src: Pointer to pointer to input string
+ * \param[out]      dt: Date time structure
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_datetime(const char** src, gsm_datetime_t* dt) {
+    dt->date = gsmi_parse_number(src);
+    dt->month = gsmi_parse_number(src);
+    dt->year = GSM_U16(2000) + gsmi_parse_number(src);
+    dt->hours = gsmi_parse_number(src);
+    dt->minutes = gsmi_parse_number(src);
+    dt->seconds = gsmi_parse_number(src);
+
+    gsmi_check_and_trim(src);                   /* Trim text to the end */
+    return 1;
+}
+
 #if GSM_CFG_CALL || __DOXYGEN__
 
 /**
@@ -493,7 +533,38 @@ gsmi_parse_cmgr(const char* str) {
     gsmi_parse_sms_status(&str, &e->status);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
     gsmi_parse_string(&str, NULL, 0, 1);
-    //gsmi_parse_datetime(&str, &e->datetime);
+    gsmi_parse_datetime(&str, &e->datetime);
+
+    return 1;
+}
+
+/**
+ * \brief           Parse +CMGL statement
+ * \todo            Parse date and time from SMS entry
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cmgl(const char* str) {
+    gsm_sms_entry_t* e;
+
+    if (gsm.msg->cmd_def != GSM_CMD_CMGL ||
+        gsm.msg->msg.sms_list.ei >= gsm.msg->msg.sms_list.etr) {
+        return 0;
+    }
+
+    if (*str == '+') {
+        str += 7;
+    }
+
+    e = &gsm.msg->msg.sms_list.entries[gsm.msg->msg.sms_list.ei];
+
+    e->mem = gsm.msg->msg.sms_list.mem;         /* Manually set memory */
+    e->pos = gsmi_parse_number(&str);           /* Scan position */
+    gsmi_parse_sms_status(&str, &e->status);
+    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    gsmi_parse_string(&str, NULL, 0, 1);
+    gsmi_parse_datetime(&str, &e->datetime);
 
     return 1;
 }

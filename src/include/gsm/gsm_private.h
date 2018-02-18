@@ -375,16 +375,31 @@ typedef struct gsm_msg {
         struct {
             const char* num;                    /*!< Phone number */
             const char* text;                   /*!< SMS content to send */
-            uint8_t format;                     /*!< SMS format, 0 = PDU, 1 = text */
+            uint8_t format;                     /*!< SMS format, `0 = PDU`, `1 = text` */
         } sms_send;                             /*!< Send SMS */
         struct {
             gsm_mem_t mem;                      /*!< Memory to read from */
-            uint16_t pos;                       /*!< SMS position in memory */
+            size_t pos;                         /*!< SMS position in memory */
             gsm_sms_entry_t* entry;             /*!< Pointer to entry to write info */
             uint8_t update;                     /*!< Update SMS status after read operation */
-            uint8_t format;                     /*!< SMS format, 0 = PDU, 1 = text */
+            uint8_t format;                     /*!< SMS format, `0 = PDU`, `1 = text` */
             uint8_t read;                       /*!< Read the data flag */
         } sms_read;                             /*!< Read single SMS */
+        struct {
+            gsm_mem_t mem;                      /*!< Memory to delete from */
+            size_t pos;                         /*!< SMS position in memory */
+        } sms_delete;                           /*!< Delete SMS message */
+        struct {
+            gsm_mem_t mem;                      /*!< Memory to use for read */
+            gsm_sms_status_t status;            /*!< SMS entries status */
+            gsm_sms_entry_t* entries;           /*!< Pointer to entries */
+            size_t etr;                         /*!< Entries to read (array length) */
+            size_t ei;                          /*!< Current entry index in array */
+            size_t* er;                         /*!< Final entries read pointer for user */
+            uint8_t update;                     /*!< Update SMS status after read operation */
+            uint8_t format;                     /*!< SMS format, `0 = PDU`, `1 = text` */
+            uint8_t read;                       /*!< Read the data flag */
+        } sms_list;                             /*!< List SMS messages */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
         struct {

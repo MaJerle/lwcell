@@ -84,22 +84,28 @@ gsm_sms_send(const char* num, const char* text, uint32_t blocking) {
 }
 
 /**
- * \brief           Read SMS entry
+ * \brief           Read SMS entry at specific memory and position
  * \param[in]       mem: Memory used to read message from
  * \param[in]       pos: Position number in memory to read
- * \param[out]      sms_entry: Pointer to SMS entry structure to fill data to
+ * \param[out]      entry: Pointer to SMS entry structure to fill data to
  * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_read(gsm_mem_t mem, uint16_t pos, gsm_sms_entry_t* sms_entry, uint8_t update, uint32_t blocking) {
+gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
-    GSM_ASSERT("sms_entry != NULL", sms_entry != NULL); /* Assert input parameters */
-    GSM_ASSERT("sms_mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("sms_entry != NULL", entry != NULL); /* Assert input parameters */
+    GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
-    memset(sms_entry, 0x00, sizeof(*sms_entry));/* Reset data structure */
+    memset(entry, 0x00, sizeof(*entry));        /* Reset data structure */
+
+    /**
+     * \todo: Get current memory if \ref GSM_MEM_CURRENT is used
+     */
+    entry->mem = mem;                           /* Set device memory */
+    entry->pos = pos;                           /* Set device position */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGR;
@@ -110,12 +116,63 @@ gsm_sms_read(gsm_mem_t mem, uint16_t pos, gsm_sms_entry_t* sms_entry, uint8_t up
     }
     GSM_MSG_VAR_REF(msg).msg.sms_read.mem = mem;
     GSM_MSG_VAR_REF(msg).msg.sms_read.pos = pos;
-    GSM_MSG_VAR_REF(msg).msg.sms_read.entry = sms_entry;
+    GSM_MSG_VAR_REF(msg).msg.sms_read.entry = entry;
     GSM_MSG_VAR_REF(msg).msg.sms_read.update = update;
     GSM_MSG_VAR_REF(msg).msg.sms_read.format = 1;   /* Send as plain text */
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
 
+/**
+ * \brief           Delete SMS entry at specific memory and position
+ * \param[in]       mem: Memory used to read message from
+ * \param[in]       pos: Position number in memory to read
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_sms_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGD;
+    if (mem != GSM_MEM_CURRENT) {
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_SET;    /* First set memory */
+    }
+    GSM_MSG_VAR_REF(msg).msg.sms_delete.mem = mem;
+    GSM_MSG_VAR_REF(msg).msg.sms_delete.pos = pos;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+gsmr_t
+gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("entires != NULL", entries != NULL); /* Assert input parameters */
+    GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
+
+    memset(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGL;
+    if (mem != GSM_MEM_CURRENT) {
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_SET;    /* First set memory */
+    } else {
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;/* Set mode first */
+    }
+    GSM_MSG_VAR_REF(msg).msg.sms_list.mem = mem;
+    GSM_MSG_VAR_REF(msg).msg.sms_list.status = stat;
+    GSM_MSG_VAR_REF(msg).msg.sms_list.entries = entries;
+    GSM_MSG_VAR_REF(msg).msg.sms_list.etr = etr;
+    GSM_MSG_VAR_REF(msg).msg.sms_list.er = er;
+    GSM_MSG_VAR_REF(msg).msg.sms_list.update = update;
+    GSM_MSG_VAR_REF(msg).msg.sms_list.format = 1;   /* Send as plain text */
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
 
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */

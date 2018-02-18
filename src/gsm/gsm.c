@@ -239,7 +239,7 @@ gsm_set_pin(const char* pin, uint32_t blocking) {
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
+    //GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
     GSM_MSG_VAR_REF(msg).msg.cpin.pin = pin;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */

@@ -280,6 +280,29 @@ send_dev_memory(gsm_mem_t mem, uint8_t q, uint8_t c) {
     }
 }
 
+#if GSM_CFG_SMS || __DOXYGEN__
+
+/**
+ * \brief           Send SMS status text
+ * \param[in]       q: Value to indicate starting and ending quotes, enabled (`1`) or disabled (`0`)
+ * \param[in]       c: Set to `1` to include comma before string
+ */
+static void
+send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
+    const char* t = NULL;
+    switch (status) {
+        case GSM_SMS_STATUS_UNREAD: t = "REC UNREAD";   break;
+        case GSM_SMS_STATUS_READ:   t = "REC READ";     break;
+        case GSM_SMS_STATUS_UNSENT: t = "STO UNSENT";   break;
+        case GSM_SMS_STATUS_SENT:   t = "STO SENT";     break;
+        case GSM_SMS_STATUS_ALL:
+        default:                    t = "ALL";          break;
+    }
+    send_string(t, 0, q, c);
+}
+
+#endif /* GSM_CFG_SMS */
+
 /**
  * \brief           Reset all connections
  * \note            Used to notify upper layer stack to close everything and reset the memory if necessary
@@ -447,7 +470,15 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             gsmi_parse_cmgs(rcv->data, 1);      /* Parse +CMGS response */
         } else if (IS_CURR_CMD(GSM_CMD_CMGR) && !strncmp(rcv->data, "+CMGR", 5)) {
             if (gsmi_parse_cmgr(rcv->data)) {   /* Parse +CMGR response */
-                gsm.msg->msg.sms_read.read = 1; /* Set read flag and process the data */
+                gsm.msg->msg.sms_read.read = 2; /* Set read flag and process the data */
+            } else {
+                gsm.msg->msg.sms_read.read = 1; /* Read but ignore data */
+            }
+        } else if (IS_CURR_CMD(GSM_CMD_CMGL) && !strncmp(rcv->data, "+CMGL", 5)) {
+            if (gsmi_parse_cmgl(rcv->data)) {   /* Parse +CMGL response */
+                gsm.msg->msg.sms_list.read = 2; /* Set read flag and process the data */
+            } else {
+                gsm.msg->msg.sms_list.read = 1; /* Read but ignore data */
             }
         } else if (!strncmp(rcv->data, "+CMTI", 5)) {
             gsmi_parse_cmti(rcv->data, 1);      /* Parse +CMTI response with received SMS */
@@ -594,18 +625,37 @@ gsmi_process(const void* data, size_t data_len) {
 #if GSM_CFG_SMS
         } else if (IS_CURR_CMD(GSM_CMD_CMGR) && gsm.msg->msg.sms_read.read) {
             gsm_sms_entry_t* e = gsm.msg->msg.sms_read.entry;
-            if (e != NULL) {
-                if (e->length < (sizeof(e->data) - 1)) {
-                    e->data[e->length++] = ch;
+            if (gsm.msg->msg.sms_read.read == 2) {  /* Read only if set to 2 */
+                if (e != NULL) {                /* Check if valid entry */
+                    if (e->length < (sizeof(e->data) - 1)) {
+                        e->data[e->length++] = ch;
+                    }
+                } else {
+                    gsm.msg->msg.sms_read.read = 1; /* Read but ignore data */
                 }
-                if (ch == '\n' && ch_prev1 == '\r') {
-                    
-                    gsm.msg->msg.sms_read.read = 0;
+            }
+            if (ch == '\n' && ch_prev1 == '\r') {
+                if (gsm.msg->msg.sms_read.read == 2) {
                     gsm.cb.cb.sms_read.entry = e;
                     gsmi_send_cb(GSM_CB_SMS_READ);
                 }
-            } else {
                 gsm.msg->msg.sms_read.read = 0;
+            }
+        } else if (IS_CURR_CMD(GSM_CMD_CMGL) && gsm.msg->msg.sms_list.read) {
+            if (gsm.msg->msg.sms_list.read == 2) {
+                gsm_sms_entry_t* e = &gsm.msg->msg.sms_list.entries[gsm.msg->msg.sms_list.ei];
+                if (e->length < (sizeof(e->data) - 1)) {
+                    e->data[e->length++] = ch;
+                }
+            }
+            if (ch == '\n' && ch_prev1 == '\r') {
+                if (gsm.msg->msg.sms_list.read == 2) {
+                    gsm.msg->msg.sms_list.ei++; /* Go to next entry */
+                    if (gsm.msg->msg.sms_list.er != NULL) { /* Check and update user variable */
+                        *gsm.msg->msg.sms_list.er = gsm.msg->msg.sms_list.ei;
+                    }
+                }
+                gsm.msg->msg.sms_list.read = 0;
             }
 #endif /* GSM_CFG_SMS */
         /*
@@ -804,7 +854,22 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             n_cmd = GSM_CMD_CMGF;               /* Set text mode */
         } else if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
             n_cmd = GSM_CMD_CMGR;               /* Start message read */
-        } 
+        }
+    } else if (msg->cmd_def == GSM_CMD_CMGD) {
+        if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
+            n_cmd = GSM_CMD_CMGD;               /* Delete message */
+        }
+    } else if (msg->cmd_def == GSM_CMD_CMGL) {
+        if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
+            n_cmd = GSM_CMD_CMGF;               /* Set text format */
+        } else if (msg->cmd == GSM_CMD_CMGF && is_ok) {
+            n_cmd = GSM_CMD_CMGL;               /* List messages */
+        } else if (GSM_CMD_CMGL) {
+            gsm.cb.cb.sms_list.entries = gsm.msg->msg.sms_list.entries;
+            gsm.cb.cb.sms_list.size = gsm.msg->msg.sms_list.ei;
+            gsm.cb.cb.sms_list.err = is_ok ? gsmOK : gsmERR;
+            gsmi_send_cb(GSM_CB_SMS_LIST);
+        }
 #endif /* GSM_CFG_SMS */
     }
 
@@ -926,6 +991,8 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
                 send_number(GSM_U32(!!msg->msg.sms_send.format), 0, 0);
             } else if (msg->cmd_def == GSM_CMD_CMGR) {
                 send_number(GSM_U32(!!msg->msg.sms_read.format), 0, 0);
+            } else if (msg->cmd_def == GSM_CMD_CMGL) {
+                send_number(GSM_U32(!!msg->msg.sms_list.format), 0, 0);
             } else {
                 GSM_AT_PORT_SEND_STR("1");      /* Force text mode */
             }
@@ -947,6 +1014,21 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
+        case GSM_CMD_CMGD: {                    /* Delete SMS message */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CMGD=");
+            send_number(GSM_U32(msg->msg.sms_delete.pos), 0, 0);
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CMGL: {                    /* Delete SMS message */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CMGL=");
+            send_sms_stat(msg->msg.sms_list.status, 1, 0);
+            send_number(GSM_U32(!msg->msg.sms_list.update), 0, 1);
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
         case GSM_CMD_CPMS_GET_OPT: {            /* Get available SMS storages */
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             GSM_AT_PORT_SEND_STR("+CPMS=?");
@@ -956,9 +1038,14 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CPMS_SET: {                /* Set active SMS storage(s) */
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             GSM_AT_PORT_SEND_STR("+CPMS=");
-            if (msg->cmd_def == GSM_CMD_CMGR) { /* Read SMS only? */
+            if (msg->cmd_def == GSM_CMD_CMGR) { /* Read SMS original command? */
                 send_dev_memory(msg->msg.sms_read.mem, 1, 0);  /* Send memory to read */
+            } else if(msg->cmd_def == GSM_CMD_CMGD) {   /* Delete SMS original command? */
+                send_dev_memory(msg->msg.sms_delete.mem, 1, 0);  /* Send memory to read */
+            } else if(msg->cmd_def == GSM_CMD_CMGL) {   /* List SMS original command? */
+                send_dev_memory(msg->msg.sms_list.mem, 1, 0);  /* Send memory to read */
             } else {                            /* Do we want to set memory for read,send,receive? */
+            
             }
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
