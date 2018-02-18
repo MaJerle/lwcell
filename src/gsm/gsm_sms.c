@@ -146,6 +146,17 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
 
+/**
+ * \brief           List SMS from SMS memory
+ * \param[in]       mem: Memory to read entries from. Use \ref GSM_MEM_CURRENT to read from current memory
+ * \param[in]       stat: SMS status to read, either `read`, `unread`, `sent`, `unsent` or `all`
+ * \param[out]      entries: Pointer to array to save SMS entries
+ * \param[in]       etr: Number of entries to read
+ * \param[out]      er: Pointer to output variable to save number of entries in array
+ * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
 gsmr_t
 gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
@@ -174,6 +185,14 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
 
+/**
+ * \brief           Set preferred storage for SMS
+ * \param[in]       mem1: Preferred memory for read/delete SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
+ * \param[in]       mem2: Preferred memory for sent/write SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
+ * \param[in]       mem3: Preferred memory for received SMS entries. Use \ref GSM_MEM_CURRENT to keep it as is
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
 gsmr_t
 gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
@@ -184,7 +203,8 @@ gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, ui
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPMS_SET;
-    /* In case any of memories is set to current, read current status first */
+
+    /* In case any of memories is set to current, read current status first from device */
     if (mem1 == GSM_MEM_CURRENT || mem2 == GSM_MEM_CURRENT || mem3 == GSM_MEM_CURRENT) {
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;
     }
