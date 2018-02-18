@@ -483,7 +483,11 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         } else if (!strncmp(rcv->data, "+CMTI", 5)) {
             gsmi_parse_cmti(rcv->data, 1);      /* Parse +CMTI response with received SMS */
         } else if (IS_CURR_CMD(GSM_CMD_CPMS_GET_OPT) && !strncmp(rcv->data, "+CPMS", 5)) {
-            gsmi_parse_cpms(rcv->data);         /* Parse +CPMS with SMS memories info */
+            gsmi_parse_cpms(rcv->data, 0);      /* Parse +CPMS with SMS memories info */
+        } else if (IS_CURR_CMD(GSM_CMD_CPMS_GET) && !strncmp(rcv->data, "+CPMS", 5)) {
+            gsmi_parse_cpms(rcv->data, 1);      /* Parse +CPMS with SMS memories info */
+        } else if (IS_CURR_CMD(GSM_CMD_CPMS_SET) && !strncmp(rcv->data, "+CPMS", 5)) {
+            gsmi_parse_cpms(rcv->data, 2);      /* Parse +CPMS with SMS memories info */
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CALL
         } else if (!strncmp(rcv->data, "+CLCC", 5)) {
@@ -804,10 +808,15 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
                 break;
             }
             case GSM_CMD_CPMS_GET_OPT: {
-                if (!is_ok) {
+                if (!is_ok) {                   /* In case of failure, try again */
                     gsm_delay(1000);
-                    n_cmd = GSM_CMD_CPMS_GET_OPT;
+                    n_cmd = GSM_CMD_CPMS_GET_OPT;   /* Get memory options */
+                } else {
+                    n_cmd = GSM_CMD_CPMS_GET;   /* Get current status */
                 }
+                break;
+            }
+            case GSM_CMD_CPMS_GET: {
 #endif /* GSM_CFG_SMS */
             }
             default: break;
@@ -850,17 +859,23 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             n_cmd = GSM_CMD_CMGS;               /* Now send actual message */
         }
     } else if (msg->cmd_def == GSM_CMD_CMGR) {
-        if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
+        if (msg->cmd == GSM_CMD_CPMS_GET && is_ok) {
+            n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
+        } else if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
             n_cmd = GSM_CMD_CMGF;               /* Set text mode */
         } else if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
             n_cmd = GSM_CMD_CMGR;               /* Start message read */
         }
     } else if (msg->cmd_def == GSM_CMD_CMGD) {
-        if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
+        if (msg->cmd == GSM_CMD_CPMS_GET && is_ok) {
+            n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
+        } else if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
             n_cmd = GSM_CMD_CMGD;               /* Delete message */
         }
     } else if (msg->cmd_def == GSM_CMD_CMGL) {
-        if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
+        if (msg->cmd == GSM_CMD_CPMS_GET && is_ok) {
+            n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
+        } else if (msg->cmd == GSM_CMD_CPMS_SET && is_ok) {
             n_cmd = GSM_CMD_CMGF;               /* Set text format */
         } else if (msg->cmd == GSM_CMD_CMGF && is_ok) {
             n_cmd = GSM_CMD_CMGL;               /* List messages */
@@ -869,6 +884,10 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             gsm.cb.cb.sms_list.size = gsm.msg->msg.sms_list.ei;
             gsm.cb.cb.sms_list.err = is_ok ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_CB_SMS_LIST);
+        }
+    } else if (msg->cmd_def == GSM_CMD_CPMS_SET) {  /* Set preferred memory */
+        if (msg->cmd == GSM_CMD_CPMS_GET && is_ok) {
+            n_cmd = GSM_CMD_CPMS_SET;           /* Now set the command */
         }
 #endif /* GSM_CFG_SMS */
     }
@@ -1035,17 +1054,26 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
+        case GSM_CMD_CPMS_GET: {                /* Get current SMS storage info */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPMS?");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
         case GSM_CMD_CPMS_SET: {                /* Set active SMS storage(s) */
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             GSM_AT_PORT_SEND_STR("+CPMS=");
             if (msg->cmd_def == GSM_CMD_CMGR) { /* Read SMS original command? */
-                send_dev_memory(msg->msg.sms_read.mem, 1, 0);  /* Send memory to read */
+                send_dev_memory(msg->msg.sms_read.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_read.mem, 1, 0);
             } else if(msg->cmd_def == GSM_CMD_CMGD) {   /* Delete SMS original command? */
-                send_dev_memory(msg->msg.sms_delete.mem, 1, 0);  /* Send memory to read */
+                send_dev_memory(msg->msg.sms_delete.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_delete.mem, 1, 0);
             } else if(msg->cmd_def == GSM_CMD_CMGL) {   /* List SMS original command? */
-                send_dev_memory(msg->msg.sms_list.mem, 1, 0);  /* Send memory to read */
-            } else {                            /* Do we want to set memory for read,send,receive? */
-            
+                send_dev_memory(msg->msg.sms_list.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
+            } else if (msg->cmd_def == GSM_CMD_CPMS_SET) {  /* Do we want to set memory for read/delete,sent/write,receive? */
+                size_t i;
+                for (i = 0; i < 3; i++) {       /* Write 3 memories */
+                    send_dev_memory(msg->msg.sms_memory.mem[i] == GSM_MEM_CURRENT ? gsm.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
+                }
             }
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;

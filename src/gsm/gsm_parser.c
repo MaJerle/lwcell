@@ -593,21 +593,43 @@ gsmi_parse_cmti(const char* str, uint8_t send_evt) {
 /**
  * \brief           Parse +CPMS statement
  * \param[in]       str: Input string
+ * \param[in]       opt: Expected input: 0 = CPMS_OPT, 1 = CPMS_GET, 2 = CPMS_SET
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cpms(const char* str) {
-    uint8_t res, i;
+gsmi_parse_cpms(const char* str, uint8_t opt) {
+    uint8_t i;
     if (*str == '+') {
         str += 7;
     }
-    for (i = 0; i < 3; i++) {
-        res = gsmi_parse_memories_string(&str, &gsm.mem_list_sms[i]);
-        if (!res) {
+    switch (opt) {                              /* Check expected input string */
+        case 0: {                               /* Get list of CPMS options: +CPMS: (("","","",..),("....")("...")) */
+            for (i = 0; i < 3; i++) {           /* 3 different memories for "operation","receive","sent" */
+                if (!gsmi_parse_memories_string(&str, &gsm.sms.mem[i].mem_available)) {
+                    return 0;
+                }
+            }
             break;
         }
+        case 1: {                               /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
+            for (i = 0; i < 3; i++) {           /* 3 memories expected */
+                gsm.sms.mem[i].current = gsmi_parse_memory(&str);   /* Parse memory string and save it as current */
+                gsm.sms.mem[i].used = gsmi_parse_number(&str);  /* Get used memory size */
+                gsm.sms.mem[i].total = gsmi_parse_number(&str); /* Get total memory size */
+            }
+            break;
+        }
+        case 2: {                               /* Received statement of set info: +CPMS: 10,20,2,20 */
+            for (i = 0; i < 3; i++) {           /* 3 memories expected */
+                gsm.sms.mem[i].used = gsmi_parse_number(&str);  /* Get used memory size */
+                gsm.sms.mem[i].total = gsmi_parse_number(&str); /* Get total memory size */
+            }
+            break;
+        }
+        default: break;
     }
-    return res;
+
+    return 1;
 }
 
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */

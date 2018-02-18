@@ -400,6 +400,9 @@ typedef struct gsm_msg {
             uint8_t format;                     /*!< SMS format, `0 = PDU`, `1 = text` */
             uint8_t read;                       /*!< Read the data flag */
         } sms_list;                             /*!< List SMS messages */
+        struct {
+            gsm_mem_t mem[3];                   /*!< Array of memories */
+        } sms_memory;                           /*!< Set preferred memories */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
         struct {
@@ -441,6 +444,23 @@ typedef struct gsm_cb_func {
 } gsm_cb_func_t;
 
 /**
+ * \brief           SMS memory information
+ */
+typedef struct {
+    uint32_t mem_available;                     /*!< Bit field of available memories */
+    gsm_mem_t current;                          /*!< Current memory choice */
+    size_t total;                               /*!< Size of memory in units of entries */
+    size_t used;                                /*!< Number of used entries */
+} gsm_sms_mem_t;
+
+/**
+ * \brief           SMS structure
+ */
+typedef struct {
+    gsm_sms_mem_t mem[3];                       /*!< 3 memory info for operation,receive,sent storage */
+} gsm_sms_t;
+
+/**
  * \brief           GSM global structure
  */
 typedef struct {    
@@ -473,7 +493,7 @@ typedef struct {
     gsm_cb_func_t*      cb_func;                /*!< Callback function linked list */
 
 #if GSM_CFG_SMS || __DOXYGEN__
-    uint32_t            mem_list_sms[3];        /*!< Available memories for SMS */
+    gsm_sms_t           sms;                    /*!< SMS information */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */ 
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
     uint32_t            mem_list_pb;            /*!< Available memories for phonebook */

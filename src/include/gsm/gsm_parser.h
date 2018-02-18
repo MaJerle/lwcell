@@ -58,7 +58,7 @@ uint8_t     gsmi_parse_clcc(const char* str, uint8_t send_evt);
 
 uint8_t     gsmi_parse_cpbs(const char* str);
 
-uint8_t     gsmi_parse_cpms(const char* str);
+uint8_t     gsmi_parse_cpms(const char* str, uint8_t opt);
 
 #if defined(__cplusplus)
 }
