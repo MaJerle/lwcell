@@ -418,7 +418,23 @@ typedef struct gsm_msg {
             const char* num;                    /*!< Entry number */
             gsm_number_type_t type;             /*!< Entry phone number type */
             uint8_t del;                        /*!< Flag indicates delete */
-        } pb_write;
+        } pb_write;                             /*!< Write/Edit/Delete entry */
+        struct {
+            gsm_mem_t mem;                      /*!< Memory to use */
+            size_t start_index;                 /*!< Start index in phonebook to read */
+            gsm_pb_entry_t* entries;            /*!< Pointer to entries array */
+            size_t etr;                         /*!< NUmber of entries to read */
+            size_t ei;                          /*!< Current entry index */
+            size_t* er;                         /*!< Final entries read pointer for user */
+        } pb_list;                              /*!< List phonebook entries */
+        struct {
+            gsm_mem_t mem;                      /*!< Memory to use */
+            gsm_pb_entry_t* entries;            /*!< Pointer to entries array */
+            size_t etr;                         /*!< NUmber of entries to read */
+            size_t ei;                          /*!< Current entry index */
+            size_t* er;                         /*!< Final entries read pointer for user */
+            const char* search;                 /*!< Search string */
+        } pb_search;                            /*!< Search phonebook entries */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
     } msg;                                      /*!< Group of different possible message contents */
 } gsm_msg_t;

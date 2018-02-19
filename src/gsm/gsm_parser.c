@@ -548,7 +548,7 @@ uint8_t
 gsmi_parse_cmgl(const char* str) {
     gsm_sms_entry_t* e;
 
-    if (gsm.msg->cmd_def != GSM_CMD_CMGL ||
+    if (gsm.msg == NULL || gsm.msg->cmd_def != GSM_CMD_CMGL ||
         gsm.msg->msg.sms_list.ei >= gsm.msg->msg.sms_list.etr) {
         return 0;
     }
@@ -558,9 +558,8 @@ gsmi_parse_cmgl(const char* str) {
     }
 
     e = &gsm.msg->msg.sms_list.entries[gsm.msg->msg.sms_list.ei];
-
     e->mem = gsm.msg->msg.sms_list.mem;         /* Manually set memory */
-    e->pos = gsmi_parse_number(&str);           /* Scan position */
+    e->pos = GSM_SZ(gsmi_parse_number(&str));   /* Scan position */
     gsmi_parse_sms_status(&str, &e->status);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
@@ -661,6 +660,68 @@ gsmi_parse_cpbs(const char* str, uint8_t opt) {
             gsm.pb.mem.total = gsmi_parse_number(&str); /* Get total memory size */
             break;
         }
+    }
+    return 1;
+}
+
+/**
+ * \brief           Parse +CPBR statement
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cpbr(const char* str) {
+    gsm_pb_entry_t* e;
+
+    if (gsm.msg == NULL || gsm.msg->cmd_def != GSM_CMD_CPBR ||
+        gsm.msg->msg.pb_list.ei >= gsm.msg->msg.pb_list.etr) {
+        return 0;
+    }
+
+    if (*str == '+') {
+        str += 7;
+    }
+    
+    e = &gsm.msg->msg.pb_list.entries[gsm.msg->msg.pb_list.ei];
+    e->pos = GSM_SZ(gsmi_parse_number(&str));
+    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
+    e->type = (gsm_number_type_t)gsmi_parse_number(&str);
+    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+
+    gsm.msg->msg.pb_list.ei++;
+    if (gsm.msg->msg.pb_list.er != NULL) {
+        *gsm.msg->msg.pb_list.er = gsm.msg->msg.pb_list.ei;
+    }
+    return 1;
+}
+
+/**
+ * \brief           Parse +CPBF statement
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cpbf(const char* str) {
+    gsm_pb_entry_t* e;
+
+    if (gsm.msg == NULL || gsm.msg->cmd_def != GSM_CMD_CPBF ||
+        gsm.msg->msg.pb_search.ei >= gsm.msg->msg.pb_search.etr) {
+        return 0;
+    }
+
+    if (*str == '+') {
+        str += 7;
+    }
+    
+    e = &gsm.msg->msg.pb_search.entries[gsm.msg->msg.pb_search.ei];
+    e->pos = GSM_SZ(gsmi_parse_number(&str));
+    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
+    e->type = (gsm_number_type_t)gsmi_parse_number(&str);
+    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+
+    gsm.msg->msg.pb_search.ei++;
+    if (gsm.msg->msg.pb_search.er != NULL) {
+        *gsm.msg->msg.pb_search.er = gsm.msg->msg.pb_search.ei;
     }
     return 1;
 }

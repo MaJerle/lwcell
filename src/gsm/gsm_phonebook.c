@@ -54,6 +54,15 @@ check_mem(gsm_mem_t mem, uint8_t can_curr) {
     return res;
 }
 
+/**
+ * \brief           Add new phonebook entry to desired memory
+ * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
+ * \param[in]       name: Entry name
+ * \param[in]       num: Entry phone number
+ * \param[in]       type: Entry phone number type
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
 gsmr_t
 gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
@@ -80,6 +89,16 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
 
+/**
+ * \brief           Edit or overwrite phonebook entry at desired memory and position
+ * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
+ * \param[in]       pos: Entry position in memory to edit
+ * \param[in]       name: New entry name
+ * \param[in]       num: New entry phone number
+ * \param[in]       type: New entry phone number type
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
 gsmr_t
 gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
@@ -93,8 +112,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
-    }
-    else {
+    } else {
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_SET;    /* First set memory */
     }
 
@@ -107,6 +125,13 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
 
+/**
+ * \brief           Delete phonebook entry at desired memory and position
+ * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
+ * \param[in]       pos: Entry position in memory to delete
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
 gsmr_t
 gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
@@ -130,10 +155,87 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
 
+/**
+ * \brief           List entires from specific memory
+ * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
+ * \param[in]       start_index: Start position in memory to list
+ * \param[out]      entries: Pointer to array to save entries
+ * \param[in]       etr: Number of entries to read
+ * \param[out]      er: Pointer to output variable to save entries listed
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
 gsmr_t
-gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking);
+gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("start_index > 0", start_index > 0); /* Assert input parameters */
+    GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
+    GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+
+    if (er != NULL) {
+        *er = 0;
+    }
+    memset(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBR;
+    if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
+    } else {
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_SET;    /* First set memory */
+    }
+
+    GSM_MSG_VAR_REF(msg).msg.pb_list.mem = mem;
+    GSM_MSG_VAR_REF(msg).msg.pb_list.start_index = start_index;
+    GSM_MSG_VAR_REF(msg).msg.pb_list.entries = entries;
+    GSM_MSG_VAR_REF(msg).msg.pb_list.etr = etr;
+    GSM_MSG_VAR_REF(msg).msg.pb_list.er = er;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Search for entires with specific name from specific memory
+ * \note            Search works by entry name only. Phone number search is not available
+ * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
+ * \param[in]       search: String to search for
+ * \param[out]      entries: Pointer to array to save entries
+ * \param[in]       etr: Number of entries to read
+ * \param[out]      er: Pointer to output variable to save entries found
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
 gsmr_t
-gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking);
+gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("search != NULL", search != NULL);   /* Assert input parameters */
+    GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
+    GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+
+    if (er != NULL) {
+        *er = 0;
+    }
+    memset(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBF;
+    if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
+    } else {
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_SET;    /* First set memory */
+    }
+
+    GSM_MSG_VAR_REF(msg).msg.pb_search.mem = mem;
+    GSM_MSG_VAR_REF(msg).msg.pb_search.search = search;
+    GSM_MSG_VAR_REF(msg).msg.pb_search.entries = entries;
+    GSM_MSG_VAR_REF(msg).msg.pb_search.etr = etr;
+    GSM_MSG_VAR_REF(msg).msg.pb_search.er = er;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
 
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */

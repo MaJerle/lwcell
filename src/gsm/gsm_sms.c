@@ -167,6 +167,9 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
 
+    if (er != NULL) {
+        *er = 0;
+    }
     memset(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGL;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */

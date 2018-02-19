@@ -500,6 +500,10 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             gsmi_parse_cpbs(rcv->data, 1);      /* Parse +CPBS response */
         } else if (IS_CURR_CMD(GSM_CMD_CPBS_SET) && !strncmp(rcv->data, "+CPBS", 5)) {
             gsmi_parse_cpbs(rcv->data, 2);      /* Parse +CPBS response */
+        } else if (IS_CURR_CMD(GSM_CMD_CPBR) && !strncmp(rcv->data, "+CPBR", 5)) {
+            gsmi_parse_cpbr(rcv->data);         /* Parse +CPBR statement */
+        } else if (IS_CURR_CMD(GSM_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
+            gsmi_parse_cpbf(rcv->data);         /* Parse +CPBR statement */
 #endif /* GSM_CFG_PHONEBOOK */
         }
     } else {
@@ -886,6 +890,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
         } else if (msg->cmd == GSM_CMD_CMGF && is_ok) {
             n_cmd = GSM_CMD_CMGL;               /* List messages */
         } else if (GSM_CMD_CMGL) {
+            gsm.cb.cb.sms_list.mem = gsm.sms.mem[0].current;
             gsm.cb.cb.sms_list.entries = gsm.msg->msg.sms_list.entries;
             gsm.cb.cb.sms_list.size = gsm.msg->msg.sms_list.ei;
             gsm.cb.cb.sms_list.err = is_ok ? gsmOK : gsmERR;
@@ -902,6 +907,31 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint8_t is_error, uint8_t is
             n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */
         } else if (msg->cmd == GSM_CMD_CPBS_SET && is_ok) {
             n_cmd = GSM_CMD_CPBW_SET;           /* Write entry to phonebook */
+        }
+    } else if (msg->cmd_def == GSM_CMD_CPBR) {
+        if (msg->cmd == GSM_CMD_CPBS_GET && is_ok) {/* Get current memory */
+            n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */
+        } else if (msg->cmd == GSM_CMD_CPBS_SET && is_ok) {
+            n_cmd = GSM_CMD_CPBR;               /* Read entries */
+        } else if (msg->cmd == GSM_CMD_CPBR) {
+            gsm.cb.cb.pb_list.mem = gsm.pb.mem.current;
+            gsm.cb.cb.pb_list.entries = gsm.msg->msg.pb_list.entries;
+            gsm.cb.cb.pb_list.size = gsm.msg->msg.pb_list.ei;
+            gsm.cb.cb.pb_list.err = is_ok ? gsmOK : gsmERR;
+            gsmi_send_cb(GSM_CB_PB_LIST);
+        }
+    } else if (msg->cmd_def == GSM_CMD_CPBF) {
+        if (msg->cmd == GSM_CMD_CPBS_GET && is_ok) {/* Get current memory */
+            n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */
+        } else if (msg->cmd == GSM_CMD_CPBS_SET && is_ok) {
+            n_cmd = GSM_CMD_CPBF;               /* Read entries */
+        } else if (msg->cmd == GSM_CMD_CPBF) {
+            gsm.cb.cb.pb_search.mem = gsm.pb.mem.current;
+            gsm.cb.cb.pb_search.search = gsm.msg->msg.pb_search.search;
+            gsm.cb.cb.pb_search.entries = gsm.msg->msg.pb_search.entries;
+            gsm.cb.cb.pb_search.size = gsm.msg->msg.pb_search.ei;
+            gsm.cb.cb.pb_search.err = is_ok ? gsmOK : gsmERR;
+            gsmi_send_cb(GSM_CB_PB_SEARCH);
         }
 #endif /* GSM_CFG_PHONEBOOK */
     }
@@ -1152,6 +1182,21 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
                 send_number(GSM_U32(msg->msg.pb_write.type), 0, 1);
                 send_string(msg->msg.pb_write.name, 0, 1, 1);
             }
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CPBR: {                    /* Read entires */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPBR=");
+            send_number(GSM_U32(msg->msg.pb_list.start_index), 0, 0);
+            send_number(GSM_U32(msg->msg.pb_list.etr), 0, 1);
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CPBF: {                    /* Find entires */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CPBF=");
+            send_string(msg->msg.pb_search.search, 1, 1, 0);
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
