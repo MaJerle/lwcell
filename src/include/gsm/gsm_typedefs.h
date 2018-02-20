@@ -205,6 +205,28 @@ typedef enum {
 
 /**
  * \ingroup         GSM_OPERATOR
+ * \brief           Operator selection mode
+ */
+typedef enum {
+    GSM_OPERATOR_MODE_AUTO = 0x00,              /*!< Operator automatic mode */
+    GSM_OPERATOR_MODE_MANUAL = 0x01,            /*!< Operator manual mode */
+    GSM_OPERATOR_MODE_DEREGISTER = 0x02,        /*!< Operator deregistered from network */
+    GSM_OPERATOR_MODE_MANUAL_AUTO = 0x04,       /*!< Operator manual mode first. If fails, auto mode enabled */
+} gsm_operator_mode_t;
+
+/**
+ * \ingroup         GSM_OPERATOR
+ * \brief           Operator data format
+ */
+typedef enum {
+    GSM_OPERATOR_FORMAT_LONG_NAME = 0x00,       /*!< COPS command returned long name */
+    GSM_OPERATOR_FORMAT_SHORT_NAME,             /*!< COPS command returned short name */
+    GSM_OPERATOR_FORMAT_NUMBER,                 /*!< COPS command returned number */
+    GSM_OPERATOR_FORMAT_INVALID                 /*!< Unknown format */
+} gsm_operator_format_t;
+
+/**
+ * \ingroup         GSM_OPERATOR
  * \brief           Operator details for scan
  */
 typedef struct {
@@ -213,6 +235,31 @@ typedef struct {
     char short_name[20];                        /*!< Operator short name */
     uint32_t num;                               /*!< Operator numeric value */
 } gsm_operator_t;
+
+/**
+ * \ingroup         GSM_OPERATOR
+ * \brief           Current operator info
+ */
+typedef struct {
+    gsm_operator_mode_t mode;                   /*!< Operator mode */
+    gsm_operator_format_t format;               /*!< Data format */
+    union {
+        char long_name[20];                     /*!< Long name format */
+        char short_name[20];                    /*!< Short name format */
+        uint32_t num;                           /*!< Number format */
+    } data;
+} gsm_operator_curr_t;
+
+/**
+ * \brief           Network Registration status
+ */
+typedef enum {
+    GSM_NETWORK_REG_STATUS_SIM_ERR = 0x00,      /*!< SIM card error */
+    GSM_NETWORK_REG_STATUS_CONNECTED = 0x01,    /*!< Device is connected to network */
+    GSM_NETWORK_REG_STATUS_SEARCHING = 0x02,    /*!< Network search is in progress */
+    GSM_NETWORK_REG_STATUS_DENIED = 0x03,       /*!< Registration denied */
+    GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING = 0x05 /*!< Device is connected and is roaming */
+} gsm_network_reg_status_t;
 
 /**
  * \ingroup         GSM_CALL
@@ -294,9 +341,9 @@ typedef gsmr_t  (*gsm_cb_fn)(struct gsm_cb_t* cb);
  */
 typedef enum gsm_cb_type_t {
     GSM_CB_RESET,                               /*!< Device reset detected */
-    
+
     GSM_CB_INIT_FINISH,                         /*!< Initialization has been finished at this point */
-    
+
     GSM_CB_CONN_DATA_RECV,                      /*!< Connection data received */
     GSM_CB_CONN_DATA_SENT,                      /*!< Data were successfully sent */
     GSM_CB_CONN_DATA_SEND_ERR,                  /*!< Error trying to send data */
@@ -306,6 +353,7 @@ typedef enum gsm_cb_type_t {
     GSM_CB_CONN_POLL,                           /*!< Poll for connection if there are any changes */
 
     GSM_CB_CPIN,                                /*!< SIM event */
+    GSM_CB_OPERATOR_CURRENT,                    /*!< Current operator event */
 #if GSM_CFG_SMS || __DOXYGEN__
     GSM_CB_SMS_READY,                           /*!< SMS ready event */
     GSM_CB_SMS_SENT,                            /*!< SMS sent successfully */
@@ -318,6 +366,8 @@ typedef enum gsm_cb_type_t {
     GSM_CB_CALL_READY,                          /*!< Call ready event */
     GSM_CB_CALL_CHANGED,                        /*!< Call info changed, `+CLCK` statement received */
     GSM_CB_CALL_RING,                           /*!< Call is ringing event */
+    GSM_CB_CALL_BUSY,                           /*!< Call is busy */
+    GSM_CB_CALL_NO_CARRIER,                     /*!< No carrier to make a call */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
     GSM_CB_PB_LIST,                             /*!< Phonebook list event */
@@ -336,6 +386,9 @@ typedef struct gsm_cb_t {
         struct {
             gsm_sim_state_t state;              /*!< SIM state */
         } cpin;                                 /*!< CPIN event */
+        struct {
+            const gsm_operator_curr_t* operator_current;    /*!< Current operator info */
+        } operator_current;                     /*!< Current operator event. Use with \ref GSM_CB_OPERATOR_CURRENT event */
 #if GSM_CFG_SMS || __DOXYGEN__
         struct {
             size_t num;                         /*!< Received number in memory for sent SMS*/

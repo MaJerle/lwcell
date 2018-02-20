@@ -51,7 +51,7 @@ extern "C" {
  */
 typedef enum {
     GSM_CMD_IDLE = 0,                           /*!< IDLE mode */
-    
+
     /*
      * Basic AT commands
      */
@@ -141,6 +141,7 @@ typedef enum {
     GSM_CMD_CLIR,                               /*!< Calling Line Identification Restriction */
     GSM_CMD_CMEE,                               /*!< Report Mobile Equipment Error */
     GSM_CMD_COLP,                               /*!< Connected Line Identification Presentation */
+    GSM_CMD_COPS_SET,                           /*!< Set operator */
     GSM_CMD_COPS_GET,                           /*!< Get current operator */
     GSM_CMD_COPS_GET_OPT,                       /*!< Get a list of available operators */
     GSM_CMD_CPAS,                               /*!< Phone Activity Status */
@@ -159,7 +160,8 @@ typedef enum {
     GSM_CMD_CPWD,                               /*!< Change Password */
     GSM_CMD_CR,                                 /*!< Service Reporting Control */
     GSM_CMD_CRC,                                /*!< Set Cellular Result Codes for Incoming Call Indication */
-    GSM_CMD_CREG,                               /*!< Network Registration */
+    GSM_CMD_CREG_SET,                           /*!< Network Registration set output */
+    GSM_CMD_CREG_GET,                           /*!< Get current network registration status */
     GSM_CMD_CRLP,                               /*!< Select Radio Link Protocol Parameters  */
     GSM_CMD_CRSM,                               /*!< Restricted SIM Access */
     GSM_CMD_CSQ,                                /*!< Signal Quality Report */
@@ -371,6 +373,12 @@ typedef struct gsm_msg {
             size_t opsi;                        /*!< Current operator index array */
             size_t* opf;                        /*!< Pointer to number of operators found */
         } cops_scan;                            /*!< Scan operators */
+        struct {
+            gsm_operator_mode_t mode;           /*!< COPS mode */
+            gsm_operator_format_t format;       /*!< Operator format to print */
+            const char* name;                   /*!< Short or long name, according to format */
+            uint32_t num;                       /*!< Number in case format is number */
+        } cops_set;
 
 #if GSM_CFG_SMS || __DOXYGEN__
         struct {
@@ -505,6 +513,14 @@ typedef struct {
 } gsm_pb_t;
 
 /**
+ * \brief           Network info
+ */
+typedef struct {
+    gsm_network_reg_status_t status;            /*!< Network registration status */
+    gsm_operator_curr_t curr_operator;          /*!< Current operator information */
+} gsm_network_t;
+
+/**
  * \brief           GSM global structure
  */
 typedef struct {    
@@ -527,6 +543,7 @@ typedef struct {
     uint32_t            active_conns_last;      /*!< The same as previous but status before last check */
 
     gsm_sim_state_t     sim_state;              /*!< SIM current state */
+    gsm_network_t       network;                /*!< Network status */
     
     gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
     

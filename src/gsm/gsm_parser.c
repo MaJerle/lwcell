@@ -291,6 +291,46 @@ gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
 }
 
 /**
+ * \brief           Parse received +CREG message
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_creg(const char* str, uint8_t skip_first) {
+    uint8_t cb = 0;
+    if (*str == '+') {
+        str += 7;
+    }
+
+    if (skip_first) {
+        gsmi_parse_number(&str);
+    }
+    gsm.network.status = (gsm_network_reg_status_t)gsmi_parse_number(&str);
+
+    /*
+     * In case we are connected to network,
+     * scan for current network info
+     */
+    if (gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED ||
+        gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
+        if (gsm_operator_get(0) != gsmOK) {     /* Notify user in case we are not able to add new command to queue */
+            cb = 1;
+        }
+    } else {
+        cb = 1;
+    }
+
+    /**
+     * \todo: Process callback
+     */
+    if (cb) {                                   /* Check for callback */
+
+    }
+
+    return 1;
+}
+
+/**
  * \brief           Parse received +CPIN status value
  * \param[in]       str: Input string
  * \param[in]       send_evt: Send event about new CPIN status
@@ -331,6 +371,39 @@ gsmi_parse_cpin(const char* str, uint8_t send_evt) {
 }
 
 /**
+ * \brief           Parse +COPS string from COPS? command
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_cops(const char* str) {
+    if (*str == '+') {
+        str += 7;
+    }
+
+    gsm.network.curr_operator.mode = (gsm_operator_mode_t)gsmi_parse_number(&str);
+    if (*str != '\r') {
+        gsm.network.curr_operator.format = (gsm_operator_format_t)gsmi_parse_number(&str);
+        if (*str != '\r') {
+            switch (gsm.network.curr_operator.format) {
+                case GSM_OPERATOR_FORMAT_LONG_NAME:
+                    gsmi_parse_string(&str, gsm.network.curr_operator.data.long_name, sizeof(gsm.network.curr_operator.data.long_name), 1);
+                    break;
+                case GSM_OPERATOR_FORMAT_SHORT_NAME:
+                    gsmi_parse_string(&str, gsm.network.curr_operator.data.short_name, sizeof(gsm.network.curr_operator.data.short_name), 1);
+                    break;
+                case GSM_OPERATOR_FORMAT_NUMBER:
+                    gsm.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str, 1));
+                    break;
+            }
+        }
+    } else {
+        gsm.network.curr_operator.format = GSM_OPERATOR_FORMAT_INVALID;
+    }
+    return 1;
+}
+
+/**
  * \brief           Parse +COPS received statement byte by byte
  * \note            Command must be active and message set to use this function
  * \param[in]       ch: New character to parse
@@ -355,6 +428,14 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
         return 1;
     }
 
+    if (!u.f.ch_prev) {                         /* Check if this is first character */
+        if (ch == ' ') {                        /* Skip leading spaces */
+            return 1;
+        } else if (ch == ',') {                 /* If first character is comma, no operators available */
+            u.f.ccd = 1;                        /* Fake double commas in a row */
+        }
+    }
+ 
     if (u.f.ccd ||                              /* Ignore data after 2 commas in a row */
         gsm.msg->msg.cops_scan.opsi >= gsm.msg->msg.cops_scan.opsl) {   /* or if array is full */
         return 1;

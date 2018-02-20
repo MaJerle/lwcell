@@ -45,6 +45,7 @@ uint8_t     gsmi_parse_ip(const char** src, gsm_ip_t* ip);
 uint8_t     gsmi_parse_mac(const char** src, gsm_mac_t* mac);
 
 uint8_t     gsmi_parse_cpin(const char* str, uint8_t send_evt);
+uint8_t     gsmi_parse_creg(const char* str, uint8_t skip_first);
 
 uint8_t     gsmi_parse_cmgs(const char* str, uint8_t send_evt);
 uint8_t     gsmi_parse_cmti(const char* str, uint8_t send_evt);
@@ -54,6 +55,7 @@ uint8_t     gsmi_parse_cmgl(const char* str);
 uint8_t     gsmi_parse_at_sdk_version(const char* str, uint32_t* version_out);
 
 uint8_t     gsmi_parse_cops_scan(uint8_t ch, uint8_t reset);
+uint8_t     gsmi_parse_cops(const char* str);
 uint8_t     gsmi_parse_clcc(const char* str, uint8_t send_evt);
 
 uint8_t     gsmi_parse_cpbs(const char* str, uint8_t opt);

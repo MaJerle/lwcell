@@ -37,6 +37,19 @@
 #if GSM_CFG_CALL || __DOXYGEN__
 
 /**
+ * \brief           Check if call is available
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+static gsmr_t
+check_call_ready(void) {
+    gsmr_t res;
+    GSM_CORE_PROTECT();
+    res = gsm.status.f.call_ready ? gsmOK : gsmERR;
+    GSM_CORE_UNPROTECT();
+    return res;
+}
+
+/**
  * \brief           Start a new voice call
  * \param[in]       number: Phone number to call
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -47,6 +60,7 @@ gsm_call_start(const char* number, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("number != NULL", number != NULL);   /* Assert input parameters */
+    GSM_ASSERT("call_ready", check_call_ready() == gsmOK);  /* Assert input parameters */
                                                     
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;
