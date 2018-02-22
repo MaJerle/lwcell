@@ -374,6 +374,9 @@ typedef struct gsm_msg {
             size_t* opf;                        /*!< Pointer to number of operators found */
         } cops_scan;                            /*!< Scan operators */
         struct {
+            gsm_operator_curr_t* curr;          /*!< Pointer to output current operator */
+        } cops_get;                             /*!< Get current operator info */
+        struct {
             gsm_operator_mode_t mode;           /*!< COPS mode */
             gsm_operator_format_t format;       /*!< Operator format to print */
             const char* name;                   /*!< Short or long name, according to format */

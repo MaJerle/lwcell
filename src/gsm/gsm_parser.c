@@ -400,6 +400,11 @@ gsmi_parse_cops(const char* str) {
     } else {
         gsm.network.curr_operator.format = GSM_OPERATOR_FORMAT_INVALID;
     }
+
+    if (gsm.msg != NULL && gsm.msg->cmd_def == GSM_CMD_COPS_GET &&
+        gsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
+        memcpy(gsm.msg->msg.cops_get.curr, &gsm.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
+    }
     return 1;
 }
 
