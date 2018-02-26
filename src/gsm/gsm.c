@@ -72,10 +72,10 @@ gsm_init(gsm_cb_fn cb_func) {
     
     gsm_sys_sem_create(&gsm.sem_sync, 1);       /* Create new semaphore with unlocked state */
     gsm_sys_mbox_create(&gsm.mbox_producer, GSM_CFG_THREAD_PRODUCER_MBOX_SIZE); /* Producer message queue */
-    gsm_sys_thread_create(&gsm.thread_producer, "producer", gsm_thread_producer, &gsm, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
-    
+    gsm_sys_thread_create(&gsm.thread_producer, "gsm_producer", (gsm_sys_thread_fn)gsm_thread_producer, &gsm, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
+
     gsm_sys_mbox_create(&gsm.mbox_process, GSM_CFG_THREAD_PROCESS_MBOX_SIZE);   /* Consumer message queue */
-    gsm_sys_thread_create(&gsm.thread_process,  "process", gsm_thread_process, &gsm, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
+    gsm_sys_thread_create(&gsm.thread_process,  "gsm_process", (gsm_sys_thread_fn)gsm_thread_process, &gsm, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
 
 #if !GSM_CFG_INPUT_USE_PROCESS
     gsm_buff_init(&gsm.buff, GSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
@@ -108,7 +108,11 @@ gsm_reset(uint32_t blocking) {
 }
 
 /**
- * \brief           Lock and protect GSM core from multiple access at a time
+ * \brief           Increase protection counter
+ *
+ *                  If lock was `0` before func call, lock is enabled and increased
+ * \note            Function may be called multiple times to increase locks. 
+ *                  User must take care of calling \ref gsm_core_unlock function the same times to decrease lock
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -118,7 +122,9 @@ gsm_core_lock(void) {
 }
 
 /**
- * \brief           Unlock and unprotect GSM core from multiple access at a time
+ * \brief           Decrease protection counter
+ *
+ *                  If lock was non-zero before func call, it is decreased. In case of `lock = 0`, protection is disabled
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -159,7 +165,6 @@ gsm_cb_register(gsm_cb_fn cb_fn) {
             } else {
                 for (func = gsm.cb_func; func->next != NULL; func = func->next) {}
                 func->next = newFunc;           /* Set new function as next */
-                res = gsmOK;
             }
             res = gsmOK;
         } else {

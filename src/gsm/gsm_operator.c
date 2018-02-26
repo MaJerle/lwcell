@@ -46,7 +46,6 @@ gsm_operator_get(gsm_operator_curr_t* curr, uint32_t blocking) {
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET;
-
     GSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
@@ -61,7 +60,6 @@ gsmr_t
 gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
-    
     if (mode != GSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
         GSM_ASSERT("format valid", format < GSM_OPERATOR_FORMAT_INVALID);   /* Assert input parameters */
         if (format != GSM_OPERATOR_FORMAT_NUMBER) {
@@ -81,7 +79,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
 }
 
 /**
- * \brief           Get current operator name
+ * \brief           Scan for available operators
  * \param[in]       ops: Pointer to array to write found operators
  * \param[in]       opsl: Length of input array in units of elements
  * \param[out]      opf: Pointer to ouput variable to save number of operators found
