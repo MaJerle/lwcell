@@ -40,6 +40,23 @@
 #define GSM_SMS_SEND_IDX                1   /*!< Send index for memory array */
 #define GSM_SMS_RECEIVE_IDX             2   /*!< Receive index for memory array */
 
+#if !__DOXYGEN__
+#define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
+#endif /* !__DOXYGEN__ */
+
+/**
+ * \brief           Check if sms is enabled
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+static gsmr_t
+check_enabled(void) {
+    gsmr_t res;
+    GSM_CORE_PROTECT();                         /* Protect core */
+    res = gsm.sms.enabled ? gsmOK : gsmERR;
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    return res;
+}
+
 /**
  * \brief           Check if input memory is available in modem
  * \param[in]       mem: Memory to test
@@ -49,13 +66,42 @@
 static gsmr_t
 check_sms_mem(gsm_mem_t mem, uint8_t can_curr) {
     gsmr_t res = gsmERRMEM;
-    GSM_CORE_PROTECT();                     /* Protect core */
+    GSM_CORE_PROTECT();                         /* Protect core */
     if ((mem < GSM_MEM_END && gsm.sms.mem[GSM_SMS_OPERATION_IDX].mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
-    GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
     return res;
+}
+
+/**
+ * \brief           Enable SMS functionality
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_sms_enable(uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_SMS_ENABLE;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET_OPT;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Disable SMS functionality
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_sms_disable(uint32_t blocking) {
+    GSM_CORE_PROTECT();                         /* Protect core */
+    gsm.sms.enabled = 0;                        /* Clear enabled status */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    return gsmOK;
 }
 
 /**
@@ -72,6 +118,7 @@ gsm_sms_send(const char* num, const char* text, uint32_t blocking) {
     GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
     GSM_ASSERT("text != NULL && strlen(text) <= 160", 
         num != NULL && strlen(text) <= 160);    /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGS;
@@ -97,6 +144,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, 
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("sms_entry != NULL", entry != NULL); /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -131,6 +179,7 @@ gsmr_t
 gsm_sms_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -161,9 +210,10 @@ gsmr_t
 gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
-    GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
     GSM_ASSERT("entires != NULL", entries != NULL); /* Assert input parameters */
     GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
+    GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
 
@@ -200,6 +250,7 @@ gsmr_t
 gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem1", check_sms_mem(mem1, 1) == gsmOK);/* Assert input parameters */
     GSM_ASSERT("mem2", check_sms_mem(mem2, 1) == gsmOK);/* Assert input parameters */
     GSM_ASSERT("mem3", check_sms_mem(mem3, 1) == gsmOK);/* Assert input parameters */

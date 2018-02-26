@@ -146,6 +146,7 @@ typedef enum {
     GSM_CMD_COPS_GET_OPT,                       /*!< Get a list of available operators */
     GSM_CMD_CPAS,                               /*!< Phone Activity Status */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
+    GSM_CMD_PHONEBOOK_ENABLE,                   /*!< Top command to enable phonebook */
     GSM_CMD_CPBF,                               /*!< Find Phonebook Entries */
     GSM_CMD_CPBR,                               /*!< Read Current Phonebook Entries  */
     GSM_CMD_CPBS_SET,                           /*!< Select Phonebook Memory Storage */
@@ -266,9 +267,11 @@ typedef enum {
     GSM_CMD_CIPBEIPING,                         /*!< Set the Module to be PING or Not */
 #endif /* GSM_CFG_PING || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
+    GSM_CMD_CALL_ENABLE,                        /*!< Top command to enable call */
 
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_SMS || __DOXYGEN__
+    GSM_CMD_SMS_ENABLE,                         /*!< Top command to enable SMS */
     /*
      * SMS AT commands according to 3GPP TS 27.005
      */
@@ -495,6 +498,7 @@ typedef struct {
  * \brief           SMS structure
  */
 typedef struct {
+    uint8_t enabled;                            /*!< Flag indicating feature enabled */
     gsm_sms_mem_t mem[3];                       /*!< 3 memory info for operation,receive,sent storage */
 } gsm_sms_t;
 
@@ -512,6 +516,7 @@ typedef struct {
  * \brief           Phonebook structure
  */
 typedef struct {
+    uint8_t enabled;                            /*!< Flag indicating feature enabled */
     gsm_pb_mem_t mem;                           /*!< Memory information */
 } gsm_pb_t;
 

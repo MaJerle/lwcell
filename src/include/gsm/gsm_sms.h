@@ -47,6 +47,9 @@ extern "C" {
  * \{
  */
 
+gsmr_t      gsm_sms_enable(uint32_t blocking);
+gsmr_t      gsm_sms_disable(uint32_t blocking);
+
 gsmr_t      gsm_sms_send(const char* num, const char* text, uint32_t blocking);
 gsmr_t      gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, uint32_t blocking);
 gsmr_t      gsm_sms_delete(gsm_mem_t mem, size_t pos, uint32_t blocking);

@@ -73,6 +73,7 @@ typedef enum {
     gsmERRPASS,                                 /*!< Invalid password for access point */
     gsmERRNOAP,                                 /*!< No access point found with specific SSID and MAC address */
     gsmERRCONNFAIL,                             /*!< Connection failed to access point */
+    gsmERRNOTENABLED,                           /*!< Feature is not enabled */
 } gsmr_t;
 
 /**
@@ -300,6 +301,8 @@ typedef enum {
  * \note            Data received on `+CLCC` info
  */
 typedef struct {
+    uint8_t enabled;                            /*!< Flag indicating feature enabled */
+
     uint8_t id;                                 /*!< Call identification number, 0-7 */
     gsm_call_dir_t dir;                         /*!< Call direction */
     gsm_call_state_t state;                     /*!< Call state */
@@ -355,6 +358,7 @@ typedef enum gsm_cb_type_t {
     GSM_CB_CPIN,                                /*!< SIM event */
     GSM_CB_OPERATOR_CURRENT,                    /*!< Current operator event */
 #if GSM_CFG_SMS || __DOXYGEN__
+    GSM_CB_SMS_ENABLE,                          /*!< SMS enable event */
     GSM_CB_SMS_READY,                           /*!< SMS ready event */
     GSM_CB_SMS_SENT,                            /*!< SMS sent successfully */
     GSM_CB_SMS_SEND_ERROR,                      /*!< SMS sent successfully */
@@ -363,6 +367,7 @@ typedef enum gsm_cb_type_t {
     GSM_CB_SMS_LIST,                            /*!< SMS list */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
+    GSM_CB_CALL_ENABLE,                         /*!< Call enable event */
     GSM_CB_CALL_READY,                          /*!< Call ready event */
     GSM_CB_CALL_CHANGED,                        /*!< Call info changed, `+CLCK` statement received */
     GSM_CB_CALL_RING,                           /*!< Call is ringing event */
@@ -370,6 +375,7 @@ typedef enum gsm_cb_type_t {
     GSM_CB_CALL_NO_CARRIER,                     /*!< No carrier to make a call */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
+    GSM_CB_PB_ENABLE,                           /*!< Phonebook enable event */
     GSM_CB_PB_LIST,                             /*!< Phonebook list event */
     GSM_CB_PB_SEARCH,                           /*!< Phonebook search event */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
@@ -391,6 +397,9 @@ typedef struct gsm_cb_t {
         } operator_current;                     /*!< Current operator event. Use with \ref GSM_CB_OPERATOR_CURRENT event */
 #if GSM_CFG_SMS || __DOXYGEN__
         struct {
+            gsmr_t status;                      /*!< Enable status */
+        } sms_enable;                           /*!< SMS enable event. Use with \ref GSM_CB_SMS_ENABLE event */
+        struct {
             size_t num;                         /*!< Received number in memory for sent SMS*/
         } sms_sent;                             /*!< SMS sent info. Use with \ref GSM_CB_SMS_SENT event */
         struct {
@@ -409,10 +418,16 @@ typedef struct gsm_cb_t {
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
         struct {
+            gsmr_t status;                      /*!< Enable status */
+        } call_enable;                          /*!< Call enable event. Use with \ref GSM_CB_CALL_ENABLE event */
+        struct {
             const gsm_call_t* call;             /*!< Call information */
         } call_changed;                         /*!< Call changed info. Use with \ref GSM_CB_CALL_CHANGED event */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
-#if GSM_CFG_CALL || __DOXYGEN__
+#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+        struct {
+            gsmr_t status;                      /*!< Enable status */
+        } pb_enable;                            /*!< Phonebook enable event. Use with \ref GSM_CB_PB_ENABLE event */
         struct {
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_pb_entry_t* entries;            /*!< Pointer to entries */
@@ -426,7 +441,7 @@ typedef struct gsm_cb_t {
             size_t size;                        /*!< Number of valid entries */
             gsmr_t err;                         /*!< Error message if exists */
         } pb_search;                            /*!< Phonebok search list. Use with \ref GSM_CB_PB_SEARCH event */
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
+#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
         struct {
             gsm_conn_p conn;                    /*!< Connection where data were received */
             gsm_pbuf_p buff;                    /*!< Pointer to received data */

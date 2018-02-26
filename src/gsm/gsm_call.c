@@ -36,6 +36,23 @@
 
 #if GSM_CFG_CALL || __DOXYGEN__
 
+#if !__DOXYGEN__
+#define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
+#endif /* !__DOXYGEN__ */
+
+/**
+ * \brief           Check if sms is enabled
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+static gsmr_t
+check_enabled(void) {
+    gsmr_t res;
+    GSM_CORE_PROTECT();                     /* Protect core */
+    res = gsm.call.enabled ? gsmOK : gsmERR;
+    GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    return res;
+}
+
 /**
  * \brief           Check if call is available
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -50,6 +67,35 @@ check_call_ready(void) {
 }
 
 /**
+ * \brief           Enable call functionality
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_call_enable(uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CALL_ENABLE;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CLCC;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Disable call functionality
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_call_disable(uint32_t blocking) {
+    GSM_CORE_PROTECT();                         /* Protect core */
+    gsm.call.enabled = 0;                       /* Clear enabled status */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    return gsmOK;
+}
+
+/**
  * \brief           Start a new voice call
  * \param[in]       number: Phone number to call
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -60,6 +106,7 @@ gsm_call_start(const char* number, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("number != NULL", number != NULL);   /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("call_ready", check_call_ready() == gsmOK);  /* Assert input parameters */
                                                     
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -78,6 +125,7 @@ gsmr_t
 gsm_call_answer(uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATA;
 
@@ -93,6 +141,7 @@ gsmr_t
 gsm_call_hangup(uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATH;
 

@@ -787,12 +787,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error, uint8_t i
                 break;
             }
             case GSM_CMD_CREG_SET: {
-#if GSM_CFG_CALL
-                n_cmd = GSM_CMD_CLCC;           /* Enable unsolicited code for call */
-                break;
-            }
-            case GSM_CMD_CLCC: {
-#endif /* GSM_CFG_CALL */
+
             }
             default: break;
         }
@@ -801,64 +796,24 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error, uint8_t i
             gsm.cb.cb.operator_current.operator_current = &gsm.network.curr_operator;
             gsmi_send_cb(GSM_CB_OPERATOR_CURRENT);
         }
-    } else if (msg->cmd_def == GSM_CMD_SIM_PROCESS_BASIC_CMDS) {
-        switch (msg->cmd) {
-            case GSM_CMD_CNUM: {                /* Get own phone number */
-                if (!is_ok) {
-                    gsm_delay(1000);            /* Process delay first */
-                    n_cmd = GSM_CMD_CNUM;
-                } else 
-#if GSM_CFG_PHONEBOOK
-                n_cmd = GSM_CMD_CPBS_GET_OPT;   /* Get phonebook storages */
-                break;
-            }
-            case GSM_CMD_CPBS_GET_OPT: {
-#endif /* GSM_CFG_PHONEBOOK */
 #if GSM_CFG_SMS
-                n_cmd = GSM_CMD_CPMS_GET_OPT;   /* Get SMS storages */
-                break;
-            }
+    } else if (msg->cmd_def == GSM_CMD_SMS_ENABLE) {
+        switch (msg->cmd) {
             case GSM_CMD_CPMS_GET_OPT: {
-                if (!is_ok) {                   /* In case of failure, try again */
-                    gsm_delay(1000);
-                    n_cmd = GSM_CMD_CPMS_GET_OPT;   /* Get memory options */
-                } else {
-                    n_cmd = GSM_CMD_CPMS_GET;   /* Get current status */
-                }
+                n_cmd = GSM_CMD_CPMS_GET;
                 break;
             }
             case GSM_CMD_CPMS_GET: {
-#endif /* GSM_CFG_SMS */
+                break;
             }
             default: break;
         }
-    } else if (msg->cmd_def == GSM_CMD_CPIN_SET) {  /* Set PIN code */
-        if (msg->cmd == GSM_CMD_CPIN_GET && is_ok) {
-            /**
-             * \todo: Check if pin already OK, then decide what to do next
-             */
-            n_cmd = GSM_CMD_CPIN_SET;           /* Set command to write PIN */
-        }
-#if GSM_CFG_NETWORK
-    } else if (msg->cmd_def == GSM_CMD_NETWORK_ATTACH) {
-        switch (msg->cmd) {
-            case GSM_CMD_CGACT_SET_0: n_cmd = GSM_CMD_CGACT_SET_1; break;
-            case GSM_CMD_CGACT_SET_1: {
-                if (is_ok) {
-                    n_cmd = GSM_CMD_CGATT_SET_0;
-                }
-                break;
-            }
-            case GSM_CMD_CGATT_SET_0: n_cmd = GSM_CMD_CGATT_SET_1; break;
-            case GSM_CMD_CGATT_SET_1: {
-                if (is_ok) {
-                    n_cmd = GSM_CMD_CGATT_SET_0;
-                }
-                break;
-            }
-        }
-#endif /* GSM_CFG_NETWORK */
-#if GSM_CFG_SMS
+        if (!is_ok || n_cmd == GSM_CMD_IDLE) {  /* Stop execution on any command */
+            n_cmd = GSM_CMD_IDLE;
+            gsm.sms.enabled = n_cmd == GSM_CMD_IDLE;    /* Set enabled status */
+            gsm.cb.cb.sms_enable.status = gsm.sms.enabled ? gsmOK : gsmERR;
+            gsmi_send_cb(GSM_CB_SMS_ENABLE);    /* Send to user */
+        }    
     } else if (msg->cmd_def == GSM_CMD_CMGS) {  /* Send SMS default command */
         if (msg->cmd == GSM_CMD_CMGF && is_ok) {/* Set message format current command*/
             n_cmd = GSM_CMD_CMGS;               /* Now send actual message */
@@ -898,7 +853,53 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error, uint8_t i
             n_cmd = GSM_CMD_CPMS_SET;           /* Now set the command */
         }
 #endif /* GSM_CFG_SMS */
+    } else if (msg->cmd_def == GSM_CMD_SIM_PROCESS_BASIC_CMDS) {
+        switch (msg->cmd) {
+            case GSM_CMD_CNUM: {                /* Get own phone number */
+                if (!is_ok) {
+                    gsm_delay(1000);            /* Process delay first */
+                    n_cmd = GSM_CMD_CNUM;
+                }
+            }
+            default: break;
+        }
+    } else if (msg->cmd_def == GSM_CMD_CPIN_SET) {  /* Set PIN code */
+        if (msg->cmd == GSM_CMD_CPIN_GET && is_ok) {
+            /**
+             * \todo: Check if pin already OK, then decide what to do next
+             */
+            n_cmd = GSM_CMD_CPIN_SET;           /* Set command to write PIN */
+        }
+#if GSM_CFG_NETWORK
+    } else if (msg->cmd_def == GSM_CMD_NETWORK_ATTACH) {
+        switch (msg->cmd) {
+            case GSM_CMD_CGACT_SET_0: n_cmd = GSM_CMD_CGACT_SET_1; break;
+            case GSM_CMD_CGACT_SET_1: {
+                if (is_ok) {
+                    n_cmd = GSM_CMD_CGATT_SET_0;
+                }
+                break;
+            }
+            case GSM_CMD_CGATT_SET_0: n_cmd = GSM_CMD_CGATT_SET_1; break;
+            case GSM_CMD_CGATT_SET_1: {
+                if (is_ok) {
+                    n_cmd = GSM_CMD_CGATT_SET_0;
+                }
+                break;
+            }
+        }
+#endif /* GSM_CFG_NETWORK */
+#if GSM_CFG_CALL
+    } else if (msg->cmd_def == GSM_CMD_CALL_ENABLE) {
+        gsm.call.enabled = is_ok;               /* Set enabled status */
+        gsm.cb.cb.call_enable.status = gsm.call.enabled ? gsmOK : gsmERR;
+        gsmi_send_cb(GSM_CB_CALL_ENABLE);       /* Send to user */
+#endif /* GSM_CFG_CALL */
 #if GSM_CFG_PHONEBOOK
+    } else if (msg->cmd_def == GSM_CMD_PHONEBOOK_ENABLE) {
+        gsm.pb.enabled = is_ok;                 /* Set enabled status */
+        gsm.cb.cb.pb_enable.status = gsm.pb.enabled ? gsmOK : gsmERR;
+        gsmi_send_cb(GSM_CB_PB_ENABLE);         /* Send to user */
     } else if (msg->cmd_def == GSM_CMD_CPBW_SET) {  /* Write phonebook entry */
         if (msg->cmd == GSM_CMD_CPBS_GET && is_ok) {/* Get current memory */
             n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */

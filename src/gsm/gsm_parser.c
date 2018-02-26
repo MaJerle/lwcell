@@ -313,7 +313,7 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
      */
     if (gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED ||
         gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
-        if (gsm_operator_get(0) != gsmOK) {     /* Notify user in case we are not able to add new command to queue */
+        if (gsm_operator_get(NULL, 0) != gsmOK) {   /* Notify user in case we are not able to add new command to queue */
             cb = 1;
         }
     } else {
@@ -393,7 +393,7 @@ gsmi_parse_cops(const char* str) {
                     gsmi_parse_string(&str, gsm.network.curr_operator.data.short_name, sizeof(gsm.network.curr_operator.data.short_name), 1);
                     break;
                 case GSM_OPERATOR_FORMAT_NUMBER:
-                    gsm.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str, 1));
+                    gsm.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str));
                     break;
             }
         }

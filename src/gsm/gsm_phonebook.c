@@ -36,6 +36,23 @@
 
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
 
+#if !__DOXYGEN__
+#define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
+#endif /* !__DOXYGEN__ */
+
+/**
+ * \brief           Check if phonebook is enabled
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+static gsmr_t
+check_enabled(void) {
+    gsmr_t res;
+    GSM_CORE_PROTECT();                     /* Protect core */
+    res = gsm.pb.enabled ? gsmOK : gsmERR;
+    GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    return res;
+}
+
 /**
  * \brief           Check if input memory is available in modem
  * \param[in]       mem: Memory to test
@@ -55,6 +72,35 @@ check_mem(gsm_mem_t mem, uint8_t can_curr) {
 }
 
 /**
+ * \brief           Enable phonebook functionality
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_pb_enable(uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_PHONEBOOK_ENABLE;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET_OPT;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Disable phonebook functionality
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_pb_disable(uint32_t blocking) {
+    GSM_CORE_PROTECT();                         /* Protect core */
+    gsm.pb.enabled = 0;                         /* Clear enabled status */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    return gsmOK;
+}
+
+/**
  * \brief           Add new phonebook entry to desired memory
  * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
  * \param[in]       name: Entry name
@@ -69,6 +115,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
     GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -105,6 +152,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
     GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -136,8 +184,9 @@ gsmr_t
 gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
     GSM_ASSERT("pos > 0", pos > 0);             /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
 
@@ -169,10 +218,11 @@ gsmr_t
 gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
     GSM_ASSERT("start_index > 0", start_index > 0); /* Assert input parameters */
     GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
     GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
 
@@ -211,10 +261,11 @@ gsmr_t
 gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
     GSM_ASSERT("search != NULL", search != NULL);   /* Assert input parameters */
     GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
     GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
+    CHECK_ENABLED();                            /* Check if enabled */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
 

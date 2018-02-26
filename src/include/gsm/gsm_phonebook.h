@@ -46,7 +46,10 @@ extern "C" {
  * \brief           Phonebook manager
  * \{
  */
-   
+
+gsmr_t      gsm_pb_enable(uint32_t blocking);
+gsmr_t      gsm_pb_disable(uint32_t blocking);
+
 gsmr_t      gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking);
 gsmr_t      gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking);
 gsmr_t      gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking);
