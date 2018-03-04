@@ -359,6 +359,9 @@ typedef struct gsm_msg {
     gsmr_t          (*fn)(struct gsm_msg *);    /*!< Processing callback function to process packet */
     union {
         struct {
+            uint32_t delay;                     /*!< Delay to use before sending first reset AT command */
+        } reset;
+        struct {
             uint32_t baudrate;                  /*!< Baudrate for AT port */
         } uart;
 
@@ -573,6 +576,7 @@ typedef struct {
     union {
         struct {
             uint8_t     initialized:1;          /*!< Flag indicating GSM library is initialized */
+            uint8_t     dev_present:1;          /*!< Flag indicating GSM device is present */
 #if GSM_CFG_SMS || __DOXYGEN__
             uint8_t     sms_ready:1;            /*!< Flag indicating SMS system is ready */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */ 

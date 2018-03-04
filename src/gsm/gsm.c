@@ -57,11 +57,14 @@ def_callback(gsm_cb_t* cb) {
 
 /**
  * \brief           Init and prepare GSM stack
+ * \note            When \ref GSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device.
+ *                  In this case, `blocking` parameter indicates if we shall wait or not for response
  * \param[in]       cb_func: Event callback function
+ * \param[in]       blocking: Status whether command should be blocking or not
  * \return          Member of \ref gsmr_t enumeration
  */
 gsmr_t
-gsm_init(gsm_cb_fn cb_func) {
+gsm_init(gsm_cb_fn cb_func, uint32_t blocking) {
     gsm.status.f.initialized = 0;               /* Clear possible init flag */
     
     def_cb_link.fn = cb_func ? cb_func : def_callback;
@@ -81,12 +84,19 @@ gsm_init(gsm_cb_fn cb_func) {
     gsm_buff_init(&gsm.buff, GSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
 #endif /* !GSM_CFG_INPUT_USE_PROCESS */
     gsm.status.f.initialized = 1;               /* We are initialized now */
+    gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
     
     /*
      * Call reset command and call default
      * AT commands to prepare basic setup for device
      */
-    gsm_reset(1);
+#if GSM_CFG_RESET_ON_INIT
+    if (gsm.status.f.dev_present) {             /* In case device exists */
+        gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking);    /* Send reset sequence with delay */
+    }
+#else
+    GSM_UNUSED(blocking);                       /* Unused variable */
+#endif /* GSM_CFG_RESET_ON_INIT */
     gsmi_send_cb(GSM_CB_INIT_FINISH);           /* Call user callback function */
     
     return gsmOK;
@@ -103,6 +113,24 @@ gsm_reset(uint32_t blocking) {
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
+    GSM_MSG_VAR_REF(msg).msg.reset.delay = 0;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Execute reset and send default commands with delay
+ * \param[in]       delay: Number of milliseconds to wait before initiating first command to device
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_reset_with_delay(uint32_t delay, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
+    GSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
@@ -248,6 +276,53 @@ gsm_set_pin(const char* pin, uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.cpin.pin = pin;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Notify stack if device is present or not
+ * 
+ *                  Use this function to notify stack that device is not connected and not ready to communicate with host device
+ * \param[in]       present: Flag indicating device is present
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_device_set_present(uint8_t present, uint32_t blocking) {
+    gsmr_t res = gsmOK;
+    GSM_CORE_PROTECT();                         /* Lock ESP core */
+    gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
+    
+    /**
+     * \todo: Set stack to default values
+     */
+
+#if GSM_CFG_RESET_ON_INIT
+    if (gsm.status.f.dev_present) {             /* Is new device present? */
+        GSM_CORE_UNPROTECT();                   /* Unlock ESP core */
+        res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking); /* Reset with delay */
+        GSM_CORE_PROTECT();                     /* Lock ESP core */
+    }
+#else
+    GSM_UNUSED(blocking);                       /* Unused variable */
+#endif /* ESP_CFG_RESET_ON_INIT */
+    
+    gsmi_send_cb(GSM_CB_DEVICE_PRESENT);        /* Send present event */
+    
+    GSM_CORE_UNPROTECT();                       /* Unlock ESP core */
+    return res;
+}
+
+/**
+ * \brief           Check if device is present
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsm_device_is_present(void) {
+    uint8_t res;
+    GSM_CORE_PROTECT();                         /* Lock ESP core */
+    res = gsm.status.f.dev_present;
+    GSM_CORE_UNPROTECT();                       /* Unlock ESP core */
+    return res;
 }
 
 /**

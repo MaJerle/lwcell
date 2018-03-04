@@ -46,8 +46,9 @@ extern "C" {
  * \{
  */
 
-gsmr_t      gsm_init(gsm_cb_fn cb_func);
+gsmr_t      gsm_init(gsm_cb_fn cb_func, uint32_t blocking);
 gsmr_t      gsm_reset(uint32_t blocking);
+gsmr_t      gsm_reset_with_delay(uint32_t delay, uint32_t blocking);
 gsmr_t      gsm_set_at_baudrate(uint32_t baud, uint32_t blocking);
 
 gsmr_t      gsm_set_pin(const char* pin, uint32_t blocking);
@@ -59,6 +60,9 @@ gsmr_t      gsm_core_unlock(void);
 
 gsmr_t      gsm_cb_register(gsm_cb_fn cb_fn);
 gsmr_t      gsm_cb_unregister(gsm_cb_fn cb_fn);
+
+gsmr_t      gsm_device_set_present(uint8_t present, uint32_t blocking);
+uint8_t     gsm_device_is_present(void);
 
 void        gsm_delay(uint32_t ms);
 

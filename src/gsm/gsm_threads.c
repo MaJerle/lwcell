@@ -54,8 +54,13 @@ gsm_thread_producer(void* const arg) {
         GSM_CORE_UNPROTECT();                   /* Unprotect system */
         time = gsm_sys_mbox_get(&gsm.mbox_producer, (void **)&msg, 0);  /* Get message from queue */
         GSM_CORE_PROTECT();                     /* Protect system */
-        if (time == GSM_SYS_TIMEOUT || !msg) {  /* Check valid message */
+        if (time == GSM_SYS_TIMEOUT || msg == NULL) {   /* Check valid message */
             continue;
+        }
+
+        /* For reset message, we can have delay! */
+        if (msg->cmd_def == GSM_CMD_RESET && msg->msg.reset.delay) {
+            gsm_delay(msg->msg.reset.delay);
         }
         
         /*
@@ -123,8 +128,13 @@ gsm_thread_process(void* const arg) {
         gsmi_process_buffer();                  /* Process input data */
 #else
     while (1) {
-        /* Check timeouts only */
-        time = gsmi_get_from_mbox_with_timeout_checks(&gsm.mbox_process, (void **)&msg, 100);
+        /*
+        * Check for next timeout event only here
+        *
+        * If there are no timeouts to process, we can wait unlimited time.
+        * In case new timeout occurs, thread will wake up by writing new element to mbox process queue
+        */
+        time = gsmi_get_from_mbox_with_timeout_checks(&gsm.mbox_process, (void **)&msg, 0);
         GSM_UNUSED(time);
 #endif /* !GSM_CFG_INPUT_USE_PROCESS */
     }

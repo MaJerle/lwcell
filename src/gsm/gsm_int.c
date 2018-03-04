@@ -791,6 +791,9 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error, uint8_t i
             }
             default: break;
         }
+        if (n_cmd == GSM_CMD_IDLE) {
+            gsmi_send_cb(GSM_CB_RESET_FINISH);  /* Send to upper layer */
+        }
     } else if (msg->cmd_def == GSM_CMD_COPS_GET) {
         if (msg->cmd == GSM_CMD_COPS_GET) {
             gsm.cb.cb.operator_current.operator_current = &gsm.network.curr_operator;
@@ -1267,6 +1270,20 @@ gsmi_is_valid_conn_ptr(gsm_conn_p conn) {
 gsmr_t
 gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t block, uint32_t max_block_time) {
     gsmr_t res = msg->res = gsmOK;
+
+    /* Check here if stack is even enabled or shall we disable new command entry? */
+    GSM_CORE_PROTECT();
+    if (!gsm.status.f.dev_present) {
+        if (msg->cmd_def != GSM_CMD_RESET) {    /* Only reset is allowed */
+            res = gsmERRNODEVICE;               /* No device connected */
+        }
+    }
+    GSM_CORE_UNPROTECT();
+    if (res != gsmOK) {
+        GSM_MSG_VAR_FREE(msg);                  /* Free memory and return */
+        return res;
+    }
+
     if (block) {                                /* In case message is blocking */
         if (!gsm_sys_sem_create(&msg->sem, 0)) {/* Create semaphore and lock it immediatelly */
             GSM_MSG_VAR_FREE(msg);              /* Release memory and return */

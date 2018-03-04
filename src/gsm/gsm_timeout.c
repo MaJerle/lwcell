@@ -180,6 +180,7 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn_t fn, void* arg) {
             }
         }
     }
+    gsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Insert dummy value to wakeup process thread */
     return gsmOK;
 }
 

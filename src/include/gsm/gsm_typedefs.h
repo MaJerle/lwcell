@@ -74,6 +74,7 @@ typedef enum {
     gsmERRNOAP,                                 /*!< No access point found with specific SSID and MAC address */
     gsmERRCONNFAIL,                             /*!< Connection failed to access point */
     gsmERRNOTENABLED,                           /*!< Feature is not enabled */
+    gsmERRNODEVICE,                             /*!< No device present */
 } gsmr_t;
 
 /**
@@ -344,6 +345,9 @@ typedef gsmr_t  (*gsm_cb_fn)(struct gsm_cb_t* cb);
  */
 typedef enum gsm_cb_type_t {
     GSM_CB_RESET,                               /*!< Device reset detected */
+    GSM_CB_RESET_FINISH,                        /*!< Reset operation finished */
+
+    GSM_CB_DEVICE_PRESENT,                      /*!< Notification when device present status changes */
 
     GSM_CB_INIT_FINISH,                         /*!< Initialization has been finished at this point */
 
