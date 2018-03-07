@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of ESP-AT.
+ * This file is part of GSM-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -48,9 +48,11 @@ extern "C" {
  */
 
 gsmr_t      gsm_operator_get(gsm_operator_curr_t* curr, uint32_t blocking);
+gsmr_t      gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, uint32_t blocking);
+
 gsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, uint32_t blocking);
 
-gsmr_t      gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, uint32_t blocking);
+gsmr_t      gsm_operator_rssi(int16_t* rssi, uint32_t blocking);
 
 /**
  * \}

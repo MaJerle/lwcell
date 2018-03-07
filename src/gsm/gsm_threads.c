@@ -59,7 +59,7 @@ gsm_thread_producer(void* const arg) {
         }
 
         /* For reset message, we can have delay! */
-        if (msg->cmd_def == GSM_CMD_RESET && msg->msg.reset.delay) {
+        if (CMD_IS_DEF(GSM_CMD_RESET) && msg->msg.reset.delay) {
             gsm_delay(msg->msg.reset.delay);
         }
         

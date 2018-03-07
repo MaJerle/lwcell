@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of ESP-AT.
+ * This file is part of GSM-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -44,6 +44,7 @@ extern "C" {
 #include "gsm/gsm_debug.h"
 #include "gsm/gsm_utilities.h"
 #include "gsm/gsm_pbuf.h"
+#include "gsm/gsm_sim.h"
 #include "gsm/gsm_operator.h"
 
 #include "system/gsm_sys.h"
@@ -57,6 +58,9 @@ extern "C" {
 #if GSM_CFG_PHONEBOOK
 #include "gsm/gsm_phonebook.h"
 #endif /* GSM_CFG_PHONEBOOK */
+#if GSM_CFG_NETWORK
+#include "gsm/gsm_network.h"
+#endif /* GSM_CFG_NETWORK */
 
 #ifdef __cplusplus
 }

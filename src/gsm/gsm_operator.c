@@ -102,3 +102,20 @@ gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, uint32_t blocki
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);  /* Send message to producer queue */
 }
+
+/**
+ * \brief           Read RSSI signal from operator
+ * \param[out]      rssi: RSSI output variable. When set to `0`, RSSI is not valid
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_operator_rssi(int16_t* rssi, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CSQ_GET;
+    GSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);  /* Send message to producer queue */
+}

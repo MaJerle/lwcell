@@ -1,8 +1,8 @@
-/**	
- * \file            gsm_call.h
- * \brief           Call API
+/**
+ * \file            gsm_int_device.c
+ * \brief           Internal functions for device management
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
  *  
@@ -10,7 +10,7 @@
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
  * and to permit persons to whom the Software is furnished to do so, 
  * subject to the following conditions:
  * 
@@ -30,37 +30,27 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_CALL_H
-#define __GSM_CALL_H
-
-/* C++ detection */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+#include "gsm/gsm_private.h"
 #include "gsm/gsm.h"
 
-/**
- * \ingroup         GSM
- * \defgroup        GSM_CALL Call API
- * \brief           Call manager
- * \{
- */
+#if GSM_CFG_SMS || __DOXYGEN__
 
-gsmr_t      gsm_call_enable(uint32_t blocking);
-gsmr_t      gsm_call_disable(uint32_t blocking);
-
-gsmr_t      gsm_call_start(const char* number, uint32_t blocking);
-gsmr_t      gsm_call_answer(uint32_t blocking);
-gsmr_t      gsm_call_hangup(uint32_t blocking);
-
-/**
- * \}
- */
-
-/* C++ detection */
-#ifdef __cplusplus
+uint8_t
+gsmi_device_set_sms_ready(uint8_t ready) {
+    gsm.status.f.sms_ready = !!ready;           /* SMS ready flag */
+    gsmi_send_cb(GSM_CB_SMS_READY);             /* Send SMS ready event */
+    return 1;
 }
-#endif
 
-#endif /* __GSM_CALL_H */
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */
+
+#if GSM_CFG_CALL || __DOXYGEN__
+
+uint8_t
+gsmi_device_set_call_ready(uint8_t ready) {
+    gsm.status.f.call_ready = !!ready;          /* Call ready flag */
+    gsmi_send_cb(GSM_CB_CALL_READY);            /* Send call ready event */
+    return 1;
+}
+
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */

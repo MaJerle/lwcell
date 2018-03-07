@@ -51,8 +51,6 @@ gsmr_t      gsm_reset(uint32_t blocking);
 gsmr_t      gsm_reset_with_delay(uint32_t delay, uint32_t blocking);
 gsmr_t      gsm_set_at_baudrate(uint32_t baud, uint32_t blocking);
 
-gsmr_t      gsm_set_pin(const char* pin, uint32_t blocking);
-
 gsmr_t      gsm_set_func_mode(uint8_t mode, uint32_t blocking);
 
 gsmr_t      gsm_core_lock(void);

@@ -120,6 +120,11 @@ typedef enum {
     /*
      * AT commands according to 3GPP TS 27.007
      */
+    GSM_CMD_COPS_SET,                           /*!< Set operator */
+    GSM_CMD_COPS_GET,                           /*!< Get current operator */
+    GSM_CMD_COPS_GET_OPT,                       /*!< Get a list of available operators */
+    GSM_CMD_CPAS,                               /*!< Phone Activity Status */
+
     GSM_CMD_CACM,                               /*!< Accumulated Call Meter (ACM) Reset or Query */
     GSM_CMD_CAMM,                               /*!< Accumulated Call Meter Maximum (ACM max) Set or Query */
     GSM_CMD_CAOC,                               /*!< Advice of Charge */
@@ -141,10 +146,6 @@ typedef enum {
     GSM_CMD_CLIR,                               /*!< Calling Line Identification Restriction */
     GSM_CMD_CMEE,                               /*!< Report Mobile Equipment Error */
     GSM_CMD_COLP,                               /*!< Connected Line Identification Presentation */
-    GSM_CMD_COPS_SET,                           /*!< Set operator */
-    GSM_CMD_COPS_GET,                           /*!< Get current operator */
-    GSM_CMD_COPS_GET_OPT,                       /*!< Get a list of available operators */
-    GSM_CMD_CPAS,                               /*!< Phone Activity Status */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
     GSM_CMD_PHONEBOOK_ENABLE,                   /*!< Top command to enable phonebook */
     GSM_CMD_CPBF,                               /*!< Find Phonebook Entries */
@@ -158,22 +159,29 @@ typedef enum {
     GSM_CMD_SIM_PROCESS_BASIC_CMDS,             /*!< Command setup, executed when SIM is in READY state */
     GSM_CMD_CPIN_SET,                           /*!< Enter PIN */
     GSM_CMD_CPIN_GET,                           /*!< Read current SIM status */
+    GSM_CMD_CPIN_ADD,                           /*!< Add new PIN to SIM if pin is not set */
+    GSM_CMD_CPIN_CHANGE,                        /*!< Change already active SIM */
+    GSM_CMD_CPIN_REMOVE,                        /*!< Remove current PIN */
+    GMM_CMD_CPUK_SET,                           /*!< Enter PUK and set new PIN */
+
+    GSM_CMD_CSQ_GET,                            /*!< Signal Quality Report */
+    GSM_CMD_CFUN_SET,                           /*!< Set Phone Functionality */
+    GSM_CMD_CFUN_GET,                           /*!< Get Phone Functionality */
+    GSM_CMD_CREG_SET,                           /*!< Network Registration set output */
+    GSM_CMD_CREG_GET,                           /*!< Get current network registration status */
+    GSM_CMD_CBC,                                /*!< Battery Charge */
+    GSM_CMD_CNUM,                               /*!< Subscriber Number */
+
     GSM_CMD_CPWD,                               /*!< Change Password */
     GSM_CMD_CR,                                 /*!< Service Reporting Control */
     GSM_CMD_CRC,                                /*!< Set Cellular Result Codes for Incoming Call Indication */
-    GSM_CMD_CREG_SET,                           /*!< Network Registration set output */
-    GSM_CMD_CREG_GET,                           /*!< Get current network registration status */
     GSM_CMD_CRLP,                               /*!< Select Radio Link Protocol Parameters  */
     GSM_CMD_CRSM,                               /*!< Restricted SIM Access */
-    GSM_CMD_CSQ,                                /*!< Signal Quality Report */
     GSM_CMD_VTD,                                /*!< Tone Duration */
     GSM_CMD_VTS,                                /*!< DTMF and Tone Generation */
     GSM_CMD_CMUX,                               /*!< Multiplexer Control */
-    GSM_CMD_CNUM,                               /*!< Subscriber Number */
     GSM_CMD_CPOL,                               /*!< Preferred Operator List */
     GSM_CMD_COPN,                               /*!< Read Operator Names */
-    GSM_CMD_CFUN_SET,                           /*!< Set Phone Functionality */
-    GSM_CMD_CFUN_GET,                           /*!< Get Phone Functionality */
     GSM_CMD_CCLK,                               /*!< Clock */
     GSM_CMD_CSIM,                               /*!< Generic SIM Access */
     GSM_CMD_CALM,                               /*!< Alert Sound Mode */
@@ -183,10 +191,8 @@ typedef enum {
     GSM_CMD_CMUT,                               /*!< Mute Control */
     GSM_CMD_CPUC,                               /*!< Price Per Unit and Currency Table */
     GSM_CMD_CCWE,                               /*!< Call Meter Maximum Event */
-    GSM_CMD_CBC,                                /*!< Battery Charge */
     GSM_CMD_CUSD,                               /*!< Unstructured Supplementary Service Data108 */
     GSM_CMD_CSSN,                               /*!< Supplementary Services Notification 109 */
-
 #if GSM_CFG_CONN || __DOXYGEN__
     GSM_CMD_CIPMUX,                             /*!< Start Up Multi-IP Connection */
     GSM_CMD_CIPSTART,                           /*!< Start Up TCP or UDP Connection */
@@ -219,62 +225,11 @@ typedef enum {
     GSM_CMD_CIPSGTXT,                           /*!< Select GPRS PDP context */
     GSM_CMD_CIPTKA,                             /*!< Set TCP Keepalive Parameters */
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */
-#if GSM_CFG_HTTP || __DOXYGEN__
-    GSM_CMD_HTTPINIT,                           /*!< Initialize HTTP Service */
-    GSM_CMD_HTTPTERM,                           /*!< Terminate HTTP Service */
-    GSM_CMD_HTTPPARA,                           /*!< Set HTTP Parameters Value */
-    GSM_CMD_HTTPDATA,                           /*!< Input HTTP Data */
-    GSM_CMD_HTTPACTION,                         /*!< HTTP Method Action */
-    GSM_CMD_HTTPREAD,                           /*!< Read the HTTP Server Response */
-    GSM_CMD_HTTPSCONT,                          /*!< Save HTTP Application Context */
-    GSM_CMD_HTTPSTATUS,                         /*!< Read HTTP Status */
-    GSM_CMD_HTTPHEAD,                           /*!< Read the HTTP Header Information of Server Response */
-#endif /* GSM_CFG_HTTP || __DOXYGEN__ */
-#if GSM_CFG_FTP || __DOXYGEN__
-    GSM_CMD_FTPPORT,                            /*!< Set FTP Control Port */
-    GSM_CMD_FTPMODE,                            /*!< Set Active or Passive FTP Mode */
-    GSM_CMD_FTPTYPE,                            /*!< Set the Type of Data to Be Transferred */
-    GSM_CMD_FTPPUTOPT,                          /*!< Set FTP Put Type */
-    GSM_CMD_FTPCID,                             /*!< Set FTP Bearer Profile Identifier */
-    GSM_CMD_FTPREST,                            /*!< Set Resume Broken Download */
-    GSM_CMD_FTPSERV,                            /*!< Set FTP Server Address */
-    GSM_CMD_FTPUN,                              /*!< Set FTP User Name */
-    GSM_CMD_FTPPW,                              /*!< Set FTP Password */
-    GSM_CMD_FTPGETNAME,                         /*!< Set Download File Name */
-    GSM_CMD_FTPGETPATH,                         /*!< Set Download File Path */
-    GSM_CMD_FTPPUTNAME,                         /*!< Set Upload File Name */
-    GSM_CMD_FTPPUTPATH,                         /*!< Set Upload File Path */
-    GSM_CMD_FTPGET,                             /*!< Download File */
-    GSM_CMD_FTPPUT,                             /*!< Set Upload File */
-    GSM_CMD_FTPSCONT,                           /*!< Save FTP Application Context */
-    GSM_CMD_FTPDELE,                            /*!< Delete Specified File in FTP Server */
-    GSM_CMD_FTPSIZE,                            /*!< Get the Size of Specified File in FTP Server */
-    GSM_CMD_FTPSTATE,                           /*!< Get the FTP State */
-    GSM_CMD_FTPEXTPUT,                          /*!< Extend Upload File */
-    GSM_CMD_FTPMKD,                             /*!< Make Directory on the Remote Machine */
-    GSM_CMD_FTPRMD,                             /*!< Remove Directory on the Remote Machine */
-    GSM_CMD_FTPLIST,                            /*!< List Contents of Directory on the Remote Machine */
-    GSM_CMD_FTPGETTOFS,                         /*!< Download File and Save in File System */
-    GSM_CMD_FTPPUTFRMFS,                        /*!< Upload File from File System */
-    GSM_CMD_FTPEXTGET,                          /*!< Extend Download File */
-    GSM_CMD_FTPFILEPUT,                         /*!< Load File in RAM from File System then Upload with FTPPUT */
-    GSM_CMD_FTPQUIT,                            /*!< Quit Current FTP Session */
-#endif /* GSM_CFG_FTP || __DOXYGEN__ */
-#if GSM_CFG_PING || __DOXYGEN__
-    GSM_CMD_CIPPING,                            /*!< PING Request */
-    GSM_CMD_CIPCTL,                             /*!< Set the Mode When Receiving an IP Packet */
-    GSM_CMD_CIPFLT,                             /*!< Set the Rules of IP Filter */
-    GSM_CMD_CIPBEIPING,                         /*!< Set the Module to be PING or Not */
-#endif /* GSM_CFG_PING || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
     GSM_CMD_CALL_ENABLE,                        /*!< Top command to enable call */
-
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_SMS || __DOXYGEN__
     GSM_CMD_SMS_ENABLE,                         /*!< Top command to enable SMS */
-    /*
-     * SMS AT commands according to 3GPP TS 27.005
-     */
     GSM_CMD_CMGD,                               /*!< Delete SMS Message */
     GSM_CMD_CMGF,                               /*!< Select SMS Message Format */
     GSM_CMD_CMGL,                               /*!< List SMS Messages from Preferred Store */
@@ -294,6 +249,8 @@ typedef enum {
     GSM_CMD_CSMP,                               /*!< Set SMS Text Mode Parameters */
     GSM_CMD_CSMS,                               /*!< Select Message Service */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
+
+    GSM_CMD_END,                                /*!< Last CMD entry */
 } gsm_cmd_t;
 
 #if GSM_CFG_CONN || __DOXYGEN__
@@ -354,9 +311,11 @@ typedef struct gsm_msg {
     uint8_t         i;                          /*!< Variable to indicate order number of subcommands */
     gsm_sys_sem_t   sem;                        /*!< Semaphore for the message */
     uint8_t         is_blocking;                /*!< Status if command is blocking */
+    uint8_t         is_device;                  /*!< Is message device specific? */
     uint32_t        block_time;                 /*!< Maximal blocking time in units of milliseconds. Use 0 to for non-blocking call */
     gsmr_t          res;                        /*!< Result of message operation */
     gsmr_t          (*fn)(struct gsm_msg *);    /*!< Processing callback function to process packet */
+    gsmr_t          (*sub_fn)(struct gsm_msg *, uint8_t is_ok, uint16_t is_error);  /*!< Sub command function call */
     union {
         struct {
             uint32_t delay;                     /*!< Delay to use before sending first reset AT command */
@@ -368,10 +327,28 @@ typedef struct gsm_msg {
         struct {
             uint8_t mode;                       /*!< Functionality mode */
         } cfun;                                 /*!< Set phone functionality */
+        
         struct {
             const char* pin;                    /*!< Pin code to write */
-        } cpin;                                 /*!< CPIN command */
+        } cpin_enter;                           /*!< Enter pin code */
+        struct {
+            const char* pin;                    /*!< New pin code */
+        } cpin_add;                             /*!< Add pin code if previously wasn't set */
+        struct {
+            const char* current_pin;            /*!< Current pin code */
+            const char* new_pin;                /*!< New pin code */
+        } cpin_change;                          /*!< Change current pin code */
+        struct {
+            const char* pin;                    /*!< Current pin code */
+        } cpin_remove;                          /*!< Remove PIN code */
+        struct {
+            const char* puk;                    /*!< PUK code */
+            const char* pin;                    /*!< New PIN code */
+        } cpuk_enter;                           /*!< Enter PUK and new PIN */
 
+        struct {
+            int16_t* rssi;                      /*!< Pointer to RSSI variable */
+        } csq;                                  /*!< Signal strength */
         struct {
             uint8_t read;                       /*!< Flag indicating we can read the COPS actual data */
             gsm_operator_t* ops;                /*!< Pointer to operators array */
@@ -453,6 +430,13 @@ typedef struct gsm_msg {
             const char* search;                 /*!< Search string */
         } pb_search;                            /*!< Search phonebook entries */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#if GSM_CFG_NETWORK || __DOXYGEN__ 
+        struct {
+            const char* apn;
+            const char* user;
+            const char* pass;
+        } network_attach;
+#endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
     } msg;                                      /*!< Group of different possible message contents */
 } gsm_msg_t;
 
@@ -564,6 +548,7 @@ typedef struct {
     
     gsm_cb_func_t*      cb_func;                /*!< Callback function linked list */
 
+    int16_t             rssi;                   /*!< RSSI signal strength. `0` = invalid, `-53 % -113` = valid */
 #if GSM_CFG_SMS || __DOXYGEN__
     gsm_sms_t           sms;                    /*!< SMS information */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */ 
@@ -611,6 +596,67 @@ typedef struct {
  * \}
  */
 
+/**
+ * \ingroup         GSM_DEVICE
+ * \name            GSM_DEVICE_FEATURES Device features
+ * \anchor          GSM_DEVICE_FEATURES
+ * \{
+ */
+
+#define GSM_DEVICE_FEATURE_SMS                  GSM_U16(0x0001) /*!< SMS feature */
+#define GSM_DEVICE_FEATURE_CALL                 GSM_U16(0x0002) /*!< Phone book feature */
+#define GSM_DEVICE_FEATURE_PB                   GSM_U16(0x0004) /*!< Call feature */
+#define GSM_DEVICE_FEATURE_TCPIP                GSM_U16(0x0004) /*!< TCP/IP raw connections */
+
+/**
+ * \}
+ */
+
+#if !__DOXYGEN__
+/**
+ * \ingroup         GSM_PRIVATE
+ * \brief           Receive character structure to handle full line terminated with `\n` character
+ */
+typedef struct {
+    char data[128];                             /*!< Received characters */
+    uint8_t len;                                /*!< Length of line */
+} gsm_recv_t;
+#endif
+
+/**
+ * \ingroup         GSM_DEVICE
+ * \brief           Device driver structure
+ */
+typedef struct gsm_device_driver {
+    uint16_t features;                          /*!< List of supported features by device driver */
+
+    /**
+     * Prototype function to send AT command string to modem
+     * 
+     * \param[in]       msg: Current active message
+     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+     */
+    gsmr_t (*at_start_cmd_fn)   (gsm_msg_t* msg);
+
+    /**
+     * New line of data received over AT port
+     *
+     * \param[in]       recv: Received line of data
+     * \param[in,out]   is_ok: Pointer to status if operation is ok. User may modify this status
+     * \param[in,out]   is_error: Pointer to status if operation error occurred. User may modify this status
+     * \return          `1` if message eaten or `0` if ignored
+     */
+    uint8_t (*at_line_recv_fn)  (gsm_recv_t* recv, uint8_t* is_ok, uint16_t* is_error);
+
+    /**
+     * Process sub command
+     *
+     * \param[in]       msg: Current message
+     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+     */
+    gsmr_t (*at_process_sub_cmd_fn)   (gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error);
+} gsm_device_driver_t;
+
 #if !__DOXYGEN__
 /**
  * \ingroup         GSM
@@ -619,9 +665,19 @@ typedef struct {
  * \{
  */
 
-extern gsm_t gsm;
-extern gsm_dev_mem_map_t gsm_dev_mem_map[];
-extern size_t gsm_dev_mem_map_size;
+extern gsm_t                gsm;
+extern gsm_device_driver_t  gsm_device;
+
+extern gsm_dev_mem_map_t    gsm_dev_mem_map[];
+extern size_t               gsm_dev_mem_map_size;
+
+#define CMD_IS_CUR(c)       (gsm.msg != NULL && gsm.msg->cmd == (c))
+#define CMD_IS_DEF(c)       (gsm.msg != NULL && gsm.msg->cmd_def == (c))
+#define CMD_GET_CUR()       ((gsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd : GSM_CMD_IDLE)))
+#define CMD_GET_DEF()       ((gsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd_def : GSM_CMD_IDLE)))
+
+#define CRLF                "\r\n"
+#define CRLF_LEN            2
 
 #define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
 #define GSM_MSG_VAR_ALLOC(name)                 do {\
@@ -646,6 +702,27 @@ extern size_t gsm_dev_mem_map_size;
 #define GSM_CHARHEXTONUM(x)                 (((x) >= '0' && (x) <= '9') ? ((x) - '0') : (((x) >= 'a' && (x) <= 'f') ? ((x) - 'a' + 10) : (((x) >= 'A' && (x) <= 'F') ? ((x) - 'A' + 10) : 0)))
 #define GSM_ISVALIDASCII(x)                 (((x) >= 32 && (x) <= 126) || (x) == '\r' || (x) == '\n')
 
+#define RECV_ADD(ch)        do { recv_buff.data[recv_buff.len++] = ch; recv_buff.data[recv_buff.len] = 0; } while (0)
+#define RECV_RESET()        do { recv_buff.len = 0; recv_buff.data[0] = 0; } while (0)
+#define RECV_LEN()          recv_buff.len
+#define RECV_IDX(index)     recv_buff.data[index]
+
+#define GSM_AT_PORT_SEND_BEGIN()        do { GSM_AT_PORT_SEND_STR("AT"); } while (0)
+#define GSM_AT_PORT_SEND_END()          do { GSM_AT_PORT_SEND_STR(CRLF); } while (0)
+
+#define GSM_AT_PORT_SEND_STR(str)       gsm.ll.send_fn((const uint8_t *)(str), (uint16_t)strlen(str))
+#define GSM_AT_PORT_SEND_CHR(ch)        gsm.ll.send_fn((const uint8_t *)(ch), (uint16_t)1)
+#define GSM_AT_PORT_SEND(d, l)          gsm.ll.send_fn((const uint8_t *)(d), (uint16_t)(l))
+
+#define GSM_AT_PORT_SEND_QUOTE_COND(q)  do { if ((q)) { GSM_AT_PORT_SEND_STR("\""); } } while (0)
+#define GSM_AT_PORT_SEND_COMMA_COND(c)  do { if ((c)) { GSM_AT_PORT_SEND_STR(","); } } while (0)
+#define GSM_AT_PORT_SEND_EQUAL_COND(e)  do { if ((e)) { GSM_AT_PORT_SEND_STR("="); } } while (0)
+
+#define GSM_AT_PORT_SEND_CTRL_Z()       GSM_AT_PORT_SEND_STR("\x1A")
+#define GSM_AT_PORT_SEND_ESC()          GSM_AT_PORT_SEND_STR("\x1B")
+
+#define GSM_PORT2NUM(port)              ((uint32_t)(port))
+
 /**
  * \brief           Protect (count up) OS protection (mutex)
  */
@@ -665,9 +742,27 @@ gsmr_t      gsmi_send_cb(gsm_cb_type_t type);
 gsmr_t      gsmi_send_conn_cb(gsm_conn_t* conn, gsm_cb_fn cb);
 void        gsmi_conn_init(void);
 gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t block, uint32_t max_block_time);
+gsmr_t      gsmi_send_device_msg_to_producer_mbox(gsm_msg_t* msg, uint32_t block, uint32_t max_block_time);
 uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
 
 gsmr_t      gsmi_get_sim_info(uint32_t blocking);
+
+/* Device internal functions */
+uint8_t     gsmi_device_set_sms_ready(uint8_t ready);
+uint8_t     gsmi_device_set_call_ready(uint8_t ready);
+
+/* Send functions */
+void        byte_to_str(uint8_t num, char* str);
+void        number_to_str(uint32_t num, char* str);
+void        signed_number_to_str(int32_t num, char* str);
+
+/* Send functions */
+void        send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c);
+void        send_string(const char* str, uint8_t e, uint8_t q, uint8_t c);
+void        send_number(uint32_t num, uint8_t q, uint8_t c);
+void        send_port(gsm_port_t port, uint8_t q, uint8_t c);
+void        send_signed_number(int32_t num, uint8_t q, uint8_t c);
+void        send_dev_memory(gsm_mem_t mem, uint8_t q, uint8_t c);
 
 /**
  * \}

@@ -38,6 +38,9 @@
 
 /**
  * \brief           Attach to network
+ * \param[in]       apn: APN name
+ * \param[in]       user: User name to attach. Set to `NULL` if not used
+ * \param[in]       pass: User password to attach. Set to `NULL` if not used
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
@@ -47,8 +50,11 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
+    GSM_MSG_VAR_REF(msg).msg.network_attach.apn = apn;
+    GSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
+    GSM_MSG_VAR_REF(msg).msg.network_attach.pass = pass;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_device_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), blocking, 60000);   /* Send message to producer queue */
 }
 
 /**
@@ -58,7 +64,12 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t
  */
 gsmr_t
 gsm_network_detach(uint32_t blocking) {
-    return gsmERR;
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_DETACH;
+
+    return gsmi_send_device_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), blocking, 60000);   /* Send message to producer queue */
 }
 
 #endif /* GSM_CFG_NETWORK || __DOXYGEN__ */

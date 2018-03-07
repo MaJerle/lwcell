@@ -331,6 +331,32 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
 }
 
 /**
+ * \brief           Parse received +CSQ signal value
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+gsmi_parse_csq(const char* str) {
+    int16_t rssi;
+    if (*str == '+') {
+        str += 6;
+    }
+
+    rssi = gsmi_parse_number(&str);
+    if (rssi < 32) {
+        rssi = -(113 - (rssi * 2));
+    } else {
+        rssi = 0;
+    }
+    gsm.rssi = rssi;                            /* Save RSSI to global variable */
+    if (gsm.msg->cmd_def == GSM_CMD_CSQ_GET &&
+        gsm.msg->msg.csq.rssi != NULL) {
+        *gsm.msg->msg.csq.rssi = rssi;          /* Save to user variable */
+    }
+    return 1;
+}
+
+/**
  * \brief           Parse received +CPIN status value
  * \param[in]       str: Input string
  * \param[in]       send_evt: Send event about new CPIN status
@@ -401,7 +427,7 @@ gsmi_parse_cops(const char* str) {
         gsm.network.curr_operator.format = GSM_OPERATOR_FORMAT_INVALID;
     }
 
-    if (gsm.msg != NULL && gsm.msg->cmd_def == GSM_CMD_COPS_GET &&
+    if (CMD_IS_DEF(GSM_CMD_COPS_GET) &&
         gsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
         memcpy(gsm.msg->msg.cops_get.curr, &gsm.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
     }
@@ -634,7 +660,7 @@ uint8_t
 gsmi_parse_cmgl(const char* str) {
     gsm_sms_entry_t* e;
 
-    if (gsm.msg == NULL || gsm.msg->cmd_def != GSM_CMD_CMGL ||
+    if (!CMD_IS_DEF(GSM_CMD_CMGL) ||
         gsm.msg->msg.sms_list.ei >= gsm.msg->msg.sms_list.etr) {
         return 0;
     }
@@ -759,7 +785,7 @@ uint8_t
 gsmi_parse_cpbr(const char* str) {
     gsm_pb_entry_t* e;
 
-    if (gsm.msg == NULL || gsm.msg->cmd_def != GSM_CMD_CPBR ||
+    if (!CMD_IS_DEF(GSM_CMD_CPBR) ||
         gsm.msg->msg.pb_list.ei >= gsm.msg->msg.pb_list.etr) {
         return 0;
     }
@@ -790,7 +816,7 @@ uint8_t
 gsmi_parse_cpbf(const char* str) {
     gsm_pb_entry_t* e;
 
-    if (gsm.msg == NULL || gsm.msg->cmd_def != GSM_CMD_CPBF ||
+    if (!CMD_IS_DEF(GSM_CMD_CPBF) ||
         gsm.msg->msg.pb_search.ei >= gsm.msg->msg.pb_search.etr) {
         return 0;
     }

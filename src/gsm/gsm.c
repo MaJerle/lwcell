@@ -261,24 +261,6 @@ gsm_set_func_mode(uint8_t mode, uint32_t blocking) {
 }
 
 /**
- * \brief           Set pin code to make card ready
- * \param[in]       pin: Pin code in string format
- * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
- */
-gsmr_t
-gsm_set_pin(const char* pin, uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
-
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
-    //GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
-    GSM_MSG_VAR_REF(msg).msg.cpin.pin = pin;
-
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
-}
-
-/**
  * \brief           Notify stack if device is present or not
  * 
  *                  Use this function to notify stack that device is not connected and not ready to communicate with host device

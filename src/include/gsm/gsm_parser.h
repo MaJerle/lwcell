@@ -46,6 +46,7 @@ uint8_t     gsmi_parse_mac(const char** src, gsm_mac_t* mac);
 
 uint8_t     gsmi_parse_cpin(const char* str, uint8_t send_evt);
 uint8_t     gsmi_parse_creg(const char* str, uint8_t skip_first);
+uint8_t     gsmi_parse_csq(const char* str);
 
 uint8_t     gsmi_parse_cmgs(const char* str, uint8_t send_evt);
 uint8_t     gsmi_parse_cmti(const char* str, uint8_t send_evt);

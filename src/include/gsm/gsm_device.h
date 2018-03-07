@@ -1,8 +1,8 @@
-/**	
- * \file            gsm_phonebook.h
- * \brief           Phonebook API
+/**
+ * \file            gsm_device.h
+ * \brief           Device specific include
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
  *  
@@ -30,40 +30,28 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_PHONEBOOK_H
-#define __GSM_PHONEBOOK_H
+#ifndef __GSM_DEVICE_H
+#define __GSM_DEVICE_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 #include "gsm/gsm.h"
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_PHONEBOOK Phonebook API
- * \brief           Phonebook manager
+ * \ingroup			GSM
+ * \defgroup        GSM_DEVICE GSM Device
+ * \brief           GSM device driver implementation
  * \{
  */
-
-gsmr_t      gsm_pb_enable(uint32_t blocking);
-gsmr_t      gsm_pb_disable(uint32_t blocking);
-
-gsmr_t      gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking);
-gsmr_t      gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking);
-gsmr_t      gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking);
-gsmr_t      gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, uint32_t blocking);
-gsmr_t      gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking);
-gsmr_t      gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking);
 
 /**
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif /* __GSM_PHONEBOOK_H */
+#endif /* __GSM_DEVICE_H */
