@@ -32,6 +32,7 @@
  */
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_device.h"
+#include "gsm/gsm_parser.h"
 
 static gsmr_t   at_send_cmd(gsm_msg_t* msg);
 static uint8_t  at_line_recv(gsm_recv_t* recv, uint8_t* is_ok, uint16_t* is_error);
@@ -49,9 +50,11 @@ typedef enum {
     GSM_CMD_CSTM_CGATT_SET_0,
     GSM_CMD_CSTM_CGATT_SET_1,
     GSM_CMD_CSTM_CIPSHUT,
+    GSM_CMD_CSTM_CIPMUX_SET,
+    GSM_CMD_CSTM_CIPRXGET_SET,
     GSM_CMD_CSTM_CSTT_SET,
     GSM_CMD_CSTM_CIICR,
-    GSM_CMD_CSTM_CIFCR,
+    GSM_CMD_CSTM_CIFSR,
 } gsm_cmd_custom_t;
 
 /**
@@ -80,9 +83,11 @@ at_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
             case 1: cmd = GSM_CMD_CSTM_CGATT_SET_0; break;
             case 2: cmd = GSM_CMD_CSTM_CGATT_SET_1; break;
             case 3: cmd = GSM_CMD_CSTM_CIPSHUT; break;
-            case 4: cmd = GSM_CMD_CSTM_CSTT_SET; break;
-            case 5: cmd = GSM_CMD_CSTM_CIICR; break;
-            case 6: cmd = GSM_CMD_CSTM_CIFCR; break;
+            case 4: cmd = GSM_CMD_CSTM_CIPMUX_SET; break;
+            case 5: cmd = GSM_CMD_CSTM_CIPRXGET_SET; break;
+            case 6: cmd = GSM_CMD_CSTM_CSTT_SET; break;
+            case 7: cmd = GSM_CMD_CSTM_CIICR; break;
+            case 8: cmd = GSM_CMD_CSTM_CIFSR; break;
             default: break;
         }
     } else if (CMD_IS_DEF(GSM_CMD_NETWORK_DETACH)) {
@@ -139,6 +144,18 @@ at_send_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
+        case GSM_CMD_CSTM_CIPMUX_SET: {         /* Set multiple connections */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CIPMUX=1");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CSTM_CIPRXGET_SET: {
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CIPRXGET=1");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
         case GSM_CMD_CSTM_CSTT_SET: {
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             GSM_AT_PORT_SEND_STR("+CSTT=");
@@ -154,9 +171,9 @@ at_send_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
-        case GSM_CMD_CSTM_CIFCR: {
+        case GSM_CMD_CSTM_CIFSR: {              /* Acquire IP address */
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
-            GSM_AT_PORT_SEND_STR("+CIFCR");
+            GSM_AT_PORT_SEND_STR("+CIFSR");
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
@@ -188,6 +205,12 @@ at_line_recv(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_error) {
         } else if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
             gsmi_device_set_call_ready(1);      /* Set call ready */
 #endif /* GSM_CFG_CALL */
+        } else if (CMD_IS_CUR(GSM_CMD_CSTM_CIFSR) && GSM_CHARISNUM(rcv->data[0])) {
+            gsm_ip_t ip;
+            const char* tmp = rcv->data;
+            gsmi_parse_ip(&tmp, &ip);
+            gsmi_device_set_ip(&ip);            /* Set device IP */
+            *is_ok = 1;                         /* Manually set OK flag as we don't expect OK in command */
         }
     }
 
