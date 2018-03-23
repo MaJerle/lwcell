@@ -54,3 +54,22 @@ gsmi_device_set_call_ready(uint8_t ready) {
 }
 
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
+
+#if GSM_CFG_NETWORK || __DOXYGEN__
+
+/**
+ * \brief           Set IP address to stack received by GSM device
+ * \param[in]       ip: IP address. Set to `NULL` to clear address
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsmi_device_set_ip(gsm_ip_t* ip) {
+    if (ip != NULL) {
+        //memcpy(&gsm.ip, ip, sizeof(*ip));
+    } else {
+        //memset(&gsm.ip, 0x00, sizeof(*ip));
+    }
+    return 1;
+}
+
+#endif /* GSM_CFG_NETWORK || __DOXYGEN__ */

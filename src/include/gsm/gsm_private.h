@@ -750,6 +750,7 @@ gsmr_t      gsmi_get_sim_info(uint32_t blocking);
 /* Device internal functions */
 uint8_t     gsmi_device_set_sms_ready(uint8_t ready);
 uint8_t     gsmi_device_set_call_ready(uint8_t ready);
+uint8_t     gsmi_device_set_ip(gsm_ip_t* ip);
 
 /* Send functions */
 void        byte_to_str(uint8_t num, char* str);

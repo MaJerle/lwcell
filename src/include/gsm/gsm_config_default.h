@@ -339,6 +339,12 @@
  * \{
  */
 
+/**
+ * \brief           Enables (1) or disables (0) network functionality
+ *
+ *                  Network must be enabled to use all GPRS/LTE functions such
+ *                  as connection API, FTP, HTTP, etc.
+ */
 #ifndef GSM_CFG_NETWORK
 #define GSM_CFG_NETWORK                     1
 #endif
