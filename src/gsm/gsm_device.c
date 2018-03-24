@@ -1,6 +1,6 @@
 /**
- * \file            gsm_int_device.c
- * \brief           Internal functions for device management
+ * \file            gsm_device.c
+ * \brief           Device driver internal functions
  */
 
 /*
@@ -36,7 +36,7 @@
 #if GSM_CFG_SMS || __DOXYGEN__
 
 uint8_t
-gsmi_device_set_sms_ready(uint8_t ready) {
+gsm_device_set_sms_ready(uint8_t ready) {
     gsm.status.f.sms_ready = !!ready;           /* SMS ready flag */
     gsmi_send_cb(GSM_CB_SMS_READY);             /* Send SMS ready event */
     return 1;
@@ -47,7 +47,7 @@ gsmi_device_set_sms_ready(uint8_t ready) {
 #if GSM_CFG_CALL || __DOXYGEN__
 
 uint8_t
-gsmi_device_set_call_ready(uint8_t ready) {
+gsm_device_set_call_ready(uint8_t ready) {
     gsm.status.f.call_ready = !!ready;          /* Call ready flag */
     gsmi_send_cb(GSM_CB_CALL_READY);            /* Send call ready event */
     return 1;
@@ -63,12 +63,22 @@ gsmi_device_set_call_ready(uint8_t ready) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_device_set_ip(gsm_ip_t* ip) {
+gsm_device_set_ip(gsm_ip_t* ip) {
     if (ip != NULL) {
         //memcpy(&gsm.ip, ip, sizeof(*ip));
     } else {
         //memset(&gsm.ip, 0x00, sizeof(*ip));
     }
+    return 1;
+}
+
+/**
+ * \brief           Set network is ready to use flag
+ * \param[in]       ready: Flag indicates if network is ready and connection(s) can be established
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsm_device_set_network_ready(uint8_t ready) {
     return 1;
 }
 

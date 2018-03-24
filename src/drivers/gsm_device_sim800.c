@@ -112,6 +112,7 @@ at_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
 static gsmr_t
 at_send_cmd(gsm_msg_t* msg) {
     switch (CMD_GET_CUR()) {
+#if GSM_CFG_NETWORK
         case GSM_CMD_NETWORK_ATTACH:
         case GSM_CMD_CSTM_CGACT_SET_0: {
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
@@ -177,6 +178,7 @@ at_send_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
+#endif /* GSM_CFG_NETWORK */
         default:
             return gsmERR;
     }
@@ -199,18 +201,22 @@ at_line_recv(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_error) {
             *is_ok = 1;
 #if GSM_CFG_SMS
         } else if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready" CRLF, 9 + CRLF_LEN)) {
-            gsmi_device_set_sms_ready(1);       /* Set SMS ready */
+            gsm_device_set_sms_ready(1);        /* Set SMS ready */
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CALL
         } else if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
-            gsmi_device_set_call_ready(1);      /* Set call ready */
+            gsm_device_set_call_ready(1);       /* Set call ready */
 #endif /* GSM_CFG_CALL */
+#if GSM_CFG_NETWORK
         } else if (CMD_IS_CUR(GSM_CMD_CSTM_CIFSR) && GSM_CHARISNUM(rcv->data[0])) {
             gsm_ip_t ip;
             const char* tmp = rcv->data;
-            gsmi_parse_ip(&tmp, &ip);
-            gsmi_device_set_ip(&ip);            /* Set device IP */
-            *is_ok = 1;                         /* Manually set OK flag as we don't expect OK in command */
+            gsmi_parse_ip(&tmp, &ip);           /* Parse IP address */
+            gsm_device_set_ip(&ip);             /* Set device IP before enabling network */
+            gsm_device_set_network_ready(1);    /* Network is ready to use at this point */
+            
+            *is_ok = 1;                         /* Manually set OK flag as we don't expect OK in CIFSR command */
+#endif /* GSM_CFG_NETWORK */
         }
     }
 

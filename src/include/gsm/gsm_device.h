@@ -46,6 +46,16 @@ extern "C" {
  * \{
  */
 
+/* For SMS */
+uint8_t     gsm_device_set_sms_ready(uint8_t ready);
+
+/* For call */
+uint8_t     gsm_device_set_call_ready(uint8_t ready);
+
+/* For network */
+uint8_t     gsm_device_set_ip(gsm_ip_t* ip);
+uint8_t     gsm_device_set_network_ready(uint8_t ready);
+
 /**
  * \}
  */
