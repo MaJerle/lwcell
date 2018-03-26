@@ -510,8 +510,8 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     /*
      * Send received info to device specific processing function
      */
-    if (gsm_device.at_line_recv_fn != NULL) {
-        gsm_device.at_line_recv_fn(rcv, &is_ok, &is_error);
+    if (gsm.driver != NULL && gsm.driver->at_line_recv_fn != NULL) {
+        gsm.driver->at_line_recv_fn(rcv, &is_ok, &is_error);
     }
     
     /*
@@ -526,6 +526,16 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             } else {
                 res = gsmi_process_sub_cmd(gsm.msg, is_ok, is_error);
             }
+
+            /*
+             * Check if reset command finished
+             */
+            if (CMD_IS_DEF(GSM_CMD_RESET)) {
+                if (gsm.msg->cmd == GSM_CMD_IDLE) {
+                    gsmi_send_cb(GSM_CB_RESET_FINISH);  /* Send to upper layer */
+                }
+            }
+
             if (res != gsmCONT) {               /* Shall we continue with next subcommand under this one? */
                 if (is_ok) {                    /* Check OK status */
                     res = gsm.msg->res = gsmOK;
@@ -750,16 +760,41 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
                 break;
             }
             case GSM_CMD_CMEE: {
+                n_cmd = GSM_CMD_CGMI_GET;       /* Get manufacturer */
+                break;
+            }
+            case GSM_CMD_CGMI_GET: {
+                n_cmd = GSM_CMD_CGMM_GET;       /* Get model */
+                break;
+            }
+            case GSM_CMD_CGMM_GET: {
+                n_cmd = GSM_CMD_CGSN_GET;       /* Get product serial number */
+                break;
+            }
+            case GSM_CMD_CGSN_GET: {
+                /*
+                 * At this point we have modem info.
+                 * It is now time to send info to user
+                 * to select between device drivers
+                 */
+                gsmi_send_cb(GSM_CB_DEVICE_IDENTIFIED);
+
                 n_cmd = GSM_CMD_CREG_SET;       /* Enable unsolicited code for CREG */
                 break;
             }
             case GSM_CMD_CREG_SET: {
-
+                /*
+                 * At this point check if device driver is set
+                 * and in case it is, start reset for device specific part
+                 */
+                if (gsm.driver != NULL) {
+                    n_cmd = GSM_CMD_RESET_DEVICE_FIRST_CMD; /* Start first reset command for device */
+                    msg->fn = gsm.driver->at_start_cmd_fn;  /* Set start function */
+                    msg->sub_fn = gsm.driver->at_process_sub_cmd_fn;    /* Function to check sub-commands */
+                }
+                break;
             }
             default: break;
-        }
-        if (n_cmd == GSM_CMD_IDLE) {
-            gsmi_send_cb(GSM_CB_RESET_FINISH);  /* Send to upper layer */
         }
     } else if (CMD_IS_DEF(GSM_CMD_COPS_GET)) {
         if (CMD_IS_CUR(GSM_CMD_COPS_GET)) {
@@ -893,6 +928,8 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
         if (msg->fn(msg) == gsmOK) {
             return gsmCONT;
         }
+    } else {
+        msg->cmd = GSM_CMD_IDLE;
     }
     return is_ok ? gsmOK : gsmERR;
 }
@@ -926,6 +963,24 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CMEE: {                    /* Enable detailed error messages */
             GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
             GSM_AT_PORT_SEND_STR("+CMEE=1");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CGMI_GET: {                /* Get manufacturer */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CGMI");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CGMM_GET: {                /* Get model */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CGMM");
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
+        case GSM_CMD_CGSN_GET: {                /* Get serial number */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_STR("+CGSN");
             GSM_AT_PORT_SEND_END();             /* End AT command string */
             break;
         }
@@ -1233,16 +1288,16 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
  * \param[in]       conn: Address to check if valid connection ptr
  * \return          1 on success, 0 otherwise
  */
-uint8_t
-gsmi_is_valid_conn_ptr(gsm_conn_p conn) {
-    uint8_t i = 0;
-    for (i = 0; i < sizeof(gsm.conns) / sizeof(gsm.conns[0]); i++) {
-        if (conn == &gsm.conns[i]) {
-            return 1;
-        }
-    }
-    return 0;
-}
+//uint8_t
+//gsmi_is_valid_conn_ptr(gsm_conn_p conn) {
+//    uint8_t i = 0;
+//    for (i = 0; i < sizeof(gsm.conns) / sizeof(gsm.conns[0]); i++) {
+//        if (conn == &gsm.conns[i]) {
+//            return 1;
+//        }
+//    }
+//    return 0;
+//}
 
 /**
  * \brief           Send message from API function to producer queue for further processing
@@ -1307,6 +1362,11 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
 
 gsmr_t
 gsmi_send_device_msg_to_producer_mbox(gsm_msg_t* msg, uint32_t block, uint32_t max_block_time) {
-    msg->sub_fn = gsm_device.at_process_sub_cmd_fn; /* Sub function pointer */
-    return gsmi_send_msg_to_producer_mbox(msg, gsm_device.at_start_cmd_fn, block, max_block_time);
+    if (gsm.driver == NULL) {
+        GSM_MSG_VAR_FREE(msg);
+        return gsmERR;
+    }
+
+    msg->sub_fn = gsm.driver->at_process_sub_cmd_fn;    /* Sub function pointer */
+    return gsmi_send_msg_to_producer_mbox(msg, gsm.driver->at_start_cmd_fn, block, max_block_time);
 }

@@ -34,9 +34,9 @@
 #include "gsm/gsm_device.h"
 #include "gsm/gsm_parser.h"
 
-static gsmr_t   at_send_cmd(gsm_msg_t* msg);
+static gsmr_t   at_send_cmd(void* m);
 static uint8_t  at_line_recv(gsm_recv_t* recv, uint8_t* is_ok, uint16_t* is_error);
-static gsmr_t   at_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error);
+static gsmr_t   at_process_sub_cmd(void* m, uint8_t is_ok, uint16_t is_error);
 
 /**
  * \brief           Custom CMD dedicated for current modem
@@ -61,7 +61,7 @@ typedef enum {
  * \brief           Device driver control structure
  */
 gsm_device_driver_t
-gsm_device = {
+gsm_device_sim800_900 = {
     .features = GSM_DEVICE_FEATURE_SMS | GSM_DEVICE_FEATURE_CALL |
                 GSM_DEVICE_FEATURE_PB | GSM_DEVICE_FEATURE_TCPIP,
     .at_start_cmd_fn = at_send_cmd,
@@ -73,11 +73,14 @@ gsm_device = {
  * \brief           Process sub command
  */
 static gsmr_t
-at_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
+at_process_sub_cmd(void* m, uint8_t is_ok, uint16_t is_error) {
+    gsm_msg_t* msg = m;
     uint32_t cmd = 0;
-    
+
+    if (CMD_IS_DEF(GSM_CMD_RESET)) {            /* Check for device specific reset */
+
 #if GSM_CFG_NETWORK
-    if (CMD_IS_DEF(GSM_CMD_NETWORK_ATTACH)) {
+    } if (CMD_IS_DEF(GSM_CMD_NETWORK_ATTACH)) {
         switch (msg->i) {
             case 0: cmd = GSM_CMD_CSTM_CGACT_SET_1; break;
             case 1: cmd = GSM_CMD_CSTM_CGATT_SET_0; break;
@@ -95,11 +98,16 @@ at_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
             case 0: cmd = GSM_CMD_CSTM_CGACT_SET_0; break;
             default: break;
         }
-    }
+        if (!cmd) {
+            is_ok = 1;
+        }
 #endif /* GSM_CFG_NETWORK */
+    }
     if (cmd) {
         msg->cmd = (gsm_cmd_t)cmd;
         return msg->fn(msg) == gsmOK ? gsmCONT : gsmERR;
+    } else {
+        msg->cmd = GSM_CMD_IDLE;
     }
     return is_ok ? gsmOK : gsmERR;
 }
@@ -110,8 +118,14 @@ at_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 static gsmr_t
-at_send_cmd(gsm_msg_t* msg) {
+at_send_cmd(void* m) {
+    gsm_msg_t* msg = m;
     switch (CMD_GET_CUR()) {
+        case GSM_CMD_RESET_DEVICE_FIRST_CMD: {  /* First command for device driver specific reset */
+            GSM_AT_PORT_SEND_BEGIN();           /* Begin AT command string */
+            GSM_AT_PORT_SEND_END();             /* End AT command string */
+            break;
+        }
 #if GSM_CFG_NETWORK
         case GSM_CMD_NETWORK_ATTACH:
         case GSM_CMD_CSTM_CGACT_SET_0: {

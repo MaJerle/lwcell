@@ -302,6 +302,7 @@ typedef enum {
  * \note            Data received on `+CLCC` info
  */
 typedef struct {
+    uint8_t ready;                              /*!< Flag indicating feature ready by device */
     uint8_t enabled;                            /*!< Flag indicating feature enabled */
 
     uint8_t id;                                 /*!< Call identification number, 0-7 */
@@ -348,6 +349,7 @@ typedef enum gsm_cb_type_t {
     GSM_CB_RESET_FINISH,                        /*!< Reset operation finished */
 
     GSM_CB_DEVICE_PRESENT,                      /*!< Notification when device present status changes */
+    GSM_CB_DEVICE_IDENTIFIED,                   /*!< Device identified event */
 
     GSM_CB_INIT_FINISH,                         /*!< Initialization has been finished at this point */
 
@@ -518,6 +520,53 @@ typedef struct gsm_buff {
     uint8_t* buff;                              /*!< Pointer to buffer data array */
     uint8_t flags;                              /*!< Flags for buffer */
 } gsm_buff_t;
+
+#if !__DOXYGEN__
+
+/**
+ * \ingroup         GSM_PRIVATE
+ * \brief           Receive character structure to handle full line terminated with `\n` character
+ */
+typedef struct {
+    char data[128];                             /*!< Received characters */
+    uint8_t len;                                /*!< Length of line */
+} gsm_recv_t;
+
+#endif /* !__DOXYGEN__ */
+
+/**
+ * \ingroup         GSM_DEVICE
+ * \brief           Device driver structure
+ */
+typedef struct gsm_device_driver {
+    uint16_t features;                          /*!< List of supported features by device driver */
+
+    /**
+     * Prototype function to send AT command string to modem
+     * 
+     * \param[in]       msg: Current active message. It is of type \ref gsm_msg_t structure
+     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+     */
+    gsmr_t (*at_start_cmd_fn)   (void* m);
+
+    /**
+     * New line of data received over AT port
+     *
+     * \param[in]       recv: Received line of data
+     * \param[in,out]   is_ok: Pointer to status if operation is ok. User may modify this status
+     * \param[in,out]   is_error: Pointer to status if operation error occurred. User may modify this status
+     * \return          `1` if message eaten or `0` if ignored
+     */
+    uint8_t (*at_line_recv_fn)  (gsm_recv_t* recv, uint8_t* is_ok, uint16_t* is_error);
+
+    /**
+     * Process sub command
+     *
+     * \param[in]       m: Current message. It is of type \ref gsm_msg_t structure
+     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+     */
+    gsmr_t (*at_process_sub_cmd_fn)   (void* m, uint8_t is_ok, uint16_t is_error);
+} gsm_device_driver_t;
 
 #ifdef __cplusplus
 }

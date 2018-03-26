@@ -58,10 +58,10 @@ check_enabled(void) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 static gsmr_t
-check_call_ready(void) {
+check_ready(void) {
     gsmr_t res;
     GSM_CORE_PROTECT();
-    res = gsm.status.f.call_ready ? gsmOK : gsmERR;
+    res = gsm.call.ready ? gsmOK : gsmERR;
     GSM_CORE_UNPROTECT();
     return res;
 }
@@ -107,7 +107,7 @@ gsm_call_start(const char* number, uint32_t blocking) {
 
     GSM_ASSERT("number != NULL", number != NULL);   /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_ASSERT("call_ready", check_call_ready() == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("call_ready", check_ready() == gsmOK);   /* Assert input parameters */
                                                     
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;

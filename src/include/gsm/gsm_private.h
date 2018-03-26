@@ -56,6 +56,7 @@ typedef enum {
      * Basic AT commands
      */
     GSM_CMD_RESET,                              /*!< Reset device */
+    GSM_CMD_RESET_DEVICE_FIRST_CMD,             /*!< Reset device first driver specific command */
     GSM_CMD_ATE0,                               /*!< Disable ECHO mode on AT commands */
     GSM_CMD_ATE1,                               /*!< Enable ECHO mode on AT commands */
     GSM_CMD_GSLP,                               /*!< Set GSM to sleep mode */
@@ -124,6 +125,13 @@ typedef enum {
     GSM_CMD_COPS_GET,                           /*!< Get current operator */
     GSM_CMD_COPS_GET_OPT,                       /*!< Get a list of available operators */
     GSM_CMD_CPAS,                               /*!< Phone Activity Status */
+    GSM_CMD_CGMI_GET,                           /*!< Request Manufacturer Identification */
+    GSM_CMD_CGMM_GET,                           /*!< Request Model Identification */
+    GSM_CMD_CGMR_GET,                           /*!< Request TA Revision Identification of Software Release */
+    GSM_CMD_CGSN_GET,                           /*!< Request Product Serial Number Identification (Identical with +GSN) */
+
+    GSM_CMD_CLCC,                               /*!< List Current Calls of ME */
+    GSM_CMD_CLCK,                               /*!< Facility Lock */
 
     GSM_CMD_CACM,                               /*!< Accumulated Call Meter (ACM) Reset or Query */
     GSM_CMD_CAMM,                               /*!< Accumulated Call Meter Maximum (ACM max) Set or Query */
@@ -132,16 +140,10 @@ typedef enum {
     GSM_CMD_CCFC,                               /*!< Call Forwarding Number and Conditions Control */
     GSM_CMD_CCWA,                               /*!< Call Waiting Control */
     GSM_CMD_CEER,                               /*!< Extended Error Report  */
-    GSM_CMD_CGMI,                               /*!< Request Manufacturer Identification */
-    GSM_CMD_CGMM,                               /*!< Request Model Identification */
-    GSM_CMD_CGMR,                               /*!< Request TA Revision Identification of Software Release */
-    GSM_CMD_CGSN,                               /*!< Request Product Serial Number Identification (Identical with +GSN) */
     GSM_CMD_CSCS,                               /*!< Select TE Character Set */
     GSM_CMD_CSTA,                               /*!< Select Type of Address */
     GSM_CMD_CHLD,                               /*!< Call Hold and Multiparty */
     GSM_CMD_CIMI,                               /*!< Request International Mobile Subscriber Identity */
-    GSM_CMD_CLCC,                               /*!< List Current Calls of ME */
-    GSM_CMD_CLCK,                               /*!< Facility Lock */
     GSM_CMD_CLIP,                               /*!< Calling Line Identification Presentation */
     GSM_CMD_CLIR,                               /*!< Calling Line Identification Restriction */
     GSM_CMD_CMEE,                               /*!< Report Mobile Equipment Error */
@@ -485,7 +487,9 @@ typedef struct {
  * \brief           SMS structure
  */
 typedef struct {
+    uint8_t ready;                              /*!< Flag indicating feature ready by device */
     uint8_t enabled;                            /*!< Flag indicating feature enabled */
+
     gsm_sms_mem_t mem[3];                       /*!< 3 memory info for operation,receive,sent storage */
 } gsm_sms_t;
 
@@ -503,7 +507,9 @@ typedef struct {
  * \brief           Phonebook structure
  */
 typedef struct {
+    uint8_t ready;                              /*!< Flag indicating feature ready by device */
     uint8_t enabled;                            /*!< Flag indicating feature enabled */
+
     gsm_pb_mem_t mem;                           /*!< Memory information */
 } gsm_pb_t;
 
@@ -518,10 +524,7 @@ typedef struct {
 /**
  * \brief           GSM global structure
  */
-typedef struct {    
-    uint32_t version_at;                        /*!< Version of AT command software on GSM device */
-    uint32_t version_sdk;                       /*!< Version of SDK used to build AT software */
-
+typedef struct {
     gsm_sys_sem_t       sem_sync;               /*!< Synchronization semaphore between threads */
     gsm_sys_mbox_t      mbox_producer;          /*!< Producer message queue handle */
     gsm_sys_mbox_t      mbox_process;           /*!< Consumer message queue handle */
@@ -533,22 +536,25 @@ typedef struct {
     gsm_ll_t            ll;                     /*!< Low level functions */
     
     gsm_msg_t*          msg;                    /*!< Pointer to current user message being executed */
-    
-    uint32_t            active_conns;           /*!< Bit field of currently active connections, @todo: In case user has more than 32 connections, single variable is not enough */
-    uint32_t            active_conns_last;      /*!< The same as previous but status before last check */
 
-    gsm_sim_state_t     sim_state;              /*!< SIM current state */
-    gsm_network_t       network;                /*!< Network status */
-    
-    gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
-    
-    gsm_link_conn_t     link_conn;              /*!< Link connection handle */
-    //gsm_ipd_t           ipd;                    /*!< Incoming data structure */
     gsm_cb_t            cb;                     /*!< Callback processing structure */
-    
     gsm_cb_func_t*      cb_func;                /*!< Callback function linked list */
 
+    /*
+     * Device driver specific
+     */
+    gsm_device_driver_t* driver;                /*!< Device driver */
+
+    /*
+     * Network&operator specific
+     */
+    gsm_sim_state_t     sim_state;              /*!< SIM current state */
+    gsm_network_t       network;                /*!< Network status */
     int16_t             rssi;                   /*!< RSSI signal strength. `0` = invalid, `-53 % -113` = valid */
+
+    /*
+     * Modules specific
+     */
 #if GSM_CFG_SMS || __DOXYGEN__
     gsm_sms_t           sms;                    /*!< SMS information */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */ 
@@ -562,12 +568,6 @@ typedef struct {
         struct {
             uint8_t     initialized:1;          /*!< Flag indicating GSM library is initialized */
             uint8_t     dev_present:1;          /*!< Flag indicating GSM device is present */
-#if GSM_CFG_SMS || __DOXYGEN__
-            uint8_t     sms_ready:1;            /*!< Flag indicating SMS system is ready */
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */ 
-#if GSM_CFG_CALL || __DOXYGEN__
-            uint8_t     call_ready:1;           /*!< Flag indicating CALL system is ready */
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */ 
         } f;                                    /*!< Flags structure */
     } status;                                   /*!< Status structure */
     
@@ -612,50 +612,26 @@ typedef struct {
  * \}
  */
 
-#if !__DOXYGEN__
 /**
- * \ingroup         GSM_PRIVATE
- * \brief           Receive character structure to handle full line terminated with `\n` character
+ * \ingroup			GSM
+ * \defgroup        GSM_DEVICE GSM Device
+ * \brief           GSM device driver implementation
+ * \{
  */
-typedef struct {
-    char data[128];                             /*!< Received characters */
-    uint8_t len;                                /*!< Length of line */
-} gsm_recv_t;
-#endif
+
+/* For SMS */
+uint8_t     gsm_device_set_sms_ready(uint8_t ready);
+
+/* For call */
+uint8_t     gsm_device_set_call_ready(uint8_t ready);
+
+/* For network */
+uint8_t     gsm_device_set_ip(gsm_ip_t* ip);
+uint8_t     gsm_device_set_network_ready(uint8_t ready);
 
 /**
- * \ingroup         GSM_DEVICE
- * \brief           Device driver structure
+ * \}
  */
-typedef struct gsm_device_driver {
-    uint16_t features;                          /*!< List of supported features by device driver */
-
-    /**
-     * Prototype function to send AT command string to modem
-     * 
-     * \param[in]       msg: Current active message
-     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
-     */
-    gsmr_t (*at_start_cmd_fn)   (gsm_msg_t* msg);
-
-    /**
-     * New line of data received over AT port
-     *
-     * \param[in]       recv: Received line of data
-     * \param[in,out]   is_ok: Pointer to status if operation is ok. User may modify this status
-     * \param[in,out]   is_error: Pointer to status if operation error occurred. User may modify this status
-     * \return          `1` if message eaten or `0` if ignored
-     */
-    uint8_t (*at_line_recv_fn)  (gsm_recv_t* recv, uint8_t* is_ok, uint16_t* is_error);
-
-    /**
-     * Process sub command
-     *
-     * \param[in]       msg: Current message
-     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
-     */
-    gsmr_t (*at_process_sub_cmd_fn)   (gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error);
-} gsm_device_driver_t;
 
 #if !__DOXYGEN__
 /**
@@ -666,7 +642,6 @@ typedef struct gsm_device_driver {
  */
 
 extern gsm_t                gsm;
-extern gsm_device_driver_t  gsm_device;
 
 extern gsm_dev_mem_map_t    gsm_dev_mem_map[];
 extern size_t               gsm_dev_mem_map_size;

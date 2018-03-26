@@ -58,6 +58,19 @@ check_enabled(void) {
 }
 
 /**
+ * \brief           Check if SMS is available
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+static gsmr_t
+check_ready(void) {
+    gsmr_t res;
+    GSM_CORE_PROTECT();
+    res = gsm.sms.ready ? gsmOK : gsmERR;
+    GSM_CORE_UNPROTECT();
+    return res;
+}
+
+/**
  * \brief           Check if input memory is available in modem
  * \param[in]       mem: Memory to test
  * \param[in]       can_curr: Flag indicates if \ref GSM_MEM_CURRENT option can be used
