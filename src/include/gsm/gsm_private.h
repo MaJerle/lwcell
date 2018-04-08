@@ -541,9 +541,12 @@ typedef struct {
     gsm_cb_func_t*      cb_func;                /*!< Callback function linked list */
 
     /*
-     * Device driver specific
+     * Device driver specific and identification
      */
     gsm_device_driver_t* driver;                /*!< Device driver */
+    char                model_manufacturer[20]; /*!< Device manufacturer */
+    char                model_number[20];       /*!< Device model number */
+    char                model_serial_number[20];/*!< Device serial number */
 
     /*
      * Network&operator specific

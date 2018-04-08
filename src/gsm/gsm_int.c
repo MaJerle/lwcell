@@ -483,15 +483,25 @@ gsmi_parse_received(gsm_recv_t* rcv) {
      * Check messages which do not start with '+' sign
      */
     if (rcv->data[0] != '+') {
+        if (0) {
 #if GSM_CFG_CALL
-        if (rcv->data[0] == 'R' && !strncmp(rcv->data, "RING" CRLF, 4 + CRLF_LEN)) {
+        } else if (rcv->data[0] == 'R' && !strncmp(rcv->data, "RING" CRLF, 4 + CRLF_LEN)) {
             gsmi_send_cb(GSM_CB_CALL_RING);     /* Send call ring */
         } else if (rcv->data[0] == 'R' && !strncmp(rcv->data, "NO CARRIER" CRLF, 10 + CRLF_LEN)) {
             gsmi_send_cb(GSM_CB_CALL_NO_CARRIER);   /* Send call no carrier event */
         } else if (rcv->data[0] == 'R' && !strncmp(rcv->data, "BUSY" CRLF, 4 + CRLF_LEN)) {
             gsmi_send_cb(GSM_CB_CALL_BUSY);     /* Send call busy message */
-        }
 #endif /* GSM_CFG_CALL */
+        } else if (!is_ok && !is_error && strncmp(rcv->data, "AT+", 3)) {
+            const char* tmp = rcv->data;
+            if (CMD_IS_CUR(GSM_CMD_CGMI_GET)) { /* Check device manufacturer */
+                gsmi_parse_string(&tmp, gsm.model_manufacturer, sizeof(gsm.model_manufacturer), 1);
+            } else if (CMD_IS_CUR(GSM_CMD_CGMM_GET)) {  /* Check device model number */
+                gsmi_parse_string(&tmp, gsm.model_number, sizeof(gsm.model_number), 1);
+            } else if (CMD_IS_CUR(GSM_CMD_CGSN_GET)) {  /* Check device serial number */
+                gsmi_parse_string(&tmp, gsm.model_serial_number, sizeof(gsm.model_serial_number), 1);
+            }
+        }
     }
 
     /*
