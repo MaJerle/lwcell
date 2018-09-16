@@ -127,7 +127,7 @@ signed_number_to_str(int32_t num, char* str) {
  */
 void
 send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
-    uint8_t i, ch;
+    uint8_t ch;
     char str[4];
     const gsm_mac_t* mac = d;
     const gsm_ip_t* ip = d;
@@ -138,7 +138,7 @@ send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     }
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     ch = is_ip ? '.' : ':';                     /* Get delimiter character */
-    for (i = 0; i < (is_ip ? 4 : 6); i++) {     /* Process byte by byte */
+    for (uint8_t i = 0; i < (is_ip ? 4 : 6); i++) { /* Process byte by byte */
         if (is_ip) {                            /* In case of IP ... */
             number_to_str(ip->ip[i], str);      /* ... go to decimal format ... */
         } else {                                /* ... in case of MAC ... */
@@ -279,12 +279,11 @@ send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
  */
 static void
 reset_connections(uint8_t forced) {
-    //size_t i;
     //
     //gsm.cb.type = GSM_CB_CONN_CLOSED;
     //gsm.cb.cb.conn_active_closed.forced = forced;
     //
-    //for (i = 0; i < GSM_CFG_MAX_CONNS; i++) {   /* Check all connections */
+    //for (size_t i = 0; i < GSM_CFG_MAX_CONNS; i++) {   /* Check all connections */
     //    if (gsm.conns[i].status.f.active) {
     //        gsm.conns[i].status.f.active = 0;
     //        
@@ -302,13 +301,10 @@ reset_connections(uint8_t forced) {
  */
 gsmr_t
 gsmi_send_cb(gsm_cb_type_t type) {
-    gsm_cb_func_t* link;
     gsm.cb.type = type;                         /* Set callback type to process */
     
-    /*
-     * Call callback function for all registered functions
-     */
-    for (link = gsm.cb_func; link != NULL; link = link->next) {
+    /* Call callback function for all registered functions */
+    for (gsm_cb_func_t* link = gsm.cb_func; link != NULL; link = link->next) {
         link->fn(&gsm.cb);
     }
     return gsmOK;
@@ -504,9 +500,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         }
     }
 
-    /*
-     * Check general responses for active commands
-     */
+    /* Check general responses for active commands */
     if (gsm.msg != NULL) {
 #if GSM_CFG_SMS
         if (CMD_IS_CUR(GSM_CMD_CMGS) && is_ok) {
@@ -517,9 +511,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #endif /* GSM_CFG_SMS */
     }
 
-    /*
-     * Send received info to device specific processing function
-     */
+    /* Send received info to device specific processing function */
     if (gsm.driver != NULL && gsm.driver->at_line_recv_fn != NULL) {
         gsm.driver->at_line_recv_fn(rcv, &is_ok, &is_error);
     }
@@ -537,9 +529,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                 res = gsmi_process_sub_cmd(gsm.msg, is_ok, is_error);
             }
 
-            /*
-             * Check if reset command finished
-             */
+            /* Check if reset command finished */
             if (CMD_IS_DEF(GSM_CMD_RESET)) {
                 if (gsm.msg->cmd == GSM_CMD_IDLE) {
                     gsmi_send_cb(GSM_CB_RESET_FINISH);  /* Send to upper layer */
@@ -590,9 +580,7 @@ gsmi_process_buffer(void) {
              */
             data = gsm_buff_get_linear_block_address(&gsm.buff);
             
-            /*
-             * Process actual received data
-             */
+            /* Process actual received data */
             gsmi_process(data, len);
             
             /*
@@ -727,8 +715,7 @@ gsmi_process(const void* data, size_t data_len) {
                      * so it is safe to just add them to receive array without checking
                      * what are the actual values
                      */
-                    uint8_t i;
-                    for (i = 0; i < unicode.t; i++) {
+                    for (uint8_t i = 0; i < unicode.t; i++) {
                         RECV_ADD(unicode.ch[i]);    /* Add character to receive array */
                     }
                 }
@@ -757,7 +744,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
         switch (CMD_GET_CUR()) {                /* Check current command */
             case GSM_CMD_RESET: {
                 n_cmd = GSM_CFG_AT_ECHO ? GSM_CMD_ATE1 : GSM_CMD_ATE0;  /* Set ECHO mode */
-                gsm_delay(3000);                /* Delay for some time before we can continue after reset */
+                gsm_delay(5000);               /* Delay for some time before we can continue after reset */
                 break;
             }
             case GSM_CMD_ATE0:
@@ -1200,8 +1187,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             } else if(CMD_IS_DEF(GSM_CMD_CMGL)) {   /* List SMS original command? */
                 send_dev_memory(msg->msg.sms_list.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
             } else if (CMD_IS_DEF(GSM_CMD_CPMS_SET)) {  /* Do we want to set memory for read/delete,sent/write,receive? */
-                size_t i;
-                for (i = 0; i < 3; i++) {       /* Write 3 memories */
+                for (size_t i = 0; i < 3; i++) {/* Write 3 memories */
                     send_dev_memory(msg->msg.sms_memory.mem[i] == GSM_MEM_CURRENT ? gsm.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
                 }
             }

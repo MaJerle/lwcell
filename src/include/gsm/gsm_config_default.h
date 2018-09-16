@@ -41,7 +41,7 @@
  */
 
 /**
- * \brief           Enables (`1`) or disables (`0`) operating system support for GSM library
+ * \brief           Enables `1` or disables `0` operating system support for GSM library
  *
  * \note            Value must be set to 1 in the current revision
  *
@@ -143,7 +143,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) reset sequence after \ref gsm_init call
+ * \brief           Enables `1` or disables `0` reset sequence after \ref gsm_init call
  *
  * \note            When this functionality is disabled, user must manually call \ref gsm_reset to send
  *                  reset sequence to GSM device.
@@ -275,7 +275,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) echo mode on AT commands
+ * \brief           Enables `1` or disables `0` echo mode on AT commands
  *                  sent to GSM device.
  *
  * \note            This mode is useful when debugging GSM communication
@@ -313,7 +313,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) direct support for processing input data
+ * \brief           Enables `1` or disables `0` direct support for processing input data
  *
  *                  When this mode is enabled, no overhead is included for copying data
  *                  to receive buffer because bytes are processed directly.

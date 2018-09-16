@@ -73,7 +73,7 @@ configure_uart(uint32_t baudrate) {
      * as generic read and write
      */
 	if (!initialized) {
-		comPort = CreateFile(L"\\\\.\\COM17",
+		comPort = CreateFile(L"\\\\.\\COM8",
 			GENERIC_READ | GENERIC_WRITE,
 			0,
 			0,
