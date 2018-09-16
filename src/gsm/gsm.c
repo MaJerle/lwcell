@@ -246,7 +246,7 @@ gsm_delay(uint32_t ms) {
 /**
  * \brief           Set modem function mode
  * \note            Use this function to set modem to normal or low-power mode
- * \param[in]       mode: Mode status. Set to 1 for full functionality or 0 for low-power mode (no functionality)
+ * \param[in]       mode: Mode status. Set to `1` for full functionality or `0` for low-power mode (no functionality)
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */

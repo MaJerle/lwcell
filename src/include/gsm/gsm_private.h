@@ -68,16 +68,9 @@ typedef enum {
     GSM_CMD_NETWORK_ATTACH,                     /*!< Attach to a network */
     GSM_CMD_NETWORK_DETACH,                     /*!< Detach from network */
 
-    GSM_CMD_CSTM_CGACT_SET_0,
-    GSM_CMD_CSTM_CGACT_SET_1,
-    GSM_CMD_CSTM_CGATT_SET_0,
-    GSM_CMD_CSTM_CGATT_SET_1,
-    GSM_CMD_CSTM_CIPSHUT,
-    GSM_CMD_CSTM_CIPMUX_SET,
-    GSM_CMD_CSTM_CIPRXGET_SET,
-    GSM_CMD_CSTM_CSTT_SET,
-    GSM_CMD_CSTM_CIICR,
-    GSM_CMD_CSTM_CIFSR,
+    GSM_CMD_CIPMUX_SET,
+    GSM_CMD_CIPRXGET_SET,
+    GSM_CMD_CSTT_SET,
 
     /* AT commands according to the V.25TER */
     GSM_CMD_CALL_ENABLE,
@@ -656,26 +649,26 @@ extern size_t               gsm_dev_mem_map_size;
 #define GSM_CHARHEXTONUM(x)                 (((x) >= '0' && (x) <= '9') ? ((x) - '0') : (((x) >= 'a' && (x) <= 'f') ? ((x) - 'a' + 10) : (((x) >= 'A' && (x) <= 'F') ? ((x) - 'A' + 10) : 0)))
 #define GSM_ISVALIDASCII(x)                 (((x) >= 32 && (x) <= 126) || (x) == '\r' || (x) == '\n')
 
-#define RECV_ADD(ch)        do { recv_buff.data[recv_buff.len++] = ch; recv_buff.data[recv_buff.len] = 0; } while (0)
-#define RECV_RESET()        do { recv_buff.len = 0; recv_buff.data[0] = 0; } while (0)
-#define RECV_LEN()          recv_buff.len
-#define RECV_IDX(index)     recv_buff.data[index]
+#define RECV_ADD(ch)                        do { recv_buff.data[recv_buff.len++] = ch; recv_buff.data[recv_buff.len] = 0; } while (0)
+#define RECV_RESET()                        do { recv_buff.len = 0; recv_buff.data[0] = 0; } while (0)
+#define RECV_LEN()                          recv_buff.len
+#define RECV_IDX(index)                     recv_buff.data[index]
 
-#define GSM_AT_PORT_SEND_BEGIN()        do { GSM_AT_PORT_SEND_STR("AT"); } while (0)
-#define GSM_AT_PORT_SEND_END()          do { GSM_AT_PORT_SEND_STR(CRLF); } while (0)
+#define GSM_AT_PORT_SEND_BEGIN()            do { GSM_AT_PORT_SEND_STR("AT"); } while (0)
+#define GSM_AT_PORT_SEND_END()              do { GSM_AT_PORT_SEND_STR(CRLF); } while (0)
 
-#define GSM_AT_PORT_SEND_STR(str)       gsm.ll.send_fn((const uint8_t *)(str), (uint16_t)strlen(str))
-#define GSM_AT_PORT_SEND_CHR(ch)        gsm.ll.send_fn((const uint8_t *)(ch), (uint16_t)1)
-#define GSM_AT_PORT_SEND(d, l)          gsm.ll.send_fn((const uint8_t *)(d), (uint16_t)(l))
+#define GSM_AT_PORT_SEND_STR(str)           gsm.ll.send_fn((const uint8_t *)(str), (uint16_t)strlen(str))
+#define GSM_AT_PORT_SEND_CHR(ch)            gsm.ll.send_fn((const uint8_t *)(ch), (uint16_t)1)
+#define GSM_AT_PORT_SEND(d, l)              gsm.ll.send_fn((const uint8_t *)(d), (uint16_t)(l))
 
-#define GSM_AT_PORT_SEND_QUOTE_COND(q)  do { if ((q)) { GSM_AT_PORT_SEND_STR("\""); } } while (0)
-#define GSM_AT_PORT_SEND_COMMA_COND(c)  do { if ((c)) { GSM_AT_PORT_SEND_STR(","); } } while (0)
-#define GSM_AT_PORT_SEND_EQUAL_COND(e)  do { if ((e)) { GSM_AT_PORT_SEND_STR("="); } } while (0)
+#define GSM_AT_PORT_SEND_QUOTE_COND(q)      do { if ((q)) { GSM_AT_PORT_SEND_STR("\""); } } while (0)
+#define GSM_AT_PORT_SEND_COMMA_COND(c)      do { if ((c)) { GSM_AT_PORT_SEND_STR(","); } } while (0)
+#define GSM_AT_PORT_SEND_EQUAL_COND(e)      do { if ((e)) { GSM_AT_PORT_SEND_STR("="); } } while (0)
 
-#define GSM_AT_PORT_SEND_CTRL_Z()       GSM_AT_PORT_SEND_STR("\x1A")
-#define GSM_AT_PORT_SEND_ESC()          GSM_AT_PORT_SEND_STR("\x1B")
+#define GSM_AT_PORT_SEND_CTRL_Z()           GSM_AT_PORT_SEND_STR("\x1A")
+#define GSM_AT_PORT_SEND_ESC()              GSM_AT_PORT_SEND_STR("\x1B")
 
-#define GSM_PORT2NUM(port)              ((uint32_t)(port))
+#define GSM_PORT2NUM(port)                  ((uint32_t)(port))
 
 /**
  * \brief           Protect (count up) OS protection (mutex)
