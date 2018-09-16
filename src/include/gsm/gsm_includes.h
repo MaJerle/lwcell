@@ -39,7 +39,6 @@ extern "C" {
 
 #include "gsm_config.h"
 #include "gsm/gsm_typedefs.h"
-#include "gsm/gsm_device.h"
 #include "gsm/gsm_buff.h"
 #include "gsm/gsm_input.h"
 #include "gsm/gsm_debug.h"

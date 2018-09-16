@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_sys_template.h
  * \brief           Template file for system functions
  */
@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of ESP-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -43,9 +43,7 @@ extern "C" {
 #include "gsm_config.h"
 
 /**
- * \ingroup         GSM_PORT
- * \defgroup        GSM_SYS System functions
- * \brief           System based function for OS management, timings, etc
+ * \addtogroup      GSM_SYS
  * \{
  */
 
@@ -119,40 +117,7 @@ typedef osPriority          gsm_sys_thread_prio_t;
  * \note            Keep as is in case of CMSIS based OS, otherwise change for your OS
  */
 #define GSM_SYS_THREAD_SS           (1024)
-#endif /* GSM_OS || __DOXYGEN__ */
-
-uint8_t     gsm_sys_init(void);
-uint32_t    gsm_sys_now(void);
-
-uint8_t     gsm_sys_protect(void);
-uint8_t     gsm_sys_unprotect(void);
-
-uint8_t     gsm_sys_mutex_create(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_delete(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_lock(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_unlock(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_invalid(gsm_sys_mutex_t* p);
-
-uint8_t     gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt);
-uint8_t     gsm_sys_sem_delete(gsm_sys_sem_t* p);
-uint32_t    gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout);
-uint8_t     gsm_sys_sem_release(gsm_sys_sem_t* p);
-uint8_t     gsm_sys_sem_isvalid(gsm_sys_sem_t* p);
-uint8_t     gsm_sys_sem_invalid(gsm_sys_sem_t* p);
-
-uint8_t     gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size);
-uint8_t     gsm_sys_mbox_delete(gsm_sys_mbox_t* b);
-uint32_t    gsm_sys_mbox_put(gsm_sys_mbox_t* b, void* m);
-uint32_t    gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
-uint8_t     gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m);
-uint8_t     gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m);
-uint8_t     gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b);
-uint8_t     gsm_sys_mbox_invalid(gsm_sys_mbox_t* b);
-
-uint8_t     gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, gsm_sys_thread_prio_t prio);
-uint8_t     gsm_sys_thread_terminate(gsm_sys_thread_t* t);
-uint8_t     gsm_sys_thread_yield(void);
+#endif /* GSM_CFG_OS || __DOXYGEN__ */
  
 /**
  * \}

@@ -35,6 +35,8 @@
 #include "gsm/gsm_mem.h"
 #include "gsm/gsm_input.h"
 
+#if !__DOXYGEN__
+
 static uint8_t initialized = 0;
 
 DWORD thread_id;
@@ -49,8 +51,8 @@ uint8_t data_buffer[0x1000];                    /*!< Received data array */
  * \param[in]       len: Number of bytes to send
  * \return          Number of bytes sent
  */
-static uint16_t
-send_data(const void* data, uint16_t len) {
+static size_t
+send_data(const void* data, size_t len) {
 	if (comPort != NULL) {
 		WriteFile(comPort, data, len, NULL, NULL);
         FlushFileBuffers(comPort);
@@ -73,7 +75,7 @@ configure_uart(uint32_t baudrate) {
      * as generic read and write
      */
 	if (!initialized) {
-		comPort = CreateFile(L"\\\\.\\COM8",
+		comPort = CreateFile(L"\\\\.\\COM23",
 			GENERIC_READ | GENERIC_WRITE,
 			0,
 			0,
@@ -83,9 +85,7 @@ configure_uart(uint32_t baudrate) {
 		);
 	}
 
-    /*
-     * Configure COM port parameters
-     */
+    /* Configure COM port parameters */
 	if (GetCommState(comPort, &dcb)) {
         COMMTIMEOUTS timeouts;
 
@@ -113,9 +113,7 @@ configure_uart(uint32_t baudrate) {
         printf("Cannot get COM PORT info\r\n");
     }
 
-    /*
-     * On first function call, create a thread to read data from COM port
-     */
+    /* On first function call, create a thread to read data from COM port */
 	if (!initialized) {
 		thread_handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)uart_thread, NULL, 0, 0);
 	}
@@ -147,14 +145,10 @@ uart_thread(void* param) {
                 for (i = 0; i < bytes_read; i++) {
                     printf("%c", data_buffer[i]);
                 }
-                /*
-                 * Send received data to input processing module
-                 */
+                /* Send received data to input processing module */
                 gsm_input_process(data_buffer, (size_t)bytes_read);
 
-                /*
-                 * Write received data to output debug file
-                 */
+                /* Write received data to output debug file */
                 if (file != NULL) {
                     fwrite(data_buffer, 1, bytes_read, file);
                     fflush(file);
@@ -177,14 +171,11 @@ uart_thread(void* param) {
  *                  When \ref GSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
  * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
- * \param[in]       baudrate: Baudrate to use on AT port
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_ll_init(gsm_ll_t* ll, uint32_t baudrate) {
-    /*
-     * Step 1: Configure memory for dynamic allocations
-     */
+gsm_ll_init(gsm_ll_t* ll) {
+    /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
 
     /*
@@ -199,17 +190,15 @@ gsm_ll_init(gsm_ll_t* ll, uint32_t baudrate) {
         gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
     }
     
-    /*
-     * Step 2: Set AT port send function to use when we have data to transmit
-     */
+    /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {
         ll->send_fn = send_data;                /* Set callback function to send data */
     }
 
-    /*
-     * Step 3: Configure AT port to be able to send/receive data to/from GSM device
-     */
-    configure_uart(baudrate);                   /* Initialize UART for communication */
+    /* Step 3: Configure AT port to be able to send/receive data to/from GSM device */
+    configure_uart(ll->uart.baudrate);          /* Initialize UART for communication */
     initialized = 1;
     return gsmOK;
 }
+
+#endif /* !__DOXYGEN__ */

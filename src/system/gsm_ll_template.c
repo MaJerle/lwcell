@@ -43,11 +43,9 @@ static uint8_t initialized = 0;
  * \param[in]       len: Number of bytes to send
  * \return          Number of bytes sent
  */
-static uint16_t
-send_data(const void* data, uint16_t len) {
-    /*
-     * Implement send function here
-     */
+static size_t
+send_data(const void* data, uint16_t size_t) {
+    /* Implement send function here */
     
     
     return len;                                 /* Return number of bytes actually sent to AT port */
@@ -63,14 +61,11 @@ send_data(const void* data, uint16_t len) {
  *                  When \ref GSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
  * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
- * \param[in]       baudrate: Baudrate to use on AT port
  * \return          gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_ll_init(gsm_ll_t* ll, uint32_t baudrate) {
-    /*
-     * Step 1: Configure memory for dynamic allocations
-     */
+gsm_ll_init(gsm_ll_t* ll) {
+    /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
 
     /*
@@ -85,17 +80,13 @@ gsm_ll_init(gsm_ll_t* ll, uint32_t baudrate) {
         gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
     }
     
-    /*
-     * Step 2: Set AT port send function to use when we have data to transmit
-     */
+    /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {
         ll->send_fn = send_data;                /* Set callback function to send data */
     }
 
-    /*
-     * Step 3: Configure AT port to be able to send/receive data to/from GSM device
-     */
-    configure_uart(baudrate);                   /* Initialize UART for communication */
+    /* Step 3: Configure AT port to be able to send/receive data to/from GSM device */
+    configure_uart(ll->uart.baudrate);          /* Initialize UART for communication */
     initialized = 1;
     return gsmOK;
 }

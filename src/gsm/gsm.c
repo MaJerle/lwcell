@@ -71,7 +71,8 @@ gsm_init(gsm_cb_fn cb_func, uint32_t blocking) {
     gsm.cb_func = &def_cb_link;                 /* Set callback function */
     
     gsm_sys_init();                             /* Init low-level system */
-    gsm_ll_init(&gsm.ll, GSM_CFG_AT_PORT_BAUDRATE); /* Init low-level communication */
+    gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
+    gsm_ll_init(&gsm.ll);                       /* Init low-level communication */
     
     gsm_sys_sem_create(&gsm.sem_sync, 1);       /* Create new semaphore with unlocked state */
     gsm_sys_mbox_create(&gsm.mbox_producer, GSM_CFG_THREAD_PRODUCER_MBOX_SIZE); /* Producer message queue */

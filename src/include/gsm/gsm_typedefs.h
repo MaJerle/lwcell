@@ -482,7 +482,7 @@ typedef struct gsm_cb_t {
  * \param[in]       len: Number of bytes to send
  * \return          Number of bytes sent
  */
-typedef uint16_t (*gsm_ll_send_fn)(const void* data, uint16_t len);
+typedef size_t  (*gsm_ll_send_fn)(const void* data, size_t len);
 
 /**
  * \ingroup         GSM_LL
@@ -490,6 +490,9 @@ typedef uint16_t (*gsm_ll_send_fn)(const void* data, uint16_t len);
  */
 typedef struct {
     gsm_ll_send_fn send_fn;                     /*!< Callback function to transmit data */
+    struct {
+        uint32_t baudrate;                      /*!< UART baudrate value */
+    } uart;                                     /*!< UART communication parameters */
 } gsm_ll_t;
 
 /**
@@ -533,40 +536,6 @@ typedef struct {
 } gsm_recv_t;
 
 #endif /* !__DOXYGEN__ */
-
-/**
- * \ingroup         GSM_DEVICE
- * \brief           Device driver structure
- */
-typedef struct gsm_device_driver {
-    uint16_t features;                          /*!< List of supported features by device driver */
-
-    /**
-     * Prototype function to send AT command string to modem
-     * 
-     * \param[in]       msg: Current active message. It is of type \ref gsm_msg_t structure
-     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
-     */
-    gsmr_t (*at_start_cmd_fn)   (void* m);
-
-    /**
-     * New line of data received over AT port
-     *
-     * \param[in]       recv: Received line of data
-     * \param[in,out]   is_ok: Pointer to status if operation is ok. User may modify this status
-     * \param[in,out]   is_error: Pointer to status if operation error occurred. User may modify this status
-     * \return          `1` if message eaten or `0` if ignored
-     */
-    uint8_t (*at_line_recv_fn)  (gsm_recv_t* recv, uint8_t* is_ok, uint16_t* is_error);
-
-    /**
-     * Process sub command
-     *
-     * \param[in]       m: Current message. It is of type \ref gsm_msg_t structure
-     * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
-     */
-    gsmr_t (*at_process_sub_cmd_fn)   (void* m, uint8_t is_ok, uint16_t is_error);
-} gsm_device_driver_t;
 
 #ifdef __cplusplus
 }
