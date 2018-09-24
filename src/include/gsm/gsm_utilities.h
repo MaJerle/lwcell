@@ -41,7 +41,7 @@ extern "C" {
 #include "gsm/gsm.h"
     
 /**
- * \ingroup         ESP
+ * \ingroup         GSM
  * \defgroup        GSM_UTILITIES Utilities
  * \brief           Utilities
  * \{
