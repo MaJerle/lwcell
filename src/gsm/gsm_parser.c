@@ -368,30 +368,30 @@ gsmi_parse_cpin(const char* str, uint8_t send_evt) {
         str += 7;
     }
     if (!strncmp(str, "READY", 5)) {
-        gsm.sim_state = GSM_SIM_STATE_READY;
+        gsm.sim.state = GSM_SIM_STATE_READY;
     } else if (!strncmp(str, "NOT READY", 9)) {
-        gsm.sim_state = GSM_SIM_STATE_NOT_READY;
+        gsm.sim.state = GSM_SIM_STATE_NOT_READY;
     } else if (!strncmp(str, "NOT INSERTED", 14)) {
-        gsm.sim_state = GSM_SIM_STATE_NOT_INSERTED;
+        gsm.sim.state = GSM_SIM_STATE_NOT_INSERTED;
     } else if (!strncmp(str, "SIM PIN", 7)) {
-        gsm.sim_state = GSM_SIM_STATE_PIN;
-    } else if (!strncmp(str, "PIN PUK", 7)) {
-        gsm.sim_state = GSM_SIM_STATE_PUK;
+        gsm.sim.state = GSM_SIM_STATE_PIN;
+    } else if (!strncmp(str, "SIM PUK", 7)) {
+        gsm.sim.state = GSM_SIM_STATE_PUK;
     } else {
-        gsm.sim_state = GSM_SIM_STATE_NOT_READY;
+        gsm.sim.state = GSM_SIM_STATE_NOT_READY;
     }
 
     /*
      * In case SIM is ready,
      * start with basic info about SIM
      */
-    if (gsm.sim_state == GSM_SIM_STATE_READY) {
+    if (gsm.sim.state == GSM_SIM_STATE_READY) {
         gsmi_get_sim_info(0);
     }
 
     if (send_evt) {
-        gsm.cb.cb.cpin.state = gsm.sim_state;
-        gsmi_send_cb(GSM_CB_CPIN);              /* SIM card event */
+        gsm.evt.evt.cpin.state = gsm.sim.state;
+        gsmi_send_cb(GSM_EVT_CPIN);
     }
     return 1;
 }
@@ -566,8 +566,8 @@ gsmi_parse_clcc(const char* str, uint8_t send_evt) {
     gsmi_parse_string(&str, gsm.call.name, sizeof(gsm.call.name), 1);
 
     if (send_evt) {
-        gsm.cb.cb.call_changed.call = &gsm.call;
-        gsmi_send_cb(GSM_CB_CALL_CHANGED);
+        gsm.evt.evt.call_changed.call = &gsm.call;
+        gsmi_send_cb(GSM_EVT_CALL_CHANGED);
     }
     return 1;
 }
@@ -622,8 +622,8 @@ gsmi_parse_cmgs(const char* str, uint8_t send_evt) {
     num = gsmi_parse_number(&str);              /* Parse number */
 
     if (send_evt) {
-        gsm.cb.cb.sms_sent.num = num;
-        gsmi_send_cb(GSM_CB_SMS_SENT);          /* SIM card event */
+        gsm.evt.evt.sms_sent.num = num;
+        gsmi_send_cb(GSM_EVT_SMS_SENT);
     }
     return 1;
 }
@@ -692,11 +692,11 @@ gsmi_parse_cmti(const char* str, uint8_t send_evt) {
         str += 7;
     }
 
-    gsm.cb.cb.sms_recv.mem = gsmi_parse_memory(&str);   /* Parse memory string */
-    gsm.cb.cb.sms_recv.pos = gsmi_parse_number(&str);   /* Parse number */
+    gsm.evt.evt.sms_recv.mem = gsmi_parse_memory(&str);   /* Parse memory string */
+    gsm.evt.evt.sms_recv.pos = gsmi_parse_number(&str);   /* Parse number */
 
     if (send_evt) {
-        gsmi_send_cb(GSM_CB_SMS_RECV);          /* SIM card event */
+        gsmi_send_cb(GSM_EVT_SMS_RECV);
     }
     return 1;
 }

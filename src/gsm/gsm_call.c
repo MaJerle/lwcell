@@ -77,7 +77,7 @@ gsm_call_enable(uint32_t blocking) {
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CALL_ENABLE;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CLCC;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CLCC_SET;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }

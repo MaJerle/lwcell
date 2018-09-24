@@ -40,8 +40,8 @@
 #error GSM_CFG_OS must be set to 1!
 #endif
 
-static gsmr_t   def_callback(gsm_cb_t* cb);
-static gsm_cb_func_t def_cb_link;
+static gsmr_t   def_callback(gsm_evt_t* cb);
+static gsm_evt_func_t def_evt_link;
 
 gsm_t gsm;
 
@@ -51,7 +51,7 @@ gsm_t gsm;
  * \return          Member of \ref gsmr_t enumeration
  */
 static gsmr_t
-def_callback(gsm_cb_t* cb) {
+def_callback(gsm_evt_t* cb) {
     return gsmOK;
 }
 
@@ -64,11 +64,11 @@ def_callback(gsm_cb_t* cb) {
  * \return          Member of \ref gsmr_t enumeration
  */
 gsmr_t
-gsm_init(gsm_cb_fn cb_func, uint32_t blocking) {
+gsm_init(gsm_evt_fn evt_func, uint32_t blocking) {
     gsm.status.f.initialized = 0;               /* Clear possible init flag */
     
-    def_cb_link.fn = cb_func ? cb_func : def_callback;
-    gsm.cb_func = &def_cb_link;                 /* Set callback function */
+    def_evt_link.fn = evt_func != NULL ? evt_func : def_callback;
+    gsm.evt_func = &def_evt_link;               /* Set callback function */
     
     gsm_sys_init();                             /* Init low-level system */
     gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
@@ -98,7 +98,7 @@ gsm_init(gsm_cb_fn cb_func, uint32_t blocking) {
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
 #endif /* GSM_CFG_RESET_ON_INIT */
-    gsmi_send_cb(GSM_CB_INIT_FINISH);           /* Call user callback function */
+    gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
     
     return gsmOK;
 }
@@ -110,13 +110,7 @@ gsm_init(gsm_cb_fn cb_func, uint32_t blocking) {
  */
 gsmr_t
 gsm_reset(uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
-
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
-    GSM_MSG_VAR_REF(msg).msg.reset.delay = 0;
-
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsm_reset_with_delay(0, blocking);
 }
 
 /**
@@ -141,7 +135,8 @@ gsm_reset_with_delay(uint32_t delay, uint32_t blocking) {
  *
  *                  If lock was `0` before func call, lock is enabled and increased
  * \note            Function may be called multiple times to increase locks. 
- *                  User must take care of calling \ref gsm_core_unlock function the same times to decrease lock
+ *                  User must take care of calling \ref gsm_core_unlock function
+ *                  for the same amount to decrease lock back to `0`
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -153,7 +148,8 @@ gsm_core_lock(void) {
 /**
  * \brief           Decrease protection counter
  *
- *                  If lock was non-zero before func call, it is decreased. In case of `lock = 0`, protection is disabled
+ *                  If lock was non-zero before func call, it is decreased.
+ *                  When `lock == 0`, protection is disabled
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -168,16 +164,16 @@ gsm_core_unlock(void) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_cb_register(gsm_cb_fn cb_fn) {
+gsm_cb_register(gsm_evt_fn cb_fn) {
     gsmr_t res = gsmOK;
-    gsm_cb_func_t* func, *newFunc;
+    gsm_evt_func_t* func, *newFunc;
     
     GSM_ASSERT("cb_fn != NULL", cb_fn != NULL); /* Assert input parameters */
     
     GSM_CORE_PROTECT();                         /* Lock GSM core */
     
     /* Check if function already exists on list */
-    for (func = gsm.cb_func; func != NULL; func = func->next) {
+    for (func = gsm.evt_func; func != NULL; func = func->next) {
         if (func->fn == cb_fn) {
             res = gsmERR;
             break;
@@ -189,10 +185,10 @@ gsm_cb_register(gsm_cb_fn cb_fn) {
         if (newFunc != NULL) {
             memset(newFunc, 0x00, sizeof(*newFunc));/* Reset memory */
             newFunc->fn = cb_fn;                /* Set function pointer */
-            if (gsm.cb_func == NULL) {
-                gsm.cb_func = newFunc;          /* This should never happen! */
+            if (gsm.evt_func == NULL) {
+                gsm.evt_func = newFunc;         /* This should never happen! */
             } else {
-                for (func = gsm.cb_func; func->next != NULL; func = func->next) {}
+                for (func = gsm.evt_func; func->next != NULL; func = func->next) {}
                 func->next = newFunc;           /* Set new function as next */
             }
             res = gsmOK;
@@ -211,12 +207,12 @@ gsm_cb_register(gsm_cb_fn cb_fn) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_cb_unregister(gsm_cb_fn cb_fn) {
-    gsm_cb_func_t* func, *prev;
+gsm_cb_unregister(gsm_evt_fn cb_fn) {
+    gsm_evt_func_t* func, *prev;
     GSM_ASSERT("cb_fn != NULL", cb_fn != NULL); /* Assert input parameters */
     
     GSM_CORE_PROTECT();                         /* Lock GSM core */
-    for (prev = gsm.cb_func, func = gsm.cb_func->next; func != NULL; prev = func, func = func->next) {
+    for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == cb_fn) {
             prev->next = func->next;
             gsm_mem_free(func);
@@ -287,9 +283,9 @@ gsm_device_set_present(uint8_t present, uint32_t blocking) {
     }
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
-#endif /* ESP_CFG_RESET_ON_INIT */
+#endif /* GSM_CFG_RESET_ON_INIT */
     
-    gsmi_send_cb(GSM_CB_DEVICE_PRESENT);        /* Send present event */
+    gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);       /* Send present event */
     
     GSM_CORE_UNPROTECT();                       /* Unlock ESP core */
     return res;

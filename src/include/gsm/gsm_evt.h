@@ -47,8 +47,126 @@ extern "C" {
  * \{
  */
 
-uint8_t     gsm_evt_reset_is_forced(gsm_cb_t* cb);
+gsm_evt_type_t  gsm_evt_get_type(gsm_evt_t* cc);
+
+/**
+ * \name            GSM_EVT_RESET
+ * \anchor          GSM_EVT_RESET
+ * \brief           Event helper functions for \ref GSM_EVT_RESET event
+ */
+
+uint8_t         gsm_evt_reset_is_forced(gsm_evt_t* cc);
  
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_OPERATOR_CURRENT
+ * \anchor          GSM_EVT_OPERATOR_CURRENT
+ * \brief           Event helper functions for \ref GSM_EVT_OPERATOR_CURRENT event
+ */
+
+const gsm_operator_curr_t*  gsm_evt_operator_current_get_operator(gsm_evt_t* cc);
+ 
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_CONN_DATA_RECV
+ * \anchor          GSM_EVT_CONN_DATA_RECV
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_RECV event
+ */
+
+gsm_pbuf_p  gsm_evt_conn_data_recv_get_buff(gsm_evt_t* cc);
+gsm_conn_p  gsm_evt_conn_data_recv_get_conn(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_CONN_DATA_SENT
+ * \anchor          GSM_EVT_CONN_DATA_SENT
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_SENT event
+ */
+
+gsm_conn_p  gsm_evt_conn_data_sent_get_conn(gsm_evt_t* cc);
+size_t      gsm_evt_conn_data_sent_get_length(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_CONN_DATA_SEND_ERR
+ * \anchor          GSM_EVT_CONN_DATA_SEND_ERR
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_SEND_ERR event
+ */
+
+gsm_conn_p  gsm_evt_conn_data_send_err_get_conn(gsm_evt_t* cc);
+size_t      gsm_evt_conn_data_send_err_get_length(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_CONN_ACTIVE
+ * \anchor          GSM_EVT_CONN_ACTIVE
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_ACTIVE event
+ */
+
+gsm_conn_p  gsm_evt_conn_active_get_conn(gsm_evt_t* cc);
+uint8_t     gsm_evt_conn_active_is_client(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_CONN_CLOSED
+ * \anchor          GSM_EVT_CONN_CLOSED
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_CLOSED event
+ */
+
+gsm_conn_p  gsm_evt_conn_closed_get_conn(gsm_evt_t* cc);
+uint8_t     gsm_evt_conn_closed_is_client(gsm_evt_t* cc);
+uint8_t     gsm_evt_conn_closed_is_forced(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_CONN_POLL
+ * \anchor          GSM_EVT_CONN_POLL
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_POLL event
+ */
+
+gsm_conn_p  gsm_evt_conn_poll_get_conn(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_CONN_ERROR
+ * \anchor          GSM_EVT_CONN_ERROR
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_ERROR event
+ */
+
+gsmr_t              gsm_evt_conn_error_get_error(gsm_evt_t* cc);
+gsm_conn_type_t     gsm_evt_conn_error_get_type(gsm_evt_t* cc);
+const char*         gsm_evt_conn_error_get_host(gsm_evt_t* cc);
+gsm_port_t          gsm_evt_conn_error_get_port(gsm_evt_t* cc);
+void*               gsm_evt_conn_error_get_arg(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
 /**
  * \}
  */

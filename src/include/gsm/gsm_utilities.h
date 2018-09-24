@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_utilities.h
  * \brief           Utilities
  */
@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -41,7 +41,7 @@ extern "C" {
 #include "gsm/gsm.h"
     
 /**
- * \ingroup         GSM
+ * \ingroup         ESP
  * \defgroup        GSM_UTILITIES Utilities
  * \brief           Utilities
  * \{
@@ -72,7 +72,7 @@ extern "C" {
  * \brief           Get minimal value between `x` and `y` inputs
  * \param[in]       x: First input to test
  * \param[in]       y: Second input to test
- * \return          Minimal value between `x` and `y` parameters
+ * \return          Minimal value between x and y parameters
  * \hideinitializer
  */
 #define GSM_MIN(x, y)                       ((x) < (y) ? (x) : (y))

@@ -43,15 +43,15 @@ extern "C" {
 /**
  * \ingroup         GSM
  * \defgroup        GSM_SIM SIM API
- * \brief           SIM manager
+ * \brief           SIM card manager
  * \{
  */
 
-gsmr_t      gsm_sim_enter_pin(const char* pin, uint32_t blocking);
-gsmr_t      gsm_sim_add_pin(const char* pin, uint32_t blocking);
-gsmr_t      gsm_sim_remove_pin(const char* pin, uint32_t blocking);
-gsmr_t      gsm_sim_change_pin(const char* pin, const char* new_pin, uint32_t blocking);
-gsmr_t      gsm_sim_enter_puk(const char* puk, const char* new_pin, uint32_t blocking);
+gsmr_t      gsm_sim_pin_enter(const char* pin, uint32_t blocking);
+gsmr_t      gsm_sim_pin_add(const char* pin, uint32_t blocking);
+gsmr_t      gsm_sim_pin_remove(const char* pin, uint32_t blocking);
+gsmr_t      gsm_sim_pin_change(const char* pin, const char* new_pin, uint32_t blocking);
+gsmr_t      gsm_sim_puk_enter(const char* puk, const char* new_pin, uint32_t blocking);
 
 /**
  * \}

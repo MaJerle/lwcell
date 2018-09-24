@@ -64,17 +64,19 @@ typedef enum {
     gsmPARERR,                                  /*!< Wrong parameters on function call */
     gsmERRMEM,                                  /*!< Memory error occurred */
     gsmTIMEOUT,                                 /*!< Timeout occurred on command */
-    gsmNOFREECONN,                              /*!< There is no free connection available to start */
     gsmCONT,                                    /*!< There is still some command to be processed in current command */
     gsmCLOSED,                                  /*!< Connection just closed */
     gsmINPROG,                                  /*!< Operation is in progress */
     
+    gsmERRNOTENABLED,                           /*!< Feature not enabled error */
+    gsmERRNOIP,                                 /*!< Station does not have IP address */
+    gsmERRNOFREECONN,                           /*!< There is no free connection available to start */
     gsmERRCONNTIMEOUT,                          /*!< Timeout received when connection to access point */
     gsmERRPASS,                                 /*!< Invalid password for access point */
     gsmERRNOAP,                                 /*!< No access point found with specific SSID and MAC address */
     gsmERRCONNFAIL,                             /*!< Connection failed to access point */
-    gsmERRNOTENABLED,                           /*!< Feature is not enabled */
-    gsmERRNODEVICE,                             /*!< No device present */
+    gsmERRWIFINOTCONNECTED,                     /*!< Wifi not connected to access point */
+    gsmERRNODEVICE,                             /*!< Device is not present */
 } gsmr_t;
 
 /**
@@ -89,7 +91,6 @@ typedef enum {
     GSM_SIM_STATE_PH_PIN,
     GSM_SIM_STATE_PH_PUK,
 } gsm_sim_state_t;
-
 
 /**
  * \ingroup         GSM_TYPEDEFS
@@ -316,7 +317,7 @@ typedef struct {
 } gsm_call_t;
 
 /* Forward declarations */
-struct gsm_cb_t;
+struct gsm_evt_t;
 struct gsm_conn_t;
 struct gsm_pbuf_t;
 
@@ -338,140 +339,154 @@ typedef struct gsm_pbuf_t* gsm_pbuf_p;
  * \param[in]       cb: Callback event data
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
-typedef gsmr_t  (*gsm_cb_fn)(struct gsm_cb_t* cb);
+typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt_t* cb);
 
 /**
  * \ingroup         GSM_EVT
  * \brief           List of possible callback types received to user
  */
 typedef enum gsm_cb_type_t {
-    GSM_CB_RESET,                               /*!< Device reset detected */
-    GSM_CB_RESET_FINISH,                        /*!< Reset operation finished */
+    GSM_EVT_RESET,                              /*!< Device reset detected */
+    GSM_EVT_RESET_FINISH,                       /*!< Reset operation finished */
 
-    GSM_CB_DEVICE_PRESENT,                      /*!< Notification when device present status changes */
-    GSM_CB_DEVICE_IDENTIFIED,                   /*!< Device identified event */
+    GSM_EVT_DEVICE_PRESENT,                     /*!< Notification when device present status changes */
+    GSM_EVT_DEVICE_IDENTIFIED,                  /*!< Device identified event */
 
-    GSM_CB_INIT_FINISH,                         /*!< Initialization has been finished at this point */
+    GSM_EVT_INIT_FINISH,                        /*!< Initialization has been finished at this point */
 
-    GSM_CB_CONN_DATA_RECV,                      /*!< Connection data received */
-    GSM_CB_CONN_DATA_SENT,                      /*!< Data were successfully sent */
-    GSM_CB_CONN_DATA_SEND_ERR,                  /*!< Error trying to send data */
-    GSM_CB_CONN_ACTIVE,                         /*!< Connection just became active */
-    GSM_CB_CONN_ERROR,                          /*!< Client connection start was not successful */
-    GSM_CB_CONN_CLOSED,                         /*!< Connection was just closed */
-    GSM_CB_CONN_POLL,                           /*!< Poll for connection if there are any changes */
+#if GSM_CFG_CONN || __DOXYGEN__
+    GSM_EVT_CONN_DATA_RECV,                     /*!< Connection data received */
+    GSM_EVT_CONN_DATA_SENT,                     /*!< Data were successfully sent */
+    GSM_EVT_CONN_DATA_SEND_ERR,                 /*!< Error trying to send data */
+    GSM_EVT_CONN_ACTIVE,                        /*!< Connection just became active */
+    GSM_EVT_CONN_ERROR,                         /*!< Client connection start was not successful */
+    GSM_EVT_CONN_CLOSED,                        /*!< Connection was just closed */
+    GSM_EVT_CONN_POLL,                          /*!< Poll for connection if there are any changes */
+#endif /* GSM_CFG_CONN || __DOXYGEN__ */
 
-    GSM_CB_CPIN,                                /*!< SIM event */
-    GSM_CB_OPERATOR_CURRENT,                    /*!< Current operator event */
+    GSM_EVT_CPIN,                               /*!< SIM event */
+    GSM_EVT_OPERATOR_CURRENT,                   /*!< Current operator event */
 #if GSM_CFG_SMS || __DOXYGEN__
-    GSM_CB_SMS_ENABLE,                          /*!< SMS enable event */
-    GSM_CB_SMS_READY,                           /*!< SMS ready event */
-    GSM_CB_SMS_SENT,                            /*!< SMS sent successfully */
-    GSM_CB_SMS_SEND_ERROR,                      /*!< SMS sent successfully */
-    GSM_CB_SMS_RECV,                            /*!< SMS received */
-    GSM_CB_SMS_READ,                            /*!< SMS read */
-    GSM_CB_SMS_LIST,                            /*!< SMS list */
+    GSM_EVT_SMS_ENABLE,                         /*!< SMS enable event */
+    GSM_EVT_SMS_READY,                          /*!< SMS ready event */
+    GSM_EVT_SMS_SENT,                           /*!< SMS sent successfully */
+    GSM_EVT_SMS_SEND_ERROR,                     /*!< SMS sent successfully */
+    GSM_EVT_SMS_RECV,                           /*!< SMS received */
+    GSM_EVT_SMS_READ,                           /*!< SMS read */
+    GSM_EVT_SMS_LIST,                           /*!< SMS list */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
-    GSM_CB_CALL_ENABLE,                         /*!< Call enable event */
-    GSM_CB_CALL_READY,                          /*!< Call ready event */
-    GSM_CB_CALL_CHANGED,                        /*!< Call info changed, `+CLCK` statement received */
-    GSM_CB_CALL_RING,                           /*!< Call is ringing event */
-    GSM_CB_CALL_BUSY,                           /*!< Call is busy */
-    GSM_CB_CALL_NO_CARRIER,                     /*!< No carrier to make a call */
+    GSM_EVT_CALL_ENABLE,                        /*!< Call enable event */
+    GSM_EVT_CALL_READY,                         /*!< Call ready event */
+    GSM_EVT_CALL_CHANGED,                       /*!< Call info changed, `+CLCK` statement received */
+    GSM_EVT_CALL_RING,                          /*!< Call is ringing event */
+    GSM_EVT_CALL_BUSY,                          /*!< Call is busy */
+    GSM_EVT_CALL_NO_CARRIER,                    /*!< No carrier to make a call */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
-    GSM_CB_PB_ENABLE,                           /*!< Phonebook enable event */
-    GSM_CB_PB_LIST,                             /*!< Phonebook list event */
-    GSM_CB_PB_SEARCH,                           /*!< Phonebook search event */
+    GSM_EVT_PB_ENABLE,                          /*!< Phonebook enable event */
+    GSM_EVT_PB_LIST,                            /*!< Phonebook list event */
+    GSM_EVT_PB_SEARCH,                          /*!< Phonebook search event */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
-    
-} gsm_cb_type_t;
+} gsm_evt_type_t;
 
 /**
  * \ingroup         GSM_EVT
  * \brief           Global callback structure to pass as parameter to callback function
  */
-typedef struct gsm_cb_t {
-    gsm_cb_type_t type;                         /*!< Callback type */
+typedef struct gsm_evt_t {
+    gsm_evt_type_t type;                        /*!< Callback type */
     union {
+        struct {
+            uint8_t forced;                     /*!< Set to `1` if reset forced by user */
+        } reset;                                /*!< Reset occurred. Use with \ref GSM_EVT_RESET event */
+
         struct {
             gsm_sim_state_t state;              /*!< SIM state */
         } cpin;                                 /*!< CPIN event */
         struct {
             const gsm_operator_curr_t* operator_current;    /*!< Current operator info */
-        } operator_current;                     /*!< Current operator event. Use with \ref GSM_CB_OPERATOR_CURRENT event */
+        } operator_current;                     /*!< Current operator event. Use with \ref GSM_EVT_OPERATOR_CURRENT event */
+
+#if GSM_CFG_CALL || __DOXYGEN__
+        struct {
+            gsm_conn_p conn;                    /*!< Connection where data were received */
+            gsm_pbuf_p buff;                    /*!< Pointer to received data */
+        } conn_data_recv;                       /*!< Network data received. Use with \ref GSM_EVT_CONN_DATA_RECV event */
+        struct {
+            gsm_conn_p conn;                    /*!< Connection where data were sent */
+            size_t sent;                        /*!< Number of bytes sent on connection */
+        } conn_data_sent;                       /*!< Data successfully sent. Use with \ref GSM_EVT_CONN_DATA_SENT event */
+        struct {
+            gsm_conn_p conn;                    /*!< Connection where data were sent */
+            size_t sent;                        /*!< Number of bytes sent on connection before error occurred */
+        } conn_data_send_err;                   /*!< Data were not sent. Use with \ref GSM_EVT_CONN_DATA_SEND_ERR event */
+        struct {
+            const char* host;                   /*!< Host to use for connection */
+            gsm_port_t port;                    /*!< Remote port used for connection */
+            gsm_conn_type_t type;               /*!< Connection type */
+            void* arg;                          /*!< Connection argument used on connection */
+            gsmr_t err;                         /*!< Error value */
+        } conn_error;                           /*!< Client connection start error. Use with \ref GSM_EVT_CONN_ERROR event */
+        struct {
+            gsm_conn_p conn;                    /*!< Pointer to connection */
+            uint8_t client;                     /*!< Set to 1 if connection is/was client mode */
+            uint8_t forced;                     /*!< Set to 1 if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
+        } conn_active_closed;                   /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref ESP_EVT_CONN_CLOSED events */
+        struct {
+            gsm_conn_p conn;                    /*!< Set connection pointer */
+        } conn_poll;                            /*!< Polling active connection to check for timeouts. Use with \ref GSM_EVT_CONN_POLL event */
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */
+
 #if GSM_CFG_SMS || __DOXYGEN__
         struct {
             gsmr_t status;                      /*!< Enable status */
-        } sms_enable;                           /*!< SMS enable event. Use with \ref GSM_CB_SMS_ENABLE event */
+        } sms_enable;                           /*!< SMS enable event. Use with \ref GSM_EVT_SMS_ENABLE event */
         struct {
             size_t num;                         /*!< Received number in memory for sent SMS*/
-        } sms_sent;                             /*!< SMS sent info. Use with \ref GSM_CB_SMS_SENT event */
+        } sms_sent;                             /*!< SMS sent info. Use with \ref GSM_EVT_SMS_SENT event */
         struct {
             gsm_mem_t mem;                      /*!< Memory of received message */
             size_t pos;                         /*!< Received position in memory for sent SMS */
-        } sms_recv;                             /*!< SMS received info. Use with \ref GSM_CB_SMS_RECV event */
+        } sms_recv;                             /*!< SMS received info. Use with \ref GSM_EVT_SMS_RECV event */
         struct {
             gsm_sms_entry_t* entry;             /*!< SMS entry */
-        } sms_read;                             /*!< SMS read. Use with \ref GSM_CB_SMS_READ event */
+        } sms_read;                             /*!< SMS read. Use with \ref GSM_EVT_SMS_READ event */
         struct {
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_sms_entry_t* entries;           /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
             gsmr_t err;                         /*!< Error message if exists */
-        } sms_list;                             /*!< SMS list. Use with \ref GSM_CB_SMS_LIST event */
+        } sms_list;                             /*!< SMS list. Use with \ref GSM_EVT_SMS_LIST event */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
         struct {
             gsmr_t status;                      /*!< Enable status */
-        } call_enable;                          /*!< Call enable event. Use with \ref GSM_CB_CALL_ENABLE event */
+        } call_enable;                          /*!< Call enable event. Use with \ref GSM_EVT_CALL_ENABLE event */
         struct {
             const gsm_call_t* call;             /*!< Call information */
-        } call_changed;                         /*!< Call changed info. Use with \ref GSM_CB_CALL_CHANGED event */
+        } call_changed;                         /*!< Call changed info. Use with \ref GSM_EVT_CALL_CHANGED event */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
         struct {
             gsmr_t status;                      /*!< Enable status */
-        } pb_enable;                            /*!< Phonebook enable event. Use with \ref GSM_CB_PB_ENABLE event */
+        } pb_enable;                            /*!< Phonebook enable event. Use with \ref GSM_EVT_PB_ENABLE event */
         struct {
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
             gsmr_t err;                         /*!< Error message if exists */
-        } pb_list;                              /*!< Phonebok list. Use with \ref GSM_CB_PB_LIST event */
+        } pb_list;                              /*!< Phonebok list. Use with \ref GSM_EVT_PB_LIST event */
         struct {
             const char* search;                 /*!< Search string */
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
             gsmr_t err;                         /*!< Error message if exists */
-        } pb_search;                            /*!< Phonebok search list. Use with \ref GSM_CB_PB_SEARCH event */
+        } pb_search;                            /*!< Phonebok search list. Use with \ref GSM_EVT_PB_SEARCH event */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
-        struct {
-            gsm_conn_p conn;                    /*!< Connection where data were received */
-            gsm_pbuf_p buff;                    /*!< Pointer to received data */
-        } conn_data_recv;                       /*!< Network data received. Use with \ref GSM_CB_CONN_DATA_RECV event */
-        struct {
-            gsm_conn_p conn;                    /*!< Connection where data were sent */
-            size_t sent;                        /*!< Number of bytes sent on connection */
-        } conn_data_sent;                       /*!< Data successfully sent. Use with \ref GSM_CB_CONN_DATA_SENT event */
-        struct {
-            gsm_conn_p conn;                    /*!< Connection where data were sent */
-            size_t sent;                        /*!< Number of bytes sent on connection before error occurred */
-        } conn_data_send_err;                   /*!< Data were not sent. Use with \ref GSM_CB_CONN_DATA_SEND_ERR event */
-        struct {
-            const char* host;                   /*!< Host to use for connection */
-            gsm_port_t port;                    /*!< Remote port used for connection */
-            gsm_conn_type_t type;               /*!< Connection type */
-            void* arg;                          /*!< Connection argument used on connection */
-        } conn_error;                           /*!< Client connection start error */
-
-        struct {
-            uint8_t forced;                     /*!< Set to 1 if reset forced by user */
-        } reset;                                /*!< Reset occurred */
-    } cb;                                       /*!< Callback event union */
-} gsm_cb_t;
+    } evt;                                      /*!< Callback event union */
+} gsm_evt_t;
 
 #define GSM_SIZET_MAX                           ((size_t)(-1))  /*!< Maximal value of size_t variable type */
  
@@ -523,6 +538,16 @@ typedef struct gsm_buff {
     uint8_t* buff;                              /*!< Pointer to buffer data array */
     uint8_t flags;                              /*!< Flags for buffer */
 } gsm_buff_t;
+
+/**
+ * \ingroup         GSM_TYPEDEFS
+ * \brief           Linear buffer structure
+ */
+typedef struct {
+    uint8_t* buff;                              /*!< Pointer to buffer data array */
+    size_t len;                                 /*!< Length of buffer array */
+    size_t ptr;                                 /*!< Current buffer pointer */
+} gsm_linbuff_t;
 
 #if !__DOXYGEN__
 

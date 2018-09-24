@@ -84,7 +84,7 @@
  *
  */
 #ifndef GSM_CFG_MAX_CONNS
-#define GSM_CFG_MAX_CONNS                   5
+#define GSM_CFG_MAX_CONNS                   6
 #endif
 
 /**
@@ -348,6 +348,9 @@
 #ifndef GSM_CFG_NETWORK
 #define GSM_CFG_NETWORK                     1
 #endif
+#ifndef GSM_CFG_CONN
+#define GSM_CFG_CONN                        0
+#endif
 
 #ifndef GSM_CFG_SMS
 #define GSM_CFG_SMS                         0
@@ -382,6 +385,56 @@
 #ifndef GSM_CFG_CONN_POLL_INTERVAL
 #define GSM_CFG_CONN_POLL_INTERVAL          500
 #endif
+
+/**
+ * \defgroup        GSM_CONF_STD_LIB Standard library
+ * \brief           Standard C library configuration
+ * \{
+ *
+ * Configuration allows you to overwrite default C language function
+ * in case of better implementation with hardware (for example DMA for data copy).
+ */
+
+/**
+ * \brief           Memory copy function declaration
+ *
+ *                  User is able to change the memory function, in case
+ *                  hardware supports copy operation, it may implement its own
+ *
+ *                  Function prototype must be similar to:
+ * \code{c}
+void *  my_memcpy(void* dst, const void* src, size_t len);
+\endcode
+ *
+ * \param[in]       dst: Destination memory start address
+ * \param[in]       src: Source memory start address
+ * \param[in]       len: Number of bytes to copy
+ * \return          Destination memory start address
+ */
+#ifndef GSM_MEMCPY
+#define GSM_MEMCPY(dst, src, len)           memcpy(dst, src, len)
+#endif
+
+/**
+ * \brief           Memory set function declaration
+ *
+ *                  Function prototype must be similar to:
+ * \code{c}
+void *  my_memset(void* dst, int b, size_t len);
+\endcode
+ *
+ * \param[in]       dst: Destination memory start address
+ * \param[in]       b: Value (byte) to set in memory
+ * \param[in]       len: Number of bytes to set
+ * \return          Destination memory start address
+ */
+#ifndef GSM_MEMSET
+#define GSM_MEMSET(dst, b, len)             memset(dst, b, len)
+#endif
+
+/**
+ * \}
+ */
 
 /**
  * \}
