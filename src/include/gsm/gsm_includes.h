@@ -1,5 +1,5 @@
 /**
- * \file            esp_includes.h
+ * \file            gsm_includes.h
  * \brief           All main includes
  */
 
@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -70,4 +70,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __ESP_INCLUDES_H */
+#endif /* __GSM_INCLUDES_H */

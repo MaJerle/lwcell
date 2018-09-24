@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -59,7 +59,7 @@ def_callback(gsm_evt_t* cb) {
  * \brief           Init and prepare GSM stack
  * \note            When \ref GSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device.
  *                  In this case, `blocking` parameter indicates if we shall wait or not for response
- * \param[in]       cb_func: Event callback function
+ * \param[in]       evt_func: Event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          Member of \ref gsmr_t enumeration
  */
@@ -268,7 +268,7 @@ gsm_set_func_mode(uint8_t mode, uint32_t blocking) {
 gsmr_t
 gsm_device_set_present(uint8_t present, uint32_t blocking) {
     gsmr_t res = gsmOK;
-    GSM_CORE_PROTECT();                         /* Lock ESP core */
+    GSM_CORE_PROTECT();                         /* Protect core */
     gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
     
     /**
@@ -277,9 +277,9 @@ gsm_device_set_present(uint8_t present, uint32_t blocking) {
 
 #if GSM_CFG_RESET_ON_INIT
     if (gsm.status.f.dev_present) {             /* Is new device present? */
-        GSM_CORE_UNPROTECT();                   /* Unlock ESP core */
+        GSM_CORE_UNPROTECT();                   /* Unprotect core */
         res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking); /* Reset with delay */
-        GSM_CORE_PROTECT();                     /* Lock ESP core */
+        GSM_CORE_PROTECT();                     /* Protect core */
     }
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
@@ -287,7 +287,7 @@ gsm_device_set_present(uint8_t present, uint32_t blocking) {
     
     gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);       /* Send present event */
     
-    GSM_CORE_UNPROTECT();                       /* Unlock ESP core */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
     return res;
 }
 
@@ -298,9 +298,9 @@ gsm_device_set_present(uint8_t present, uint32_t blocking) {
 uint8_t
 gsm_device_is_present(void) {
     uint8_t res;
-    GSM_CORE_PROTECT();                         /* Lock ESP core */
+    GSM_CORE_PROTECT();                         /* Protect core */
     res = gsm.status.f.dev_present;
-    GSM_CORE_UNPROTECT();                       /* Unlock ESP core */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
     return res;
 }
 

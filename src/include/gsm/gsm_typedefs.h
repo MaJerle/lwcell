@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -432,7 +432,7 @@ typedef struct gsm_evt_t {
             gsm_conn_p conn;                    /*!< Pointer to connection */
             uint8_t client;                     /*!< Set to 1 if connection is/was client mode */
             uint8_t forced;                     /*!< Set to 1 if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
-        } conn_active_closed;                   /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref ESP_EVT_CONN_CLOSED events */
+        } conn_active_closed;                   /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref GSM_EVT_CONN_CLOSED events */
         struct {
             gsm_conn_p conn;                    /*!< Set connection pointer */
         } conn_poll;                            /*!< Polling active connection to check for timeouts. Use with \ref GSM_EVT_CONN_POLL event */

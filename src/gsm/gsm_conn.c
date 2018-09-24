@@ -270,7 +270,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw, c
     GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
     GSM_ASSERT("btw > 0", btw > 0);             /* Assert input parameters */
 
-    GSM_CORE_PROTECT();                         /* Protect ESP core */
+    GSM_CORE_PROTECT();                         /* Protect core */
     if (conn->buff.buff != NULL) {              /* Check if memory available */
         size_t to_copy;
         to_copy = GSM_MIN(btw, conn->buff.len - conn->buff.ptr);
@@ -281,7 +281,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw, c
             btw -= to_copy;
         }
     }
-    GSM_CORE_UNPROTECT();                       /* Unprotect ESP core */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
     res = flush_buff(conn);                     /* Flush currently written memory if exists */
     if (btw) {                                  /* Check for remaining data */
         res = conn_send(conn, NULL, 0, d, btw, bw, 0, blocking);

@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT.
+ * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -47,9 +47,9 @@
 static gsmr_t
 check_enabled(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();                     /* Protect core */
+    GSM_CORE_PROTECT();                         /* Protect core */
     res = gsm.pb.enabled ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
     return res;
 }
 
@@ -62,12 +62,12 @@ check_enabled(void) {
 static gsmr_t
 check_mem(gsm_mem_t mem, uint8_t can_curr) {
     gsmr_t res = gsmERRMEM;
-    GSM_CORE_PROTECT();                     /* Protect core */
+    GSM_CORE_PROTECT();                         /* Protect core */
     if ((mem < GSM_MEM_END && gsm.pb.mem.mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
-    GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       /* Unprotect core */
     return res;
 }
 
