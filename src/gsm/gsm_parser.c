@@ -864,9 +864,9 @@ gsmi_parse_cipstatus_conn(const char* str) {
     conn->status.f.bearer = GSM_U8(gsmi_parse_number(&str));
     gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
     if (strlen(s_tmp)) {
-        if (strcmp(s_tmp, "TCP")) {
+        if (!(s_tmp, "TCP")) {
             conn->type = GSM_CONN_TYPE_TCP;
-        } else if (strcmp(s_tmp, "UDP")) {
+        } else if (!strcmp(s_tmp, "UDP")) {
             conn->type = GSM_CONN_TYPE_UDP;
         }
     }
