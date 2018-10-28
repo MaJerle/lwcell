@@ -294,6 +294,19 @@ typedef struct gsm_pbuf_t {
 } gsm_pbuf_t;
 
 /**
+ * \brief           Incoming network data read structure
+ */
+typedef struct {
+    uint8_t             read;                   /*!< Set to 1 when we should process input data as connection data */
+    size_t              tot_len;                /*!< Total length of packet */
+    size_t              rem_len;                /*!< Remaining bytes to read in current +IPD statement */
+    gsm_conn_p          conn;                   /*!< Pointer to connection for network data */
+
+    size_t              buff_ptr;               /*!< Buffer pointer to save data to */
+    gsm_pbuf_p          buff;                   /*!< Pointer to data buffer used for receiving data */
+} gsm_ipd_t;
+
+/**
  * \brief           Connection result on connect command
  */
 typedef enum {
@@ -597,6 +610,7 @@ typedef struct {
     uint8_t             active_conns_cur_parse_num; /*!< Current connection number used for parsing */
 
     gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
+    gsm_ipd_t           ipd;                    /*!< Connection incoming data structure */
 #endif /* GSM_CFG_CONNS || __DOXYGEN__ */
 #if GSM_CFG_SMS || __DOXYGEN__
     gsm_sms_t           sms;                    /*!< SMS information */

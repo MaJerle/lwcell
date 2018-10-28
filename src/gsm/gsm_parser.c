@@ -914,4 +914,40 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line) {
     return 1;
 }
 
+/**
+ * \brief           Parse IPD or RECEIVE statements
+ * \param[in]       str: Input string
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsmi_parse_ipd(const char* str) {
+    uint8_t conn;
+    size_t len;
+    gsm_conn_p c;
+
+    if (*str == '+') {
+        str++;
+        if (*str == 'R') {
+            str += 8;                           /* Advance for RECEIVE */
+        } else {
+            str += 4;                           /* Advance for IPD */
+        }
+    }
+
+    conn = gsmi_parse_number(&str);             /* Parse number for connection number */
+    len = gsmi_parse_number(&str);              /* Parse number for number of bytes to read */
+
+    c = conn < GSM_CFG_MAX_CONNS ? &gsm.conns[conn] : NULL; /* Get connection handle */
+    if (c == NULL) {                            /* Invalid connection number */
+        return 0;
+    }
+
+    gsm.ipd.read = 1;                           /* Start reading network data */
+    gsm.ipd.tot_len = len;                      /* Total number of bytes in this received packet */
+    gsm.ipd.rem_len = len;                      /* Number of remaining bytes to read */
+    gsm.ipd.conn = c;                           /* Pointer to connection we have data for */
+
+    return 1;
+}
+
 #endif /* GSM_CFG_CONN */

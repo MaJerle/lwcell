@@ -523,7 +523,11 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     /* Scan received strings which start with '+' */
     if (rcv->data[0] == '+') {
         if (!strncmp(rcv->data, "+CSQ", 4)) {
-            gsmi_parse_csq(rcv->data);          /* Parse +CSQ rgsmonse */
+            gsmi_parse_csq(rcv->data);          /* Parse +CSQ response */
+#if GSM_CFG_CONN
+        } else if (!strncmp(rcv->data, "+RECEIVE", 8)) {
+            gsmi_parse_ipd(rcv->data);          /* Parse IPD */
+#endif /* GSM_CFG_CONN */
         } else if (!strncmp(rcv->data, "+CREG", 5)) {   /* Check for +CREG indication */
             gsmi_parse_creg(rcv->data, GSM_U8(CMD_IS_CUR(GSM_CMD_CREG_GET)));  /* Parse +CREG rgsmonse */
         } else if (CMD_IS_CUR(GSM_CMD_CPIN_GET) && !strncmp(rcv->data, "+CPIN", 5)) {  /* Check for +CPIN indication for SIM */
@@ -818,11 +822,95 @@ gsmi_process(const void* data, size_t data_len) {
         ch = *d++;                              /* Get next character */
         d_len--;                                /* Decrease remaining length */
         
+        if (0) {
+#if GSM_CFG_CONN
+        } else if (gsm.ipd.read) {              /* Read connection data */
+            size_t len;
+
+            if (gsm.ipd.buff != NULL) {         /* Do we have active buffer? */
+                gsm.ipd.buff->payload[gsm.ipd.buff_ptr] = ch;   /* Save data character */
+            }
+            gsm.ipd.buff_ptr++;
+            gsm.ipd.rem_len--;
+
+            /* Try to read more data directly from buffer */
+            len = GSM_MIN(d_len, GSM_MIN(gsm.ipd.rem_len, gsm.ipd.buff != NULL ? (gsm.ipd.buff->len - gsm.ipd.buff_ptr) : gsm.ipd.rem_len));
+            GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                "[IPD] New length to read: %d bytes\r\n", (int)len);
+            if (len) {
+                if (gsm.ipd.buff != NULL) {     /* Is buffer valid? */
+                    GSM_MEMCPY(&gsm.ipd.buff->payload[gsm.ipd.buff_ptr], d, len);
+                    GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                        "[IPD] Bytes read: %d\r\n", (int)len);
+                } else {                        /* Simply skip the data in buffer */
+                    GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                        "[IPD] Bytes skipped: %d\r\n", (int)len);
+                }
+                d_len -= len;                   /* Decrease effective length */
+                d += len;                       /* Skip remaining length */
+                gsm.ipd.buff_ptr += len;        /* Forward buffer pointer */
+                gsm.ipd.rem_len -= len;         /* Decrease remaining length */
+            }
+
+            /* Did we reach end of buffer or no more data? */
+            if (!gsm.ipd.rem_len || (gsm.ipd.buff != NULL && gsm.ipd.buff_ptr == gsm.ipd.buff->len)) {
+                gsmr_t res = gsmOK;
+
+                /* Call user callback function with received data */
+                if (gsm.ipd.buff != NULL) {     /* Do we have valid buffer? */
+                    gsm.ipd.conn->total_recved += gsm.ipd.buff->tot_len;    /* Increase number of bytes received */
+
+                    /*
+                     * Send data buffer to upper layer
+                     *
+                     * From this moment, user is responsible for packet
+                     * buffer and must free it manually
+                     */
+                    gsm.evt.type = GSM_EVT_CONN_DATA_RECV;  /* We have received data */
+                    gsm.evt.evt.conn_data_recv.buff = gsm.ipd.buff;
+                    gsm.evt.evt.conn_data_recv.conn = gsm.ipd.conn;
+                    res = gsmi_send_conn_cb(gsm.ipd.conn, NULL);    /* Send connection callback */
+
+                    gsm_pbuf_free(gsm.ipd.buff);    /* Free packet buffer at this point */
+                    GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                        "[IPD] Free packet buffer\r\n");
+                    if (res == gsmOKIGNOREMORE) {   /* We should ignore more data */
+                        GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                            "[IPD] Ignoring more data from this IPD if available\r\n");
+                        gsm.ipd.buff = NULL;    /* Set to NULL to ignore more data if possibly available */
+                    }
+
+                    /*
+                     * Create new data packet if case if:
+                     *
+                     *  - Previous one was successful and more data to read and
+                     *  - Connection is not in closing state
+                     */
+                    if (gsm.ipd.buff != NULL && gsm.ipd.rem_len && !gsm.ipd.conn->status.f.in_closing) {
+                        size_t new_len = GSM_MIN(gsm.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE);   /* Calculate new buffer length */
+
+                        GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                            "[IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
+                        gsm.ipd.buff = gsm_pbuf_new(new_len);   /* Allocate new packet buffer */
+
+                        GSM_DEBUGW(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING,
+                            gsm.ipd.buff == NULL, "[IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
+                    } else {
+                        gsm.ipd.buff = NULL;    /* Reset it */
+                    }
+                }
+                if (!gsm.ipd.rem_len) {         /* Check if we read everything */
+                    gsm.ipd.buff = NULL;        /* Reset buffer pointer */
+                    gsm.ipd.read = 0;           /* Stop reading data */
+                }
+                gsm.ipd.buff_ptr = 0;           /* Reset input buffer pointer */
+            }
+#endif /* GSM_CFG_CONN */
         /*
          * Check if operators scan command is active
          * and if we are ready to read the incoming data
          */
-        if (CMD_IS_CUR(GSM_CMD_COPS_GET_OPT) && gsm.msg->msg.cops_scan.read) {
+        } else if (CMD_IS_CUR(GSM_CMD_COPS_GET_OPT) && gsm.msg->msg.cops_scan.read) {
             if (ch == '\n') {
                 gsm.msg->msg.cops_scan.read = 0;
             } else {
@@ -893,6 +981,38 @@ gsmi_process(const void* data, size_t data_len) {
                             RECV_ADD(ch);       /* Any ASCII valid character */
                             break;
                     }
+
+#if GSM_CFG_CONN
+                    /* Check if we have to read data */
+                    if (ch == '\n' && gsm.ipd.read) {
+                        size_t len;
+                        GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                            "[IPD] Data on connection %d with total size %d byte(s)\r\n",
+                            (int)gsm.ipd.conn->num, gsm.ipd.tot_len);
+
+                        len = GSM_MIN(gsm.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE);
+
+                        /*
+                         * Read received data in case of:
+                         *
+                         *  - Connection is active and
+                         *  - Connection is not in closing mode
+                         */
+                        if (gsm.ipd.conn->status.f.active && !gsm.ipd.conn->status.f.in_closing) {
+                            gsm.ipd.buff = gsm_pbuf_new(len);   /* Allocate new packet buffer */
+                            GSM_DEBUGW(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING, gsm.ipd.buff == NULL,
+                                "[IPD] Buffer allocation failed for %d byte(s)\r\n", (int)len);
+                        } else {
+                            gsm.ipd.buff = NULL;    /* Ignore reading on closed connection */
+                            GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
+                                "[IPD] Connection %d closed or in closing, skipping %d byte(s)\r\n",
+                                (int)gsm.ipd.conn->num, (int)len);
+                        }
+                        gsm.ipd.conn->status.f.data_received = 1;   /* We have first received data */
+
+                        gsm.ipd.buff_ptr = 0;   /* Reset buffer write pointer */
+                    }
+#endif /* GSM_CFG_CONN */
 
                     /*
                      * Do we have a special sequence "> "?

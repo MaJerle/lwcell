@@ -66,6 +66,8 @@ uint8_t     gsmi_parse_cpbf(const char* str);
 
 uint8_t     gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line);
 
+uint8_t     gsmi_parse_ipd(const char* str);
+
 #if defined(__cplusplus)
 }
 #endif /* defined(__cplusplus) */
