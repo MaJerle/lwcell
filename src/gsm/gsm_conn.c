@@ -185,7 +185,7 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
     GSM_MSG_VAR_REF(msg).msg.conn_start.type = type;
     GSM_MSG_VAR_REF(msg).msg.conn_start.host = host;
     GSM_MSG_VAR_REF(msg).msg.conn_start.port = port;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.cb_func = evt_fn;
+    GSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = evt_fn;
     GSM_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
     
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */

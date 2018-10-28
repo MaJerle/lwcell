@@ -41,15 +41,14 @@
  */
 typedef struct {
     gsm_sys_sem_t sem_not_empty;                /*!< Semaphore indicates not empty */
-	gsm_sys_sem_t sem_not_full;                 /*!< Semaphore indicates not full */
-	gsm_sys_sem_t sem;                          /*!< Semaphore to lock access */
+    gsm_sys_sem_t sem_not_full;                 /*!< Semaphore indicates not full */
+    gsm_sys_sem_t sem;                          /*!< Semaphore to lock access */
     size_t in, out, size;
     void* entries[1];
 } win32_mbox_t;
 
 static LARGE_INTEGER freq, sys_start_time;
 static gsm_sys_mutex_t sys_mutex;				/* Mutex ID for main protection */
-
 
 static uint8_t
 mbox_is_full(win32_mbox_t* m) {
@@ -69,19 +68,19 @@ mbox_is_empty(win32_mbox_t* m) {
 
 static uint32_t
 osKernelSysTick(void) {
-	LONGLONG ret;
-	LARGE_INTEGER now;
+    LONGLONG ret;
+    LARGE_INTEGER now;
 
     QueryPerformanceFrequency(&freq);           /* Get frequency */
-	QueryPerformanceCounter(&now);              /* Get current time */
-	ret = now.QuadPart - sys_start_time.QuadPart;
-	return (uint32_t)(((ret) * 1000) / freq.QuadPart);
+    QueryPerformanceCounter(&now);              /* Get current time */
+    ret = now.QuadPart - sys_start_time.QuadPart;
+    return (uint32_t)(((ret) * 1000) / freq.QuadPart);
 }
 
 uint8_t
 gsm_sys_init(void) {
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&sys_start_time);   /* Get start time */
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&sys_start_time);   /* Get start time */
 
     gsm_sys_mutex_create(&sys_mutex);           /* Create system mutex */
     return 1;
@@ -106,33 +105,33 @@ gsm_sys_unprotect(void) {
 
 uint8_t
 gsm_sys_mutex_create(gsm_sys_mutex_t* p) {
-	*p = CreateMutex(NULL, FALSE, NULL);
-	return !!*p;
+    *p = CreateMutex(NULL, FALSE, NULL);
+    return *p != NULL;
 }
 
 uint8_t
 gsm_sys_mutex_delete(gsm_sys_mutex_t* p) {
-	return CloseHandle(*p);
+    return CloseHandle(*p);
 }
 
 uint8_t
 gsm_sys_mutex_lock(gsm_sys_mutex_t* p) {
-	DWORD ret;
-	ret = WaitForSingleObject(*p, INFINITE);
-	if (ret != WAIT_OBJECT_0) {
+    DWORD ret;
+    ret = WaitForSingleObject(*p, INFINITE);
+    if (ret != WAIT_OBJECT_0) {
         return 0;
-	}
-	return 1;
+    }
+    return 1;
 }
 
 uint8_t
 gsm_sys_mutex_unlock(gsm_sys_mutex_t* p) {
-	return !!ReleaseMutex(*p);
+	return (uint8_t)ReleaseMutex(*p);
 }
 
 uint8_t
 gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p) {
-    return !!*p;                                /* Check if mutex is valid */
+    return *p != NULL;                          /* Check if mutex is valid */
 }
 
 uint8_t
@@ -143,38 +142,38 @@ gsm_sys_mutex_invalid(gsm_sys_mutex_t* p) {
 
 uint8_t
 gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt) {
-	HANDLE h;
-	h = CreateSemaphore(NULL, !!cnt, 1, NULL);
-	*p = h;
-	return !!*p;
+    HANDLE h;
+    h = CreateSemaphore(NULL, !!cnt, 1, NULL);
+    *p = h;
+    return *p != NULL;
 }
 
 uint8_t
 gsm_sys_sem_delete(gsm_sys_sem_t* p) {
-	return CloseHandle(*p);
+    return CloseHandle(*p);
 }
 
 uint32_t
 gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout) {
-	DWORD ret;
+    DWORD ret;
     uint32_t tick = osKernelSysTick();          /* Get start tick time */
 	
-	if (!timeout) {
-		ret = WaitForSingleObject(*p, INFINITE);
-		return 1;
-	} else {
-		ret = WaitForSingleObject(*p, timeout);
-		if (ret == WAIT_OBJECT_0) {
-			return 1;
-		} else {
-			return GSM_SYS_TIMEOUT;
-		}
-	}
+    if (!timeout) {
+        ret = WaitForSingleObject(*p, INFINITE);
+        return 1;
+    } else {
+        ret = WaitForSingleObject(*p, timeout);
+        if (ret == WAIT_OBJECT_0) {
+            return 1;
+        } else {
+            return GSM_SYS_TIMEOUT;
+        }
+    }
 }
 
 uint8_t
 gsm_sys_sem_release(gsm_sys_sem_t* p) {
-	return ReleaseSemaphore(*p, 1, NULL);
+    return ReleaseSemaphore(*p, 1, NULL);
 }
 
 uint8_t
@@ -192,7 +191,7 @@ uint8_t
 gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
     win32_mbox_t* mbox;
     
-    *b = 0;
+    *b = NULL;
     
     mbox = malloc(sizeof(*mbox) + size * sizeof(void *));
     if (mbox != NULL) {
@@ -203,7 +202,7 @@ gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
         gsm_sys_sem_create(&mbox->sem_not_full, 0);
         *b = mbox;
     }
-    return !!*b;
+    return *b != NULL;
 }
 
 uint8_t
@@ -332,7 +331,7 @@ gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
 
 uint8_t
 gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b) {
-    return !!*b;                                /* Return status if message box is valid */
+    return *b != NULL;                          /* Return status if message box is valid */
 }
 
 uint8_t

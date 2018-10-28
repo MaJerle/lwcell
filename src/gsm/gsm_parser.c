@@ -114,10 +114,13 @@ gsmi_parse_hexnumber(const char** str) {
 /**
  * \brief           Parse input string as string part of AT command
  * \param[in,out]   src: Pointer to pointer to string to parse from
- * \param[in]       dst: Destination pointer. Use NULL in case you want only skip string in source
- * \param[in]       dst_len: Length of distance buffer, including memory for NULL termination
- * \param[in]       trim: Set to 1 to process entire string, even if no memory anymore
- * \return          1 on success, 0 otherwise
+ * \param[in]       dst: Destination pointer.
+ *                      Set to `NULL` in case you want to skip string in source
+ * \param[in]       dst_len: Length of distance buffer,
+ *                      including memory for `NULL` termination
+ * \param[in]       trim: Set to `1` to process entire string,
+ *                      even if no memory anymore
+ * \return          `1` on success, `0` otherwise
  */
 uint8_t
 gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
@@ -839,3 +842,51 @@ gsmi_parse_cpbf(const char* str) {
 }
 
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+
+#if GSM_CFG_CONN
+
+/**
+ * \brief           Parse connection info line from CIPSTATUS command
+ * \param[in]       str: Input string
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsmi_parse_cipstatus_conn(const char* str) {
+    uint8_t num;
+    gsm_conn_t* conn;
+    char s_tmp[16];
+    if (*str == 'C') {
+        str += 3;
+    }
+    num = GSM_U8(gsmi_parse_number(&str));
+    conn = &gsm.conns[num];
+
+    conn->status.f.bearer = GSM_U8(gsmi_parse_number(&str));
+    gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
+    if (strlen(s_tmp)) {
+        if (strcmp(s_tmp, "TCP")) {
+            conn->type = GSM_CONN_TYPE_TCP;
+        } else if (strcmp(s_tmp, "UDP")) {
+            conn->type = GSM_CONN_TYPE_UDP;
+        }
+    }
+    gsmi_parse_ip(&str, &conn->remote_ip);
+    conn->remote_port = gsmi_parse_number(&str);
+
+    /* Get connection status */
+    gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);
+
+    /* TODO: Implement all connection states */
+    if (!strcmp(s_tmp, "INITIAL")) {
+
+    } else if (!strcmp(s_tmp, "CONNECTED")) {
+
+    }
+
+    /* Save last parsed connection */
+    gsm.active_conns_cur_parse_num = num;
+
+    return 1;
+}
+
+#endif /* GSM_CFG_CONN */

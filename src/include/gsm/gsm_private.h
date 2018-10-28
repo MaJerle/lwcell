@@ -274,6 +274,7 @@ typedef struct gsm_conn_t {
             uint8_t data_received:1;            /*!< Status whether first data were received on connection */
             uint8_t in_closing:1;               /*!< Status if connection is in closing mode.
                                                     When in closing mode, ignore any possible received data from function */
+            uint8_t bearer:1;                   /*!< Bearer used. Can be `1` or `0` */
         } f;
     } status;                                   /*!< Connection status union with flag bits */
 } gsm_conn_t;
@@ -291,6 +292,16 @@ typedef struct gsm_pbuf_t {
     gsm_ip_t ip;                                /*!< Remote address for received IPD data */
     gsm_port_t port;                            /*!< Remote port for received IPD data */
 } gsm_pbuf_t;
+
+/**
+ * \brief           Connection result on connect command
+ */
+typedef enum {
+    GSM_CONN_CONNECT_UNKNOWN,                   /*!< No valid result */
+    GSM_CONN_CONNECT_OK,                        /*!< Connected OK */
+    GSM_CONN_CONNECT_ERROR,                     /*!< Error on connection */
+    GSM_CONN_CONNECT_ALREADY,                   /*!< Already connected */
+} gsm_conn_connect_res_t;
 
 /**
  * \brief           Message queue structure to share between threads
@@ -363,8 +374,9 @@ typedef struct gsm_msg {
             gsm_port_t port;                    /*!< Remote port used for connection */
             gsm_conn_type_t type;               /*!< Connection type */
             void* arg;                          /*!< Connection custom argument */
-            gsm_evt_fn cb_func;                 /*!< Callback function to use on connection */
+            gsm_evt_fn evt_func;                /*!< Callback function to use on connection */
             uint8_t num;                        /*!< Connection number used for start */
+            gsm_conn_connect_res_t conn_res;    /*!< Connection result status */
         } conn_start;                           /*!< Structure for starting new connection */
         struct {
             gsm_conn_t* conn;                   /*!< Pointer to connection to close */
@@ -493,6 +505,7 @@ typedef struct gsm_evt_func {
 } gsm_evt_func_t;
 
 /**
+ * \ingroup         GSM_SMS
  * \brief           SMS memory information
  */
 typedef struct {
@@ -503,6 +516,7 @@ typedef struct {
 } gsm_sms_mem_t;
 
 /**
+ * \ingroup         GSM_SMS
  * \brief           SMS structure
  */
 typedef struct {
@@ -513,6 +527,7 @@ typedef struct {
 } gsm_sms_t;
 
 /**
+ * \ingroup         GSM_SMS
  * \brief           SMS memory information
  */
 typedef struct {
@@ -523,6 +538,7 @@ typedef struct {
 } gsm_pb_mem_t;
 
 /**
+ * \ingroup         GSM_PB
  * \brief           Phonebook structure
  */
 typedef struct {
@@ -578,8 +594,7 @@ typedef struct {
 
     /* Device specific */
 #if GSM_CFG_CONN || __DOXYGEN__
-    uint32_t            active_conns;           /*!< Bit field of currently active connections */
-    uint32_t            active_conns_last;      /*!< The same as previous but status before last check */
+    uint8_t             active_conns_cur_parse_num; /*!< Current connection number used for parsing */
 
     gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
 #endif /* GSM_CFG_CONNS || __DOXYGEN__ */

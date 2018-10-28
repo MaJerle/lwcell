@@ -424,7 +424,7 @@ gsmi_send_conn_error_cb(gsm_msg_t* msg, gsmr_t error) {
     gsm.evt.evt.conn_error.err = error;
 
     /* Call callback specified by user on connection startup */
-    gsm.msg->msg.conn_start.cb_func(&gsm.evt);
+    gsm.msg->msg.conn_start.evt_func(&gsm.evt);
 }
 
 /**
@@ -527,12 +527,16 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             gsmi_parse_cpbf(rcv->data);         /* Parse +CPBR statement */
 #endif /* GSM_CFG_PHONEBOOK */
         }
-    }
 
-    /* Check messages which do not start with '+' sign */
-    if (rcv->data[0] != '+') {
+    /* Messages not starting with '+' sign */
+    } else {
         if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SHUT OK" CRLF, 7 + CRLF_LEN)) {
             is_ok = 1;
+#if GSM_CFG_CONN
+        } else if (GSM_CHARISNUM(rcv->data[0]) && rcv->data[1] == ',' && rcv->data[2] == ' '
+            && (!strncmp(&rcv->data[3], "CLOSE OK" CRLF, 8 + CRLF_LEN) || !strncmp(&rcv->data[3], "CLOSED" CRLF, 6 + CRLF_LEN))) {
+            printf("Connection closed madafaka!\r\n");
+#endif /* GSM_CFG_CONN */
 #if GSM_CFG_CALL
         } else if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
             gsm.call.ready = 1;
@@ -567,6 +571,64 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 
             is_ok = 1;                          /* Manually set OK flag as we don't expect OK in CIFSR command */
         }
+    }
+
+    /* Special commands */
+    if (0) {
+#if GSM_CFG_CONN
+    } else if (CMD_IS_CUR(GSM_CMD_CIPSTATUS)) {
+        /* For CIPSTATUS, OK is returned before important data */
+        if (is_ok) {
+            is_ok = 0;
+        }
+        /* Check if connection data received */
+        if (rcv->len > 3 && rcv->data[0] == 'C'
+            && rcv->data[1] == ':' && rcv->data[2] == ' ') {
+            gsmi_parse_cipstatus_conn(rcv->data);
+
+            if (gsm.active_conns_cur_parse_num == (GSM_CFG_MAX_CONNS - 1)) {
+                is_ok = 1;
+            }
+        }
+    } else if (CMD_IS_CUR(GSM_CMD_CIPSTART)) {
+        /* For CIPSTART, OK is returned before important data */
+        if (is_ok) {
+            is_ok = 0;
+        }
+
+        /* Wait here for CONNECT status before we cancel connection */
+        if (GSM_CHARISNUM(rcv->data[0])
+            && rcv->data[1] == ',' && rcv->data[2] == ' ') {
+            uint8_t num = GSM_CHARTONUM(rcv->data[0]);
+            if (num < GSM_CFG_MAX_CONNS) {
+                uint8_t id;
+                gsm_conn_t* conn = &gsm.conns[num]; /* Get connection handle */
+
+                if (!strncmp(&rcv->data[3], "CONNECT OK" CRLF, 10 + CRLF_LEN)) {
+                    id = conn->val_id;
+                    GSM_MEMSET(conn, 0x00, sizeof(*conn));  /* Reset connection parameters */
+                    conn->num = num;
+                    conn->status.f.active = 1;
+                    conn->val_id = ++id;            /* Set new validation ID */
+
+                    /* Set connection parameters */
+                    conn->status.f.client = 1;
+                    conn->evt_func = gsm.msg->msg.conn_start.evt_func;
+                    conn->arg = gsm.msg->msg.conn_start.arg;
+
+                    /* Set status */
+                    gsm.msg->msg.conn_start.conn_res = GSM_CONN_CONNECT_OK;
+                    is_ok = 1;
+                } else if (!strncmp(&rcv->data[3], "CONNECT FAIL" CRLF, 12 + CRLF_LEN)) {
+                    gsm.msg->msg.conn_start.conn_res = GSM_CONN_CONNECT_ERROR;
+                    is_error = 1;
+                } else if (!strncmp(&rcv->data[3], "ALREADY CONNECT" CRLF, 15 + CRLF_LEN)) {
+                    gsm.msg->msg.conn_start.conn_res = GSM_CONN_CONNECT_ALREADY;
+                    is_error = 1;
+                }
+            }
+        }
+#endif /* GSM_CFG_CONN */
     }
 
     /* Check general rgsmonses for active commands */
@@ -974,6 +1036,38 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
             is_ok = 1;
         }
 #endif /* GSM_CFG_NETWORK */
+#if GSM_CFG_CONN
+    } else if (CMD_IS_DEF(GSM_CMD_CIPSTART)) {
+        if (msg->i == 0 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) { /* Was the current command status info? */
+            if (is_ok) {
+                n_cmd = GSM_CMD_CIPSTART;       /* Now actually start connection */
+            }
+        } else if (msg->i == 1 && CMD_IS_CUR(GSM_CMD_CIPSTART)) {
+            n_cmd = GSM_CMD_CIPSTATUS;          /* Go to status mode */
+        } else if (msg->i == 2 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) {
+            /* After second CIP status, define what to do next */
+            switch (msg->msg.conn_start.conn_res) {
+                case GSM_CONN_CONNECT_OK: {     /* Successfully connected */
+                    gsm_conn_t* conn = &gsm.conns[msg->msg.conn_start.num]; /* Get connection number */
+
+                    gsm.evt.type = GSM_EVT_CONN_ACTIVE; /* Connection just active */
+                    gsm.evt.evt.conn_active_closed.client = 1;
+                    gsm.evt.evt.conn_active_closed.conn = conn;
+                    gsm.evt.evt.conn_active_closed.forced = 1;
+                    gsmi_send_conn_cb(conn, NULL);
+                    break;
+                }
+                case GSM_CONN_CONNECT_ERROR: {  /* Connection error */
+                    gsmi_send_conn_error_cb(msg, gsmERRCONNFAIL);
+                    break;
+                }
+                default: {
+                    /* Do nothing as of now */
+                    break;
+                }
+            }
+        }
+#endif /* GSM_CFG_CONN */
     }
 
     /* Check if new command was set for execution */
@@ -1195,7 +1289,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
 
             msg->msg.conn_start.num = 0;        /* Start with max value = invalidated */
             for (int16_t i = GSM_CFG_MAX_CONNS - 1; i >= 0; i--) {  /* Find available connection */
-                if (!gsm.conns[i].status.f.active || !(gsm.active_conns & (1 << i))) {
+                if (!gsm.conns[i].status.f.active) {
                     c = &gsm.conns[i];
                     c->num = GSM_U8(i);
                     msg->msg.conn_start.num = GSM_U8(i);    /* Set connection number for message structure */
@@ -1242,8 +1336,6 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             return gsmi_tcpip_process_send_data();  /* Process send data */
         }
         case GSM_CMD_CIPSTATUS: {               /* Get status of device and all connections */
-            gsm.active_conns_last = gsm.active_conns;   /* Save as last status */
-            gsm.active_conns = 0;               /* Reset new status before parsing starts */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CIPSTATUS");
             GSM_AT_PORT_SEND_END();

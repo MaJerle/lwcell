@@ -75,14 +75,24 @@ configure_uart(uint32_t baudrate) {
      * as generic read and write
      */
 	if (!initialized) {
-		comPort = CreateFile(L"\\\\.\\COM23",
-			GENERIC_READ | GENERIC_WRITE,
-			0,
-			0,
-			OPEN_EXISTING,
-			0,
-			NULL
-		);
+        static const LPCWSTR com_ports[] = {
+            L"\\\\.\\COM23",
+            L"\\\\.\\COM9"
+        };
+        for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); i++) {
+            comPort = CreateFile(com_ports[i],
+                GENERIC_READ | GENERIC_WRITE,
+                0,
+                0,
+                OPEN_EXISTING,
+                0,
+                NULL
+            );
+            if (GetCommState(comPort, &dcb)) {
+                printf("COM PORT %s opened!\r\n", (const char *)com_ports[i]);
+                break;
+            }
+        }
 	}
 
     /* Configure COM port parameters */

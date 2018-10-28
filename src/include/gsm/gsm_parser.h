@@ -64,6 +64,8 @@ uint8_t     gsmi_parse_cpms(const char* str, uint8_t opt);
 uint8_t     gsmi_parse_cpbr(const char* str);
 uint8_t     gsmi_parse_cpbf(const char* str);
 
+uint8_t     gsmi_parse_cipstatus_conn(const char* str);
+
 #if defined(__cplusplus)
 }
 #endif /* defined(__cplusplus) */
