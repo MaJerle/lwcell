@@ -89,7 +89,7 @@
 
 /**
  * \brief           Maximal number of bytes we can send at single command to GSM
- * \note            Value can not exceed 2048 bytes or no data will be ever send
+ * \note            Value can not exceed `2048` bytes or no data will be ever send
  *
  * \note            This is limitation of GSM AT commands and on systems where RAM
  *                  is not an issue, it should be set to maximal value (2048)

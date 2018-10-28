@@ -50,6 +50,9 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
+#if GSM_CFG_CONN
+    /* GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS; */
+#endif /* GSM_CFG_CONN */
     GSM_MSG_VAR_REF(msg).msg.network_attach.apn = apn;
     GSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
     GSM_MSG_VAR_REF(msg).msg.network_attach.pass = pass;
@@ -68,6 +71,9 @@ gsm_network_detach(uint32_t blocking) {
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_DETACH;
+#if GSM_CFG_CONN
+    /* GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS; */
+#endif /* GSM_CFG_CONN */
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }

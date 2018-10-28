@@ -72,7 +72,7 @@ gsmi_parse_number(const char** str) {
         val = val * 10 + GSM_CHARTONUM(*p);
         p++;
     }
-    if (*p == ',') {                            /* Go to next entry if possible */
+    if (*p == '"') {                            /* Skip trailling quotes */
         p++;
     }
     *str = p;                                   /* Save new pointer with new offset */
@@ -175,19 +175,24 @@ gsmi_check_and_trim(const char** src) {
  * \brief           Parse string as IP address
  * \param[in,out]   src: Pointer to pointer to string to parse from
  * \param[in]       dst: Destination pointer
- * \return          1 on success, 0 otherwise
+ * \return          `1 on success, 0 otherwise
  */
 uint8_t
 gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
     const char* p = *src;
     
+    if (*p == ',') {
+        p++;
+    }
     if (*p == '"') {
         p++;
     }
-    ip->ip[0] = gsmi_parse_number(&p); p++;
-    ip->ip[1] = gsmi_parse_number(&p); p++;
-    ip->ip[2] = gsmi_parse_number(&p); p++;
-    ip->ip[3] = gsmi_parse_number(&p);
+    if (GSM_CHARISNUM(*p)) {
+        ip->ip[0] = gsmi_parse_number(&p); p++;
+        ip->ip[1] = gsmi_parse_number(&p); p++;
+        ip->ip[2] = gsmi_parse_number(&p); p++;
+        ip->ip[3] = gsmi_parse_number(&p);
+    }
     if (*p == '"') {
         p++;
     }
@@ -848,16 +853,28 @@ gsmi_parse_cpbf(const char* str) {
 /**
  * \brief           Parse connection info line from CIPSTATUS command
  * \param[in]       str: Input string
+ * \param[in]       is_conn_line: Set to `1` for connection, `0` for general status
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_parse_cipstatus_conn(const char* str) {
+gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line) {
     uint8_t num;
     gsm_conn_t* conn;
     char s_tmp[16];
-    if (*str == 'C') {
+    
+    if (is_conn_line && (*str == 'C' || *str == 'S')) {
         str += 3;
+    } else {
+        /* Parse general status */
+
+        /* Check if PDP context is deactivated or not */
+        if (!strncmp(&str[7], "PDP DEACT", 9)) {
+            /* Deactivated */
+        }
+        return 1;
     }
+
+    /* Parse connection line */
     num = GSM_U8(gsmi_parse_number(&str));
     conn = &gsm.conns[num];
 
@@ -879,7 +896,15 @@ gsmi_parse_cipstatus_conn(const char* str) {
     /* TODO: Implement all connection states */
     if (!strcmp(s_tmp, "INITIAL")) {
 
+    } else if (!strcmp(s_tmp, "CONNECTING")) {
+
     } else if (!strcmp(s_tmp, "CONNECTED")) {
+
+    } else if (!strcmp(s_tmp, "REMOTE CLOSING")) {
+
+    } else if (!strcmp(s_tmp, "CLOSING")) {
+
+    } else if (!strcmp(s_tmp, "CLOSED")) {
 
     }
 
