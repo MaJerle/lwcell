@@ -64,6 +64,10 @@ gsm_conn_p  gsm_conn_get_from_evt(gsm_evt_t* evt);
 gsmr_t      gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
 gsmr_t      gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf);
 size_t      gsm_conn_get_total_recved_count(gsm_conn_p conn);
+
+uint8_t     gsm_conn_get_remote_ip(gsm_conn_p conn, gsm_ip_t* ip);
+gsm_port_t  gsm_conn_get_remote_port(gsm_conn_p conn);
+gsm_port_t  gsm_conn_get_local_port(gsm_conn_p conn);
  
 /**
  * \}

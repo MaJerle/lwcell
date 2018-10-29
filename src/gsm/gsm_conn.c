@@ -595,4 +595,56 @@ gsm_conn_get_total_recved_count(gsm_conn_p conn) {
     return tot;
 }
 
+
+
+/**
+ * \brief           Get connection remote IP address
+ * \param[in]       conn: Connection handle
+ * \param[out]      ip: Pointer to IP output handle
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsm_conn_get_remote_ip(gsm_conn_p conn, gsm_ip_t* ip) {
+    if (conn != NULL && ip != NULL) {
+        GSM_CORE_PROTECT();                     /* Protect core */
+        GSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip));  /* Copy data */
+        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * \brief           Get connection remote port number
+ * \param[in]       conn: Connection handle
+ * \return          Port number on success, `0` otherwise
+ */
+gsm_port_t
+gsm_conn_get_remote_port(gsm_conn_p conn) {
+    gsm_port_t port = 0;
+    if (conn != NULL) {
+        GSM_CORE_PROTECT();                     /* Protect core */
+        port = conn->remote_port;
+        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    }
+    return port;
+}
+
+/**
+ * \brief           Get connection local port number
+ * \param[in]       conn: Connection handle
+ * \return          Port number on success, `0` otherwise
+ */
+gsm_port_t
+gsm_conn_get_local_port(gsm_conn_p conn) {
+    gsm_port_t port = 0;
+    if (conn != NULL) {
+        GSM_CORE_PROTECT();                     /* Protect core */
+        port = conn->local_port;
+        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    }
+    return port;
+}
+
+
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */
