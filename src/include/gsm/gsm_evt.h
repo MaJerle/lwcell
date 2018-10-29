@@ -100,13 +100,14 @@ size_t      gsm_evt_conn_data_sent_get_length(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_DATA_SEND_ERR
- * \anchor          GSM_EVT_CONN_DATA_SEND_ERR
- * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_SEND_ERR event
+ * \name            GSM_EVT_CONN_DATA_SEND
+ * \anchor          GSM_EVT_CONN_DATA_SEND
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_SEND event
  */
 
-gsm_conn_p  gsm_evt_conn_data_send_err_get_conn(gsm_evt_t* cc);
-size_t      gsm_evt_conn_data_send_err_get_length(gsm_evt_t* cc);
+gsm_conn_p  gsm_evt_conn_data_send_get_conn(gsm_evt_t* cc);
+size_t      gsm_evt_conn_data_send_get_length(gsm_evt_t* cc);
+gsmr_t      gsm_evt_conn_data_send_get_result(gsm_evt_t* cc);
 
 /**
  * \}

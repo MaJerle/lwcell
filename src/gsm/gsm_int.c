@@ -64,24 +64,28 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 #define CONN_SEND_DATA_FREE(m)      do {            \
     if ((m) != NULL && (m)->msg.conn_send.fau) {    \
         (m)->msg.conn_send.fau = 0;                 \
-        GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,   \
-            "[CONN] Free write buffer fau: %p\r\n", (void *)(m)->msg.conn_send.data);   \
-        gsm_mem_free((void *)(m)->msg.conn_send.data);  \
-        (m)->msg.conn_send.data = NULL;             \
+        if ((m)->msg.conn_send.data != NULL) {      \
+            GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,   \
+                "[CONN] Free write buffer fau: %p\r\n", (void *)(m)->msg.conn_send.data);   \
+            gsm_mem_free((void *)(m)->msg.conn_send.data);  \
+            (m)->msg.conn_send.data = NULL;         \
+        }                                           \
     }                                               \
 } while (0)
 
 /**
- * \brief           Send connection callback for "sent error" event
+ * \brief           Send connection callback for "data send"
  * \param[in]       m: Connection send message
  * \param[in]       c: Connection handle
  * \param[in]       sa: Number of bytes successfully sent, "sent all"
+ * \param[in]       err: Error of type \ref gsmr_t
  */
-#define CONN_SEND_DATA_SEND_ERR_EVT(m, c, sa)  do { \
+#define CONN_SEND_DATA_SEND_EVT(m, c, sa, err)  do { \
     CONN_SEND_DATA_FREE(m);                         \
-    gsm.evt.type = GSM_EVT_CONN_DATA_SEND_ERR;      \
-    gsm.evt.evt.conn_data_send_err.conn = c;        \
-    gsm.evt.evt.conn_data_send_err.sent = sa;       \
+    gsm.evt.type = GSM_EVT_CONN_DATA_SEND;          \
+    gsm.evt.evt.conn_data_send.res = err;           \
+    gsm.evt.evt.conn_data_send.conn = c;            \
+    gsm.evt.evt.conn_data_send.sent = sa;           \
     gsmi_send_conn_cb(c, NULL);                     \
 } while (0)
 
@@ -705,23 +709,27 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                         gsm.msg->msg.conn_send.wait_send_ok_err = 0;
                         is_ok = gsmi_tcpip_process_data_sent(1);    /* Process as data were sent */
                         if (is_ok && gsm.msg->msg.conn_send.conn->status.f.active) {
-                            CONN_SEND_DATA_FREE(gsm.msg);   /* Free message data */
-                            gsm.evt.type = GSM_EVT_CONN_DATA_SENT;  /* Data were fully sent */
-                            gsm.evt.evt.conn_data_sent.conn = gsm.msg->msg.conn_send.conn;
-                            gsm.evt.evt.conn_data_sent.sent = gsm.msg->msg.conn_send.sent_all;
-                            gsmi_send_conn_cb(gsm.msg->msg.conn_send.conn, NULL);   /* Send connection callback */
+                            CONN_SEND_DATA_SEND_EVT(gsm.msg,
+                                gsm.msg->msg.conn_send.conn,
+                                gsm.msg->msg.conn_send.sent_all,
+                                gsmOK);
                         }
                     } else if (!strncmp(&rcv->data[3], "SEND FAIL" CRLF, 9 + CRLF_LEN)) {
                         gsm.msg->msg.conn_send.wait_send_ok_err = 0;
                         is_error = gsmi_tcpip_process_data_sent(0); /* Data were not sent due to SEND FAIL or command didn't even start */
                         if (is_error && gsm.msg->msg.conn_send.conn->status.f.active) {
-                            CONN_SEND_DATA_SEND_ERR_EVT(gsm.msg,
-                                gsm.msg->msg.conn_send.conn, gsm.msg->msg.conn_send.sent_all);
+                            CONN_SEND_DATA_SEND_EVT(gsm.msg,
+                                gsm.msg->msg.conn_send.conn,
+                                gsm.msg->msg.conn_send.sent_all,
+                                gsmERR);
                         }
                     }
                 }
             } else if (is_error) {
-                CONN_SEND_DATA_FREE(gsm.msg);
+                CONN_SEND_DATA_SEND_EVT(gsm.msg,
+                    gsm.msg->msg.conn_send.conn,
+                    gsm.msg->msg.conn_send.sent_all,
+                    gsmERR);
             }
 #endif /* GSM_CFG_CONN */
         }

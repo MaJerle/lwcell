@@ -94,8 +94,8 @@ gsm_evt_conn_data_recv_get_conn(gsm_evt_t* cc) {
  * \return          Connection handle
  */
 gsm_conn_p
-gsm_evt_conn_data_sent_get_conn(gsm_evt_t* cc) {
-    return cc->evt.conn_data_sent.conn;
+gsm_evt_conn_data_send_get_conn(gsm_evt_t* cc) {
+    return cc->evt.conn_data_send.conn;
 }
 
 /**
@@ -104,28 +104,18 @@ gsm_evt_conn_data_sent_get_conn(gsm_evt_t* cc) {
  * \return          Number of bytes sent
  */
 size_t
-gsm_evt_conn_data_sent_get_length(gsm_evt_t* cc) {
-    return cc->evt.conn_data_sent.sent;
+gsm_evt_conn_data_send_get_length(gsm_evt_t* cc) {
+    return cc->evt.conn_data_send.sent;
 }
 
 /**
- * \brief           Get connection handle
+ * \brief           Check if connection send was successful
  * \param[in]       cc: Event handle
- * \return          Connection handle
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
-gsm_conn_p
-gsm_evt_conn_data_send_err_get_conn(gsm_evt_t* cc) {
-    return cc->evt.conn_data_send_err.conn;
-}
-
-/**
- * \brief           Get number of bytes successfully sent on failed send command
- * \param[in]       cc: Event handle
- * \return          Connection handle
- */
-size_t
-gsm_evt_conn_data_send_err_get_length(gsm_evt_t* cc) {
-    return cc->evt.conn_data_send_err.sent;
+gsmr_t
+gsm_evt_conn_data_send_get_result(gsm_evt_t* cc) {
+    return cc->evt.conn_data_send.res;
 }
 
 /**
