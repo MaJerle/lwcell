@@ -250,7 +250,7 @@ typedef enum {
 /**
  * \brief           Connection structure
  */
-typedef struct gsm_conn_t {
+typedef struct gsm_conn {
     gsm_conn_type_t type;                       /*!< Connection type */
     uint8_t         num;                        /*!< Connection number */
     gsm_ip_t        remote_ip;                  /*!< Remote IP address */
@@ -283,8 +283,8 @@ typedef struct gsm_conn_t {
  * \ingroup         GSM_PBUF
  * \brief           Packet buffer structure
  */
-typedef struct gsm_pbuf_t {
-    struct gsm_pbuf_t* next;                    /*!< Next pbuf in chain list */
+typedef struct gsm_pbuf {
+    struct gsm_pbuf* next;                      /*!< Next pbuf in chain list */
     size_t tot_len;                             /*!< Total length of pbuf chain */
     size_t len;                                 /*!< Length of payload */
     size_t ref;                                 /*!< Number of references to this structure */

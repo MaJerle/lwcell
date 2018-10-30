@@ -317,21 +317,21 @@ typedef struct {
 } gsm_call_t;
 
 /* Forward declarations */
-struct gsm_evt_t;
-struct gsm_conn_t;
-struct gsm_pbuf_t;
+struct gsm_evt;
+struct gsm_conn;
+struct gsm_pbuf;
 
 /**
  * \ingroup         GSM_CONN
  * \brief           Pointer to \ref gsm_conn_t structure
  */
-typedef struct gsm_conn_t* gsm_conn_p;
+typedef struct gsm_conn* gsm_conn_p;
 
 /**
  * \ingroup         GSM_PBUF
  * \brief           Pointer to \ref gsm_pbuf_t structure
  */
-typedef struct gsm_pbuf_t* gsm_pbuf_p;
+typedef struct gsm_pbuf* gsm_pbuf_p;
 
 /**
  * \ingroup         GSM_EVT
@@ -339,7 +339,7 @@ typedef struct gsm_pbuf_t* gsm_pbuf_p;
  * \param[in]       cb: Callback event data
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
-typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt_t* cb);
+typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt* cb);
 
 /**
  * \ingroup         GSM_EVT
@@ -393,7 +393,7 @@ typedef enum gsm_cb_type_t {
  * \ingroup         GSM_EVT
  * \brief           Global callback structure to pass as parameter to callback function
  */
-typedef struct gsm_evt_t {
+typedef struct gsm_evt {
     gsm_evt_type_t type;                        /*!< Callback type */
     union {
         struct {
