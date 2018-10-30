@@ -510,7 +510,7 @@ typedef struct {
  * \ingroup         GSM_TIMEOUT
  * \brief           Timeout callback function prototype
  */
-typedef void (*gsm_timeout_fn_t)(void *);
+typedef void (*gsm_timeout_fn)(void *);
 
 /**
  * \ingroup         GSM_TIMEOUT
@@ -520,7 +520,7 @@ typedef struct gsm_timeout {
     struct gsm_timeout* next;                   /*!< Pointer to next timeout entry */
     uint32_t time;                              /*!< Time difference from previous entry */
     void* arg;                                  /*!< Argument to pass to callback function */
-    gsm_timeout_fn_t fn;                        /*!< Callback function for timeout */
+    gsm_timeout_fn fn;                          /*!< Callback function for timeout */
 } gsm_timeout_t;
 
 /**

@@ -118,7 +118,7 @@ gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t tim
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_timeout_add(uint32_t time, gsm_timeout_fn_t fn, void* arg) {
+gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
     gsm_timeout_t* to;
     uint32_t now, diff = 0;
     
@@ -190,7 +190,7 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn_t fn, void* arg) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_timeout_remove(gsm_timeout_fn_t fn) {
+gsm_timeout_remove(gsm_timeout_fn fn) {
     gsm_timeout_t *t, *t_prev;
     
     for (t = first_timeout, t_prev = NULL; t != NULL;
