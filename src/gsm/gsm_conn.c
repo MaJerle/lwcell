@@ -524,7 +524,7 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
     /* Step 2 */
     while (btw >= GSM_CFG_CONN_MAX_DATA_LEN) {
         uint8_t* buff;
-        buff = gsm_mem_alloc(GSM_CFG_CONN_MAX_DATA_LEN);    /* Allocate memory */
+        buff = gsm_mem_alloc(sizeof(*buff) * GSM_CFG_CONN_MAX_DATA_LEN);    /* Allocate memory */
         if (buff != NULL) {
             GSM_MEMCPY(buff, d, GSM_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
             if (conn_send(conn, NULL, 0, buff, GSM_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != gsmOK) {
@@ -544,7 +544,7 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
     
     /* Step 3 */
     if (conn->buff.buff == NULL) {
-        conn->buff.buff = gsm_mem_alloc(GSM_CFG_CONN_MAX_DATA_LEN); /* Allocate memory for temp buffer */
+        conn->buff.buff = gsm_mem_alloc(sizeof(*conn->buff.buff) * GSM_CFG_CONN_MAX_DATA_LEN);  /* Allocate memory for temp buffer */
         conn->buff.len = GSM_CFG_CONN_MAX_DATA_LEN;
         conn->buff.ptr = 0;
         

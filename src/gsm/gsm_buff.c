@@ -52,7 +52,7 @@ gsm_buff_init(gsm_buff_t* buff, size_t size) {
     memset(buff, 0, sizeof(*buff));             /* Set buffer values to all zeros */
 
     buff->size = size;                          /* Set default values */
-    buff->buff = gsm_mem_alloc(size);           /* Allocate memory for buffer */
+    buff->buff = gsm_mem_alloc(sizeof(buff->buff) * size);  /* Allocate memory for buffer */
     if (buff->buff == NULL) {                   /* Check allocation */
         return 0;
     }
