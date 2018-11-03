@@ -527,7 +527,7 @@ typedef struct gsm_timeout {
  * \ingroup         GSM_BUFF
  * \brief           Buffer structure
  */
-typedef struct gsm_buff {
+typedef struct {
     size_t size;                                /*!< Size of buffer in units of bytes */
     size_t in;                                  /*!< Input pointer to save next value */
     size_t out;                                 /*!< Output pointer to read next value */

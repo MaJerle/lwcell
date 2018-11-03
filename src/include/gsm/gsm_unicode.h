@@ -42,8 +42,8 @@ extern "C" {
     
 /**
  * \ingroup         GSM
- * \defgroup        GSM_UNICODE Unicode support
- * \brief           Unicode manager
+ * \defgroup        GSM_UNICODE Unicode manager
+ * \brief           Unicode support manager
  * \{
  */
     

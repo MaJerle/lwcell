@@ -49,7 +49,7 @@ gsm_buff_init(gsm_buff_t* buff, size_t size) {
     if (buff == NULL) {                         /* Check buffer structure */
         return 0;
     }
-    memset(buff, 0, sizeof(*buff));             /* Set buffer values to all zeros */
+    GSM_MEMSET(buff, 0, sizeof(*buff));         /* Set buffer values to all zeros */
 
     buff->size = size;                          /* Set default values */
     buff->buff = gsm_mem_alloc(sizeof(buff->buff) * size);  /* Allocate memory for buffer */
@@ -105,12 +105,12 @@ gsm_buff_write(gsm_buff_t* buff, const void* data, size_t count) {
     if (tocopy > count) {                       /* Check for copy count */
         tocopy = count;
     }
-    memcpy(&buff->buff[buff->in], d, tocopy);   /* Copy content to buffer */
+    GSM_MEMCPY(&buff->buff[buff->in], d, tocopy);   /* Copy content to buffer */
     i += tocopy;                                /* Increase number of bytes we copied already */
     buff->in += tocopy;	
     count -= tocopy;
     if (count > 0) {                            /* Check if anything to write */	
-        memcpy(buff->buff, (void *)&d[i], count);   /* Copy content */
+        GSM_MEMCPY(buff->buff, (void *)&d[i], count);   /* Copy content */
         buff->in = count;									/* Set input pointer */
     }
     if (buff->in >= buff->size) {               /* Check input overflow */
@@ -150,12 +150,12 @@ gsm_buff_read(gsm_buff_t* buff, void* data, size_t count) {
     if (tocopy > count) {                       /* Check for copy count */
         tocopy = count;
     }
-    memcpy(d, &buff->buff[buff->out], tocopy);  /* Copy content from buffer */
+    GSM_MEMCPY(d, &buff->buff[buff->out], tocopy);  /* Copy content from buffer */
     i += tocopy;                                /* Increase number of bytes we copied already */
     buff->out += tocopy;
     count -= tocopy;
     if (count > 0) {                            /* Check if anything to read */
-        memcpy(&d[i], buff->buff, count);       /* Copy content */
+        GSM_MEMCPY(&d[i], buff->buff, count);   /* Copy content */
         buff->out = count;                      /* Set input pointer */
     }
     if (buff->out >= buff->size) {              /* Check output overflow */
@@ -204,11 +204,11 @@ gsm_buff_peek(gsm_buff_t* buff, size_t skip_count, void* data, size_t count) {
     if (tocopy > count) {                       /* Check for copy count */
         tocopy = count;
     }
-    memcpy(d, &buff->buff[out], tocopy);        /* Copy content from buffer */
+    GSM_MEMCPY(d, &buff->buff[out], tocopy);    /* Copy content from buffer */
     i += tocopy;                                /* Increase number of bytes we copied already */
     count -= tocopy;
     if (count > 0) {                            /* Check if anything to read */
-        memcpy(&d[i], buff->buff, count);       /* Copy content */
+        GSM_MEMCPY(&d[i], buff->buff, count);   /* Copy content */
     }
     return i + count;                           /* Return number of elements stored in memory */
 }

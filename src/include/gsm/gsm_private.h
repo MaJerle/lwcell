@@ -640,6 +640,7 @@ typedef struct {
 } gsm_dev_mem_map_t;
 
 /**
+ * \ingroup         GSM_UNICODE
  * \brief           Unicode support structure
  */
 typedef struct {
