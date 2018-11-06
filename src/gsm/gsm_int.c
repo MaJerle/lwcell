@@ -1041,8 +1041,8 @@ gsmi_process(const void* data, size_t data_len) {
                         } else if (CMD_IS_CUR(GSM_CMD_CMGS)) {  /* Send SMS? */
                             GSM_AT_PORT_SEND(gsm.msg->msg.sms_send.text, strlen(gsm.msg->msg.sms_send.text));
                             GSM_AT_PORT_SEND_CTRL_Z();
-                        }
 #endif /* GSM_CFG_SMS */
+                        }
                     } else if (CMD_IS_CUR(GSM_CMD_COPS_GET_OPT)) {
                         if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+COPS:", 5)) {
                             RECV_RESET();       /* Reset incoming buffer */

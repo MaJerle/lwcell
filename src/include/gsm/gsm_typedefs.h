@@ -407,7 +407,7 @@ typedef struct gsm_evt {
             const gsm_operator_curr_t* operator_current;    /*!< Current operator info */
         } operator_current;                     /*!< Current operator event. Use with \ref GSM_EVT_OPERATOR_CURRENT event */
 
-#if GSM_CFG_CALL || __DOXYGEN__
+#if GSM_CFG_CONN || __DOXYGEN__
         struct {
             gsm_conn_p conn;                    /*!< Connection where data were received */
             gsm_pbuf_p buff;                    /*!< Pointer to received data */
@@ -432,7 +432,7 @@ typedef struct gsm_evt {
         struct {
             gsm_conn_p conn;                    /*!< Set connection pointer */
         } conn_poll;                            /*!< Polling active connection to check for timeouts. Use with \ref GSM_EVT_CONN_POLL event */
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
+#endif /* GSM_CFG_CONN || __DOXYGEN__ */
 
 #if GSM_CFG_SMS || __DOXYGEN__
         struct {
