@@ -881,7 +881,7 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line) {
     conn->status.f.bearer = GSM_U8(gsmi_parse_number(&str));
     gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
     if (strlen(s_tmp)) {
-        if (!(s_tmp, "TCP")) {
+        if (!strcmp(s_tmp, "TCP")) {
             conn->type = GSM_CONN_TYPE_TCP;
         } else if (!strcmp(s_tmp, "UDP")) {
             conn->type = GSM_CONN_TYPE_UDP;
@@ -904,8 +904,10 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line) {
 
     } else if (!strcmp(s_tmp, "CLOSING")) {
 
-    } else if (!strcmp(s_tmp, "CLOSED")) {
-
+    } else if (!strcmp(s_tmp, "CLOSED")) {      /* Connection closed */
+        if (conn->status.f.active) {            /* Check if connection is not */
+            gsmi_conn_closed_process(conn->num, 0); /* Process closed event */
+        }
     }
 
     /* Save last parsed connection */

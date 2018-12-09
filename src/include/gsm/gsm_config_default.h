@@ -275,6 +275,15 @@
 #endif
 
 /**
+ * \brief           Set debug level for netconn sequential API
+ *
+ *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ */
+#ifndef GSM_CFG_DBG_NETCONN
+#define GSM_CFG_DBG_NETCONN                 GSM_DBG_OFF
+#endif
+
+/**
  * \brief           Enables `1` or disables `0` echo mode on AT commands
  *                  sent to GSM device.
  *
@@ -337,6 +346,58 @@
  * \defgroup        GSM_CONF_MODULES Modules
  * \brief           Configuration of specific modules
  * \{
+ */
+
+/**
+ * \defgroup        GSM_CONF_MODULES_NETCONN Netconn module
+ * \brief           Configuration of netconn API module
+ * \{
+ */
+
+/**
+ * \brief           Enables `1` or disables `0` NETCONN sequential API support for OS systems
+ *
+ * \note            To use this feature, OS support is mandatory.
+ * \sa              GSM_CFG_OS
+ */
+#ifndef GSM_CFG_NETCONN
+#define GSM_CFG_NETCONN                     0
+#endif
+
+/**
+ * \brief           Enables `1` or disables `0` receive timeout feature
+ *
+ *                  When this option is enabled, user will get an option
+ *                  to set timeout value for receive data on netconn,
+ *                  before function returns timeout error.
+ *
+ * \note            Even if this option is enabled, user must still manually set timeout,
+ *                  by default time will be set to 0 which means no timeout.
+ */
+#ifndef GSM_CFG_NETCONN_RECEIVE_TIMEOUT
+#define GSM_CFG_NETCONN_RECEIVE_TIMEOUT     1
+#endif
+
+/**
+ * \brief           Accept queue length for new client when netconn server is used
+ *
+ *                  Defines number of maximal clients waiting in accept queue of server connection
+ */
+#ifndef GSM_CFG_NETCONN_ACCEPT_QUEUE_LEN
+#define GSM_CFG_NETCONN_ACCEPT_QUEUE_LEN    5
+#endif
+
+/**
+ * \brief           Receive queue length for pbuf entries
+ *
+ *                  Defines maximal number of pbuf data packet references for receive
+ */
+#ifndef GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN
+#define GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN   8
+#endif
+
+/**
+ * \}
  */
 
 /**

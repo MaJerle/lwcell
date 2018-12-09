@@ -160,21 +160,21 @@ gsm_core_unlock(void) {
 
 /**
  * \brief           Register callback function for global (non-connection based) events
- * \param[in]       cb_fn: Callback function to call on specific event
+ * \param[in]       fn: Callback function to call on specific event
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_cb_register(gsm_evt_fn cb_fn) {
+gsm_evt_register(gsm_evt_fn fn) {
     gsmr_t res = gsmOK;
     gsm_evt_func_t* func, *newFunc;
     
-    GSM_ASSERT("cb_fn != NULL", cb_fn != NULL); /* Assert input parameters */
+    GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
     
     GSM_CORE_PROTECT();                         /* Lock GSM core */
     
     /* Check if function already exists on list */
     for (func = gsm.evt_func; func != NULL; func = func->next) {
-        if (func->fn == cb_fn) {
+        if (func->fn == fn) {
             res = gsmERR;
             break;
         }
@@ -184,7 +184,7 @@ gsm_cb_register(gsm_evt_fn cb_fn) {
         newFunc = gsm_mem_alloc(sizeof(*newFunc));  /* Get memory for new function */
         if (newFunc != NULL) {
             memset(newFunc, 0x00, sizeof(*newFunc));/* Reset memory */
-            newFunc->fn = cb_fn;                /* Set function pointer */
+            newFunc->fn = fn;                   /* Set function pointer */
             if (gsm.evt_func == NULL) {
                 gsm.evt_func = newFunc;         /* This should never happen! */
             } else {
@@ -202,18 +202,18 @@ gsm_cb_register(gsm_evt_fn cb_fn) {
 
 /**
  * \brief           Unregister callback function for global (non-connection based) events
- * \note            Function must be first registered using \ref gsm_cb_register
- * \param[in]       cb_fn: Callback function to call on specific event
+ * \note            Function must be first registered using \ref gsm_evt_register
+ * \param[in]       fn: Callback function to call on specific event
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_cb_unregister(gsm_evt_fn cb_fn) {
+gsm_evt_unregister(gsm_evt_fn fn) {
     gsm_evt_func_t* func, *prev;
-    GSM_ASSERT("cb_fn != NULL", cb_fn != NULL); /* Assert input parameters */
+    GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
     
     GSM_CORE_PROTECT();                         /* Lock GSM core */
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
-        if (func->fn == cb_fn) {
+        if (func->fn == fn) {
             prev->next = func->next;
             gsm_mem_free(func);
             func = NULL;

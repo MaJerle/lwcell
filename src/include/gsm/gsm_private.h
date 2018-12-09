@@ -762,6 +762,7 @@ void        gsmi_conn_init(void);
 gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t block, uint32_t max_block_time);
 gsmr_t      gsmi_send_device_msg_to_producer_mbox(gsm_msg_t* msg, uint32_t block, uint32_t max_block_time);
 uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
+uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
 
 gsmr_t      gsmi_get_sim_info(uint32_t blocking);
 

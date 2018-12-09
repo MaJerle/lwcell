@@ -65,6 +65,9 @@ extern "C" {
 #if GSM_CFG_CONN
 #include "gsm/gsm_conn.h"
 #endif /* GSM_CFG_CONN */
+#if GSM_CFG_NETCONN
+#include "gsm/gsm_netconn.h"
+#endif /* GSM_CFG_NETCONN */
 
 #ifdef __cplusplus
 }

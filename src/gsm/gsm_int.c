@@ -339,7 +339,7 @@ gsmi_send_cb(gsm_evt_type_t type) {
 gsmr_t
 gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn evt) {
     if (conn->status.f.in_closing && gsm.evt.type != GSM_EVT_CONN_CLOSED) { /* Do not continue if in closing mode */
-        return gsmOK;
+        /* return gsmOK; */
     }
 
     if (evt != NULL) {                          /* Try with user connection */
@@ -376,7 +376,11 @@ gsmi_tcpip_process_send_data(void) {
     if (!gsm_conn_is_active(c) ||               /* Is the connection already closed? */
         gsm.msg->msg.conn_send.val_id != c->val_id  /* Did validation ID change after we set parameter? */
     ) {
-        CONN_SEND_DATA_FREE(gsm.msg);           /* Free message data */
+        /* Send event to user about failed send event */
+        CONN_SEND_DATA_SEND_EVT(gsm.msg,
+            gsm.msg->msg.conn_send.conn,
+            gsm.msg->msg.conn_send.sent_all,
+            gsmCLOSED);
         return gsmERR;
     }
     gsm.msg->msg.conn_send.sent = GSM_MIN(gsm.msg->msg.conn_send.btw, GSM_CFG_CONN_MAX_DATA_LEN);
@@ -535,7 +539,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         } else if (!strncmp(rcv->data, "+CREG", 5)) {   /* Check for +CREG indication */
             gsmi_parse_creg(rcv->data, GSM_U8(CMD_IS_CUR(GSM_CMD_CREG_GET)));  /* Parse +CREG rgsmonse */
         } else if (CMD_IS_CUR(GSM_CMD_CPIN_GET) && !strncmp(rcv->data, "+CPIN", 5)) {  /* Check for +CPIN indication for SIM */
-            gsmi_parse_cpin(rcv->data, 1);      /* Parse +CPIN rgsmonse */
+            gsmi_parse_cpin(rcv->data, !CMD_IS_DEF(GSM_CMD_CPIN_SET));  /* Parse +CPIN rgsmonse */
         } else if (CMD_IS_CUR(GSM_CMD_COPS_GET) && !strncmp(rcv->data, "+COPS", 5)) {
             gsmi_parse_cops(rcv->data);         /* Parse current +COPS */
 #if GSM_CFG_SMS
@@ -1057,7 +1061,7 @@ gsmi_process(const void* data, size_t data_len) {
                      * what are the actual values
                      */
                     for (uint8_t i = 0; i < unicode.t; i++) {
-                        RECV_ADD(unicode.ch[i]);    /* Add character to receive array */
+                        RECV_ADD(unicode.ch[i]);/* Add character to receive array */
                     }
                 }
             } else if (res != gsmINPROG) {      /* Not in progress? */
@@ -1183,10 +1187,21 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
             default: break;
         }
     } else if (CMD_IS_DEF(GSM_CMD_CPIN_SET)) {  /* Set PIN code */
-        if (CMD_IS_CUR(GSM_CMD_CPIN_GET) && is_ok) {
-            if (gsm.sim.state == GSM_SIM_STATE_PIN) {
-                n_cmd = GSM_CMD_CPIN_SET;       /* Set command to write PIN */
+        switch (CMD_GET_CUR()) {
+            case GSM_CMD_CPIN_GET: {            /* Get own phone number */
+                if (is_ok && gsm.sim.state == GSM_SIM_STATE_PIN) {
+                    n_cmd = GSM_CMD_CPIN_SET;   /* Set command to write PIN */
+                }
+                break;
             }
+            case GSM_CMD_CPIN_SET: {            /* Set CPIN */
+                if (is_ok) {
+                    gsm_delay(2000);            /* Make delay for 2 seconds to make sure SIM is ready */
+                }
+                break;
+            }
+            default:
+                break;
         }
 #if GSM_CFG_CALL
     } else if (CMD_IS_DEF(GSM_CMD_CALL_ENABLE)) {

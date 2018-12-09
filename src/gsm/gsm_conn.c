@@ -38,6 +38,22 @@
 #if GSM_CFG_CONN || __DOXYGEN__
 
 /**
+ * \brief           Check if connection is closed or in closing state
+ * \param[in]       conn: Connection handle
+ */
+#define CONN_CHECK_CLOSED_IN_CLOSING(conn) do { \
+    gsmr_t r = gsmOK;                           \
+    GSM_CORE_PROTECT();                         \
+    if (conn->status.f.in_closing || !conn->status.f.active) {  \
+        r = gsmCLOSED;                          \
+    }                                           \
+    GSM_CORE_UNPROTECT();                       \
+    if (r != gsmOK) {                           \
+        return r;                               \
+    }                                           \
+} while (0)
+
+/**
  * \brief           Timeout callback for connection
  * \param[in]       arg: Timeout callback custom argument
  */
@@ -104,7 +120,9 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
     if (bw != NULL) {
         *bw = 0;
     }
-    
+
+    CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
+
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSEND;
     
@@ -204,14 +222,7 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
     
-    GSM_CORE_PROTECT();                         /* Protect core */
-    if (conn->status.f.in_closing || !conn->status.f.active) {  /* Check if already in closing mode or already closed */
-        res = gsmERR;
-    }
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
-    if (res != gsmOK) {
-        return res;
-    }
+    CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
     
     /* Proceed with close event at this point! */
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
