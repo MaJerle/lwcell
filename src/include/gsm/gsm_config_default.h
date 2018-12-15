@@ -401,7 +401,36 @@
  */
 
 /**
- * \brief           Enables (1) or disables (0) network functionality
+ * \defgroup        GSM_CONF_MODULES_MQTT MQTT client module
+ * \brief           Configuration of MQTT and MQTT API client modules
+ * \{
+ */
+
+
+/**
+ * \brief           Set debug level for MQTT client module
+ *
+ *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ */
+#ifndef GSM_CFG_DBG_MQTT
+#define GSM_CFG_DBG_MQTT                    GSM_DBG_OFF
+#endif
+
+/**
+ * \brief           Set debug level for MQTT API client module
+ *
+ *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ */
+#ifndef GSM_CFG_DBG_MQTT_API
+#define GSM_CFG_DBG_MQTT_API                GSM_DBG_OFF
+#endif
+
+/**
+ * \}
+ */
+
+/**
+ * \brief           Enables (`1`) or disables (`0`) network functionality
  *
  *                  Network must be enabled to use all GPRS/LTE functions such
  *                  as connection API, FTP, HTTP, etc.
