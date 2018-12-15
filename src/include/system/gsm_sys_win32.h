@@ -55,7 +55,7 @@ typedef int                         gsm_sys_thread_prio_t;
 #define GSM_SYS_MUTEX_NULL          (HANDLE)0
 #define GSM_SYS_TIMEOUT             (INFINITE)
 #define GSM_SYS_THREAD_PRIO         (0)
-#define GSM_SYS_THREAD_SS           (1024)
+#define GSM_SYS_THREAD_SS           (4096)
 
 #endif /* GSM_CFG_OS && !__DOXYGEN__ */
 
