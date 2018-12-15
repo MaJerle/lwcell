@@ -354,6 +354,8 @@ typedef enum gsm_cb_type_t {
 
     GSM_EVT_INIT_FINISH,                        /*!< Initialization has been finished at this point */
 
+    GSM_EVT_SIGNAL_STRENGTH,                    /*!< Signal strength event */
+
 #if GSM_CFG_CONN || __DOXYGEN__
     GSM_EVT_CONN_DATA_RECV,                     /*!< Connection data received */
     GSM_EVT_CONN_DATA_SEND,                     /*!< Connection data send */
@@ -406,6 +408,10 @@ typedef struct gsm_evt {
         struct {
             const gsm_operator_curr_t* operator_current;    /*!< Current operator info */
         } operator_current;                     /*!< Current operator event. Use with \ref GSM_EVT_OPERATOR_CURRENT event */
+
+        struct {
+            int16_t rssi;                       /*!< Strength in units of dBm */
+        } rssi;                                 /*<! Signal strength event. Use with \ref GSM_EVT_SIGNAL_STRENGTH event */
 
 #if GSM_CFG_CONN || __DOXYGEN__
         struct {

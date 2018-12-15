@@ -169,6 +169,18 @@ void*               gsm_evt_conn_error_get_arg(gsm_evt_t* cc);
  */
 
 /**
+ * \name            GSM_EVT_SIGNAL_STRENGTH
+ * \anchor          GSM_EVT_SIGNAL_STRENGTH
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_RECV event
+ */
+
+int16_t gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
  * \}
  */
 

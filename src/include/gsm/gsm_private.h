@@ -763,6 +763,7 @@ gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(
 gsmr_t      gsmi_send_device_msg_to_producer_mbox(gsm_msg_t* msg, uint32_t block, uint32_t max_block_time);
 uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
 uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
+void        gsmi_conn_start_timeout(gsm_conn_p conn);
 
 gsmr_t      gsmi_get_sim_info(uint32_t blocking);
 
@@ -770,8 +771,6 @@ gsmr_t      gsmi_get_sim_info(uint32_t blocking);
 void        byte_to_str(uint8_t num, char* str);
 void        number_to_str(uint32_t num, char* str);
 void        signed_number_to_str(int32_t num, char* str);
-
-/* Send functions */
 void        send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c);
 void        send_string(const char* str, uint8_t e, uint8_t q, uint8_t c);
 void        send_number(uint32_t num, uint8_t q, uint8_t c);

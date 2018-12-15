@@ -263,7 +263,6 @@ gsm_netconn_delete(gsm_netconn_p nc) {
     GSM_ASSERT("netconn != NULL", nc != NULL);  /* Assert input parameters */
 
     GSM_CORE_PROTECT();
-
     flush_mboxes(nc, 0);                        /* Clear mboxes */
 
     /* Remove netconn from linkedlist */
@@ -329,6 +328,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
 
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
     GSM_ASSERT("nc->type must be TCP\r\n", nc->type == GSM_NETCONN_TYPE_TCP);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     /*
      * Several steps are done in write process
@@ -407,6 +407,7 @@ gsmr_t
 gsm_netconn_flush(gsm_netconn_p nc) {
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
     GSM_ASSERT("nc->type must be TCP\r\n", nc->type == GSM_NETCONN_TYPE_TCP);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     /*
      * In case we have data in write buffer,
@@ -433,6 +434,7 @@ gsmr_t
 gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
     GSM_ASSERT("nc->type must be UDP\r\n", nc->type == GSM_NETCONN_TYPE_UDP);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     return gsm_conn_send(nc->conn, data, btw, NULL, 1);
 }
@@ -451,6 +453,7 @@ gsmr_t
 gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
     GSM_ASSERT("nc->type must be UDP\r\n", nc->type == GSM_NETCONN_TYPE_UDP);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     return gsm_conn_sendto(nc->conn, ip, port, data, btw, NULL, 1);
 }
@@ -500,11 +503,13 @@ gsm_netconn_close(gsm_netconn_p nc) {
     gsm_conn_p conn;
 
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
-    conn = nc->conn;
-    nc->conn = NULL;
-    GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn != NULL", nc->conn != NULL);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     gsm_netconn_flush(nc);                      /* Flush data and ignore result */
+    conn = nc->conn;
+    nc->conn = NULL;
+
     gsm_conn_set_arg(conn, NULL);               /* Reset argument */
     gsm_conn_close(conn, 1);                    /* Close the connection */
     flush_mboxes(nc, 1);                        /* Flush message queues */

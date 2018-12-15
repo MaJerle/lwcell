@@ -361,6 +361,11 @@ gsmi_parse_csq(const char* str) {
         gsm.msg->msg.csq.rssi != NULL) {
         *gsm.msg->msg.csq.rssi = rssi;          /* Save to user variable */
     }
+
+    /* Report CSQ status */
+    gsm.evt.evt.rssi.rssi = rssi;
+    gsmi_send_cb(GSM_EVT_SIGNAL_STRENGTH);      /* RSSI event type */
+
     return 1;
 }
 

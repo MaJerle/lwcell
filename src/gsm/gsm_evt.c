@@ -66,6 +66,16 @@ gsm_evt_operator_current_get_operator(gsm_evt_t* cc) {
     return cc->evt.operator_current.operator_current;
 }
 
+/**
+ * \brief           Get RSSi from CSQ command
+ * \param[in]       cc: Event data
+ * \return          `RSSI` value in units of dBm
+ */
+int16_t
+gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc) {
+    return cc->evt.rssi.rssi;
+}
+
 #if GSM_CFG_CONN || __DOXYGEN__
 
 /**

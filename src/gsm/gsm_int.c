@@ -40,7 +40,7 @@
 
 static gsm_recv_t recv_buff;
 
-static gsmr_t gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error);
+static gsmr_t gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error);
 
 /**
  * \brief           Memory map
@@ -746,7 +746,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     if (is_ok || is_error) {
         gsmr_t res = gsmOK;
         if (gsm.msg != NULL) {                  /* Do we have active message? */
-            res = gsmi_process_sub_cmd(gsm.msg, is_ok, is_error);
+            res = gsmi_process_sub_cmd(gsm.msg, &is_ok, &is_error);
 
             /* Check if reset command finished */
             if (CMD_IS_DEF(GSM_CMD_RESET)) {
@@ -1078,12 +1078,12 @@ gsmi_process(const void* data, size_t data_len) {
 /**
  * \brief           Process current command with known execution status and start another if necessary
  * \param[in]       msg: Pointer to current message
- * \param[in]       is_ok: Status whether last command result was OK
- * \param[in]       is_error: Status whether last command result was ERROR
+ * \param[in]       is_ok: pointer to status whether last command result was OK
+ * \param[in]       is_error: Pointer to status whether last command result was ERROR
  * \return          \ref gsmCONT if you sent more data and we need to process more data, \ref gsmOK on success, or \ref gsmERR on error
  */
 static gsmr_t
-gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
+gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     gsm_cmd_t n_cmd = GSM_CMD_IDLE;
     if (CMD_IS_DEF(GSM_CMD_RESET)) {
         switch (CMD_GET_CUR()) {                /* Check current command */
@@ -1131,55 +1131,55 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
             }
             default: break;
         }
-        if (!is_ok || n_cmd == GSM_CMD_IDLE) {  /* Stop execution on any command */
+        if (!*is_ok || n_cmd == GSM_CMD_IDLE) { /* Stop execution on any command */
             n_cmd = GSM_CMD_IDLE;
             gsm.sms.enabled = n_cmd == GSM_CMD_IDLE;    /* Set enabled status */
             gsm.evt.evt.sms_enable.status = gsm.sms.enabled ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_SMS_ENABLE);   /* Send to user */
         }    
     } else if (CMD_IS_DEF(GSM_CMD_CMGS)) {      /* Send SMS default command */
-        if (CMD_IS_CUR(GSM_CMD_CMGF) && is_ok) {/* Set message format current command*/
+        if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {   /* Set message format current command*/
             n_cmd = GSM_CMD_CMGS;               /* Now send actual message */
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGR)) {      /* Read SMS message */
-        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && is_ok) {
+        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
             n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
-        } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && *is_ok) {
             n_cmd = GSM_CMD_CMGF;               /* Set text mode */
-        } else if (CMD_IS_CUR(GSM_CMD_CMGF) && is_ok) {/* Set message format current command*/
+        } else if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {/* Set message format current command*/
             n_cmd = GSM_CMD_CMGR;               /* Start message read */
-        } else if (CMD_IS_CUR(GSM_CMD_CMGR) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CMGR) && *is_ok) {
             msg->msg.sms_read.mem = gsm.sms.mem[0].current; /* Set current memory */
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGD)) {      /* Delete SMS message*/
-        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && is_ok) {
+        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
             n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
-        } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && *is_ok) {
             n_cmd = GSM_CMD_CMGD;               /* Delete message */
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGL)) {      /* List SMS messages */
-        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && is_ok) {
+        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
             n_cmd = GSM_CMD_CPMS_SET;           /* Set memory */
-        } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && *is_ok) {
             n_cmd = GSM_CMD_CMGF;               /* Set text format */
-        } else if (CMD_IS_CUR(GSM_CMD_CMGF) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {
             n_cmd = GSM_CMD_CMGL;               /* List messages */
         } else if (CMD_IS_CUR(GSM_CMD_CMGL)) {
             gsm.evt.evt.sms_list.mem = gsm.sms.mem[0].current;
             gsm.evt.evt.sms_list.entries = gsm.msg->msg.sms_list.entries;
             gsm.evt.evt.sms_list.size = gsm.msg->msg.sms_list.ei;
-            gsm.evt.evt.sms_list.err = is_ok ? gsmOK : gsmERR;
+            gsm.evt.evt.sms_list.err = *is_ok ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_SMS_LIST);
         }
     } else if (CMD_IS_DEF(GSM_CMD_CPMS_SET)) {  /* Set preferred memory */
-        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && is_ok) {
+        if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
             n_cmd = GSM_CMD_CPMS_SET;           /* Now set the command */
         }
 #endif /* GSM_CFG_SMS */
     } else if (CMD_IS_DEF(GSM_CMD_SIM_PROCESS_BASIC_CMDS)) {
         switch (CMD_GET_CUR()) {
             case GSM_CMD_CNUM: {                /* Get own phone number */
-                if (!is_ok) {
+                if (!*is_ok) {
                     gsm_delay(1000);            /* Process delay first */
                     n_cmd = GSM_CMD_CNUM;
                 }
@@ -1189,13 +1189,13 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
     } else if (CMD_IS_DEF(GSM_CMD_CPIN_SET)) {  /* Set PIN code */
         switch (CMD_GET_CUR()) {
             case GSM_CMD_CPIN_GET: {            /* Get own phone number */
-                if (is_ok && gsm.sim.state == GSM_SIM_STATE_PIN) {
+                if (*is_ok && gsm.sim.state == GSM_SIM_STATE_PIN) {
                     n_cmd = GSM_CMD_CPIN_SET;   /* Set command to write PIN */
                 }
                 break;
             }
             case GSM_CMD_CPIN_SET: {            /* Set CPIN */
-                if (is_ok) {
+                if (*is_ok) {
                     gsm_delay(2000);            /* Make delay for 2 seconds to make sure SIM is ready */
                 }
                 break;
@@ -1205,44 +1205,44 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
         }
 #if GSM_CFG_CALL
     } else if (CMD_IS_DEF(GSM_CMD_CALL_ENABLE)) {
-        gsm.call.enabled = is_ok;               /* Set enabled status */
+        gsm.call.enabled = *is_ok;              /* Set enabled status */
         gsm.evt.evt.call_enable.status = gsm.call.enabled ? gsmOK : gsmERR;
         gsmi_send_cb(GSM_EVT_CALL_ENABLE);      /* Send to user */
 #endif /* GSM_CFG_CALL */
 #if GSM_CFG_PHONEBOOK
     } else if (CMD_IS_DEF(GSM_CMD_PHONEBOOK_ENABLE)) {
-        gsm.pb.enabled = is_ok;                 /* Set enabled status */
+        gsm.pb.enabled = *is_ok;                /* Set enabled status */
         gsm.evt.evt.pb_enable.status = gsm.pb.enabled ? gsmOK : gsmERR;
         gsmi_send_cb(GSM_EVT_PB_ENABLE);        /* Send to user */
     } else if (CMD_IS_DEF(GSM_CMD_CPBW_SET)) {  /* Write phonebook entry */
-        if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && is_ok) {/* Get current memory */
+        if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && *is_ok) {   /* Get current memory */
             n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */
-        } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && *is_ok) {
             n_cmd = GSM_CMD_CPBW_SET;           /* Write entry to phonebook */
         }
     } else if (CMD_IS_DEF(GSM_CMD_CPBR)) {
-        if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && is_ok) {/* Get current memory */
+        if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && *is_ok) {/* Get current memory */
             n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */
-        } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && *is_ok) {
             n_cmd = GSM_CMD_CPBR;               /* Read entries */
         } else if (CMD_IS_CUR(GSM_CMD_CPBR)) {
             gsm.evt.evt.pb_list.mem = gsm.pb.mem.current;
             gsm.evt.evt.pb_list.entries = gsm.msg->msg.pb_list.entries;
             gsm.evt.evt.pb_list.size = gsm.msg->msg.pb_list.ei;
-            gsm.evt.evt.pb_list.err = is_ok ? gsmOK : gsmERR;
+            gsm.evt.evt.pb_list.err = *is_ok ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_PB_LIST);
         }
     } else if (CMD_IS_DEF(GSM_CMD_CPBF)) {
-        if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && is_ok) {/* Get current memory */
+        if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && *is_ok) {/* Get current memory */
             n_cmd = GSM_CMD_CPBS_SET;           /* Set current memory */
-        } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && is_ok) {
+        } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && *is_ok) {
             n_cmd = GSM_CMD_CPBF;               /* Read entries */
         } else if (CMD_IS_CUR(GSM_CMD_CPBF)) {
             gsm.evt.evt.pb_search.mem = gsm.pb.mem.current;
             gsm.evt.evt.pb_search.search = gsm.msg->msg.pb_search.search;
             gsm.evt.evt.pb_search.entries = gsm.msg->msg.pb_search.entries;
             gsm.evt.evt.pb_search.size = gsm.msg->msg.pb_search.ei;
-            gsm.evt.evt.pb_search.err = is_ok ? gsmOK : gsmERR;
+            gsm.evt.evt.pb_search.err = *is_ok ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_PB_SEARCH);
         }
 #endif /* GSM_CFG_PHONEBOOK */
@@ -1274,17 +1274,20 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
             default: break;
         }
         if (!n_cmd) {
-            is_ok = 1;
+            *is_ok = 1;
         }
 #endif /* GSM_CFG_NETWORK */
 #if GSM_CFG_CONN
     } else if (CMD_IS_DEF(GSM_CMD_CIPSTART)) {
         if (msg->i == 0 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) { /* Was the current command status info? */
-            if (is_ok) {
+            if (*is_ok) {
                 n_cmd = GSM_CMD_CIPSTART;       /* Now actually start connection */
             }
         } else if (msg->i == 1 && CMD_IS_CUR(GSM_CMD_CIPSTART)) {
             n_cmd = GSM_CMD_CIPSTATUS;          /* Go to status mode */
+            if (*is_error) {
+                msg->msg.conn_start.conn_res = GSM_CONN_CONNECT_ERROR;
+            }
         } else if (msg->i == 2 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) {
             /* After second CIP status, define what to do next */
             switch (msg->msg.conn_start.conn_res) {
@@ -1296,10 +1299,13 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
                     gsm.evt.evt.conn_active_closed.conn = conn;
                     gsm.evt.evt.conn_active_closed.forced = 1;
                     gsmi_send_conn_cb(conn, NULL);
+                    gsmi_conn_start_timeout(conn);  /* Start connection timeout timer */
                     break;
                 }
                 case GSM_CONN_CONNECT_ERROR: {  /* Connection error */
                     gsmi_send_conn_error_cb(msg, gsmERRCONNFAIL);
+                    *is_error = 1;              /* Manually set error */
+                    *is_ok = 0;                 /* Reset success */
                     break;
                 }
                 default: {
@@ -1320,7 +1326,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t is_ok, uint16_t is_error) {
     } else {
         msg->cmd = GSM_CMD_IDLE;
     }
-    return is_ok ? gsmOK : gsmERR;
+    return *is_ok ? gsmOK : gsmERR;
 }
 
 /**
