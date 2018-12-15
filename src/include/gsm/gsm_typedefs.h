@@ -356,6 +356,11 @@ typedef enum gsm_cb_type_t {
 
     GSM_EVT_SIGNAL_STRENGTH,                    /*!< Signal strength event */
 
+#if GSM_CFG_NETWORK || __DOXYGEN__
+    GSM_EVT_NETWORK_ATTACHED,                   /*!< Attached to network, PDP context active and ready for TCP/IP application */
+    GSM_EVT_NETWORK_DETACHED,                   /*!< Detached from network, PDP context not active anymore */
+#endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
+
 #if GSM_CFG_CONN || __DOXYGEN__
     GSM_EVT_CONN_DATA_RECV,                     /*!< Connection data received */
     GSM_EVT_CONN_DATA_SEND,                     /*!< Connection data send */

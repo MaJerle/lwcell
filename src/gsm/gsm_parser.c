@@ -859,23 +859,38 @@ gsmi_parse_cpbf(const char* str) {
  * \brief           Parse connection info line from CIPSTATUS command
  * \param[in]       str: Input string
  * \param[in]       is_conn_line: Set to `1` for connection, `0` for general status
+ * \param[out]      continueScan: Pointer to output variable holding continue processing state
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line) {
+gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan) {
     uint8_t num;
     gsm_conn_t* conn;
     char s_tmp[16];
+    uint8_t tmp_pdp_state;
     
+    *continueScan = 1;
     if (is_conn_line && (*str == 'C' || *str == 'S')) {
         str += 3;
     } else {
-        /* Parse general status */
-
         /* Check if PDP context is deactivated or not */
-        if (!strncmp(&str[7], "PDP DEACT", 9)) {
+        tmp_pdp_state = 1;
+        if (!strncmp(&str[7], "IP INITIAL", 10)) {
+            *continueScan = 0;                  /* Stop command execution at this point (no OK,ERROR received after this line) */
+            tmp_pdp_state = 0;
+        } else if (!strncmp(&str[7], "PDP DEACT", 9)) {
             /* Deactivated */
+            tmp_pdp_state = 0;
         }
+
+        /* Check if we have to update status for application */
+        if (gsm.network.is_attached != tmp_pdp_state) {
+            gsm.network.is_attached = tmp_pdp_state;
+
+            /* Notify upper layer */
+            gsmi_send_cb(gsm.network.is_attached ? GSM_EVT_NETWORK_ATTACHED : GSM_EVT_NETWORK_DETACHED);
+        }
+
         return 1;
     }
 

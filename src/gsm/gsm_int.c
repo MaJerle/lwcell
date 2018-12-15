@@ -627,11 +627,8 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                 gsmi_parse_string(&tmp, gsm.model_serial_number, sizeof(gsm.model_serial_number), 1);
             }
         } else if (CMD_IS_CUR(GSM_CMD_CIFSR) && GSM_CHARISNUM(rcv->data[0])) {
-            gsm_ip_t ip;
             const char* tmp = rcv->data;
-            gsmi_parse_ip(&tmp, &ip);           /* Parse IP address */
-            //gsm_device_set_ip(&ip);             /* Set device IP before enabling network */
-            //gsm_device_set_network_ready(1);    /* Network is ready to use at this point */
+            gsmi_parse_ip(&tmp, &gsm.network.ip_addr);  /* Parse IP address */
 
             is_ok = 1;                          /* Manually set OK flag as we don't expect OK in CIFSR command */
         }
@@ -654,14 +651,22 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             }
             /* Check if connection data received */
             if (rcv->len > 3) {
+                uint8_t continueScan, processed = 0;
                 if (rcv->data[0] == 'C' && rcv->data[1] == ':' && rcv->data[2] == ' ') {
-                    gsmi_parse_cipstatus_conn(rcv->data, 1);
+                    processed = 1;
+                    gsmi_parse_cipstatus_conn(rcv->data, 1, &continueScan);
 
                     if (gsm.active_conns_cur_parse_num == (GSM_CFG_MAX_CONNS - 1)) {
                         is_ok = 1;
                     }
                 } else if (!strncmp(rcv->data, "STATE:", 6)) {
-                    gsmi_parse_cipstatus_conn(rcv->data, 0);
+                    processed = 1;
+                    gsmi_parse_cipstatus_conn(rcv->data, 0, &continueScan);
+                }
+
+                /* Check if we shall stop processing at this stage */
+                if (processed && !continueScan) {
+                    is_ok = 1;
                 }
             }
         } else if (CMD_IS_CUR(GSM_CMD_CIPSTART)) {
@@ -1259,9 +1264,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             case 7: n_cmd = GSM_CMD_CSTT_SET; break;
             case 8: n_cmd = GSM_CMD_CIICR; break;
             case 9: n_cmd = GSM_CMD_CIFSR; break;
-#if GSM_CFG_CONN
             case 10: n_cmd = GSM_CMD_CIPSTATUS; break;
-#endif /* GSM_CFG_CONN */
             default: break;
         }
     } else if (CMD_IS_DEF(GSM_CMD_NETWORK_DETACH)) {

@@ -574,6 +574,9 @@ typedef struct {
 typedef struct {
     gsm_network_reg_status_t status;            /*!< Network registration status */
     gsm_operator_curr_t curr_operator;          /*!< Current operator information */
+
+    uint8_t is_attached;                        /*!< Flag indicating device is attached and PDP context is active */
+    gsm_ip_t ip_addr;                           /*!< Device IP address when network PDP context is enabled */
 } gsm_network_t;
 
 /**
