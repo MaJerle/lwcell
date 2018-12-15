@@ -1088,8 +1088,7 @@ gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t p
     GSM_ASSERT("info != NULL", info != NULL);   /* Assert input parameters */
     
     gsm_core_lock();                            /* Protect core */
-    /* TODO: Check if network is attached */
-    if (/* gsm_sta_is_joined() && */ client->conn_state == GSM_MQTT_CONN_DISCONNECTED) {        
+    if (gsm_network_is_attached() && client->conn_state == GSM_MQTT_CONN_DISCONNECTED) {        
         client->info = info;                    /* Save client info parameters */
         client->evt_fn = evt_fn != NULL ? evt_fn : mqtt_evt_fn_default;
         
