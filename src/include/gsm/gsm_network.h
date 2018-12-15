@@ -49,6 +49,8 @@ extern "C" {
 
 gsmr_t      gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t blocking);
 gsmr_t      gsm_network_detach(uint32_t blocking);
+uint8_t     gsm_network_is_attached(void);
+gsmr_t      gsm_network_copy_ip(gsm_ip_t* ip);
 
 /**
  * \}

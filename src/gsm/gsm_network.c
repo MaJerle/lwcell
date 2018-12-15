@@ -37,7 +37,7 @@
 #if GSM_CFG_NETWORK || __DOXYGEN__
 
 /**
- * \brief           Attach to network
+ * \brief           Attach to network and active PDP context
  * \param[in]       apn: APN name
  * \param[in]       user: User name to attach. Set to `NULL` if not used
  * \param[in]       pass: User password to attach. Set to `NULL` if not used
@@ -51,7 +51,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
 #if GSM_CFG_CONN
-    /* GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS; */
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS;
 #endif /* GSM_CFG_CONN */
     GSM_MSG_VAR_REF(msg).msg.network_attach.apn = apn;
     GSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
@@ -76,6 +76,35 @@ gsm_network_detach(uint32_t blocking) {
 #endif /* GSM_CFG_CONN */
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Copy IP address from internal value to user variable
+ * \param[out]      ip: Pointer to output IP variable
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_network_copy_ip(gsm_ip_t* ip) {
+    if (gsm_network_is_attached()) {
+        GSM_CORE_PROTECT();
+        memcpy(ip, &gsm.network.ip_addr, sizeof(*ip));
+        GSM_CORE_UNPROTECT();
+        return gsmOK;
+    }
+    return gsmERR;
+}
+
+/**
+ * \brief           Check if device is attached to network and PDP context is active
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsm_network_is_attached(void) {
+    uint8_t res;
+    GSM_CORE_PROTECT();
+    res = GSM_U8(gsm.network.is_attached);
+    GSM_CORE_UNPROTECT();
+    return res;
 }
 
 #endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
