@@ -128,7 +128,7 @@ gsm_sim_puk_enter(const char* puk, const char* new_pin, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("puk != NULL", puk != NULL);     /* Assert input parameters */
-    GSM_ASSERT("new_pin != NULL", pin != NULL); /* Assert input parameters */
+    GSM_ASSERT("new_pin != NULL", new_pin != NULL); /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
