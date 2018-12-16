@@ -122,9 +122,9 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;/* First get memory */
     } else {
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_SET;    /* First set memory */
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_SET;/* First set memory */
     }
 
     GSM_MSG_VAR_REF(msg).msg.pb_write.pos = 0;
@@ -134,6 +134,19 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     GSM_MSG_VAR_REF(msg).msg.pb_write.type = type;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+/**
+ * \brief           Read single phonebook entry
+ * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
+ * \param[in]       pos: Entry position in memory to read
+ * \param[out]      entry: Pointer to entry variable to save data
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \param[in]       blocking: Status whether command should be blocking or not
+ */
+gsmr_t
+gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, uint32_t blocking) {
+    return gsm_pb_list(mem, pos, entry, 1, NULL, blocking);
 }
 
 /**

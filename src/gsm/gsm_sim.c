@@ -57,7 +57,7 @@ gsm_sim_pin_enter(const char* pin, uint32_t blocking) {
 /**
  * \brief           Add pin number to open SIM card
  * \note            Use this function only if your SIM card doesn't have PIN code.
- *                  If you wish to change current pin, use \ref gsm_sim_change_pin instead
+ *                  If you wish to change current pin, use \ref gsm_sim_pin_change instead
  * \param[in]       pin: Current SIM pin code
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -119,21 +119,21 @@ gsm_sim_pin_remove(const char* pin, uint32_t blocking) {
 /**
  * \brief           Enter PUK code and new PIN to unlock SIM card
  * \param[in]       puk: PUK code associated with SIM card
- * \param[in]       pin: New PIN code to use
+ * \param[in]       new_pin: New PIN code to use
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_puk_enter(const char* puk, const char* pin, uint32_t blocking) {
+gsm_sim_puk_enter(const char* puk, const char* new_pin, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("puk != NULL", puk != NULL);     /* Assert input parameters */
-    GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
+    GSM_ASSERT("new_pin != NULL", pin != NULL); /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
     GSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
-    GSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = pin;
+    GSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
 }

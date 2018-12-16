@@ -250,7 +250,7 @@ typedef struct {
         char long_name[20];                     /*!< Long name format */
         char short_name[20];                    /*!< Short name format */
         uint32_t num;                           /*!< Number format */
-    } data;
+    } data;                                     /*!< Operator data union */
 } gsm_operator_curr_t;
 
 /**
@@ -269,7 +269,7 @@ typedef enum {
  * \brief           List of call directions
  */
 typedef enum {
-    GSM_CALL_DIR_MO = 0x00,                     /*!< Mobile originated, outgoing call */
+    GSM_CALL_DIR_MO = 0x00,                     /*!< Mobile Originated, outgoing call */
     GSM_CALL_DIR_MT,                            /*!< Mobile Terminated, incoming call */
 } gsm_call_dir_t;
 
@@ -292,9 +292,9 @@ typedef enum {
  * \brief           List of call types
  */
 typedef enum {
-    GSM_CALL_TYPE_VOICE = 0x00,
-    GSM_CALL_TYPE_DATA,
-    GSM_CALL_TYPE_FAX,
+    GSM_CALL_TYPE_VOICE = 0x00,                 /*!< Voice call */
+    GSM_CALL_TYPE_DATA,                         /*!< Data call */
+    GSM_CALL_TYPE_FAX,                          /*!< Fax call */
 } gsm_call_type_t;
 
 /**
