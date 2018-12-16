@@ -42,9 +42,12 @@ extern "C" {
 
 /**
  * \ingroup         GSM
- * \defgroup        GSM_HTTP HTTP API
- * \brief           HTTP manager
+ * \defgroup        GSM_HTTP Hyper Text Transfer Protocol
+ * \brief           Hyper Text Transfer Protocol (HTTP) manager
  * \{
+ *
+ * Currently it is under development
+ *
  */
     
 /**

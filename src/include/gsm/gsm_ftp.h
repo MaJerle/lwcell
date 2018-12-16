@@ -42,8 +42,11 @@ extern "C" {
 
 /**
  * \ingroup         GSM
- * \defgroup        GSM_FTP FTP API
- * \brief           FTP manager
+ * \defgroup        GSM_FTP File transfer protocol
+ * \brief           File Transfer Protocol (FTP) manager
+ *
+ * Currently it is under development
+ *
  * \{
  */
     

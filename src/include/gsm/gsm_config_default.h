@@ -110,7 +110,8 @@
 #endif
 
 /**
- * \brief           Maximal buffer size for entries in +IPD statement from GSM
+ * \brief           Maximal data buffer for Input Data Packet, used on TCP/IP commands
+ *
  * \note            If +IPD length is larger that this value, 
  *                  multiple pbuf entries will be created to hold entire +IPD
  */
@@ -431,6 +432,7 @@
 
 /**
  * \brief           Enables (`1`) or disables (`0`) network functionality
+ *                      used for TCP/IP communication
  *
  *                  Network must be enabled to use all GPRS/LTE functions such
  *                  as connection API, FTP, HTTP, etc.
@@ -438,25 +440,63 @@
 #ifndef GSM_CFG_NETWORK
 #define GSM_CFG_NETWORK                     1
 #endif
+
+/**
+ * \brief           Enables (`1`) or disables (`0`) connection API.
+ *
+ * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
+ */
 #ifndef GSM_CFG_CONN
 #define GSM_CFG_CONN                        0
 #endif
 
+/**
+ * \brief           Enables (`1`) or disables (`0`) SMS API.
+ *
+ */
 #ifndef GSM_CFG_SMS
 #define GSM_CFG_SMS                         0
 #endif
+
+/**
+ * \brief           Enables (`1`) or disables (`0`) call API.
+ *
+ */
 #ifndef GSM_CFG_CALL
 #define GSM_CFG_CALL                        0
 #endif
+
+/**
+ * \brief           Enables (`1`) or disables (`0`) phonebook API.
+ *
+ */
 #ifndef GSM_CFG_PHONEBOOK
 #define GSM_CFG_PHONEBOOK                   0
 #endif
+
+/**
+ * \brief           Enables (`1`) or disables (`0`) HTTP API.
+ *
+ * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
+ */
 #ifndef GSM_CFG_HTTP
 #define GSM_CFG_HTTP                        0
 #endif
+
+/**
+ * \brief           Enables (`1`) or disables (`0`) FTP API.
+ *
+ * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
+ */
 #ifndef GSM_CFG_FTP
 #define GSM_CFG_FTP                         0
 #endif
+
+/**
+ * \brief           Enables (`1`) or disables (`0`) PING API.
+ *
+ * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
+ */
 #ifndef GSM_CFG_PING
 #define GSM_CFG_PING                        0
 #endif

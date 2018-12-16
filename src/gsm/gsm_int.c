@@ -1738,9 +1738,16 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             break;
         }
         case GSM_CMD_CPBS_SET: {                /* Get current memory info */
+            gsm_mem_t mem;
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPBS=");
-            send_dev_memory(msg->msg.pb_write.mem == GSM_MEM_CURRENT ? gsm.pb.mem.current : msg->msg.pb_write.mem, 1, 0);
+            switch (CMD_GET_DEF()) {
+                case GSM_CMD_CPBW_SET: mem = msg->msg.pb_write.mem; break;
+                case GSM_CMD_CPBR: mem = msg->msg.pb_list.mem; break;
+                case GSM_CMD_CPBF: mem = msg->msg.pb_search.mem; break;
+                default: break;
+            }
+            send_dev_memory(mem == GSM_MEM_CURRENT ? gsm.pb.mem.current : mem, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
