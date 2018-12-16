@@ -633,8 +633,9 @@ gsmi_parse_cmgs(const char* str, uint8_t send_evt) {
     num = gsmi_parse_number(&str);              /* Parse number */
 
     if (send_evt) {
-        gsm.evt.evt.sms_sent.num = num;
-        gsmi_send_cb(GSM_EVT_SMS_SENT);
+        gsm.evt.evt.sms_send.num = num;
+        gsm.evt.evt.sms_send.res = gsmOK;
+        gsmi_send_cb(GSM_EVT_SMS_SEND);
     }
     return 1;
 }

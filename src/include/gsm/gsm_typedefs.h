@@ -376,8 +376,7 @@ typedef enum gsm_cb_type_t {
 #if GSM_CFG_SMS || __DOXYGEN__
     GSM_EVT_SMS_ENABLE,                         /*!< SMS enable event */
     GSM_EVT_SMS_READY,                          /*!< SMS ready event */
-    GSM_EVT_SMS_SENT,                           /*!< SMS sent successfully */
-    GSM_EVT_SMS_SEND_ERROR,                     /*!< SMS sent successfully */
+    GSM_EVT_SMS_SEND,                           /*!< SMS send event */
     GSM_EVT_SMS_RECV,                           /*!< SMS received */
     GSM_EVT_SMS_READ,                           /*!< SMS read */
     GSM_EVT_SMS_LIST,                           /*!< SMS list */
@@ -451,8 +450,9 @@ typedef struct gsm_evt {
             gsmr_t status;                      /*!< Enable status */
         } sms_enable;                           /*!< SMS enable event. Use with \ref GSM_EVT_SMS_ENABLE event */
         struct {
-            size_t num;                         /*!< Received number in memory for sent SMS*/
-        } sms_sent;                             /*!< SMS sent info. Use with \ref GSM_EVT_SMS_SENT event */
+            size_t num;                         /*!< Received number in memory for sent SMS */
+            gsmr_t res;                         /*!< SMS send result information */
+        } sms_send;                             /*!< SMS sent info. Use with \ref GSM_EVT_SMS_SEND event */
         struct {
             gsm_mem_t mem;                      /*!< Memory of received message */
             size_t pos;                         /*!< Received position in memory for sent SMS */

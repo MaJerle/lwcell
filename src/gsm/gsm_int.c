@@ -694,7 +694,8 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         } else if (CMD_IS_CUR(GSM_CMD_CMGS) && is_ok) {
             /* At this point we have to wait for "> " to send data */
         } else if (CMD_IS_CUR(GSM_CMD_CMGS) && is_error) {
-            gsmi_send_cb(GSM_EVT_SMS_SEND_ERROR);   /* SIM card event */
+            gsm.evt.evt.sms_send.res = gsmERR;
+            gsmi_send_cb(GSM_EVT_SMS_SEND); /* SIM card event */
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CONN
         } else if (CMD_IS_CUR(GSM_CMD_CIPSTATUS)) {
@@ -1234,7 +1235,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             }
             case GSM_CMD_CPIN_SET: {            /* Set CPIN */
                 if (*is_ok) {
-                    gsm_delay(5000);            /* Make delay for 2 seconds to make sure SIM is ready */
+                    gsm_delay(5000);            /* Make delay to make sure SIM is ready */
                 }
                 break;
             }
