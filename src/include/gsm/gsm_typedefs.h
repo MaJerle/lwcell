@@ -336,10 +336,10 @@ typedef struct gsm_pbuf* gsm_pbuf_p;
 /**
  * \ingroup         GSM_EVT
  * \brief           Event function prototype
- * \param[in]       cb: Callback event data
+ * \param[in]       evt: Callback event data
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
-typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt* cb);
+typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt* evt);
 
 /**
  * \ingroup         GSM_EVT
@@ -356,6 +356,8 @@ typedef enum gsm_cb_type_t {
 
     GSM_EVT_SIGNAL_STRENGTH,                    /*!< Signal strength event */
 
+    GSM_EVT_NETWORK_OPERATOR_CURRENT,           /*!< Current operator event */
+    GSM_EVT_NETWORK_REG,                        /*!< Network registration changed. Available even when \ref GSM_CFG_NETWORK is disabled */
 #if GSM_CFG_NETWORK || __DOXYGEN__
     GSM_EVT_NETWORK_ATTACHED,                   /*!< Attached to network, PDP context active and ready for TCP/IP application */
     GSM_EVT_NETWORK_DETACHED,                   /*!< Detached from network, PDP context not active anymore */
@@ -371,7 +373,6 @@ typedef enum gsm_cb_type_t {
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */
 
     GSM_EVT_CPIN,                               /*!< SIM event */
-    GSM_EVT_OPERATOR_CURRENT,                   /*!< Current operator event */
 #if GSM_CFG_SMS || __DOXYGEN__
     GSM_EVT_SMS_ENABLE,                         /*!< SMS enable event */
     GSM_EVT_SMS_READY,                          /*!< SMS ready event */
@@ -412,7 +413,7 @@ typedef struct gsm_evt {
         } cpin;                                 /*!< CPIN event */
         struct {
             const gsm_operator_curr_t* operator_current;    /*!< Current operator info */
-        } operator_current;                     /*!< Current operator event. Use with \ref GSM_EVT_OPERATOR_CURRENT event */
+        } operator_current;                     /*!< Current operator event. Use with \ref GSM_EVT_NETWORK_OPERATOR_CURRENT event */
 
         struct {
             int16_t rssi;                       /*!< Strength in units of dBm */
@@ -520,8 +521,9 @@ typedef struct {
 /**
  * \ingroup         GSM_TIMEOUT
  * \brief           Timeout callback function prototype
+ * \param[in]       arg: Timeout argument
  */
-typedef void (*gsm_timeout_fn)(void *);
+typedef void (*gsm_timeout_fn)(void * arg);
 
 /**
  * \ingroup         GSM_TIMEOUT

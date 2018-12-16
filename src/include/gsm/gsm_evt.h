@@ -62,12 +62,12 @@ uint8_t         gsm_evt_reset_is_forced(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_OPERATOR_CURRENT
- * \anchor          GSM_EVT_OPERATOR_CURRENT
+ * \name            GSM_EVT_NETWORK_OPERATOR_CURRENT
+ * \anchor          GSM_EVT_NETWORK_OPERATOR_CURRENT
  * \brief           Event helper functions for \ref GSM_EVT_OPERATOR_CURRENT event
  */
 
-const gsm_operator_curr_t*  gsm_evt_operator_current_get_operator(gsm_evt_t* cc);
+const gsm_operator_curr_t*  gsm_evt_network_operator_get_current(gsm_evt_t* cc);
  
 /**
  * \}

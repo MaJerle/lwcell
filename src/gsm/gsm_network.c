@@ -57,7 +57,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t
     GSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
     GSM_MSG_VAR_REF(msg).msg.network_attach.pass = pass;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 200000);  /* Send message to producer queue */
 }
 
 /**
@@ -74,6 +74,16 @@ gsm_network_detach(uint32_t blocking) {
 #if GSM_CFG_CONN
     /* GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS; */
 #endif /* GSM_CFG_CONN */
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+}
+
+gsmr_t
+gsm_network_check_status(uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
 }
@@ -108,3 +118,34 @@ gsm_network_is_attached(void) {
 }
 
 #endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
+
+/**
+ * \brief           Read RSSI signal from network operator
+ * \param[out]      rssi: RSSI output variable. When set to `0`, RSSI is not valid
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_network_rssi(int16_t* rssi, uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+
+    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CSQ_GET;
+    GSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;
+
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);  /* Send message to producer queue */
+}
+
+/**
+ * \brief           Get network registration status
+ * \return          Member of \ref gsm_network_reg_status_t enumeration
+ */
+gsm_network_reg_status_t
+gsm_network_get_reg_status(void) {
+    gsm_network_reg_status_t ret;
+
+    GSM_CORE_PROTECT();
+    ret = gsm.network.status;
+    GSM_CORE_UNPROTECT();
+    return ret;
+}

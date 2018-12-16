@@ -62,7 +62,7 @@ gsm_evt_reset_is_forced(gsm_evt_t* cc) {
  * \return          Current operator handle
  */
 const gsm_operator_curr_t *
-gsm_evt_operator_current_get_operator(gsm_evt_t* cc) {
+gsm_evt_network_operator_get_current(gsm_evt_t* cc) {
     return cc->evt.operator_current.operator_current;
 }
 

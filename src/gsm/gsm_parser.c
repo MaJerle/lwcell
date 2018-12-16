@@ -321,19 +321,17 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
      */
     if (gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED ||
         gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
-        if (gsm_operator_get(NULL, 0) != gsmOK) {   /* Notify user in case we are not able to add new command to queue */
-            cb = 1;
-        }
-    } else {
-        cb = 1;
+        /* Try to get operator */
+        /* Notify user in case we are not able to add new command to queue */
+        gsm_operator_get(&gsm.network.curr_operator, 0);
+#if GSM_CFG_NETWORK
+    } else if (gsm_network_is_attached()) {
+        gsm_network_check_status(0);        /* Do the update */
+#endif /* GSM_CFG_NETWORK */
     }
 
-    /**
-     * \todo: Process callback
-     */
-    if (cb) {                                   /* Check for callback */
-
-    }
+    /* Send callback event */
+    gsmi_send_cb(GSM_EVT_NETWORK_REG);
 
     return 1;
 }

@@ -433,6 +433,46 @@ gsmi_tcpip_process_data_sent(uint8_t sent) {
 }
 
 /**
+ * \brief           Process CIPSEND response
+ * \param[in]       rcv: Received data
+ * \param[in,out]   is_ok: Pointer to current ok status
+ * \param[in,out]   is_ok: Pointer to current error status
+ */
+void
+gsmi_process_cipsend_response(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_error) {
+    if (gsm.msg->msg.conn_send.wait_send_ok_err) {
+        if (GSM_CHARISNUM(rcv->data[0]) && rcv->data[1] == ',') {
+            uint8_t num = GSM_CHARTONUM(rcv->data[0]);
+            if (!strncmp(&rcv->data[3], "SEND OK" CRLF, 7 + CRLF_LEN)) {
+                gsm.msg->msg.conn_send.wait_send_ok_err = 0;
+                *is_ok = gsmi_tcpip_process_data_sent(1);    /* Process as data were sent */
+                if (*is_ok && gsm.msg->msg.conn_send.conn->status.f.active) {
+                    CONN_SEND_DATA_SEND_EVT(gsm.msg,
+                        gsm.msg->msg.conn_send.conn,
+                        gsm.msg->msg.conn_send.sent_all,
+                        gsmOK);
+                }
+            } else if (!strncmp(&rcv->data[3], "SEND FAIL" CRLF, 9 + CRLF_LEN)) {
+                gsm.msg->msg.conn_send.wait_send_ok_err = 0;
+                *is_error = gsmi_tcpip_process_data_sent(0);/* Data were not sent due to SEND FAIL or command didn't even start */
+                if (*is_error && gsm.msg->msg.conn_send.conn->status.f.active) {
+                    CONN_SEND_DATA_SEND_EVT(gsm.msg,
+                        gsm.msg->msg.conn_send.conn,
+                        gsm.msg->msg.conn_send.sent_all,
+                        gsmERR);
+                }
+            }
+        }
+    /* Check for an error or if connection closed in the meantime */
+    } else if (*is_error) {
+        CONN_SEND_DATA_SEND_EVT(gsm.msg,
+            gsm.msg->msg.conn_send.conn,
+            gsm.msg->msg.conn_send.sent_all,
+            gsmERR);
+    }
+}
+
+/**
  * \brief           Send error event to application layer
  * \param[in]       msg: Message from user with connection start
  */
@@ -532,6 +572,11 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     if (rcv->data[0] == '+') {
         if (!strncmp(rcv->data, "+CSQ", 4)) {
             gsmi_parse_csq(rcv->data);          /* Parse +CSQ response */
+#if GSM_CFG_NETWORK
+        } else if (!strncmp(rcv->data, "+PDP: DEACT", 11)) {
+            /* PDP has been deactivated */
+            gsm_network_check_status(0);        /* Update status */
+#endif /* GSM_CFG_NETWORK */
 #if GSM_CFG_CONN
         } else if (!strncmp(rcv->data, "+RECEIVE", 8)) {
             gsmi_parse_ipd(rcv->data);          /* Parse IPD */
@@ -594,10 +639,18 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             uint8_t forced = 0, num;
             
             num = GSM_CHARTONUM(rcv->data[0]);  /* Get connection number */
-            if (CMD_IS_CUR(GSM_CMD_CIPCLOSE)) {
-                if (gsm.msg->msg.conn_close.conn->num == num) {
-                    forced = 1;
-                }
+            if (CMD_IS_CUR(GSM_CMD_CIPCLOSE) && gsm.msg->msg.conn_close.conn->num == num) {
+                forced = 1;
+            }
+
+            /* Manually stop send command? */
+            if (CMD_IS_CUR(GSM_CMD_CIPSEND) && gsm.msg->msg.conn_send.conn->num == num) {
+                /*
+                 * If active command is CIPSEND and CLOSED event received,
+                 * manually set error and process usual "ERROR" event on senddata
+                 */
+                is_error = 1;                   /* This is an error in response */
+                gsmi_process_cipsend_response(rcv, &is_ok, &is_error);
             }
             gsmi_conn_closed_process(num, forced);  /* Connection closed, process */
 #endif /* GSM_CFG_CONN */
@@ -711,35 +764,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             if (is_ok) {
                 is_ok = 0;
             }
-            if (gsm.msg->msg.conn_send.wait_send_ok_err) {
-                if (GSM_CHARISNUM(rcv->data[0]) && rcv->data[1] == ',') {
-                    uint8_t num = GSM_CHARTONUM(rcv->data[0]);
-                    if (!strncmp(&rcv->data[3], "SEND OK" CRLF, 7 + CRLF_LEN)) {
-                        gsm.msg->msg.conn_send.wait_send_ok_err = 0;
-                        is_ok = gsmi_tcpip_process_data_sent(1);    /* Process as data were sent */
-                        if (is_ok && gsm.msg->msg.conn_send.conn->status.f.active) {
-                            CONN_SEND_DATA_SEND_EVT(gsm.msg,
-                                gsm.msg->msg.conn_send.conn,
-                                gsm.msg->msg.conn_send.sent_all,
-                                gsmOK);
-                        }
-                    } else if (!strncmp(&rcv->data[3], "SEND FAIL" CRLF, 9 + CRLF_LEN)) {
-                        gsm.msg->msg.conn_send.wait_send_ok_err = 0;
-                        is_error = gsmi_tcpip_process_data_sent(0); /* Data were not sent due to SEND FAIL or command didn't even start */
-                        if (is_error && gsm.msg->msg.conn_send.conn->status.f.active) {
-                            CONN_SEND_DATA_SEND_EVT(gsm.msg,
-                                gsm.msg->msg.conn_send.conn,
-                                gsm.msg->msg.conn_send.sent_all,
-                                gsmERR);
-                        }
-                    }
-                }
-            } else if (is_error) {
-                CONN_SEND_DATA_SEND_EVT(gsm.msg,
-                    gsm.msg->msg.conn_send.conn,
-                    gsm.msg->msg.conn_send.sent_all,
-                    gsmERR);
-            }
+            gsmi_process_cipsend_response(rcv, &is_ok, &is_error);
 #endif /* GSM_CFG_CONN */
         }
     }
@@ -1080,6 +1105,18 @@ gsmi_process(const void* data, size_t data_len) {
     return gsmOK;
 }
 
+/* Temporary macros, only available for inside gsmi_process_sub_cmd function */
+/* Set new command, but first check for error on previous */
+#define SET_NEW_CMD_CHECK_ERROR(new_cmd) do {   \
+    if (!*(is_error)) {                         \
+        n_cmd = new_cmd;                        \
+    }                                           \
+} while (0)
+/* Set new command, ignore result of previous */
+#define SET_NEW_CMD(new_cmd) do {               \
+    n_cmd = new_cmd;                            \
+} while (0)
+
 /**
  * \brief           Process current command with known execution status and start another if necessary
  * \param[in]       msg: Pointer to current message
@@ -1122,7 +1159,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     } else if (CMD_IS_DEF(GSM_CMD_COPS_GET)) {
         if (CMD_IS_CUR(GSM_CMD_COPS_GET)) {
             gsm.evt.evt.operator_current.operator_current = &gsm.network.curr_operator;
-            gsmi_send_cb(GSM_EVT_OPERATOR_CURRENT);
+            gsmi_send_cb(GSM_EVT_NETWORK_OPERATOR_CURRENT);
         }
 #if GSM_CFG_SMS
     } else if (CMD_IS_DEF(GSM_CMD_SMS_ENABLE)) {
@@ -1254,25 +1291,25 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 #if GSM_CFG_NETWORK
     } if (CMD_IS_DEF(GSM_CMD_NETWORK_ATTACH)) {
         switch (msg->i) {
-            case 0: n_cmd = GSM_CMD_CGACT_SET_0; break;
-            case 1: n_cmd = GSM_CMD_CGACT_SET_1; break;
-            case 2: n_cmd = GSM_CMD_CGATT_SET_0; break;
-            case 3: n_cmd = GSM_CMD_CGATT_SET_1; break;
-            case 4: n_cmd = GSM_CMD_CIPSHUT; break;
-            case 5: n_cmd = GSM_CMD_CIPMUX_SET; break;
-            case 6: n_cmd = GSM_CMD_CIPRXGET_SET; break;
-            case 7: n_cmd = GSM_CMD_CSTT_SET; break;
-            case 8: n_cmd = GSM_CMD_CIICR; break;
-            case 9: n_cmd = GSM_CMD_CIFSR; break;
-            case 10: n_cmd = GSM_CMD_CIPSTATUS; break;
+            case 0: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CGACT_SET_0); break;
+            case 1: SET_NEW_CMD(GSM_CMD_CGACT_SET_1); break;
+            case 2: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CGATT_SET_0); break;
+            case 3: SET_NEW_CMD(GSM_CMD_CGATT_SET_1); break;
+            case 4: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CIPSHUT); break;
+            case 5: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CIPMUX_SET); break;
+            case 6: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CIPRXGET_SET); break;
+            case 7: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CSTT_SET); break;
+            case 8: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CIICR); break;
+            case 9: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CIFSR); break;
+            case 10: SET_NEW_CMD(GSM_CMD_CIPSTATUS); break;
             default: break;
         }
     } else if (CMD_IS_DEF(GSM_CMD_NETWORK_DETACH)) {
         switch (msg->i) {
-            case 0: n_cmd = GSM_CMD_CGATT_SET_0; break;
-            case 1: n_cmd = GSM_CMD_CGACT_SET_0; break;
+            case 0: SET_NEW_CMD(GSM_CMD_CGATT_SET_0); break;
+            case 1: SET_NEW_CMD(GSM_CMD_CGACT_SET_0); break;
 #if GSM_CFG_CONN
-            case 2: n_cmd = GSM_CMD_CIPSTATUS; break;
+            case 2: SET_NEW_CMD(GSM_CMD_CIPSTATUS); break;
 #endif /* GSM_CFG_CONN */
             default: break;
         }
