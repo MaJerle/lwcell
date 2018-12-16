@@ -51,7 +51,7 @@ gsm_sim_pin_enter(const char* pin, uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
     GSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 30000);   /* Send message to producer queue */
 }
 
 /**
