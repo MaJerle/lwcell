@@ -172,9 +172,9 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
 
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;/* First get memory */
     } else {
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_SET;    /* First set memory */
+        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_SET;/* First set memory */
     }
 
     GSM_MSG_VAR_REF(msg).msg.pb_write.pos = pos;

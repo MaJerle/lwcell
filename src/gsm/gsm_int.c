@@ -1234,7 +1234,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             }
             case GSM_CMD_CPIN_SET: {            /* Set CPIN */
                 if (*is_ok) {
-                    gsm_delay(2000);            /* Make delay for 2 seconds to make sure SIM is ready */
+                    gsm_delay(5000);            /* Make delay for 2 seconds to make sure SIM is ready */
                 }
                 break;
             }
