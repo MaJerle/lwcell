@@ -181,6 +181,44 @@ int16_t gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc);
  */
 
 /**
+ * \name            GSM_EVT_SMS_RECV
+ * \anchor          GSM_EVT_SMS_RECV
+ * \brief           Event helper functions for \ref GSM_EVT_SMS_RECV event
+ */
+
+size_t  gsm_evt_sms_recv_get_pos(gsm_evt_t* cc);
+gsm_mem_t   gsm_evt_sms_recv_get_mem(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_SMS_READ
+ * \anchor          GSM_EVT_SMS_READ
+ * \brief           Event helper functions for \ref GSM_EVT_SMS_READ event
+ */
+
+gsm_sms_entry_t*    gsm_evt_sms_read_get_entry(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_SMS_SEND
+ * \anchor          GSM_EVT_SMS_SEND
+ * \brief           Event helper functions for \ref GSM_EVT_SMS_SEND event
+ */
+
+gsmr_t  gsm_evt_sms_send_get_result(gsm_evt_t* cc);
+size_t  gsm_evt_sms_send_get_pos(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
  * \}
  */
 

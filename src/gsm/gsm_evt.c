@@ -239,3 +239,58 @@ gsm_evt_conn_error_get_arg(gsm_evt_t* cc) {
 }
 
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */
+
+#if GSM_CFG_SMS || __DOXYGEN__
+
+/**
+ * \brief           Get SMS position in memory which has been saved on receive
+ * \param[in]       cc: Event handle
+ * \return          SMS position in memory
+ */
+size_t
+gsm_evt_sms_recv_get_pos(gsm_evt_t* cc) {
+    return cc->evt.sms_recv.pos;
+}
+
+/**
+ * \brief           Get SMS memory used to save SMS on receive
+ * \param[in]       cc: Event handle
+ * \return          SMS memory location
+ */
+gsm_mem_t
+gsm_evt_sms_recv_get_mem(gsm_evt_t* cc) {
+    return cc->evt.sms_recv.mem;
+}
+
+/**
+ * \brief           Get SMS entry after successful read
+ * \param[in]       cc: Event handle
+ * \return          SMS entry
+ */
+gsm_sms_entry_t *
+gsm_evt_sms_read_get_entry(gsm_evt_t* cc) {
+    return cc->evt.sms_read.entry;
+}
+
+/**
+ * \brief           Get SMS send result status
+ * \param[in]       cc: Event handle
+ * \return          Member of \ref gsmr_t enumeration
+ */
+gsmr_t
+gsm_evt_sms_send_get_result(gsm_evt_t* cc) {
+    return cc->evt.sms_send.res;
+}
+
+/**
+ * \brief           Get SMS send position in memory
+ * \note            Use only if SMS sent successfully
+ * \param[in]       cc: Event handle
+ * \return          Position in memory
+ */
+size_t
+gsm_evt_sms_send_get_pos(gsm_evt_t* cc) {
+    return cc->evt.sms_send.num;
+}
+
+#endif /* GSM_CFG_CONN || __DOXYGEN__ */
