@@ -90,3 +90,14 @@ gsm_ll_init(gsm_ll_t* ll) {
     initialized = 1;
     return gsmOK;
 }
+
+/**
+ * \brief           Callback function to de-init low-level communication part
+ * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_ll_deinit(gsm_ll_t* ll) {
+    initialized = 0;                            /* Clear initialized flag */
+    return gsmOK;
+}
