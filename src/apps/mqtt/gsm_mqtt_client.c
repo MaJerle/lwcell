@@ -987,17 +987,17 @@ mqtt_conn_cb(gsm_evt_t* evt) {
         }
         
         /* A new packet of data received on MQTT client connection */
-        case GSM_EVT_CONN_DATA_RECV: {
-            mqtt_data_recv_cb(client, gsm_evt_conn_data_recv_get_buff(evt));/* Call user to process received data */
+        case GSM_EVT_CONN_RECV: {
+            mqtt_data_recv_cb(client, gsm_evt_conn_recv_get_buff(evt));/* Call user to process received data */
             break;
         }
         
         /* Data send event */
-        case GSM_EVT_CONN_DATA_SEND: {
+        case GSM_EVT_CONN_SEND: {
             /* Data sent callback */
             mqtt_data_sent_cb(client,
-                gsm_evt_conn_data_send_get_length(evt),
-                gsm_evt_conn_data_send_get_result(evt) == gsmOK);
+                gsm_evt_conn_send_get_length(evt),
+                gsm_evt_conn_send_get_result(evt) == gsmOK);
             break;
         }
         

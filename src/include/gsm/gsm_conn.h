@@ -54,7 +54,6 @@ gsmr_t      gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_
 gsmr_t      gsm_conn_set_arg(gsm_conn_p conn, void* const arg);
 void *      gsm_conn_get_arg(gsm_conn_p conn);
 uint8_t     gsm_conn_is_client(gsm_conn_p conn);
-uint8_t     gsm_conn_is_server(gsm_conn_p conn);
 uint8_t     gsm_conn_is_active(gsm_conn_p conn);
 uint8_t     gsm_conn_is_closed(gsm_conn_p conn);
 int8_t      gsm_conn_getnum(gsm_conn_p conn);

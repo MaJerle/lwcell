@@ -141,11 +141,11 @@ netconn_evt(gsm_evt_t* evt) {
          * We have a new data received which
          * should have netconn structure as argument
          */
-        case GSM_EVT_CONN_DATA_RECV: {
+        case GSM_EVT_CONN_RECV: {
             gsm_pbuf_p pbuf;
 
             nc = gsm_conn_get_arg(conn);        /* Get API from connection */
-            pbuf = gsm_evt_conn_data_recv_get_buff(evt);/* Get received buff */
+            pbuf = gsm_evt_conn_recv_get_buff(evt);/* Get received buff */
 
             gsm_conn_recved(conn, pbuf);        /* Notify stack about received data */
             nc->rcv_packets++;                  /* Increase number of received packets */

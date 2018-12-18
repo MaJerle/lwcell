@@ -84,7 +84,7 @@ gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc) {
  * \return          Buffer handle
  */
 gsm_pbuf_p
-gsm_evt_conn_data_recv_get_buff(gsm_evt_t* cc) {
+gsm_evt_conn_recv_get_buff(gsm_evt_t* cc) {
     return cc->evt.conn_data_recv.buff;
 }
 
@@ -94,7 +94,7 @@ gsm_evt_conn_data_recv_get_buff(gsm_evt_t* cc) {
  * \return          Connection handle
  */
 gsm_conn_p
-gsm_evt_conn_data_recv_get_conn(gsm_evt_t* cc) {
+gsm_evt_conn_recv_get_conn(gsm_evt_t* cc) {
     return cc->evt.conn_data_recv.conn;
 }
 
@@ -104,7 +104,7 @@ gsm_evt_conn_data_recv_get_conn(gsm_evt_t* cc) {
  * \return          Connection handle
  */
 gsm_conn_p
-gsm_evt_conn_data_send_get_conn(gsm_evt_t* cc) {
+gsm_evt_conn_send_get_conn(gsm_evt_t* cc) {
     return cc->evt.conn_data_send.conn;
 }
 
@@ -114,7 +114,7 @@ gsm_evt_conn_data_send_get_conn(gsm_evt_t* cc) {
  * \return          Number of bytes sent
  */
 size_t
-gsm_evt_conn_data_send_get_length(gsm_evt_t* cc) {
+gsm_evt_conn_send_get_length(gsm_evt_t* cc) {
     return cc->evt.conn_data_send.sent;
 }
 
@@ -124,7 +124,7 @@ gsm_evt_conn_data_send_get_length(gsm_evt_t* cc) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_evt_conn_data_send_get_result(gsm_evt_t* cc) {
+gsm_evt_conn_send_get_result(gsm_evt_t* cc) {
     return cc->evt.conn_data_send.res;
 }
 

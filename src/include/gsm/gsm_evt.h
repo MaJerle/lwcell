@@ -74,40 +74,27 @@ const gsm_operator_curr_t*  gsm_evt_network_operator_get_current(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_DATA_RECV
- * \anchor          GSM_EVT_CONN_DATA_RECV
- * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_RECV event
+ * \name            GSM_EVT_CONN_RECV
+ * \anchor          GSM_EVT_CONN_RECV
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_RECV event
  */
 
-gsm_pbuf_p  gsm_evt_conn_data_recv_get_buff(gsm_evt_t* cc);
-gsm_conn_p  gsm_evt_conn_data_recv_get_conn(gsm_evt_t* cc);
+gsm_pbuf_p  gsm_evt_conn_recv_get_buff(gsm_evt_t* cc);
+gsm_conn_p  gsm_evt_conn_recv_get_conn(gsm_evt_t* cc);
 
 /**
  * \}
  */
 
 /**
- * \name            GSM_EVT_CONN_DATA_SENT
- * \anchor          GSM_EVT_CONN_DATA_SENT
- * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_SENT event
+ * \name            GSM_EVT_CONN_SEND
+ * \anchor          GSM_EVT_CONN_SEND
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_SEND event
  */
 
-gsm_conn_p  gsm_evt_conn_data_sent_get_conn(gsm_evt_t* cc);
-size_t      gsm_evt_conn_data_sent_get_length(gsm_evt_t* cc);
-
-/**
- * \}
- */
-
-/**
- * \name            GSM_EVT_CONN_DATA_SEND
- * \anchor          GSM_EVT_CONN_DATA_SEND
- * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_SEND event
- */
-
-gsm_conn_p  gsm_evt_conn_data_send_get_conn(gsm_evt_t* cc);
-size_t      gsm_evt_conn_data_send_get_length(gsm_evt_t* cc);
-gsmr_t      gsm_evt_conn_data_send_get_result(gsm_evt_t* cc);
+gsm_conn_p  gsm_evt_conn_send_get_conn(gsm_evt_t* cc);
+size_t      gsm_evt_conn_send_get_length(gsm_evt_t* cc);
+gsmr_t      gsm_evt_conn_send_get_result(gsm_evt_t* cc);
 
 /**
  * \}
@@ -171,7 +158,7 @@ void*               gsm_evt_conn_error_get_arg(gsm_evt_t* cc);
 /**
  * \name            GSM_EVT_SIGNAL_STRENGTH
  * \anchor          GSM_EVT_SIGNAL_STRENGTH
- * \brief           Event helper functions for \ref GSM_EVT_CONN_DATA_RECV event
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_RECV event
  */
 
 int16_t gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc);

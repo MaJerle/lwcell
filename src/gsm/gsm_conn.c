@@ -394,22 +394,6 @@ gsm_conn_is_client(gsm_conn_p conn) {
 }
 
 /**
- * \brief           Check if connection type is server
- * \param[in]       conn: Pointer to connection to check for status
- * \return          `1` on success, `0` otherwise
- */
-uint8_t
-gsm_conn_is_server(gsm_conn_p conn) {
-    uint8_t res = 0;
-    if (conn != NULL && gsmi_is_valid_conn_ptr(conn)) {
-        GSM_CORE_PROTECT();
-        res = conn->status.f.active && !conn->status.f.client;
-        GSM_CORE_UNPROTECT();
-    }
-    return res;
-}
-
-/**
  * \brief           Check if connection is active
  * \param[in]       conn: Pointer to connection to check for status
  * \return          `1` on success, `0` otherwise
@@ -467,10 +451,10 @@ gsm_conn_get_from_evt(gsm_evt_t* evt) {
         return gsm_evt_conn_active_get_conn(evt);
     } else if (evt->type == GSM_EVT_CONN_CLOSED) {
         return gsm_evt_conn_closed_get_conn(evt);
-    } else if (evt->type == GSM_EVT_CONN_DATA_RECV) {
-        return gsm_evt_conn_data_recv_get_conn(evt);
-    } else if (evt->type == GSM_EVT_CONN_DATA_SEND) {
-        return gsm_evt_conn_data_send_get_conn(evt);
+    } else if (evt->type == GSM_EVT_CONN_RECV) {
+        return gsm_evt_conn_recv_get_conn(evt);
+    } else if (evt->type == GSM_EVT_CONN_SEND) {
+        return gsm_evt_conn_send_get_conn(evt);
     } else if (evt->type == GSM_EVT_CONN_POLL) {
         return gsm_evt_conn_poll_get_conn(evt);
     }

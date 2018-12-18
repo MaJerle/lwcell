@@ -364,8 +364,8 @@ typedef enum gsm_cb_type_t {
 #endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
 
 #if GSM_CFG_CONN || __DOXYGEN__
-    GSM_EVT_CONN_DATA_RECV,                     /*!< Connection data received */
-    GSM_EVT_CONN_DATA_SEND,                     /*!< Connection data send */
+    GSM_EVT_CONN_RECV,                          /*!< Connection data received */
+    GSM_EVT_CONN_SEND,                          /*!< Connection data send */
     GSM_EVT_CONN_ACTIVE,                        /*!< Connection just became active */
     GSM_EVT_CONN_ERROR,                         /*!< Client connection start was not successful */
     GSM_EVT_CONN_CLOSED,                        /*!< Connection was just closed */
@@ -422,12 +422,12 @@ typedef struct gsm_evt {
         struct {
             gsm_conn_p conn;                    /*!< Connection where data were received */
             gsm_pbuf_p buff;                    /*!< Pointer to received data */
-        } conn_data_recv;                       /*!< Network data received. Use with \ref GSM_EVT_CONN_DATA_RECV event */
+        } conn_data_recv;                       /*!< Network data received. Use with \ref GSM_EVT_CONN_RECV event */
         struct {
             gsm_conn_p conn;                    /*!< Connection where data were sent */
             size_t sent;                        /*!< Number of bytes sent on connection */
             gsmr_t res;                         /*!< Send data result */
-        } conn_data_send;                       /*!< Data successfully sent. Use with \ref GSM_EVT_CONN_DATA_SEND event */
+        } conn_data_send;                       /*!< Data successfully sent. Use with \ref GSM_EVT_CONN_SEND event */
         struct {
             const char* host;                   /*!< Host to use for connection */
             gsm_port_t port;                    /*!< Remote port used for connection */

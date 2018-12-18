@@ -82,7 +82,7 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
  */
 #define CONN_SEND_DATA_SEND_EVT(m, c, sa, err)  do { \
     CONN_SEND_DATA_FREE(m);                         \
-    gsm.evt.type = GSM_EVT_CONN_DATA_SEND;          \
+    gsm.evt.type = GSM_EVT_CONN_SEND;               \
     gsm.evt.evt.conn_data_send.res = err;           \
     gsm.evt.evt.conn_data_send.conn = c;            \
     gsm.evt.evt.conn_data_send.sent = sa;           \
@@ -909,10 +909,10 @@ gsmi_process(const void* data, size_t data_len) {
                      * From this moment, user is responsible for packet
                      * buffer and must free it manually
                      */
-                    gsm.evt.type = GSM_EVT_CONN_DATA_RECV;  /* We have received data */
+                    gsm.evt.type = GSM_EVT_CONN_RECV;
                     gsm.evt.evt.conn_data_recv.buff = gsm.ipd.buff;
                     gsm.evt.evt.conn_data_recv.conn = gsm.ipd.conn;
-                    res = gsmi_send_conn_cb(gsm.ipd.conn, NULL);    /* Send connection callback */
+                    res = gsmi_send_conn_cb(gsm.ipd.conn, NULL);
 
                     gsm_pbuf_free(gsm.ipd.buff);    /* Free packet buffer at this point */
                     GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
