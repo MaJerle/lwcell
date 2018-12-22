@@ -327,7 +327,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
     gsmr_t res;
 
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
-    GSM_ASSERT("nc->type must be TCP\r\n", nc->type == GSM_NETCONN_TYPE_TCP);   /* Assert input parameters */
+    GSM_ASSERT("nc->type must be TCP or SSL\r\n", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);/* Assert input parameters */
     GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     /*
@@ -406,7 +406,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
 gsmr_t
 gsm_netconn_flush(gsm_netconn_p nc) {
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
-    GSM_ASSERT("nc->type must be TCP\r\n", nc->type == GSM_NETCONN_TYPE_TCP);   /* Assert input parameters */
+    GSM_ASSERT("nc->type must be TCP or SSL\r\n", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);/* Assert input parameters */
     GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     /*
@@ -424,7 +424,7 @@ gsm_netconn_flush(gsm_netconn_p nc) {
 }
 
 /**
- * \brief           Send packet to specific IP and port
+ * \brief           Send data on \e UDP connection to default IP and port
  * \param[in]       nc: Netconn handle used to send
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
@@ -440,7 +440,7 @@ gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
 }
 
 /**
- * \brief           Send packet to specific IP and port
+ * \brief           Send data on \e UDP connection to specific IP and port
  * \note            Use this function in case of UDP type netconn
  * \param[in]       nc: Netconn handle used to send
  * \param[in]       ip: Pointer to IP address
@@ -535,7 +535,7 @@ gsm_netconn_getconnnum(gsm_netconn_p nc) {
  * \brief           Set timeout value for receiving data.
  *
  *                  When enabled, \ref gsm_netconn_receive will only block for up to
- *                  \arg timeout value and will return if no new data within this time
+ *                  \e timeout value and will return if no new data within this time
  * \param[in]       nc: Netconn handle
  * \param[in]       timeout: Timeout in units of milliseconds.
  *                  Set to `0` to disable timeout for \ref gsm_netconn_receive function
@@ -548,7 +548,8 @@ gsm_netconn_set_receive_timeout(gsm_netconn_p nc, uint32_t timeout) {
 /**
  * \brief           Get netconn receive timeout value
  * \param[in]       nc: Netconn handle
- * \return          Timeout in units of milliseconds. If value is `0`, timeout is disabled (wait forever)
+ * \return          Timeout in units of milliseconds.
+ *                  If value is `0`, timeout is disabled (wait forever)
  */
 uint32_t
 gsm_netconn_get_receive_timeout(gsm_netconn_p nc) {

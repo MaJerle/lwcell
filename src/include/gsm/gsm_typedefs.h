@@ -135,6 +135,7 @@ typedef struct {
 typedef enum {
     GSM_CONN_TYPE_TCP,                          /*!< Connection type is TCP */
     GSM_CONN_TYPE_UDP,                          /*!< Connection type is UDP */
+    GSM_CONN_TYPE_SSL,                          /*!< Connection type is TCP over SSL */
 } gsm_conn_type_t;
 
 /**

@@ -65,8 +65,8 @@ conn_timeout_cb(void* arg) {
         gsm.evt.type = GSM_EVT_CONN_POLL;       /* Poll connection event */
         gsm.evt.evt.conn_poll.conn = conn;      /* Set connection pointer */
         gsmi_send_conn_cb(conn, NULL);          /* Send connection callback */
-        
-        gsm_timeout_add(GSM_CFG_CONN_POLL_INTERVAL, conn_timeout_cb, conn); /* Schedule timeout again */
+
+        gsmi_conn_start_timeout(conn);          /* Schedule new timeout */
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
             "[CONN] Poll event: %p\r\n", conn);
     }
@@ -110,7 +110,8 @@ conn_get_val_id(gsm_conn_p conn) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 static gsmr_t
-conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data, size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
+conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data,
+            size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
     
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
@@ -188,7 +189,8 @@ gsmi_conn_init(void) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port, void* const arg, gsm_evt_fn evt_fn, const uint32_t blocking) {
+gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port,
+                void* const arg, gsm_evt_fn evt_fn, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("host != NULL", host != NULL);   /* Assert input parameters */
@@ -255,7 +257,8 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data, size_t btw, size_t* bw, const uint32_t blocking) {
+gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data,
+                size_t btw, size_t* bw, const uint32_t blocking) {
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
 
     flush_buff(conn);                           /* Flush currently written memory if exists */
@@ -273,7 +276,8 @@ gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, cons
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking) {
+gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
+                const uint32_t blocking) {
     gsmr_t res;
     const uint8_t* d = data;
 
@@ -447,18 +451,14 @@ gsm_conn_getnum(gsm_conn_p conn) {
  */
 gsm_conn_p
 gsm_conn_get_from_evt(gsm_evt_t* evt) {
-    if (evt->type == GSM_EVT_CONN_ACTIVE) {
-        return gsm_evt_conn_active_get_conn(evt);
-    } else if (evt->type == GSM_EVT_CONN_CLOSED) {
-        return gsm_evt_conn_closed_get_conn(evt);
-    } else if (evt->type == GSM_EVT_CONN_RECV) {
-        return gsm_evt_conn_recv_get_conn(evt);
-    } else if (evt->type == GSM_EVT_CONN_SEND) {
-        return gsm_evt_conn_send_get_conn(evt);
-    } else if (evt->type == GSM_EVT_CONN_POLL) {
-        return gsm_evt_conn_poll_get_conn(evt);
+    switch (evt->type) {
+        case GSM_EVT_CONN_ACTIVE: return gsm_evt_conn_active_get_conn(evt);
+        case GSM_EVT_CONN_CLOSED: return gsm_evt_conn_closed_get_conn(evt);
+        case GSM_EVT_CONN_RECV: return gsm_evt_conn_recv_get_conn(evt);
+        case GSM_EVT_CONN_SEND: return gsm_evt_conn_send_get_conn(evt);
+        case GSM_EVT_CONN_POLL: return gsm_evt_conn_poll_get_conn(evt);
+        default: return NULL;
     }
-    return NULL;
 }
 
 /**

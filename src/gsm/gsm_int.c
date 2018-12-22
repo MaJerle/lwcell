@@ -1031,7 +1031,7 @@ gsmi_process(const void* data, size_t data_len) {
                         size_t len;
                         GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                             "[IPD] Data on connection %d with total size %d byte(s)\r\n",
-                            (int)gsm.ipd.conn->num, gsm.ipd.tot_len);
+                            (int)gsm.ipd.conn->num, (int)gsm.ipd.tot_len);
 
                         len = GSM_MIN(gsm.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE);
 
@@ -1318,14 +1318,16 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     } else if (CMD_IS_DEF(GSM_CMD_CIPSTART)) {
         if (msg->i == 0 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) { /* Was the current command status info? */
             if (*is_ok) {
-                SET_NEW_CMD(GSM_CMD_CIPSTART);  /* Now actually start connection */
+                SET_NEW_CMD(GSM_CMD_CIPSSL);    /* Set SSL */
             }
-        } else if (msg->i == 1 && CMD_IS_CUR(GSM_CMD_CIPSTART)) {
+        } else if (msg->i == 1 && CMD_IS_CUR(GSM_CMD_CIPSSL)) {
+            SET_NEW_CMD(GSM_CMD_CIPSTART);      /* Now actually start connection */
+        } else if (msg->i == 2 && CMD_IS_CUR(GSM_CMD_CIPSTART)) {
             SET_NEW_CMD(GSM_CMD_CIPSTATUS);     /* Go to status mode */
             if (*is_error) {
                 msg->msg.conn_start.conn_res = GSM_CONN_CONNECT_ERROR;
             }
-        } else if (msg->i == 2 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) {
+        } else if (msg->i == 3 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) {
             /* After second CIP status, define what to do next */
             switch (msg->msg.conn_start.conn_res) {
                 case GSM_CONN_CONNECT_OK: {     /* Successfully connected */
@@ -1564,7 +1566,13 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();
             break;
         }
-
+        case GSM_CMD_CIPSSL: {                  /* Set SSL configuration */
+            GSM_AT_PORT_SEND_BEGIN();
+            GSM_AT_PORT_SEND_STR("+CIPSSL=");
+            send_number((msg->msg.conn_start.type == GSM_CONN_TYPE_SSL) ? 1 : 0, 0, 0);
+            GSM_AT_PORT_SEND_END();
+            break;
+        }
         case GSM_CMD_CIPSTART: {                /* Start a new connection */
             gsm_conn_t* c = NULL;
 
@@ -1602,7 +1610,6 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();
             break;
         }
-
         case GSM_CMD_CIPCLOSE: {          /* Close the connection */
             gsm_conn_p c = msg->msg.conn_close.conn;
             if (c != NULL &&
@@ -1625,7 +1632,6 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();
             break;
         }
-
 #endif /* GSM_CFG_CONN */
 #if GSM_CFG_SMS
         case GSM_CMD_CMGF: {                    /* Select SMS message format */

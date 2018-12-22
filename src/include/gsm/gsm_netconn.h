@@ -59,6 +59,7 @@ typedef struct gsm_netconn* gsm_netconn_p;
 typedef enum {
     GSM_NETCONN_TYPE_TCP = GSM_CONN_TYPE_TCP,   /*!< TCP connection */
     GSM_NETCONN_TYPE_UDP = GSM_CONN_TYPE_UDP,   /*!< UDP connection */
+    GSM_NETCONN_TYPE_SSL = GSM_CONN_TYPE_SSL,   /*!< TCP connection over SSL */
 } gsm_netconn_type_t;
 
 gsm_netconn_p   gsm_netconn_new(gsm_netconn_type_t type);
