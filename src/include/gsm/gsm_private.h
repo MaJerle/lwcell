@@ -223,6 +223,7 @@ typedef enum {
     GSM_CMD_CIPRDTIMER,                         /*!< Set Remote Delay Timer */
     GSM_CMD_CIPSGTXT,                           /*!< Select GPRS PDP context */
     GSM_CMD_CIPTKA,                             /*!< Set TCP Keepalive Parameters */
+    GSM_CMD_CIPSSL,                             /*!< Connection SSL function */
 
     GSM_CMD_SMS_ENABLE,
     GSM_CMD_CMGD,                               /*!< Delete SMS Message */
@@ -302,7 +303,8 @@ typedef struct {
     size_t              rem_len;                /*!< Remaining bytes to read in current +IPD statement */
     gsm_conn_p          conn;                   /*!< Pointer to connection for network data */
 
-    size_t              buff_ptr;               /*!< Buffer pointer to save data to */
+    size_t              buff_ptr;               /*!< Buffer pointer to save data to.
+                                                     When set to `NULL` while `read = 1`, reading should ignore incoming data */
     gsm_pbuf_p          buff;                   /*!< Pointer to data buffer used for receiving data */
 } gsm_ipd_t;
 
