@@ -53,28 +53,28 @@ uint8_t data_buffer[0x1000];                    /*!< Received data array */
  */
 static size_t
 send_data(const void* data, size_t len) {
-	if (comPort != NULL) {
-		WriteFile(comPort, data, len, NULL, NULL);
+    if (comPort != NULL) {
+        WriteFile(comPort, data, len, NULL, NULL);
         FlushFileBuffers(comPort);
-		return len;
-	}
+        return len;
+    }
     return 0;
 }
 
 /**
- * \brief			Configure UART (USB to UART)
+ * \brief           Configure UART (USB to UART)
  */
 static void
 configure_uart(uint32_t baudrate) {
-	DCB dcb = { 0 };
-	dcb.DCBlength = sizeof(dcb);
+    DCB dcb = { 0 };
+    dcb.DCBlength = sizeof(dcb);
 
     /*
      * On first call,
      * create virtual file on selected COM port and open it 
      * as generic read and write
      */
-	if (!initialized) {
+    if (!initialized) {
         static const LPCWSTR com_ports[] = {
             L"\\\\.\\COM23",
             L"\\\\.\\COM9"
@@ -93,10 +93,10 @@ configure_uart(uint32_t baudrate) {
                 break;
             }
         }
-	}
+    }
 
     /* Configure COM port parameters */
-	if (GetCommState(comPort, &dcb)) {
+    if (GetCommState(comPort, &dcb)) {
         COMMTIMEOUTS timeouts;
 
         dcb.BaudRate = baudrate;
@@ -124,26 +124,26 @@ configure_uart(uint32_t baudrate) {
     }
 
     /* On first function call, create a thread to read data from COM port */
-	if (!initialized) {
-		thread_handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)uart_thread, NULL, 0, 0);
-	}
+    if (!initialized) {
+        thread_handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)uart_thread, NULL, 0, 0);
+    }
 }
 
 /**
- * \brief			UART thread
+ * \brief            UART thread
  */
 static void
 uart_thread(void* param) {
-	DWORD bytes_read;
+    DWORD bytes_read;
     gsm_sys_sem_t sem;
     FILE* file = NULL;
 
-	while (comPort == NULL);
+    while (comPort == NULL);
 
     gsm_sys_sem_create(&sem, 0);                /* Create semaphore for delay functions */
 
     fopen_s(&file, "log_file.txt", "w+");       /* Open debug file in write mode */
-	while (1) {
+    while (1) {
         /*
          * Try to read data from COM port
          * and send it to upper layer for processing
@@ -168,7 +168,7 @@ uart_thread(void* param) {
 
         /* Implement delay to allow other tasks processing */
         gsm_sys_sem_wait(&sem, 1);
-	}
+    }
 }
 
 /**

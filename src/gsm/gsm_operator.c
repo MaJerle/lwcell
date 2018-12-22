@@ -53,6 +53,10 @@ gsm_operator_get(gsm_operator_curr_t* curr, uint32_t blocking) {
 
 /**
  * \brief           Set current operator
+ * \param[in]       mode: Operator mode. This parameter can be a value of \ref gsm_operator_mode_t enumeration
+ * \param[in]       format: Operator data format. This parameter can be a value of \ref gsm_operator_format_t enumeration
+ * \param[in]       name: Operator name. This parameter must be valid according to `format` parameter
+ * \param[in]       num: Operator number. This parameter must be valid according to `format` parameter
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
