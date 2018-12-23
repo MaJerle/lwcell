@@ -398,8 +398,8 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
 }
 
 /**
- * \brief           Flush buffered data on netconn `TCP/SSL` connection
- * \note            This function may only be used on `TCP/SSL` connection
+ * \brief           Flush buffered data on netconn \e TCP/SSL connection
+ * \note            This function may only be used on \e TCP/SSL connection
  * \param[in]       nc: Netconn handle to flush data
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
