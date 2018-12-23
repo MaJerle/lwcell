@@ -97,7 +97,7 @@ gsm_call_disable(uint32_t blocking) {
 
 /**
  * \brief           Start a new voice call
- * \param[in]       number: Phone number to call
+ * \param[in]       number: Phone number to call, including country code starting with `+` sign
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
