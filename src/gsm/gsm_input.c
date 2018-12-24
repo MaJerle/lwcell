@@ -49,7 +49,7 @@ static uint32_t gsm_recv_calls;
  */
 gsmr_t
 gsm_input(const void* data, size_t len) {
-    if (gsm.buff.buff == NULL) {
+    if (!gsm.status.f.initialized || gsm.buff.buff == NULL) {
         return gsmERR;
     }
     gsm_buff_write(&gsm.buff, data, len);       /* Write data to buffer */
@@ -76,12 +76,14 @@ gsm_input(const void* data, size_t len) {
 gsmr_t
 gsm_input_process(const void* data, size_t len) {
     gsmr_t res;
-    gsm_recv_total_len += len;                  /* Update total number of received bytes */
-    gsm_recv_calls++;                           /* Update number of calls */
     
     if (!gsm.status.f.initialized) {
         return gsmERR;
     }
+
+    gsm_recv_total_len += len;                  /* Update total number of received bytes */
+    gsm_recv_calls++;                           /* Update number of calls */
+
     GSM_CORE_PROTECT();                         /* Protect core */
     res = gsmi_process(data, len);              /* Process input data */
     GSM_CORE_UNPROTECT();                       /* Release core */

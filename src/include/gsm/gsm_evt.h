@@ -206,6 +206,18 @@ size_t  gsm_evt_sms_send_get_pos(gsm_evt_t* cc);
  */
 
 /**
+ * \name            GSM_EVT_CALL_CHANGED
+ * \anchor          GSM_EVT_CALL_CHANGED
+ * \brief           Event helper functions for \ref GSM_EVT_CALL_CHANGED event
+ */
+
+const gsm_call_t*  gsm_evt_call_changed_get_call(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
  * \}
  */
 

@@ -282,7 +282,7 @@ typedef enum {
     GSM_CALL_STATE_ACTIVE = 0x00,               /*!< Call is active */
     GSM_CALL_STATE_HELD,                        /*!< Call is held */
     GSM_CALL_STATE_DIALING,                     /*!< Call is dialing */
-    GSM_CALL_STATE_ALERGING,                    /*!< Call is alerting */
+    GSM_CALL_STATE_ALERTING,                    /*!< Call is alerting */
     GSM_CALL_STATE_INCOMING,                    /*!< Call is incoming */
     GSM_CALL_STATE_WAITING,                     /*!< Call is waiting */
     GSM_CALL_STATE_DISCONNECT,                  /*!< Call disconnected, call finished */

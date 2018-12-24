@@ -44,10 +44,16 @@
  */
 void
 gsm_thread_producer(void* const arg) {
-    gsm_t* e = arg;                             /* Thread argument is main structure */
+    gsm_sys_sem_t* sem = arg;
+    gsm_t* e = &gsm;                            /* Thread argument is main structure */
     gsm_msg_t* msg;                             /* Message structure */
     gsmr_t res;
     uint32_t time;
+
+    /* Thread is running, unlock semaphore */
+    if (gsm_sys_sem_isvalid(sem)) {
+        gsm_sys_sem_release(sem);               /* Release semaphore */
+    }
     
     GSM_CORE_PROTECT();                         /* Protect system */
     while (1) {
@@ -112,8 +118,14 @@ gsm_thread_producer(void* const arg) {
  */
 void
 gsm_thread_process(void* const arg) {
+    gsm_sys_sem_t* sem = arg;
     gsm_msg_t* msg;
     uint32_t time;
+
+    /* Thread is running, unlock semaphore */
+    if (gsm_sys_sem_isvalid(sem)) {
+        gsm_sys_sem_release(sem);               /* Release semaphore */
+    }
     
 #if !GSM_CFG_INPUT_USE_PROCESS
     GSM_CORE_PROTECT();                         /* Protect system */

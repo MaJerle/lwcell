@@ -70,20 +70,43 @@ gsm_init(gsm_evt_fn evt_func, uint32_t blocking) {
     def_evt_link.fn = evt_func != NULL ? evt_func : def_callback;
     gsm.evt_func = &def_evt_link;               /* Set callback function */
     
-    gsm_sys_init();                             /* Init low-level system */
-    gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
-    gsm_ll_init(&gsm.ll);                       /* Init low-level communication */
-    
-    gsm_sys_sem_create(&gsm.sem_sync, 1);       /* Create new semaphore with unlocked state */
-    gsm_sys_mbox_create(&gsm.mbox_producer, GSM_CFG_THREAD_PRODUCER_MBOX_SIZE); /* Producer message queue */
-    gsm_sys_thread_create(&gsm.thread_producer, "gsm_producer", (gsm_sys_thread_fn)gsm_thread_producer, &gsm, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
+    if (!gsm_sys_init()) {                      /* Init low-level system */
+        goto cleanup;
+    }
 
-    gsm_sys_mbox_create(&gsm.mbox_process, GSM_CFG_THREAD_PROCESS_MBOX_SIZE);   /* Consumer message queue */
-    gsm_sys_thread_create(&gsm.thread_process,  "gsm_process", (gsm_sys_thread_fn)gsm_thread_process, &gsm, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
+    if (!gsm_sys_sem_create(&gsm.sem_sync, 1)) {/* Create sync semaphore between threads */
+        goto cleanup;
+    }
+
+    /* Create message queues */
+    if (!gsm_sys_mbox_create(&gsm.mbox_producer, GSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {  /* Producer */
+        goto cleanup;
+    }
+    if (!gsm_sys_mbox_create(&gsm.mbox_process, GSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {  /* Process */
+        goto cleanup;
+    }
+
+    /* Create threads */
+    gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
+    if (!gsm_sys_thread_create(&gsm.thread_producer, "gsm_producer", gsm_thread_producer, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
+        gsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore */
+        goto cleanup;
+    }
+    gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in producer thread */
+    if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_producer", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
+        gsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore */
+        goto cleanup;
+    }
+    gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in producer thread */
+    gsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore */
 
 #if !GSM_CFG_INPUT_USE_PROCESS
     gsm_buff_init(&gsm.buff, GSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
 #endif /* !GSM_CFG_INPUT_USE_PROCESS */
+
+    gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
+    gsm_ll_init(&gsm.ll);                       /* Init low-level communication */
+
     gsm.status.f.initialized = 1;               /* We are initialized now */
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
     
@@ -101,6 +124,21 @@ gsm_init(gsm_evt_fn evt_func, uint32_t blocking) {
     gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
     
     return gsmOK;
+
+cleanup:
+    if (gsm_sys_mbox_isvalid(&gsm.mbox_producer)) {
+        gsm_sys_mbox_delete(&gsm.mbox_producer);
+        gsm_sys_mbox_invalid(&gsm.mbox_producer);
+    }
+    if (gsm_sys_mbox_isvalid(&gsm.mbox_process)) {
+        gsm_sys_mbox_delete(&gsm.mbox_process);
+        gsm_sys_mbox_invalid(&gsm.mbox_process);
+    }
+    if (gsm_sys_sem_isvalid(&gsm.sem_sync)) {
+        gsm_sys_sem_delete(&gsm.sem_sync);
+        gsm_sys_sem_invalid(&gsm.sem_sync);
+    }
+    return gsmERRMEM;
 }
 
 /**

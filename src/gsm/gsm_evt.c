@@ -293,4 +293,18 @@ gsm_evt_sms_send_get_pos(gsm_evt_t* cc) {
     return cc->evt.sms_send.num;
 }
 
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */
+
+#if GSM_CFG_CALL || __DOXYGEN__
+
+/**
+ * \brief           Get call information from changed event
+ * \param[in]       cc: Event handle
+ * \return          Position in memory
+ */
+const gsm_call_t *
+gsm_evt_call_changed_get_call(gsm_evt_t* cc) {
+    return gsm.evt.evt.call_changed.call;
+}
+
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */
