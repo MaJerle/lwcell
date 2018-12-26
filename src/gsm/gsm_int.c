@@ -294,8 +294,8 @@ send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
  * \note            Used to notify upper layer stack to close everything and reset the memory if necessary
  * \param[in]       forced: Flag indicating reset was forced by user
  */
-static void
-reset_connections(uint8_t forced) {
+//static void
+//reset_connections(uint8_t forced) {
     //
     //gsm.evt.type = GSM_CB_CONN_CLOSED;
     //gsm.evt.evt.conn_active_closed.forced = forced;
@@ -309,7 +309,7 @@ reset_connections(uint8_t forced) {
     //        gsmi_send_conn_cb(&gsm.conns[i], NULL); /* Send callback function */
     //    }
     //}
-}
+//}
 
 /**
  * \brief           Process callback function to user with specific type
@@ -462,6 +462,7 @@ gsmi_process_cipsend_response(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_erro
                         gsmERR);
                 }
             }
+            GSM_UNUSED(num);
         }
     /* Check for an error or if connection closed in the meantime */
     } else if (*is_error) {

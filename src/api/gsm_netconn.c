@@ -67,7 +67,7 @@ typedef struct gsm_netconn {
 #endif
 } gsm_netconn_t;
 
-static uint8_t recv_closed = 0xFF, recv_not_present = 0xFF;
+static uint8_t recv_closed = 0xFF;
 static gsm_netconn_t* netconn_list;             /*!< Linked list of netconn entries */
 
 /**

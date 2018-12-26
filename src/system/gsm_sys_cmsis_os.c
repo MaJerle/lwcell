@@ -64,7 +64,7 @@ uint8_t
 gsm_sys_mutex_create(gsm_sys_mutex_t* p) {
     osMutexDef(MUT);                            /* Define a mutex */
     *p = osRecursiveMutexCreate(osMutex(MUT));  /* Create recursive mutex */
-    return !!*p;                                /* Return status */
+    return *p != NULL;                          /* Return status */
 }
 
 uint8_t
@@ -84,7 +84,7 @@ gsm_sys_mutex_unlock(gsm_sys_mutex_t* p) {
 
 uint8_t
 gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p) {
-    return !!*p;                                /* Check if mutex is valid */
+    return *p != NULL;                          /* Check if mutex is valid */
 }
 
 uint8_t
@@ -98,10 +98,10 @@ gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt) {
     osSemaphoreDef(SEM);                        /* Define semaphore info */
     *p = osSemaphoreCreate(osSemaphore(SEM), 1);/* Create semaphore with one token */
     
-    if (*p && !cnt) {                           /* We have valid entry */
+    if (*p != NULL && !cnt) {                   /* We have valid entry */
         osSemaphoreWait(*p, 0);                 /* Lock semaphore immediatelly */
     }
-    return !!*p;
+    return *p != NULL;
 }
 
 uint8_t
@@ -122,7 +122,7 @@ gsm_sys_sem_release(gsm_sys_sem_t* p) {
 
 uint8_t
 gsm_sys_sem_isvalid(gsm_sys_sem_t* p) {
-    return !!*p;                                /* Check if valid */
+    return *p != NULL;                          /* Check if valid */
 }
 
 uint8_t
@@ -135,7 +135,7 @@ uint8_t
 gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
     osMessageQDef(MBOX, size, void *);          /* Define message box */
     *b = osMessageCreate(osMessageQ(MBOX), NULL);   /* Create message box */
-    return !!*b;
+    return *b != NULL;
 }
 
 uint8_t
@@ -184,7 +184,7 @@ gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
 
 uint8_t
 gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b) {
-    return *b;                                	/* Return status if message box is valid */
+    return *b != NULL;                          /* Return status if message box is valid */
 }
 
 uint8_t
