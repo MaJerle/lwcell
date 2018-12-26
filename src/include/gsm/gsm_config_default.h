@@ -441,7 +441,7 @@
  *                  as connection API, FTP, HTTP, etc.
  */
 #ifndef GSM_CFG_NETWORK
-#define GSM_CFG_NETWORK                     1
+#define GSM_CFG_NETWORK                     0
 #endif
 
 /**
