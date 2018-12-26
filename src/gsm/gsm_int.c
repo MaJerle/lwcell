@@ -158,7 +158,7 @@ gsmi_get_sim_info(uint32_t blocking) {
  * \param[out]      str: Pointer to string to save result to
  */
 void
-byte_to_str(uint8_t num, char* str) {
+gsmi_byte_to_str(uint8_t num, char* str) {
     sprintf(str, "%02X", (unsigned)num);        /* Currently use sprintf only */
 }
 
@@ -168,7 +168,7 @@ byte_to_str(uint8_t num, char* str) {
  * \param[out]      str: Pointer to string to save result to
  */
 void
-number_to_str(uint32_t num, char* str) {
+gsmi_number_to_str(uint32_t num, char* str) {
     sprintf(str, "%u", (unsigned)num);          /* Currently use sprintf only */
 }
 
@@ -178,7 +178,7 @@ number_to_str(uint32_t num, char* str) {
  * \param[out]      str: Pointer to string to save result to
  */
 void
-signed_number_to_str(int32_t num, char* str) {
+gsmi_signed_number_to_str(int32_t num, char* str) {
     sprintf(str, "%d", (signed)num);            /* Currently use sprintf only */
 }
 
@@ -190,7 +190,7 @@ signed_number_to_str(int32_t num, char* str) {
  * \param[in]       c: Set to `1` to include comma before string
  */
 void
-send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
+gsmi_send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     uint8_t ch;
     char str[4];
     const gsm_mac_t* mac = d;
@@ -204,9 +204,9 @@ send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     ch = is_ip ? '.' : ':';                     /* Get delimiter character */
     for (uint8_t i = 0; i < (is_ip ? 4 : 6); i++) { /* Process byte by byte */
         if (is_ip) {                            /* In case of IP ... */
-            number_to_str(ip->ip[i], str);      /* ... go to decimal format ... */
+            gsmi_number_to_str(ip->ip[i], str); /* ... go to decimal format ... */
         } else {                                /* ... in case of MAC ... */
-            byte_to_str(mac->mac[i], str);      /* ... go to HEX format */
+            gsmi_byte_to_str(mac->mac[i], str); /* ... go to HEX format */
         }
         GSM_AT_PORT_SEND_STR(str);              /* Send str */
         if (i < (is_ip ? 4 : 6) - 1) {          /* Check end if characters */
@@ -224,7 +224,7 @@ send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
  * \param[in]       c: Set to `1` to include comma before string
  */
 void
-send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
+gsmi_send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
     char special = '\\';
     
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
@@ -252,10 +252,10 @@ send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
  * \param[in]       c: Set to `1` to include comma before string
  */
 void
-send_number(uint32_t num, uint8_t q, uint8_t c) {
+gsmi_send_number(uint32_t num, uint8_t q, uint8_t c) {
     char str[11];
 
-    number_to_str(num, str);                    /* Convert digit to decimal string */
+    gsmi_number_to_str(num, str);               /* Convert digit to decimal string */
     
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
@@ -270,10 +270,10 @@ send_number(uint32_t num, uint8_t q, uint8_t c) {
  * \param[in]       c: Set to `1` to include comma before string
  */
 void
-send_port(gsm_port_t port, uint8_t q, uint8_t c) {
+gsmi_send_port(gsm_port_t port, uint8_t q, uint8_t c) {
     char str[6];
 
-    number_to_str(GSM_PORT2NUM(port), str);     /* Convert digit to decimal string */
+    gsmi_number_to_str(GSM_PORT2NUM(port), str);/* Convert digit to decimal string */
     
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
@@ -288,10 +288,10 @@ send_port(gsm_port_t port, uint8_t q, uint8_t c) {
  * \param[in]       c: Set to `1` to include comma before string
  */
 void
-send_signed_number(int32_t num, uint8_t q, uint8_t c) {
+gsmi_send_signed_number(int32_t num, uint8_t q, uint8_t c) {
     char str[11];
     
-    signed_number_to_str(num, str);             /* Convert digit to decimal string */
+    gsmi_signed_number_to_str(num, str);        /* Convert digit to decimal string */
     
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
@@ -306,9 +306,9 @@ send_signed_number(int32_t num, uint8_t q, uint8_t c) {
  * \param[in]       c: Set to `1` to include comma before string
  */
 void
-send_dev_memory(gsm_mem_t mem, uint8_t q, uint8_t c) {
+gsmi_send_dev_memory(gsm_mem_t mem, uint8_t q, uint8_t c) {
     if (mem < GSM_MEM_END) {                    /* Check valid range */
-        send_string(gsm_dev_mem_map[GSM_SZ(mem)].mem_str, 0, q, c);
+        gsmi_send_string(gsm_dev_mem_map[GSM_SZ(mem)].mem_str, 0, q, c);
     }
 }
 
@@ -320,8 +320,8 @@ send_dev_memory(gsm_mem_t mem, uint8_t q, uint8_t c) {
  * \param[in]       q: Value to indicate starting and ending quotes, enabled (`1`) or disabled (`0`)
  * \param[in]       c: Set to `1` to include comma before string
  */
-static void
-send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
+void
+gsmi_send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
     const char* t;
     switch (status) {
         case GSM_SMS_STATUS_UNREAD: t = "REC UNREAD";   break;
@@ -331,7 +331,7 @@ send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
         case GSM_SMS_STATUS_ALL:
         default:                    t = "ALL";          break;
     }
-    send_string(t, 0, q, c);
+    gsmi_send_string(t, 0, q, c);
 }
 
 #endif /* GSM_CFG_SMS */
@@ -434,14 +434,14 @@ gsmi_tcpip_process_send_data(void) {
 
     GSM_AT_PORT_SEND_BEGIN();
     GSM_AT_PORT_SEND_STR("+CIPSEND=");
-    send_number(GSM_U32(c->num), 0, 0);         /* Send connection number */
-    send_number(GSM_U32(gsm.msg->msg.conn_send.sent), 0, 1);/* Send length number */
+    gsmi_send_number(GSM_U32(c->num), 0, 0);    /* Send connection number */
+    gsmi_send_number(GSM_U32(gsm.msg->msg.conn_send.sent), 0, 1);   /* Send length number */
     
     /* On UDP connections, IP address and port may be selected */
     if (c->type == GSM_CONN_TYPE_UDP) {
         if (gsm.msg->msg.conn_send.remote_ip != NULL && gsm.msg->msg.conn_send.remote_port) {
-            send_ip_mac(gsm.msg->msg.conn_send.remote_ip, 1, 1, 1); /* Send IP address including quotes */
-            send_port(gsm.msg->msg.conn_send.remote_port, 0, 1);    /* Send length number */
+            gsmi_send_ip_mac(gsm.msg->msg.conn_send.remote_ip, 1, 1, 1);/* Send IP address including quotes */
+            gsmi_send_port(gsm.msg->msg.conn_send.remote_port, 0, 1);   /* Send length number */
         }
     }
     GSM_AT_PORT_SEND_END();
@@ -1523,53 +1523,53 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CPIN_SET: {                /* Set SIM pin code */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPIN=");
-            send_string(msg->msg.cpin_enter.pin, 0, 1, 0);  /* Send pin with quotes */
+            gsmi_send_string(msg->msg.cpin_enter.pin, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPIN_ADD: {                /* Add new pin code */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CLCK=\"SC\",1,");
-            send_string(msg->msg.cpin_add.pin, 0, 1, 0);
+            gsmi_send_string(msg->msg.cpin_add.pin, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }                          
         case GSM_CMD_CPIN_CHANGE: {             /* Change already active SIM */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPWD=\"SC\"");
-            send_string(msg->msg.cpin_change.current_pin, 0, 1, 1);
-            send_string(msg->msg.cpin_change.new_pin, 0, 1, 1);
+            gsmi_send_string(msg->msg.cpin_change.current_pin, 0, 1, 1);
+            gsmi_send_string(msg->msg.cpin_change.new_pin, 0, 1, 1);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPIN_REMOVE: {             /* Remove current PIN */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CLCK=\"SC\",0,");
-            send_string(msg->msg.cpin_remove.pin, 0, 1, 0);
+            gsmi_send_string(msg->msg.cpin_remove.pin, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GMM_CMD_CPUK_SET: {                /* Enter PUK and set new PIN */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPIN=");
-            send_string(msg->msg.cpuk_enter.puk, 0, 1, 0);
-            send_string(msg->msg.cpuk_enter.pin, 0, 1, 1);
+            gsmi_send_string(msg->msg.cpuk_enter.puk, 0, 1, 0);
+            gsmi_send_string(msg->msg.cpuk_enter.pin, 0, 1, 1);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_COPS_SET: {                /* Set current operator */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+COPS=");
-            send_number(GSM_U32(msg->msg.cops_set.mode), 0, 0);
+            gsmi_send_number(GSM_U32(msg->msg.cops_set.mode), 0, 0);
             if (msg->msg.cops_set.mode != GSM_OPERATOR_MODE_AUTO) {
-                send_number(GSM_U32(msg->msg.cops_set.format), 0, 1);
+                gsmi_send_number(GSM_U32(msg->msg.cops_set.format), 0, 1);
                 switch (msg->msg.cops_set.format) {
                     case GSM_OPERATOR_FORMAT_LONG_NAME:
                     case GSM_OPERATOR_FORMAT_SHORT_NAME:
-                        send_string(msg->msg.cops_set.name, 1, 1, 1);
+                        gsmi_send_string(msg->msg.cops_set.name, 1, 1, 1);
                         break;
                     default: 
-                        send_number(GSM_U32(msg->msg.cops_set.num), 0, 1);
+                        gsmi_send_number(GSM_U32(msg->msg.cops_set.num), 0, 1);
                 }
             }
             GSM_AT_PORT_SEND_END();
@@ -1627,7 +1627,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CIPSSL: {                  /* Set SSL configuration */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CIPSSL=");
-            send_number((msg->msg.conn_start.type == GSM_CONN_TYPE_SSL) ? 1 : 0, 0, 0);
+            gsmi_send_number((msg->msg.conn_start.type == GSM_CONN_TYPE_SSL) ? 1 : 0, 0, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1657,14 +1657,14 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
 
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CIPSTART=");
-            send_number(GSM_U32(c->num), 0, 0);
+            gsmi_send_number(GSM_U32(c->num), 0, 0);
             if (msg->msg.conn_start.type == GSM_CONN_TYPE_TCP) {
-                send_string("TCP", 0, 1, 1);
+                gsmi_send_string("TCP", 0, 1, 1);
             } else if (msg->msg.conn_start.type == GSM_CONN_TYPE_UDP) {
-                send_string("UDP", 0, 1, 1);
+                gsmi_send_string("UDP", 0, 1, 1);
             } 
-            send_string(msg->msg.conn_start.host, 0, 1, 1);
-            send_port(msg->msg.conn_start.port, 0, 1);
+            gsmi_send_string(msg->msg.conn_start.host, 0, 1, 1);
+            gsmi_send_port(msg->msg.conn_start.port, 0, 1);
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1677,7 +1677,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             }
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CIPCLOSE=");
-            send_number(GSM_U32(msg->msg.conn_close.conn ? msg->msg.conn_close.conn->num : GSM_CFG_MAX_CONNS), 0, 0);
+            gsmi_send_number(GSM_U32(msg->msg.conn_close.conn ? msg->msg.conn_close.conn->num : GSM_CFG_MAX_CONNS), 0, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1696,11 +1696,11 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CMGF=");
             if (CMD_IS_DEF(GSM_CMD_CMGS)) {
-                send_number(GSM_U32(!!msg->msg.sms_send.format), 0, 0);
+                gsmi_send_number(GSM_U32(!!msg->msg.sms_send.format), 0, 0);
             } else if (CMD_IS_DEF(GSM_CMD_CMGR)) {
-                send_number(GSM_U32(!!msg->msg.sms_read.format), 0, 0);
+                gsmi_send_number(GSM_U32(!!msg->msg.sms_read.format), 0, 0);
             } else if (CMD_IS_DEF(GSM_CMD_CMGL)) {
-                send_number(GSM_U32(!!msg->msg.sms_list.format), 0, 0);
+                gsmi_send_number(GSM_U32(!!msg->msg.sms_list.format), 0, 0);
             } else {
                 GSM_AT_PORT_SEND_STR("1");      /* Force text mode */
             }
@@ -1710,30 +1710,30 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CMGS: {                    /* Send SMS */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CMGS=");
-            send_string(msg->msg.sms_send.num, 0, 1, 0);
+            gsmi_send_string(msg->msg.sms_send.num, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CMGR: {                    /* Read message */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CMGR=");
-            send_number(GSM_U32(msg->msg.sms_read.pos), 0, 0);
-            send_number(GSM_U32(!msg->msg.sms_read.update), 0, 1);
+            gsmi_send_number(GSM_U32(msg->msg.sms_read.pos), 0, 0);
+            gsmi_send_number(GSM_U32(!msg->msg.sms_read.update), 0, 1);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CMGD: {                    /* Delete SMS message */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CMGD=");
-            send_number(GSM_U32(msg->msg.sms_delete.pos), 0, 0);
+            gsmi_send_number(GSM_U32(msg->msg.sms_delete.pos), 0, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CMGL: {                    /* Delete SMS message */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CMGL=");
-            send_sms_stat(msg->msg.sms_list.status, 1, 0);
-            send_number(GSM_U32(!msg->msg.sms_list.update), 0, 1);
+            gsmi_send_sms_stat(msg->msg.sms_list.status, 1, 0);
+            gsmi_send_number(GSM_U32(!msg->msg.sms_list.update), 0, 1);
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1753,14 +1753,14 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPMS=");
             if (CMD_IS_DEF(GSM_CMD_CMGR)) { /* Read SMS original command? */
-                send_dev_memory(msg->msg.sms_read.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_read.mem, 1, 0);
+                gsmi_send_dev_memory(msg->msg.sms_read.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_read.mem, 1, 0);
             } else if(CMD_IS_DEF(GSM_CMD_CMGD)) {   /* Delete SMS original command? */
-                send_dev_memory(msg->msg.sms_delete.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_delete.mem, 1, 0);
+                gsmi_send_dev_memory(msg->msg.sms_delete.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_delete.mem, 1, 0);
             } else if(CMD_IS_DEF(GSM_CMD_CMGL)) {   /* List SMS original command? */
-                send_dev_memory(msg->msg.sms_list.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
+                gsmi_send_dev_memory(msg->msg.sms_list.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
             } else if (CMD_IS_DEF(GSM_CMD_CPMS_SET)) {  /* Do we want to set memory for read/delete,sent/write,receive? */
                 for (size_t i = 0; i < 3; i++) {/* Write 3 memories */
-                    send_dev_memory(msg->msg.sms_memory.mem[i] == GSM_MEM_CURRENT ? gsm.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
+                    gsmi_send_dev_memory(msg->msg.sms_memory.mem[i] == GSM_MEM_CURRENT ? gsm.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
                 }
             }
             GSM_AT_PORT_SEND_END();
@@ -1771,7 +1771,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_ATD: {                     /* Start new call */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("D");
-            send_string(msg->msg.call_start.number, 0, 0, 0);
+            gsmi_send_string(msg->msg.call_start.number, 0, 0, 0);
             GSM_AT_PORT_SEND_STR(";");          /* Voice call includes semicolon at the end */
             GSM_AT_PORT_SEND_END();
             break;
@@ -1812,7 +1812,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
                 case GSM_CMD_CPBF: mem = msg->msg.pb_search.mem; break;
                 default: break;
             }
-            send_dev_memory(mem == GSM_MEM_CURRENT ? gsm.pb.mem.current : mem, 1, 0);
+            gsmi_send_dev_memory(mem == GSM_MEM_CURRENT ? gsm.pb.mem.current : mem, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1820,12 +1820,12 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPBW=");
             if (msg->msg.pb_write.pos) {        /* Write number if more than 0 */
-                send_number(GSM_U32(msg->msg.pb_write.pos), 0, 0);
+                gsmi_send_number(GSM_U32(msg->msg.pb_write.pos), 0, 0);
             }
             if (!msg->msg.pb_write.del) {
-                send_string(msg->msg.pb_write.num, 0, 1, 1);
-                send_number(GSM_U32(msg->msg.pb_write.type), 0, 1);
-                send_string(msg->msg.pb_write.name, 0, 1, 1);
+                gsmi_send_string(msg->msg.pb_write.num, 0, 1, 1);
+                gsmi_send_number(GSM_U32(msg->msg.pb_write.type), 0, 1);
+                gsmi_send_string(msg->msg.pb_write.name, 0, 1, 1);
             }
             GSM_AT_PORT_SEND_END();
             break;
@@ -1833,15 +1833,15 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CPBR: {                    /* Read entires */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPBR=");
-            send_number(GSM_U32(msg->msg.pb_list.start_index), 0, 0);
-            send_number(GSM_U32(msg->msg.pb_list.etr), 0, 1);
+            gsmi_send_number(GSM_U32(msg->msg.pb_list.start_index), 0, 0);
+            gsmi_send_number(GSM_U32(msg->msg.pb_list.etr), 0, 1);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPBF: {                    /* Find entires */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPBF=");
-            send_string(msg->msg.pb_search.search, 1, 1, 0);
+            gsmi_send_string(msg->msg.pb_search.search, 1, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1888,9 +1888,9 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CSTT_SET: {
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CSTT=");
-            send_string(msg->msg.network_attach.apn, 1, 1, 0);
-            send_string(msg->msg.network_attach.user, 1, 1, 1);
-            send_string(msg->msg.network_attach.pass, 1, 1, 1);
+            gsmi_send_string(msg->msg.network_attach.apn, 1, 1, 0);
+            gsmi_send_string(msg->msg.network_attach.user, 1, 1, 1);
+            gsmi_send_string(msg->msg.network_attach.pass, 1, 1, 1);
             GSM_AT_PORT_SEND_END();
             break;
         }

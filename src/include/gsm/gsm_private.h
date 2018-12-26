@@ -752,17 +752,6 @@ void        gsmi_conn_start_timeout(gsm_conn_p conn);
 
 gsmr_t      gsmi_get_sim_info(uint32_t blocking);
 
-/* Send functions */
-void        byte_to_str(uint8_t num, char* str);
-void        number_to_str(uint32_t num, char* str);
-void        signed_number_to_str(int32_t num, char* str);
-void        send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c);
-void        send_string(const char* str, uint8_t e, uint8_t q, uint8_t c);
-void        send_number(uint32_t num, uint8_t q, uint8_t c);
-void        send_port(gsm_port_t port, uint8_t q, uint8_t c);
-void        send_signed_number(int32_t num, uint8_t q, uint8_t c);
-void        send_dev_memory(gsm_mem_t mem, uint8_t q, uint8_t c);
-
 void        gsmi_process_events_for_timeout(gsm_msg_t* msg);
 
 /**
