@@ -290,7 +290,7 @@ gsm_evt_sms_send_get_result(gsm_evt_t* cc) {
  */
 size_t
 gsm_evt_sms_send_get_pos(gsm_evt_t* cc) {
-    return cc->evt.sms_send.num;
+    return cc->evt.sms_send.pos;
 }
 
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */

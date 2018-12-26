@@ -620,22 +620,17 @@ gsmi_parse_sms_status(const char** src, gsm_sms_status_t* stat) {
 /**
  * \brief           Parse received +CMGS with last sent SMS memory info
  * \param[in]       str: Input string
- * \param[in]       send_evt: Send event to user
- * \return          1 on success, 0 otherwise
+ * \param[in]       num: Parsed number in memory
+ * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_parse_cmgs(const char* str, uint8_t send_evt) {
-    uint16_t num;
+gsmi_parse_cmgs(const char* str, size_t* num) {
     if (*str == '+') {
         str += 7;
     }
 
-    num = gsmi_parse_number(&str);              /* Parse number */
-
-    if (send_evt) {
-        gsm.evt.evt.sms_send.num = num;
-        gsm.evt.evt.sms_send.res = gsmOK;
-        gsmi_send_cb(GSM_EVT_SMS_SEND);
+    if (num != NULL) {
+        *num = (size_t)gsmi_parse_number(&str);
     }
     return 1;
 }

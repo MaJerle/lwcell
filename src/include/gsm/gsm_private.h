@@ -419,6 +419,7 @@ typedef struct gsm_msg {
             const char* num;                    /*!< Phone number */
             const char* text;                   /*!< SMS content to send */
             uint8_t format;                     /*!< SMS format, `0 = PDU`, `1 = text` */
+            size_t pos;                         /*!< Set on +CMGS response if command is OK */
         } sms_send;                             /*!< Send SMS */
         struct {
             gsm_mem_t mem;                      /*!< Memory to read from */
@@ -761,6 +762,8 @@ void        send_number(uint32_t num, uint8_t q, uint8_t c);
 void        send_port(gsm_port_t port, uint8_t q, uint8_t c);
 void        send_signed_number(int32_t num, uint8_t q, uint8_t c);
 void        send_dev_memory(gsm_mem_t mem, uint8_t q, uint8_t c);
+
+void        gsmi_process_events_for_timeout(gsm_msg_t* msg);
 
 /**
  * \}

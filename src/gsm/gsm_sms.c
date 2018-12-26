@@ -42,6 +42,7 @@
 
 #if !__DOXYGEN__
 #define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
+#define CHECK_READY()                   if (!(check_ready() == gsmOK)) { return gsmERR; }
 #endif /* !__DOXYGEN__ */
 
 /**
@@ -129,9 +130,9 @@ gsm_sms_send(const char* num, const char* text, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
-    GSM_ASSERT("text != NULL && strlen(text) <= 160", 
-        num != NULL && strlen(text) <= 160);    /* Assert input parameters */
+    GSM_ASSERT("text != NULL && strlen(text) <= 160", text != NULL && strlen(text) <= 160); /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
+    CHECK_READY();                              /* Check if ready */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGS;
@@ -158,6 +159,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, 
 
     GSM_ASSERT("sms_entry != NULL", entry != NULL); /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
+    CHECK_READY();                              /* Check if ready */
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -193,6 +195,7 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     CHECK_ENABLED();                            /* Check if enabled */
+    CHECK_READY();                              /* Check if ready */
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -205,7 +208,7 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.sms_delete.mem = mem;
     GSM_MSG_VAR_REF(msg).msg.sms_delete.pos = pos;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);   /* Send message to producer queue */
 }
 
 /**
@@ -226,6 +229,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
     GSM_ASSERT("entires != NULL", entries != NULL); /* Assert input parameters */
     GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
+    CHECK_READY();                              /* Check if ready */
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -264,6 +268,7 @@ gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, ui
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     CHECK_ENABLED();                            /* Check if enabled */
+    CHECK_READY();                              /* Check if ready */
     GSM_ASSERT("mem1", check_sms_mem(mem1, 1) == gsmOK);/* Assert input parameters */
     GSM_ASSERT("mem2", check_sms_mem(mem2, 1) == gsmOK);/* Assert input parameters */
     GSM_ASSERT("mem3", check_sms_mem(mem3, 1) == gsmOK);/* Assert input parameters */

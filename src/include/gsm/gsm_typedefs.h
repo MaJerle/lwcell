@@ -380,6 +380,7 @@ typedef enum gsm_cb_type_t {
     GSM_EVT_SMS_SEND,                           /*!< SMS send event */
     GSM_EVT_SMS_RECV,                           /*!< SMS received */
     GSM_EVT_SMS_READ,                           /*!< SMS read */
+    GSM_EVT_SMS_DELETE,                         /*!< SMS delete */
     GSM_EVT_SMS_LIST,                           /*!< SMS list */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
@@ -451,7 +452,7 @@ typedef struct gsm_evt {
             gsmr_t status;                      /*!< Enable status */
         } sms_enable;                           /*!< SMS enable event. Use with \ref GSM_EVT_SMS_ENABLE event */
         struct {
-            size_t num;                         /*!< Received number in memory for sent SMS */
+            size_t pos;                         /*!< Position in memory */
             gsmr_t res;                         /*!< SMS send result information */
         } sms_send;                             /*!< SMS sent info. Use with \ref GSM_EVT_SMS_SEND event */
         struct {
@@ -460,12 +461,18 @@ typedef struct gsm_evt {
         } sms_recv;                             /*!< SMS received info. Use with \ref GSM_EVT_SMS_RECV event */
         struct {
             gsm_sms_entry_t* entry;             /*!< SMS entry */
+            gsmr_t res;                         /*!< SMS read result information */
         } sms_read;                             /*!< SMS read. Use with \ref GSM_EVT_SMS_READ event */
+        struct {
+            gsm_mem_t mem;                      /*!< Memory of deleted message */
+            size_t pos;                         /*!< Deleted position in memory for sent SMS */
+            gsmr_t res;                         /*!< Operation success */
+        } sms_delete;                           /*!< SMS delete. Use with \ref GSM_EVT_SMS_DELETE event */
         struct {
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_sms_entry_t* entries;           /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
-            gsmr_t err;                         /*!< Error message if exists */
+            gsmr_t res;                         /*!< Result on command */
         } sms_list;                             /*!< SMS list. Use with \ref GSM_EVT_SMS_LIST event */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__

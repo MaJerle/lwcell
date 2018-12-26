@@ -85,6 +85,7 @@ gsm_thread_producer(void* const arg) {
                 GSM_CORE_PROTECT();              /* Protect system again */
                 gsm_sys_sem_release(&e->sem_sync);  /* Release protection and start over later */
                 if (time == GSM_SYS_TIMEOUT) {  /* Sync timeout occurred? */
+                    gsmi_process_events_for_timeout(msg);   /* Manually call callbacks on commands */
                     res = gsmTIMEOUT;           /* Timeout on command */
                 }
             } else {
@@ -92,6 +93,9 @@ gsm_thread_producer(void* const arg) {
             }
         } else {
             res = gsmERR;                       /* Simply set error message */
+        }
+        if (res != gsmOK) {
+            msg->res = res;                     /* Save response */
         }
         
         /*

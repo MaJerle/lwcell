@@ -89,6 +89,53 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
     gsmi_send_conn_cb(c, NULL);                     \
 } while (0)
 
+ /**
+ * \brief           Send SMS delete operation event
+ * \param[in]       m: SMS delete message
+ * \param[in]       err: Error of type \ref gsmr_t
+ */
+#define SMS_SEND_DELETE_EVT(m, err)     do {        \
+    gsm.evt.evt.sms_delete.res = err;               \
+    gsm.evt.evt.sms_delete.mem = (m)->msg.sms_delete.mem;   \
+    gsm.evt.evt.sms_delete.pos = (m)->msg.sms_delete.pos;   \
+    gsmi_send_cb(GSM_EVT_SMS_DELETE);               \
+} while (0)
+
+/**
+ * \brief           Send SMS read operation event
+ * \param[in]       m: SMS delete message
+ * \param[in]       err: Error of type \ref gsmr_t
+ */
+#define SMS_SEND_READ_EVT(m, err)     do {          \
+    gsm.evt.evt.sms_read.res = err;                 \
+    gsm.evt.evt.sms_read.entry = (m)->msg.sms_read.entry;   \
+    gsmi_send_cb(GSM_EVT_SMS_READ);                 \
+} while (0)
+
+/**
+ * \brief           Send SMS read operation event
+ * \param[in]       m: SMS delete message
+ * \param[in]       err: Error of type \ref gsmr_t
+ */
+#define SMS_SEND_LIST_EVT(m, err)     do {          \
+    gsm.evt.evt.sms_list.mem = gsm.sms.mem[0].current;  \
+    gsm.evt.evt.sms_list.entries = (m)->msg.sms_list.entries;   \
+    gsm.evt.evt.sms_list.size = (m)->msg.sms_list.ei;   \
+    gsm.evt.evt.sms_list.res = err;                 \
+    gsmi_send_cb(GSM_EVT_SMS_LIST);                 \
+} while (0)
+
+/**
+ * \brief           Send SMS send operation event
+ * \param[in]       m: SMS delete message
+ * \param[in]       err: Error of type \ref gsmr_t
+ */
+#define SMS_SEND_SEND_EVT(m, err)     do {          \
+    gsm.evt.evt.sms_send.pos = (m)->msg.sms_send.pos;   \
+    gsm.evt.evt.sms_send.res = err;                 \
+    gsmi_send_cb(GSM_EVT_SMS_SEND);                 \
+} while (0)
+
 /**
  * \brief           Get SIM info when SIM is ready
  * \param[in]       blocking: Blocking command
@@ -590,7 +637,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             gsmi_parse_cops(rcv->data);         /* Parse current +COPS */
 #if GSM_CFG_SMS
         } else if (CMD_IS_CUR(GSM_CMD_CMGS) && !strncmp(rcv->data, "+CMGS", 5)) {
-            gsmi_parse_cmgs(rcv->data, 1);      /* Parse +CMGS rgsmonse */
+            gsmi_parse_cmgs(rcv->data, &gsm.msg->msg.sms_send.pos);  /* Parse +CMGS rgsmonse */
         } else if (CMD_IS_CUR(GSM_CMD_CMGR) && !strncmp(rcv->data, "+CMGR", 5)) {
             if (gsmi_parse_cmgr(rcv->data)) {   /* Parse +CMGR rgsmonse */
                 gsm.msg->msg.sms_read.read = 2; /* Set read flag and process the data */
@@ -694,9 +741,6 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #if GSM_CFG_SMS
         } else if (CMD_IS_CUR(GSM_CMD_CMGS) && is_ok) {
             /* At this point we have to wait for "> " to send data */
-        } else if (CMD_IS_CUR(GSM_CMD_CMGS) && is_error) {
-            gsm.evt.evt.sms_send.res = gsmERR;
-            gsmi_send_cb(GSM_EVT_SMS_SEND); /* SIM card event */
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CONN
         } else if (CMD_IS_CUR(GSM_CMD_CIPSTATUS)) {
@@ -974,8 +1018,7 @@ gsmi_process(const void* data, size_t data_len) {
             }
             if (ch == '\n' && ch_prev1 == '\r') {
                 if (gsm.msg->msg.sms_read.read == 2) {
-                    gsm.evt.evt.sms_read.entry = e;
-                    gsmi_send_cb(GSM_EVT_SMS_READ);
+                    //SMS_SEND_READ_EVT(gsm.msg, gsmOK);
                 }
                 gsm.msg->msg.sms_read.read = 0;
             }
@@ -1178,8 +1221,13 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             gsmi_send_cb(GSM_EVT_SMS_ENABLE);   /* Send to user */
         }    
     } else if (CMD_IS_DEF(GSM_CMD_CMGS)) {      /* Send SMS default command */
-        if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {   /* Set message format current command*/
+        if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {   /* Set message format current command */
             SET_NEW_CMD(GSM_CMD_CMGS);          /* Now send actual message */
+        }
+
+        /* Send event on finish */
+        if (n_cmd == GSM_CMD_IDLE) {
+            SMS_SEND_SEND_EVT(gsm.msg, *is_ok ? gsmOK : gsmERR);
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGR)) {      /* Read SMS message */
         if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
@@ -1191,11 +1239,21 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         } else if (CMD_IS_CUR(GSM_CMD_CMGR) && *is_ok) {
             msg->msg.sms_read.mem = gsm.sms.mem[0].current; /* Set current memory */
         }
+
+        /* Send event on finish */
+        if (n_cmd == GSM_CMD_IDLE) {
+            SMS_SEND_READ_EVT(gsm.msg, *is_ok ? gsmOK : gsmERR);
+        }
     } else if (CMD_IS_DEF(GSM_CMD_CMGD)) {      /* Delete SMS message*/
         if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
-            SET_NEW_CMD(GSM_CMD_CPMS_SET);      /* Set memory */
+            SET_NEW_CMD(GSM_CMD_CPMS_SET);  /* Set memory */
         } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && *is_ok) {
-            SET_NEW_CMD(GSM_CMD_CMGD);          /* Delete message */
+            SET_NEW_CMD(GSM_CMD_CMGD);      /* Delete message */
+        }
+
+        /* Send event on finish */
+        if (n_cmd == GSM_CMD_IDLE) {
+            SMS_SEND_DELETE_EVT(msg, *is_ok ? gsmOK : gsmERR);
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGL)) {      /* List SMS messages */
         if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
@@ -1204,12 +1262,11 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             SET_NEW_CMD(GSM_CMD_CMGF);          /* Set text format */
         } else if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {
             SET_NEW_CMD(GSM_CMD_CMGL);          /* List messages */
-        } else if (CMD_IS_CUR(GSM_CMD_CMGL)) {
-            gsm.evt.evt.sms_list.mem = gsm.sms.mem[0].current;
-            gsm.evt.evt.sms_list.entries = gsm.msg->msg.sms_list.entries;
-            gsm.evt.evt.sms_list.size = gsm.msg->msg.sms_list.ei;
-            gsm.evt.evt.sms_list.err = *is_ok ? gsmOK : gsmERR;
-            gsmi_send_cb(GSM_EVT_SMS_LIST);
+        }
+
+        /* Send event on finish */
+        if (n_cmd == GSM_CMD_IDLE) {
+            SMS_SEND_LIST_EVT(msg, *is_ok ? gsmOK : gsmERR);
         }
     } else if (CMD_IS_DEF(GSM_CMD_CPMS_SET)) {  /* Set preferred memory */
         if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
@@ -1915,4 +1972,61 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
         GSM_MSG_VAR_FREE(msg);                  /* Release message */
     }
     return res;
+}
+
+/**
+ * \brief           Process events in case of timeout on command
+ * \param[in]       msg: Current message
+ */
+void
+gsmi_process_events_for_timeout(gsm_msg_t* msg) {
+    switch (msg->cmd_def) {
+#if GSM_CFG_CONN
+        /*
+         * Timeout on "connection start" command.
+         * Report connection error event
+         */
+        case GSM_CMD_CIPSTART: {
+            gsmi_send_conn_error_cb(msg, gsmTIMEOUT);
+            break;
+        }
+
+        /*
+         * Timeout on "send data" command.
+         * Report data send error event
+         */
+        case GSM_CMD_CIPSEND: {
+            /* Send data sent error event */
+            CONN_SEND_DATA_SEND_EVT(msg,
+                msg->msg.conn_send.conn, 0, gsmTIMEOUT);
+            break;
+        }
+#endif /* GSM_CFG_CONN */
+#if GSM_CFG_SMS
+        case GSM_CMD_CMGS: {
+            /* Send error event */
+            SMS_SEND_SEND_EVT(msg, gsmTIMEOUT);
+            break;
+        }
+
+        case GSM_CMD_CMGR: {
+            /* Read error event */
+            SMS_SEND_READ_EVT(msg, gsmTIMEOUT);
+            break;
+        }
+
+        case GSM_CMD_CMGL: {
+            /* List error event */
+            SMS_SEND_LIST_EVT(msg, gsmTIMEOUT);
+            break;
+        }
+
+        case GSM_CMD_CMGD: {
+            /* Delete error event */
+            SMS_SEND_DELETE_EVT(msg, gsmTIMEOUT);
+            break;
+        }
+#endif /* GSM_CFG_SMS */
+        default: break;
+    }
 }
