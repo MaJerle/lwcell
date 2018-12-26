@@ -52,7 +52,9 @@ extern "C" {
 #define GSM_DBG_OFF                 0       /*!< Indicates debug is disabled */
     
 /**
+ * \anchor          GSM_DBG_LVL
  * \name            Debug levels
+ * \brief           List of debug levels
  * \{
  */
  
@@ -67,6 +69,7 @@ extern "C" {
  */
 
 /**
+ * \anchor          GSM_DBG_TYPE
  * \name            Debug types
  * \brief           List of possible debugging types
  * \{

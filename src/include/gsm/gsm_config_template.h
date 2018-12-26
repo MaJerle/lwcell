@@ -33,12 +33,7 @@
 #ifndef __GSM_CONFIG_H
 #define __GSM_CONFIG_H
 
-/*
- * Rename this file to "gsm_config.h" for your application
- */
-
-/* First include debug before any config changes */
-#include "gsm/gsm_debug.h"
+/* Rename this file to "gsm_config.h" for your application */
 
 /*
  * Open "include/gsm/gsm_config_default.h" and 

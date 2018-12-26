@@ -188,6 +188,7 @@
 /**
  * \brief           Minimal debug level
  *
+ *                  Check \ref GSM_DBG_LVL for possible values
  */
 #ifndef GSM_CFG_DBG_LVL_MIN
 #define GSM_CFG_DBG_LVL_MIN                 GSM_DBG_LVL_ALL
@@ -198,6 +199,8 @@
  *                  
  *                  When debug is globally enabled with \ref GSM_CFG_DBG parameter,
  *                  user must enable debug types such as TRACE or STATE messages.
+ *
+ *                  Check \ref GSM_DBG_TYPE for possible options. Separate values with `bitwise OR` operator
  */
 #ifndef GSM_CFG_DBG_TYPES_ON
 #define GSM_CFG_DBG_TYPES_ON                0

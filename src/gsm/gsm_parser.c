@@ -305,7 +305,6 @@ gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
  */
 uint8_t
 gsmi_parse_creg(const char* str, uint8_t skip_first) {
-    uint8_t cb = 0;
     if (*str == '+') {
         str += 7;
     }
@@ -432,6 +431,7 @@ gsmi_parse_cops(const char* str) {
                 case GSM_OPERATOR_FORMAT_NUMBER:
                     gsm.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str));
                     break;
+                default: break;
             }
         }
     } else {
