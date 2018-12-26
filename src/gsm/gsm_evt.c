@@ -273,6 +273,16 @@ gsm_evt_sms_read_get_entry(gsm_evt_t* cc) {
 }
 
 /**
+ * \brief           Get SMS read operation result
+ * \param[in]       cc: Event handle
+ * \return          SMS entry
+ */
+gsmr_t
+gsm_evt_sms_read_get_res(gsm_evt_t* cc) {
+    return cc->evt.sms_read.res;
+}
+
+/**
  * \brief           Get SMS send result status
  * \param[in]       cc: Event handle
  * \return          Member of \ref gsmr_t enumeration
@@ -291,6 +301,36 @@ gsm_evt_sms_send_get_result(gsm_evt_t* cc) {
 size_t
 gsm_evt_sms_send_get_pos(gsm_evt_t* cc) {
     return cc->evt.sms_send.pos;
+}
+
+/**
+ * \brief           Get SMS delete result status
+ * \param[in]       cc: Event handle
+ * \return          Member of \ref gsmr_t enumeration
+ */
+gsmr_t
+gsm_evt_sms_delete_get_result(gsm_evt_t* cc) {
+    return cc->evt.sms_delete.res;
+}
+
+/**
+ * \brief           Get SMS delete memory position
+ * \param[in]       cc: Event handle
+ * \return          Deleted position in memory
+ */
+size_t
+gsm_evt_sms_delete_get_pos(gsm_evt_t* cc) {
+    return cc->evt.sms_delete.pos;
+}
+
+/**
+ * \brief           Get SMS delete memory
+ * \param[in]       cc: Event handle
+ * \return          SMS memory for delete operation
+ */
+gsm_mem_t
+gsm_evt_sms_delete_get_mem(gsm_evt_t* cc) {
+    return cc->evt.sms_delete.mem;
 }
 
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */

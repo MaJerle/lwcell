@@ -173,7 +173,7 @@ int16_t gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc);
  * \brief           Event helper functions for \ref GSM_EVT_SMS_RECV event
  */
 
-size_t  gsm_evt_sms_recv_get_pos(gsm_evt_t* cc);
+size_t      gsm_evt_sms_recv_get_pos(gsm_evt_t* cc);
 gsm_mem_t   gsm_evt_sms_recv_get_mem(gsm_evt_t* cc);
 
 /**
@@ -187,6 +187,7 @@ gsm_mem_t   gsm_evt_sms_recv_get_mem(gsm_evt_t* cc);
  */
 
 gsm_sms_entry_t*    gsm_evt_sms_read_get_entry(gsm_evt_t* cc);
+gsmr_t              gsm_evt_sms_read_get_res(gsm_evt_t* cc);
 
 /**
  * \}
@@ -200,6 +201,20 @@ gsm_sms_entry_t*    gsm_evt_sms_read_get_entry(gsm_evt_t* cc);
 
 gsmr_t  gsm_evt_sms_send_get_result(gsm_evt_t* cc);
 size_t  gsm_evt_sms_send_get_pos(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
+ * \name            GSM_EVT_SMS_DELETE
+ * \anchor          GSM_EVT_SMS_DELETE
+ * \brief           Event helper functions for \ref GSM_EVT_SMS_DELETE event
+ */
+
+gsmr_t      gsm_evt_sms_delete_get_result(gsm_evt_t* cc);
+size_t      gsm_evt_sms_delete_get_pos(gsm_evt_t* cc);
+gsm_mem_t   gsm_evt_sms_delete_get_mem(gsm_evt_t* cc);
 
 /**
  * \}
