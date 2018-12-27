@@ -49,6 +49,7 @@
 #include "system/gsm_ll.h"
 
 #if !__DOXYGEN__
+
 #include "stm32f4xx_ll_bus.h"
 #include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx_ll_gpio.h"
