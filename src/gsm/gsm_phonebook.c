@@ -77,7 +77,7 @@ check_mem(gsm_mem_t mem, uint8_t can_curr) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_enable(uint32_t blocking) {
+gsm_pb_enable(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -93,7 +93,7 @@ gsm_pb_enable(uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_disable(uint32_t blocking) {
+gsm_pb_disable(const uint32_t blocking) {
     GSM_CORE_PROTECT();                         /* Protect core */
     gsm.pb.enabled = 0;                         /* Clear enabled status */
     GSM_CORE_UNPROTECT();                       /* Unprotect core */
@@ -110,7 +110,7 @@ gsm_pb_disable(uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking) {
+gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
@@ -145,7 +145,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
  * \param[in]       blocking: Status whether command should be blocking or not
  */
 gsmr_t
-gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, uint32_t blocking) {
+gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, const uint32_t blocking) {
     return gsm_pb_list(mem, pos, entry, 1, NULL, blocking);
 }
 
@@ -160,7 +160,7 @@ gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, uint32_t blocking)
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, uint32_t blocking) {
+gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
@@ -194,7 +194,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
+gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("pos > 0", pos > 0);             /* Assert input parameters */
@@ -228,7 +228,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking) {
+gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("start_index > 0", start_index > 0); /* Assert input parameters */
@@ -271,7 +271,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, uint32_t blocking) {
+gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("search != NULL", search != NULL);   /* Assert input parameters */

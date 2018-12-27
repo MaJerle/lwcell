@@ -57,7 +57,7 @@ uint8_t     gsm_conn_is_client(gsm_conn_p conn);
 uint8_t     gsm_conn_is_active(gsm_conn_p conn);
 uint8_t     gsm_conn_is_closed(gsm_conn_p conn);
 int8_t      gsm_conn_getnum(gsm_conn_p conn);
-gsmr_t      gsm_get_conns_status(uint32_t blocking);
+gsmr_t      gsm_get_conns_status(const uint32_t blocking);
 gsm_conn_p  gsm_conn_get_from_evt(gsm_evt_t* evt);
 gsmr_t      gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
 gsmr_t      gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf);

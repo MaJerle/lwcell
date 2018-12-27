@@ -372,7 +372,7 @@ gsm_conn_get_arg(gsm_conn_p conn) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_get_conns_status(uint32_t blocking) {
+gsm_get_conns_status(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
     
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */

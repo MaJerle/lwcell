@@ -47,11 +47,11 @@ extern "C" {
  * \{
  */
 
-gsmr_t      gsm_sim_pin_enter(const char* pin, uint32_t blocking);
-gsmr_t      gsm_sim_pin_add(const char* pin, uint32_t blocking);
-gsmr_t      gsm_sim_pin_remove(const char* pin, uint32_t blocking);
-gsmr_t      gsm_sim_pin_change(const char* pin, const char* new_pin, uint32_t blocking);
-gsmr_t      gsm_sim_puk_enter(const char* puk, const char* new_pin, uint32_t blocking);
+gsmr_t      gsm_sim_pin_enter(const char* pin, const uint32_t blocking);
+gsmr_t      gsm_sim_pin_add(const char* pin, const uint32_t blocking);
+gsmr_t      gsm_sim_pin_remove(const char* pin, const uint32_t blocking);
+gsmr_t      gsm_sim_pin_change(const char* pin, const char* new_pin, const uint32_t blocking);
+gsmr_t      gsm_sim_puk_enter(const char* puk, const char* new_pin, const uint32_t blocking);
 
 /**
  * \}

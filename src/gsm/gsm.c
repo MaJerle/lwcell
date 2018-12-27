@@ -64,7 +64,7 @@ def_callback(gsm_evt_t* cb) {
  * \return          Member of \ref gsmr_t enumeration
  */
 gsmr_t
-gsm_init(gsm_evt_fn evt_func, uint32_t blocking) {
+gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm.status.f.initialized = 0;               /* Clear possible init flag */
     
     def_evt_link.fn = evt_func != NULL ? evt_func : def_callback;
@@ -147,7 +147,7 @@ cleanup:
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_reset(uint32_t blocking) {
+gsm_reset(const uint32_t blocking) {
     return gsm_reset_with_delay(0, blocking);
 }
 
@@ -158,7 +158,7 @@ gsm_reset(uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_reset_with_delay(uint32_t delay, uint32_t blocking) {
+gsm_reset_with_delay(uint32_t delay, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -285,7 +285,7 @@ gsm_delay(uint32_t ms) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_set_func_mode(uint8_t mode, uint32_t blocking) {
+gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -304,7 +304,7 @@ gsm_set_func_mode(uint8_t mode, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_device_set_present(uint8_t present, uint32_t blocking) {
+gsm_device_set_present(uint8_t present, const uint32_t blocking) {
     gsmr_t res = gsmOK;
     GSM_CORE_PROTECT();                         /* Protect core */
     gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
@@ -349,7 +349,7 @@ gsm_device_is_present(void) {
 * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
 */
 gsmr_t
-gsm_set_at_baudrate(uint32_t baud, uint32_t blocking) {
+gsm_set_at_baudrate(uint32_t baud, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */

@@ -48,15 +48,15 @@ extern "C" {
  */
 
 /* Basic commands, always available */
-gsmr_t      gsm_network_rssi(int16_t* rssi, uint32_t blocking);
+gsmr_t      gsm_network_rssi(int16_t* rssi, const uint32_t blocking);
 gsm_network_reg_status_t    gsm_network_get_reg_status(void);
 
 /* TCP/IP related commands */
-gsmr_t      gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t blocking);
-gsmr_t      gsm_network_detach(uint32_t blocking);
+gsmr_t      gsm_network_attach(const char* apn, const char* user, const char* pass, const uint32_t blocking);
+gsmr_t      gsm_network_detach(const uint32_t blocking);
 uint8_t     gsm_network_is_attached(void);
 gsmr_t      gsm_network_copy_ip(gsm_ip_t* ip);
-gsmr_t      gsm_network_check_status(uint32_t blocking);
+gsmr_t      gsm_network_check_status(const uint32_t blocking);
 
 /**
  * \}

@@ -41,7 +41,7 @@
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_operator_get(gsm_operator_curr_t* curr, uint32_t blocking) {
+gsm_operator_get(gsm_operator_curr_t* curr, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -61,7 +61,7 @@ gsm_operator_get(gsm_operator_curr_t* curr, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, uint32_t blocking) {
+gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     if (mode != GSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
@@ -91,7 +91,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, uint32_t blocking) {
+gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     if (opf != NULL) {

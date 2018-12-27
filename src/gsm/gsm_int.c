@@ -140,7 +140,7 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsmi_get_sim_info(uint32_t blocking) {
+gsmi_get_sim_info(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */

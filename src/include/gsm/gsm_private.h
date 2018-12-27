@@ -750,7 +750,7 @@ uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, 
 uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
 void        gsmi_conn_start_timeout(gsm_conn_p conn);
 
-gsmr_t      gsmi_get_sim_info(uint32_t blocking);
+gsmr_t      gsmi_get_sim_info(const uint32_t blocking);
 
 void        gsmi_process_events_for_timeout(gsm_msg_t* msg);
 

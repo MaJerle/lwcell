@@ -72,7 +72,7 @@ check_ready(void) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_call_enable(uint32_t blocking) {
+gsm_call_enable(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -88,7 +88,7 @@ gsm_call_enable(uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_call_disable(uint32_t blocking) {
+gsm_call_disable(const uint32_t blocking) {
     GSM_CORE_PROTECT();                         /* Protect core */
     gsm.call.enabled = 0;                       /* Clear enabled status */
     GSM_CORE_UNPROTECT();                       /* Unprotect core */
@@ -102,7 +102,7 @@ gsm_call_disable(uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_call_start(const char* number, uint32_t blocking) {
+gsm_call_start(const char* number, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("number != NULL", number != NULL);   /* Assert input parameters */
@@ -122,7 +122,7 @@ gsm_call_start(const char* number, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_call_answer(uint32_t blocking) {
+gsm_call_answer(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
@@ -138,7 +138,7 @@ gsm_call_answer(uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_call_hangup(uint32_t blocking) {
+gsm_call_hangup(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */

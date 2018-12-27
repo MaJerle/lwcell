@@ -45,7 +45,7 @@
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t blocking) {
+gsm_network_attach(const char* apn, const char* user, const char* pass, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -66,7 +66,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, uint32_t
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_network_detach(uint32_t blocking) {
+gsm_network_detach(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -79,7 +79,7 @@ gsm_network_detach(uint32_t blocking) {
 }
 
 gsmr_t
-gsm_network_check_status(uint32_t blocking) {
+gsm_network_check_status(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
@@ -126,7 +126,7 @@ gsm_network_is_attached(void) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_network_rssi(int16_t* rssi, uint32_t blocking) {
+gsm_network_rssi(int16_t* rssi, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */

@@ -41,7 +41,7 @@
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_enter(const char* pin, uint32_t blocking) {
+gsm_sim_pin_enter(const char* pin, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -63,7 +63,7 @@ gsm_sim_pin_enter(const char* pin, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_add(const char* pin, uint32_t blocking) {
+gsm_sim_pin_add(const char* pin, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -83,7 +83,7 @@ gsm_sim_pin_add(const char* pin, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_change(const char* pin, const char* new_pin, uint32_t blocking) {
+gsm_sim_pin_change(const char* pin, const char* new_pin, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -104,7 +104,7 @@ gsm_sim_pin_change(const char* pin, const char* new_pin, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_remove(const char* pin, uint32_t blocking) {
+gsm_sim_pin_remove(const char* pin, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -124,7 +124,7 @@ gsm_sim_pin_remove(const char* pin, uint32_t blocking) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_puk_enter(const char* puk, const char* new_pin, uint32_t blocking) {
+gsm_sim_puk_enter(const char* puk, const char* new_pin, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
 
     GSM_ASSERT("puk != NULL", puk != NULL);     /* Assert input parameters */
