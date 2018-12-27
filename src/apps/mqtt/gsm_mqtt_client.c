@@ -456,7 +456,7 @@ sub_unsub(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void*
         rem_len++;
     }
     
-    gsm_core_lock();                            /* Lock core */
+    gsm_core_lock();                            
     if (client->conn_state == GSM_MQTT_CONNECTED && 
         output_check_enough_memory(client, rem_len)) {  /* Check if enough memory to write packet data */
         pkt_id = create_packet_id(client);      /* Create new packet ID */
@@ -475,7 +475,7 @@ sub_unsub(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void*
             ret = 1;
         }
     }
-    gsm_core_unlock();                          /* Unlock core */
+    gsm_core_unlock();                          
     return ret;
 }
 
@@ -1087,7 +1087,7 @@ gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t p
     GSM_ASSERT("port > 0", port > 0);           /* Assert input parameters */
     GSM_ASSERT("info != NULL", info != NULL);   /* Assert input parameters */
     
-    gsm_core_lock();                            /* Protect core */
+    gsm_core_lock();                            
     if (gsm_network_is_attached() && client->conn_state == GSM_MQTT_CONN_DISCONNECTED) {        
         client->info = info;                    /* Save client info parameters */
         client->evt_fn = evt_fn != NULL ? evt_fn : mqtt_evt_fn_default;
@@ -1098,7 +1098,7 @@ gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t p
             client->conn_state = GSM_MQTT_CONN_CONNECTING;
         }
     }
-    gsm_core_unlock();                          /* Unprotect core */
+    gsm_core_unlock();                          
     
     return res;
 }
@@ -1112,12 +1112,12 @@ gsmr_t
 gsm_mqtt_client_disconnect(gsm_mqtt_client_p client) {
     gsmr_t res = gsmERR;
     
-    gsm_core_lock();                            /* Protect core */
+    gsm_core_lock();                            
     if (client->conn_state != GSM_MQTT_CONN_DISCONNECTED
         && client->conn_state != GSM_MQTT_CONN_DISCONNECTING) {
         res = mqtt_close(client);               /* Close client connection */
     }
-    gsm_core_unlock();                          /* Unprotect core */
+    gsm_core_unlock();                          
     return res;
 }
 
@@ -1180,7 +1180,7 @@ gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void*
         rem_len += 2;
     }
     
-    gsm_core_lock();                            /* Protect core */
+    gsm_core_lock();                            
     if (client->conn_state != GSM_MQTT_CONNECTED) {
         res = gsmERR;
     } else if ((raw_len = output_check_enough_memory(client, rem_len)) != 0) {
@@ -1218,7 +1218,7 @@ gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void*
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] No enough memory to publish message\r\n");
         res = gsmERRMEM;
     }
-    gsm_core_unlock();                          /* Unprotect core */
+    gsm_core_unlock();                          
     return res;
 }
 
@@ -1232,9 +1232,9 @@ uint8_t
 gsm_mqtt_client_is_connected(gsm_mqtt_client_p client) {
     uint8_t res;
     
-    gsm_core_lock();                            /* Protect core */
+    gsm_core_lock();                            
     res = GSM_U8(client->conn_state == GSM_MQTT_CONNECTED);
-    gsm_core_unlock();                          /* Unprotect core */
+    gsm_core_unlock();                          
     
     return res;
 }
@@ -1246,9 +1246,9 @@ gsm_mqtt_client_is_connected(gsm_mqtt_client_p client) {
  */
 void
 gsm_mqtt_client_set_arg(gsm_mqtt_client_p client, void* arg) {
-    gsm_core_lock();                            /* Protect core */
+    gsm_core_lock();                            
     client->arg = arg;
-    gsm_core_unlock();                          /* Unprotect core */
+    gsm_core_unlock();                          
 }
 
 /**

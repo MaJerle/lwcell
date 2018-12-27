@@ -47,9 +47,9 @@
 static gsmr_t
 check_enabled(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();                     /* Protect core */
+    GSM_CORE_PROTECT();                     
     res = gsm.call.enabled ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();                   /* Unprotect core */
+    GSM_CORE_UNPROTECT();                   
     return res;
 }
 
@@ -73,13 +73,13 @@ check_ready(void) {
  */
 gsmr_t
 gsm_call_enable(const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CALL_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CLCC_SET;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -89,9 +89,9 @@ gsm_call_enable(const uint32_t blocking) {
  */
 gsmr_t
 gsm_call_disable(const uint32_t blocking) {
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     gsm.call.enabled = 0;                       /* Clear enabled status */
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return gsmOK;
 }
 
@@ -109,7 +109,7 @@ gsm_call_start(const char* number, const uint32_t blocking) {
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("call_ready", check_ready() == gsmOK);   /* Assert input parameters */
                                                     
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;
     GSM_MSG_VAR_REF(msg).msg.call_start.number = number;
 
@@ -126,7 +126,7 @@ gsm_call_answer(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATA;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
@@ -142,7 +142,7 @@ gsm_call_hangup(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATH;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);

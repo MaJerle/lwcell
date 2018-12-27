@@ -47,9 +47,9 @@
 static gsmr_t
 check_enabled(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     res = gsm.pb.enabled ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return res;
 }
 
@@ -62,12 +62,12 @@ check_enabled(void) {
 static gsmr_t
 check_mem(gsm_mem_t mem, uint8_t can_curr) {
     gsmr_t res = gsmERRMEM;
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     if ((mem < GSM_MEM_END && gsm.pb.mem.mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return res;
 }
 
@@ -78,13 +78,13 @@ check_mem(gsm_mem_t mem, uint8_t can_curr) {
  */
 gsmr_t
 gsm_pb_enable(const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_PHONEBOOK_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET_OPT;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -94,9 +94,9 @@ gsm_pb_enable(const uint32_t blocking) {
  */
 gsmr_t
 gsm_pb_disable(const uint32_t blocking) {
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     gsm.pb.enabled = 0;                         /* Clear enabled status */
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return gsmOK;
 }
 
@@ -111,14 +111,14 @@ gsm_pb_disable(const uint32_t blocking) {
  */
 gsmr_t
 gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
     GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
@@ -133,7 +133,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     GSM_MSG_VAR_REF(msg).msg.pb_write.num = num;
     GSM_MSG_VAR_REF(msg).msg.pb_write.type = type;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -161,14 +161,14 @@ gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, const uint32_t blo
  */
 gsmr_t
 gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
     GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
 
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
@@ -183,7 +183,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
     GSM_MSG_VAR_REF(msg).msg.pb_write.num = num;
     GSM_MSG_VAR_REF(msg).msg.pb_write.type = type;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -195,13 +195,13 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
  */
 gsmr_t
 gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pos > 0", pos > 0);             /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
 
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
@@ -214,7 +214,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.pb_write.pos = pos;
     GSM_MSG_VAR_REF(msg).msg.pb_write.del = 1;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -229,7 +229,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
  */
 gsmr_t
 gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("start_index > 0", start_index > 0); /* Assert input parameters */
     GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
@@ -237,7 +237,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
 
     if (er != NULL) {
         *er = 0;
@@ -256,7 +256,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
     GSM_MSG_VAR_REF(msg).msg.pb_list.etr = etr;
     GSM_MSG_VAR_REF(msg).msg.pb_list.er = er;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -272,7 +272,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
  */
 gsmr_t
 gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("search != NULL", search != NULL);   /* Assert input parameters */
     GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
@@ -280,7 +280,7 @@ gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
 
     if (er != NULL) {
         *er = 0;
@@ -299,7 +299,7 @@ gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t
     GSM_MSG_VAR_REF(msg).msg.pb_search.etr = etr;
     GSM_MSG_VAR_REF(msg).msg.pb_search.er = er;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */

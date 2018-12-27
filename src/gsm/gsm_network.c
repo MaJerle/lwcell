@@ -46,9 +46,9 @@
  */
 gsmr_t
 gsm_network_attach(const char* apn, const char* user, const char* pass, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
 #if GSM_CFG_CONN
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS;
@@ -57,7 +57,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, const ui
     GSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
     GSM_MSG_VAR_REF(msg).msg.network_attach.pass = pass;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 200000);  /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 200000);
 }
 
 /**
@@ -67,25 +67,25 @@ gsm_network_attach(const char* apn, const char* user, const char* pass, const ui
  */
 gsmr_t
 gsm_network_detach(const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_DETACH;
 #if GSM_CFG_CONN
     /* GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS; */
 #endif /* GSM_CFG_CONN */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 gsmr_t
 gsm_network_check_status(const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -127,13 +127,13 @@ gsm_network_is_attached(void) {
  */
 gsmr_t
 gsm_network_rssi(int16_t* rssi, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CSQ_GET;
     GSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);  /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);
 }
 
 /**

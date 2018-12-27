@@ -78,7 +78,7 @@ static void
 flush_mboxes(gsm_netconn_t* nc, uint8_t protect) {
     gsm_pbuf_p pbuf;
     if (protect) {
-        gsm_core_lock();                        /* Protect core */
+        gsm_core_lock();                        
     }
     if (gsm_sys_mbox_isvalid(&nc->mbox_receive)) {
         while (gsm_sys_mbox_getnow(&nc->mbox_receive, (void **)&pbuf)) {
@@ -90,7 +90,7 @@ flush_mboxes(gsm_netconn_t* nc, uint8_t protect) {
         gsm_sys_mbox_invalid(&nc->mbox_receive);/* Invalid handle */
     }
     if (protect) {
-        gsm_core_unlock();                      /* Release protection */
+        gsm_core_unlock();                      
     }
 }
 

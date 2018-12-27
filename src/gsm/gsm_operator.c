@@ -42,13 +42,13 @@
  */
 gsmr_t
 gsm_operator_get(gsm_operator_curr_t* curr, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET;
     GSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);
 }
 
 /**
@@ -62,7 +62,7 @@ gsm_operator_get(gsm_operator_curr_t* curr, const uint32_t blocking) {
  */
 gsmr_t
 gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     if (mode != GSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
         GSM_ASSERT("format valid", format < GSM_OPERATOR_FORMAT_INVALID);   /* Assert input parameters */
@@ -71,7 +71,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
         }
     }
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_SET;
 
     GSM_MSG_VAR_REF(msg).msg.cops_set.mode = mode;
@@ -79,7 +79,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
     GSM_MSG_VAR_REF(msg).msg.cops_set.name = name;
     GSM_MSG_VAR_REF(msg).msg.cops_set.num = num;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);
 }
 
 /**
@@ -92,17 +92,17 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
  */
 gsmr_t
 gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     if (opf != NULL) {
         *opf = 0;
     }
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET_OPT;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);  /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);
 }

@@ -89,9 +89,9 @@ gsmi_conn_start_timeout(gsm_conn_p conn) {
 uint8_t
 conn_get_val_id(gsm_conn_p conn) {
     uint8_t val_id;
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     val_id = conn->val_id;
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     
     return val_id;
 }
@@ -112,7 +112,7 @@ conn_get_val_id(gsm_conn_p conn) {
 static gsmr_t
 conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data,
             size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
     
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
     GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
@@ -124,7 +124,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSEND;
     
     GSM_MSG_VAR_REF(msg).msg.conn_send.conn = conn;
@@ -136,7 +136,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
     GSM_MSG_VAR_REF(msg).msg.conn_send.fau = fau;
     GSM_MSG_VAR_REF(msg).msg.conn_send.val_id = conn_get_val_id(conn);
     
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -147,7 +147,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 static gsmr_t
 flush_buff(gsm_conn_p conn) {
     gsmr_t res = gsmOK;
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     if (conn != NULL && conn->buff.buff != NULL) {  /* Do we have something ready? */
         /*
          * If there is nothing to write or if write was not successful,
@@ -165,7 +165,7 @@ flush_buff(gsm_conn_p conn) {
         }
         conn->buff.buff = NULL;
     }
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return res;
 }
 
@@ -191,13 +191,13 @@ gsmi_conn_init(void) {
 gsmr_t
 gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port,
                 void* const arg, gsm_evt_fn evt_fn, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("host != NULL", host != NULL);   /* Assert input parameters */
     GSM_ASSERT("port > 0", port > 0);           /* Assert input parameters */
     GSM_ASSERT("evt_fn != NULL", evt_fn != NULL);   /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTART;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS;
     GSM_MSG_VAR_REF(msg).msg.conn_start.num = GSM_CFG_MAX_CONNS;/* Set maximal value as invalid number */
@@ -208,7 +208,7 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
     GSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = evt_fn;
     GSM_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
     
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -220,26 +220,26 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
 gsmr_t
 gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     gsmr_t res = gsmOK;
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
     
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
     
     CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
     
     /* Proceed with close event at this point! */
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPCLOSE;
     GSM_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
     GSM_MSG_VAR_REF(msg).msg.conn_close.val_id = conn_get_val_id(conn);
     
     flush_buff(conn);                           /* First flush buffer */
-    res = gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000); /* Send message to producer queue */
+    res = gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);
     if (res == gsmOK && !blocking) {            /* Function succedded in non-blocking mode */
-        GSM_CORE_PROTECT();                     /* Protect core */
+        GSM_CORE_PROTECT();                     
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
             "[CONN] Connection %d set to closing state\r\n", (int)conn->num);
         conn->status.f.in_closing = 1;          /* Connection is in closing mode but not yet closed */
-        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+        GSM_CORE_UNPROTECT();                   
     }
     return res;
 }
@@ -285,7 +285,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
     GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
     GSM_ASSERT("btw > 0", btw > 0);             /* Assert input parameters */
 
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     if (conn->buff.buff != NULL) {              /* Check if memory available */
         size_t to_copy;
         to_copy = GSM_MIN(btw, conn->buff.len - conn->buff.ptr);
@@ -296,7 +296,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
             btw -= to_copy;
         }
     }
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     res = flush_buff(conn);                     /* Flush currently written memory if exists */
     if (btw) {                                  /* Check for remaining data */
         res = conn_send(conn, NULL, 0, d, btw, bw, 0, blocking);
@@ -345,9 +345,9 @@ gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf) {
  */
 gsmr_t
 gsm_conn_set_arg(gsm_conn_p conn, void* const arg) {
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     conn->arg = arg;                            /* Set argument for connection */
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return gsmOK;
 }
 
@@ -360,9 +360,9 @@ gsm_conn_set_arg(gsm_conn_p conn, void* const arg) {
 void *
 gsm_conn_get_arg(gsm_conn_p conn) {
     void* arg;
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     arg = conn->arg;                            /* Set argument for connection */
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return arg;
 }
 
@@ -373,12 +373,12 @@ gsm_conn_get_arg(gsm_conn_p conn) {
  */
 gsmr_t
 gsm_get_conns_status(const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
     
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
     
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);    /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);
 }
 
 /**
@@ -390,9 +390,9 @@ uint8_t
 gsm_conn_is_client(gsm_conn_p conn) {
     uint8_t res = 0;
     if (conn != NULL && gsmi_is_valid_conn_ptr(conn)) {
-        GSM_CORE_PROTECT();                     /* Protect core */
+        GSM_CORE_PROTECT();                     
         res = conn->status.f.active && conn->status.f.client;
-        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+        GSM_CORE_UNPROTECT();                   
     }
     return res;
 }
@@ -583,9 +583,9 @@ gsm_conn_get_total_recved_count(gsm_conn_p conn) {
 
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
 
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     tot = conn->total_recved;                   /* Get total received bytes */
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
 
     return tot;
 }
@@ -601,9 +601,9 @@ gsm_conn_get_total_recved_count(gsm_conn_p conn) {
 uint8_t
 gsm_conn_get_remote_ip(gsm_conn_p conn, gsm_ip_t* ip) {
     if (conn != NULL && ip != NULL) {
-        GSM_CORE_PROTECT();                     /* Protect core */
+        GSM_CORE_PROTECT();                     
         GSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip));  /* Copy data */
-        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+        GSM_CORE_UNPROTECT();                   
         return 1;
     }
     return 0;
@@ -618,9 +618,9 @@ gsm_port_t
 gsm_conn_get_remote_port(gsm_conn_p conn) {
     gsm_port_t port = 0;
     if (conn != NULL) {
-        GSM_CORE_PROTECT();                     /* Protect core */
+        GSM_CORE_PROTECT();                     
         port = conn->remote_port;
-        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+        GSM_CORE_UNPROTECT();                   
     }
     return port;
 }
@@ -634,9 +634,9 @@ gsm_port_t
 gsm_conn_get_local_port(gsm_conn_p conn) {
     gsm_port_t port = 0;
     if (conn != NULL) {
-        GSM_CORE_PROTECT();                     /* Protect core */
+        GSM_CORE_PROTECT();                     
         port = conn->local_port;
-        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+        GSM_CORE_UNPROTECT();                   
     }
     return port;
 }

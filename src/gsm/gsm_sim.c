@@ -42,16 +42,16 @@
  */
 gsmr_t
 gsm_sim_pin_enter(const char* pin, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
     GSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 30000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 30000);
 }
 
 /**
@@ -64,15 +64,15 @@ gsm_sim_pin_enter(const char* pin, const uint32_t blocking) {
  */
 gsmr_t
 gsm_sim_pin_add(const char* pin, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_ADD;
     GSM_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
 }
 
 /**
@@ -84,17 +84,17 @@ gsm_sim_pin_add(const char* pin, const uint32_t blocking) {
  */
 gsmr_t
 gsm_sim_pin_change(const char* pin, const char* new_pin, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
     GSM_ASSERT("new_pin != NULL", new_pin != NULL); /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_CHANGE;
     GSM_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
     GSM_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
 }
 
 /**
@@ -105,15 +105,15 @@ gsm_sim_pin_change(const char* pin, const char* new_pin, const uint32_t blocking
  */
 gsmr_t
 gsm_sim_pin_remove(const char* pin, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_REMOVE;
     GSM_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
 }
 
 /**
@@ -125,15 +125,15 @@ gsm_sim_pin_remove(const char* pin, const uint32_t blocking) {
  */
 gsmr_t
 gsm_sim_puk_enter(const char* puk, const char* new_pin, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("puk != NULL", puk != NULL);     /* Assert input parameters */
     GSM_ASSERT("new_pin != NULL", new_pin != NULL); /* Assert input parameters */
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
     GSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
     GSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
 }

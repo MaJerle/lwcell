@@ -159,13 +159,13 @@ gsm_reset(const uint32_t blocking) {
  */
 gsmr_t
 gsm_reset_with_delay(uint32_t delay, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
     GSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -179,7 +179,7 @@ gsm_reset_with_delay(uint32_t delay, const uint32_t blocking) {
  */
 gsmr_t
 gsm_core_lock(void) {
-    GSM_CORE_PROTECT();                         /* Lock GSM core */
+    GSM_CORE_PROTECT();                         
     return gsmOK;
 }
 
@@ -192,7 +192,7 @@ gsm_core_lock(void) {
  */
 gsmr_t
 gsm_core_unlock(void) {
-    GSM_CORE_UNPROTECT();                       /* Unlock GSM core */
+    GSM_CORE_UNPROTECT();                       
     return gsmOK;
 }
 
@@ -208,7 +208,7 @@ gsm_evt_register(gsm_evt_fn fn) {
     
     GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
     
-    GSM_CORE_PROTECT();                         /* Lock GSM core */
+    GSM_CORE_PROTECT();                         
     
     /* Check if function already exists on list */
     for (func = gsm.evt_func; func != NULL; func = func->next) {
@@ -234,7 +234,7 @@ gsm_evt_register(gsm_evt_fn fn) {
             res = gsmERRMEM;
         }
     }
-    GSM_CORE_UNPROTECT();                       /* Unlock GSM core */
+    GSM_CORE_UNPROTECT();                       
     return res;
 }
 
@@ -249,7 +249,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
     gsm_evt_func_t* func, *prev;
     GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
     
-    GSM_CORE_PROTECT();                         /* Lock GSM core */
+    GSM_CORE_PROTECT();                         
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
@@ -258,7 +258,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
             break;
         }
     }
-    GSM_CORE_UNPROTECT();                       /* Unlock GSM core */
+    GSM_CORE_UNPROTECT();                       
     return gsmOK;
 }
 
@@ -286,13 +286,13 @@ gsm_delay(uint32_t ms) {
  */
 gsmr_t
 gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CFUN_SET;
     GSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);   /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
 /**
@@ -306,7 +306,7 @@ gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
 gsmr_t
 gsm_device_set_present(uint8_t present, const uint32_t blocking) {
     gsmr_t res = gsmOK;
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
     
     /**
@@ -315,9 +315,9 @@ gsm_device_set_present(uint8_t present, const uint32_t blocking) {
 
 #if GSM_CFG_RESET_ON_INIT
     if (gsm.status.f.dev_present) {             /* Is new device present? */
-        GSM_CORE_UNPROTECT();                   /* Unprotect core */
+        GSM_CORE_UNPROTECT();                   
         res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking); /* Reset with delay */
-        GSM_CORE_PROTECT();                     /* Protect core */
+        GSM_CORE_PROTECT();                     
     }
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
@@ -325,7 +325,7 @@ gsm_device_set_present(uint8_t present, const uint32_t blocking) {
     
     gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);       /* Send present event */
     
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return res;
 }
 
@@ -336,9 +336,9 @@ gsm_device_set_present(uint8_t present, const uint32_t blocking) {
 uint8_t
 gsm_device_is_present(void) {
     uint8_t res;
-    GSM_CORE_PROTECT();                         /* Protect core */
+    GSM_CORE_PROTECT();                         
     res = gsm.status.f.dev_present;
-    GSM_CORE_UNPROTECT();                       /* Unprotect core */
+    GSM_CORE_UNPROTECT();                       
     return res;
 }
 
@@ -350,11 +350,11 @@ gsm_device_is_present(void) {
 */
 gsmr_t
 gsm_set_at_baudrate(uint32_t baud, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);                    /* Define variable for message */
+    GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);                     /* Allocate memory for variable */
+    GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_UART;
     GSM_MSG_VAR_REF(msg).msg.uart.baudrate = baud;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);    /* Send message to producer queue */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);
 }
