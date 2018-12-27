@@ -50,12 +50,12 @@ extern "C" {
 gsm_evt_type_t  gsm_evt_get_type(gsm_evt_t* cc);
 
 /**
- * \name            GSM_EVT_RESET
- * \anchor          GSM_EVT_RESET
- * \brief           Event helper functions for \ref GSM_EVT_RESET event
+ * \name            GSM_EVT_RESET_FINISH
+ * \anchor          GSM_EVT_RESET_FINISH
+ * \brief           Event helper functions for \ref GSM_EVT_RESET_FINISH event
  */
 
-uint8_t         gsm_evt_reset_is_forced(gsm_evt_t* cc);
+gsmr_t      gsm_evt_reset_finish_get_result(gsm_evt_t* cc);
 
 /**
  * \}

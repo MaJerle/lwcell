@@ -45,14 +45,13 @@ gsm_evt_get_type(gsm_evt_t* cc) {
 }
 
 /**
- * \brief           Checks if reset was forced by user or not
- * \note            This function may only be used when event type is \ref GSM_EVT_RESET
+ * \brief           Get reset sequence operation status
  * \param[in]       cc: Event data
- * \return          `1` if forced by user, `0` otherwise
+ * \return          Member of \ref gsmr_t enumeration
  */
-uint8_t
-gsm_evt_reset_is_forced(gsm_evt_t* cc) {
-    return cc->evt.reset.forced;                /* Return forced reset status */
+gsmr_t
+gsm_evt_reset_finish_get_result(gsm_evt_t* cc) {
+    return cc->evt.reset_finish.res;
 }
 
 /**
@@ -121,7 +120,7 @@ gsm_evt_conn_send_get_length(gsm_evt_t* cc) {
 /**
  * \brief           Check if connection send was successful
  * \param[in]       cc: Event handle
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          Member of \ref gsmr_t enumeration
  */
 gsmr_t
 gsm_evt_conn_send_get_result(gsm_evt_t* cc) {

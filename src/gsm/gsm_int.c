@@ -87,6 +87,16 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
     gsmi_send_conn_cb((m)->msg.conn_send.conn, NULL);   \
 } while (0)
 
+/**
+ * \brief           Send reset finish event
+ * \param[in]       m: Connection send message
+ * \param[in]       err: Error of type \ref gsmr_t
+ */
+#define RESET_FINISH_SEND_EVT(m, err)  do { \
+    gsm.evt.evt.reset_finish.res = err;             \
+    gsmi_send_cb(GSM_EVT_RESET_FINISH);             \
+} while (0)
+
  /**
  * \brief           Send SMS delete operation event
  * \param[in]       m: SMS delete message
@@ -809,14 +819,6 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         gsmr_t res = gsmOK;
         if (gsm.msg != NULL) {                  /* Do we have active message? */
             res = gsmi_process_sub_cmd(gsm.msg, &is_ok, &is_error);
-
-            /* Check if reset command finished */
-            if (CMD_IS_DEF(GSM_CMD_RESET)) {
-                if (gsm.msg->cmd == GSM_CMD_IDLE) {
-                    gsmi_send_cb(GSM_EVT_RESET_FINISH); /* Send to upper layer */
-                }
-            }
-
             if (res != gsmCONT) {               /* Shall we continue with next subcommand under this one? */
                 if (is_ok) {                    /* Check OK status */
                     res = gsm.msg->res = gsmOK;
@@ -1188,6 +1190,11 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             case GSM_CMD_CPIN_GET: break;
             default: break;
         }
+
+        /* Send event */
+        if (n_cmd == GSM_CMD_IDLE) {
+            RESET_FINISH_SEND_EVT(msg, gsmOK);
+        }
     } else if (CMD_IS_DEF(GSM_CMD_COPS_GET)) {
         if (CMD_IS_CUR(GSM_CMD_COPS_GET)) {
             gsm.evt.evt.operator_current.operator_current = &gsm.network.curr_operator;
@@ -1289,13 +1296,13 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 #if GSM_CFG_CALL
     } else if (CMD_IS_DEF(GSM_CMD_CALL_ENABLE)) {
         gsm.call.enabled = *is_ok;              /* Set enabled status */
-        gsm.evt.evt.call_enable.status = gsm.call.enabled ? gsmOK : gsmERR;
+        gsm.evt.evt.call_enable.res = gsm.call.enabled ? gsmOK : gsmERR;
         gsmi_send_cb(GSM_EVT_CALL_ENABLE);      /* Send to user */
 #endif /* GSM_CFG_CALL */
 #if GSM_CFG_PHONEBOOK
     } else if (CMD_IS_DEF(GSM_CMD_PHONEBOOK_ENABLE)) {
         gsm.pb.enabled = *is_ok;                /* Set enabled status */
-        gsm.evt.evt.pb_enable.status = gsm.pb.enabled ? gsmOK : gsmERR;
+        gsm.evt.evt.pb_enable.res = gsm.pb.enabled ? gsmOK : gsmERR;
         gsmi_send_cb(GSM_EVT_PB_ENABLE);        /* Send to user */
     } else if (CMD_IS_DEF(GSM_CMD_CPBW_SET)) {  /* Write phonebook entry */
         if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && *is_ok) {   /* Get current memory */
@@ -1312,7 +1319,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             gsm.evt.evt.pb_list.mem = gsm.pb.mem.current;
             gsm.evt.evt.pb_list.entries = gsm.msg->msg.pb_list.entries;
             gsm.evt.evt.pb_list.size = gsm.msg->msg.pb_list.ei;
-            gsm.evt.evt.pb_list.err = *is_ok ? gsmOK : gsmERR;
+            gsm.evt.evt.pb_list.res = *is_ok ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_PB_LIST);
         }
     } else if (CMD_IS_DEF(GSM_CMD_CPBF)) {
@@ -1325,7 +1332,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             gsm.evt.evt.pb_search.search = gsm.msg->msg.pb_search.search;
             gsm.evt.evt.pb_search.entries = gsm.msg->msg.pb_search.entries;
             gsm.evt.evt.pb_search.size = gsm.msg->msg.pb_search.ei;
-            gsm.evt.evt.pb_search.err = *is_ok ? gsmOK : gsmERR;
+            gsm.evt.evt.pb_search.res = *is_ok ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_PB_SEARCH);
         }
 #endif /* GSM_CFG_PHONEBOOK */
@@ -1967,6 +1974,11 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
 void
 gsmi_process_events_for_timeout(gsm_msg_t* msg) {
     switch (msg->cmd_def) {
+        case GSM_CMD_RESET: {
+            /* Timeout on reset */
+            RESET_FINISH_SEND_EVT(msg, gsmTIMEOUT);
+        }
+
 #if GSM_CFG_CONN
         /*
          * Timeout on "connection start" command.

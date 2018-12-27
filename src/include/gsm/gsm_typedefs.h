@@ -406,8 +406,8 @@ typedef struct gsm_evt {
     gsm_evt_type_t type;                        /*!< Callback type */
     union {
         struct {
-            uint8_t forced;                     /*!< Set to `1` if reset forced by user */
-        } reset;                                /*!< Reset occurred. Use with \ref GSM_EVT_RESET event */
+            gsmr_t res;                         /*!< Reset operation result */
+        } reset_finish;                         /*!< Reset occurred. Use with \ref GSM_EVT_RESET_FINISH event */
 
         struct {
             gsm_sim_state_t state;              /*!< SIM state */
@@ -477,7 +477,7 @@ typedef struct gsm_evt {
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
         struct {
-            gsmr_t status;                      /*!< Enable status */
+            gsmr_t res;                         /*!< Enable status */
         } call_enable;                          /*!< Call enable event. Use with \ref GSM_EVT_CALL_ENABLE event */
         struct {
             const gsm_call_t* call;             /*!< Call information */
@@ -485,20 +485,20 @@ typedef struct gsm_evt {
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
         struct {
-            gsmr_t status;                      /*!< Enable status */
+            gsmr_t res;                         /*!< Enable status */
         } pb_enable;                            /*!< Phonebook enable event. Use with \ref GSM_EVT_PB_ENABLE event */
         struct {
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
-            gsmr_t err;                         /*!< Error message if exists */
+            gsmr_t res;                         /*!< Operation success */
         } pb_list;                              /*!< Phonebok list. Use with \ref GSM_EVT_PB_LIST event */
         struct {
             const char* search;                 /*!< Search string */
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
-            gsmr_t err;                         /*!< Error message if exists */
+            gsmr_t res;                         /*!< Operation success */
         } pb_search;                            /*!< Phonebok search list. Use with \ref GSM_EVT_PB_SEARCH event */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
     } evt;                                      /*!< Callback event union */
