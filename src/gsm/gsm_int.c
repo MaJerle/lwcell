@@ -1006,7 +1006,7 @@ gsmi_process(const void* data, size_t data_len) {
             }
             if (ch == '\n' && ch_prev1 == '\r') {
                 if (gsm.msg->msg.sms_read.read == 2) {
-                    
+
                 }
                 gsm.msg->msg.sms_read.read = 0;
             }
