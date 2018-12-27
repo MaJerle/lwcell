@@ -5,24 +5,24 @@
 
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -38,14 +38,14 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "gsm_config.h"
-    
+
 /**
  * \ingroup         GSM_PORT
  * \defgroup        GSM_SYS System functions
  * \brief           System based function for OS management, timings, etc
  * \{
  */
- 
+
 /**
  * \brief           Thread function prototype
  */
@@ -56,10 +56,10 @@ typedef void (*gsm_sys_thread_fn)(void *);
  * \anchor          GSM_SYS_PORTS
  * \{
  *
- * List of already available system ports. 
+ * List of already available system ports.
  * Configure \ref GSM_CFG_SYS_PORT with one of these values to use preconfigured ports
  */
- 
+
 #define GSM_SYS_PORT_CMSIS_OS               1   /*!< CMSIS-OS based port for OS systems capable of ARM CMSIS standard */
 #define GSM_SYS_PORT_WIN32                  2   /*!< WIN32 based port to use GSM library with Windows applications */
 #define GSM_SYS_PORT_USER                   99  /*!< User custom implementation.

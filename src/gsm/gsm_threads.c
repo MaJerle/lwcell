@@ -5,24 +5,24 @@
 
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -54,12 +54,12 @@ gsm_thread_producer(void* const arg) {
     if (gsm_sys_sem_isvalid(sem)) {
         gsm_sys_sem_release(sem);               /* Release semaphore */
     }
-    
-    GSM_CORE_PROTECT();                         
+
+    GSM_CORE_PROTECT();
     while (1) {
-        GSM_CORE_UNPROTECT();                   
+        GSM_CORE_UNPROTECT();
         time = gsm_sys_mbox_get(&gsm.mbox_producer, (void **)&msg, 0);  /* Get message from queue */
-        GSM_CORE_PROTECT();                     
+        GSM_CORE_PROTECT();
         if (time == GSM_SYS_TIMEOUT || msg == NULL) {   /* Check valid message */
             continue;
         }
@@ -68,7 +68,7 @@ gsm_thread_producer(void* const arg) {
         if (CMD_IS_DEF(GSM_CMD_RESET) && msg->msg.reset.delay) {
             gsm_delay(msg->msg.reset.delay);
         }
-        
+
         /*
          * Try to call function to process this message
          * Usually it should be function to transmit data to AT port
@@ -97,7 +97,7 @@ gsm_thread_producer(void* const arg) {
         if (res != gsmOK) {
             msg->res = res;                     /* Save response */
         }
-        
+
         /*
          * In case message is blocking,
          * release semaphore and notify finished with processing
@@ -114,7 +114,7 @@ gsm_thread_producer(void* const arg) {
 
 /**
  * \brief           Thread for processing received data from device
- * 
+ *
  *                  This thread is also used to handle timeout events
  *                  in correct time order as it is never blocked by user command
  *
@@ -130,14 +130,14 @@ gsm_thread_process(void* const arg) {
     if (gsm_sys_sem_isvalid(sem)) {
         gsm_sys_sem_release(sem);               /* Release semaphore */
     }
-    
+
 #if !GSM_CFG_INPUT_USE_PROCESS
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     while (1) {
-        GSM_CORE_UNPROTECT();                   
+        GSM_CORE_UNPROTECT();
         time = gsmi_get_from_mbox_with_timeout_checks(&gsm.mbox_process, (void **)&msg, 10);    /* Get message from queue */
-        GSM_CORE_PROTECT();                     
-        
+        GSM_CORE_PROTECT();
+
         if (time == GSM_SYS_TIMEOUT || msg == NULL) {
             GSM_UNUSED(time);                   /* Unused variable */
         }

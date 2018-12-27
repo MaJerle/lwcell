@@ -5,24 +5,24 @@
 
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -45,7 +45,7 @@ gsmi_parse_number(const char** str) {
     int32_t val = 0;
     uint8_t minus = 0;
     const char* p = *str;                       /*  */
-    
+
     if (*p == '"') {                            /* Skip leading quotes */
         p++;
     }
@@ -76,7 +76,7 @@ gsmi_parse_number(const char** str) {
         p++;
     }
     *str = p;                                   /* Save new pointer with new offset */
-    
+
     return minus ? -val : val;
 }
 
@@ -90,7 +90,7 @@ uint32_t
 gsmi_parse_hexnumber(const char** str) {
     int32_t val = 0;
     const char* p = *str;                       /*  */
-    
+
     if (*p == '"') {                            /* Skip leading quotes */
         p++;
     }
@@ -126,7 +126,7 @@ uint8_t
 gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
     const char* p = *src;
     size_t i;
-    
+
     if (*p == ',') {
         p++;
     }
@@ -180,7 +180,7 @@ gsmi_check_and_trim(const char** src) {
 uint8_t
 gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
     const char* p = *src;
-    
+
     if (*p == ',') {
         p++;
     }
@@ -196,7 +196,7 @@ gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
     if (*p == '"') {
         p++;
     }
-    
+
     *src = p;                                   /* Set new pointer */
     return 1;
 }
@@ -210,7 +210,7 @@ gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
 uint8_t
 gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
     const char* p = *src;
-    
+
     if (*p == '"') {
         p++;
     }
@@ -477,7 +477,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             u.f.ccd = 1;                        /* Fake double commas in a row */
         }
     }
- 
+
     if (u.f.ccd ||                              /* Ignore data after 2 commas in a row */
         gsm.msg->msg.cops_scan.opsi >= gsm.msg->msg.cops_scan.opsl) {   /* or if array is full */
         return 1;
@@ -647,7 +647,7 @@ gsmi_parse_cmgr(const char* str) {
     if (*str == '+') {
         str += 7;
     }
-    
+
     e = gsm.msg->msg.sms_read.entry;
     gsmi_parse_sms_status(&str, &e->status);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
@@ -800,7 +800,7 @@ gsmi_parse_cpbr(const char* str) {
     if (*str == '+') {
         str += 7;
     }
-    
+
     e = &gsm.msg->msg.pb_list.entries[gsm.msg->msg.pb_list.ei];
     e->pos = GSM_SZ(gsmi_parse_number(&str));
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
@@ -831,7 +831,7 @@ gsmi_parse_cpbf(const char* str) {
     if (*str == '+') {
         str += 7;
     }
-    
+
     e = &gsm.msg->msg.pb_search.entries[gsm.msg->msg.pb_search.ei];
     e->pos = GSM_SZ(gsmi_parse_number(&str));
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
@@ -862,7 +862,7 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
     gsm_conn_t* conn;
     char s_tmp[16];
     uint8_t tmp_pdp_state;
-    
+
     *continueScan = 1;
     if (is_conn_line && (*str == 'C' || *str == 'S')) {
         str += 3;

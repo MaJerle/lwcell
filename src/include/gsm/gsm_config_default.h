@@ -5,24 +5,24 @@
 
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -71,7 +71,7 @@
  *                  will try to allocate memory on aligned boundaries.
  *
  * \note            Some CPUs such ARM Cortex-M0 dont't support unaligned memory access.
- *                  This CPUs must have set correct memory alignment value. 
+ *                  This CPUs must have set correct memory alignment value.
  *
  * \note            This value must be power of 2
  */
@@ -112,7 +112,7 @@
 /**
  * \brief           Maximal data buffer for Input Data Packet, used on TCP/IP commands
  *
- * \note            If +IPD length is larger that this value, 
+ * \note            If +IPD length is larger that this value,
  *                  multiple pbuf entries will be created to hold entire +IPD
  */
 #ifndef GSM_CFG_IPD_MAX_BUFF_SIZE
@@ -132,7 +132,7 @@
  * \brief           Buffer size for received data waiting to be processed
  * \note            When server mode is active and a lot of connections are in queue
  *                  this should be set high otherwise your buffer may overflow
- * 
+ *
  * \note            Buffer size also depends on TX user driver if it uses DMA or blocking mode
  *                  In case of DMA (CPU can work other tasks), buffer may be smaller as CPU
  *                  will have more time to process all the incoming bytes
@@ -178,7 +178,7 @@
 
 /**
  * \brief           Debugging output function
- * 
+ *
  *                  Called with format and optional parameters for printf style debug
  */
 #ifndef GSM_CFG_DBG_OUT
@@ -196,7 +196,7 @@
 
 /**
  * \brief           Enabled debug types
- *                  
+ *
  *                  When debug is globally enabled with \ref GSM_CFG_DBG parameter,
  *                  user must enable debug types such as TRACE or STATE messages.
  *
@@ -296,7 +296,7 @@
 #ifndef GSM_CFG_AT_ECHO
 #define GSM_CFG_AT_ECHO                     0
 #endif
- 
+
 /**
  * \}
  */
@@ -306,7 +306,7 @@
  * \brief           Operating system dependant configuration
  * \{
  */
- 
+
 /**
  * \brief           Set number of message queue entries for procuder thread
  *
@@ -333,7 +333,7 @@
  *
  * \note            This mode can only be used when \ref GSM_CFG_OS is enabled
  *
- * \note            When using this mode, separate thread must be dedicated only 
+ * \note            When using this mode, separate thread must be dedicated only
  *                  for reading data on AT port
  *
  * \note            Best case for using this mode is if DMA receive is supported by host device
@@ -341,7 +341,7 @@
 #ifndef GSM_CFG_INPUT_USE_PROCESS
 #define GSM_CFG_INPUT_USE_PROCESS           0
 #endif
- 
+
 /**
  * \}
  */
@@ -572,7 +572,7 @@ void *  my_memset(void* dst, int b, size_t len);
 /**
  * \}
  */
- 
+
 #if !__DOXYGEN__
 
 #if !GSM_CFG_OS

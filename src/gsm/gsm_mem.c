@@ -2,27 +2,27 @@
  * \file            gsm_mem.c
  * \brief           Memory manager
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -51,7 +51,7 @@ typedef struct mem_block {
 
 #define MEM_BLOCK_FROM_PTR(ptr)     ((mem_block_t *)(((uint8_t *)(ptr)) - MEMBLOCK_METASIZE))
 #define MEM_BLOCK_USER_SIZE(ptr)    ((MEM_BLOCK_FROM_PTR(ptr)->size & ~mem_alloc_bit) - MEMBLOCK_METASIZE)
-    
+
 static mem_block_t start_block;                     /*!< First block data for allocations */
 static mem_block_t* end_block = NULL;               /*!< Pointer to last block in linked list */
 static size_t mem_total_size = 0;                   /*!< Total size of heap memory for allocation */
@@ -118,11 +118,11 @@ mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
     mem_block_t* first_block;
     mem_block_t* prev_end_block = NULL;
     size_t i;
-    
+
     if (end_block != NULL) {                        /* Regions already defined */
         return 0;
     }
-    
+
     /* Check if region address are linear and rising */
     mem_start_addr = (uint8_t *)0;
     for (i = 0; i < len; i++) {
@@ -148,7 +148,7 @@ mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
             mem_start_addr += MEM_ALIGN_NUM - (GSM_SZ(mem_start_addr) & MEM_ALIGN_BITS);
             mem_size -= mem_start_addr - (uint8_t *)regions->start_addr;
         }
-        
+
         /* Check memory size alignment if match */
         if (mem_size & MEM_ALIGN_BITS) {
             mem_size &= ~MEM_ALIGN_BITS;            /* Clear lower bits of memory size only */
@@ -165,9 +165,9 @@ mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
             start_block.next = (mem_block_t *)mem_start_addr;
             start_block.size = 0;
         }
-        
+
         prev_end_block = end_block;                 /* Save previous end block to set next block later */
-        
+
         /*
          * Set pointer to end of free memory - block region memory
          * Calculate new end block in region
@@ -193,17 +193,17 @@ mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
         if (prev_end_block != NULL) {
             prev_end_block->next = first_block;
         }
-        
+
         /* Set number of free bytes available to allocate in region */
         mem_available_bytes += first_block->size;
-        
+
         regions++;                                  /* Go to next region */
     }
     mem_min_available_bytes = mem_available_bytes;  /* Save minimum ever available bytes in region */
-    
+
     /* Set upper bit in memory allocation bit */
     mem_alloc_bit = GSM_SZ(GSM_SZ(1) << (sizeof(size_t) * 8 - 1));
-    
+
     return 1;                                       /* Regions set as expected */
 }
 
@@ -220,7 +220,7 @@ mem_alloc(size_t size) {
     if (end_block == NULL) {                        /* If end block is not yet defined */
         return NULL;                                /* Invalid, not initialized */
     }
-      
+
     if (!size || size >= mem_alloc_bit) {           /* Check input parameters */
         return 0;
     }
@@ -241,11 +241,11 @@ mem_alloc(size_t size) {
         prev = curr;
         curr = curr->next;
     }
-    
+
     /*
      * Possible improvements
      * Try to find smallest available block for desired amount of memory
-     * 
+     *
      * Feature may be very risky later because of fragmentation
      */
     if (curr != end_block) {                        /* We found empty block of enough memory available */
@@ -253,7 +253,7 @@ mem_alloc(size_t size) {
         prev->next = curr->next;  /* Since block is now allocated, remove it from free chain */
 
         /*
-         * If found free block is much bigger than required, 
+         * If found free block is much bigger than required,
          * then split big block by 2 blocks (one used, second available)
          * There should be available memory for at least 2 metadata block size = 8 bytes of useful memory
          */
@@ -306,7 +306,7 @@ mem_free(void* ptr) {
          */
         block->size &= ~mem_alloc_bit;              /* Clear allocated bit */
         mem_available_bytes += block->size;         /* Increase available bytes back */
-        /* memset(ptr, 0x00, block->size - MEMBLOCK_METASIZE); */ 
+        /* memset(ptr, 0x00, block->size - MEMBLOCK_METASIZE); */
         mem_insertfreeblock(block);                 /* Insert block to list of free blocks */
     }
 }
@@ -317,7 +317,7 @@ mem_free(void* ptr) {
  * \return          0 on failure or number of bytes on success
  */
 static size_t
-mem_getusersize(void* ptr) {    
+mem_getusersize(void* ptr) {
     if (ptr == NULL) {
         return 0;
     }
@@ -333,7 +333,7 @@ static void *
 mem_calloc(size_t num, size_t size) {
     void* ptr;
     size_t tot_len = num * size;
-    
+
     if ((ptr = mem_alloc(tot_len)) != NULL) {       /* Try to allocate memory */
         memset(ptr, 0x00, tot_len);                 /* Reset entire memory */
     }
@@ -351,11 +351,11 @@ static void *
 mem_realloc(void* ptr, size_t size) {
     void* newPtr;
     size_t oldSize;
-    
+
     if (ptr == NULL) {                              /* If pointer is not valid */
         return mem_alloc(size);                     /* Only allocate memory */
     }
-    
+
     oldSize = mem_getusersize(ptr);                 /* Get size of old pointer */
     newPtr = mem_alloc(size);                       /* Try to allocate new memory block */
     if (newPtr != NULL) {                           /* Check success */
@@ -494,5 +494,5 @@ uint8_t
 gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t len) {
     uint8_t ret;
     ret = mem_assignmem(regions, len);              /* Assign memory */
-    return ret;                                     
+    return ret;
 }

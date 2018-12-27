@@ -2,27 +2,27 @@
  * \file            gsm_call.c
  * \brief           Call API functions
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -47,9 +47,9 @@
 static gsmr_t
 check_enabled(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();                     
+    GSM_CORE_PROTECT();
     res = gsm.call.enabled ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();                   
+    GSM_CORE_UNPROTECT();
     return res;
 }
 
@@ -89,9 +89,9 @@ gsm_call_enable(const uint32_t blocking) {
  */
 gsmr_t
 gsm_call_disable(const uint32_t blocking) {
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     gsm.call.enabled = 0;                       /* Clear enabled status */
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return gsmOK;
 }
 
@@ -108,7 +108,7 @@ gsm_call_start(const char* number, const uint32_t blocking) {
     GSM_ASSERT("number != NULL", number != NULL);   /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("call_ready", check_ready() == gsmOK);   /* Assert input parameters */
-                                                    
+
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;
     GSM_MSG_VAR_REF(msg).msg.call_start.number = number;

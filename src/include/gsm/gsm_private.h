@@ -5,24 +5,24 @@
 
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -45,7 +45,7 @@ extern "C" {
  * \addtogroup      GSM_TYPEDEFS
  * \{
  */
- 
+
 /**
  * \brief           List of possible messages
  */
@@ -259,13 +259,13 @@ typedef struct gsm_conn {
     gsm_port_t      local_port;                 /*!< Local IP address */
     gsm_evt_fn      evt_func;                   /*!< Callback function for connection */
     void*           arg;                        /*!< User custom argument */
-    
+
     uint8_t         val_id;                     /*!< Validation ID number. It is increased each time a new connection is established.
                                                      It protects sending data to wrong connection in case we have data in send queue,
                                                      and connection was closed and active again in between. */
-    
+
     gsm_linbuff_t   buff;                       /*!< Linear buffer structure */
-    
+
     size_t          total_recved;               /*!< Total number of bytes received */
 
     union {
@@ -342,7 +342,7 @@ typedef struct gsm_msg {
         struct {
             uint8_t mode;                       /*!< Functionality mode */
         } cfun;                                 /*!< Set phone functionality */
-        
+
         struct {
             const char* pin;                    /*!< Pin code to write */
         } cpin_enter;                           /*!< Enter pin code */
@@ -479,7 +479,7 @@ typedef struct gsm_msg {
             const char* search;                 /*!< Search string */
         } pb_search;                            /*!< Search phonebook entries */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
-#if GSM_CFG_NETWORK || __DOXYGEN__ 
+#if GSM_CFG_NETWORK || __DOXYGEN__
         struct {
             const char* apn;
             const char* user;
@@ -595,7 +595,7 @@ typedef struct {
     gsm_buff_t          buff;                   /*!< Input processing buffer */
 #endif /* !GSM_CFG_INPUT_USE_PROCESS || __DOXYGEN__ */
     gsm_ll_t            ll;                     /*!< Low level functions */
-    
+
     gsm_msg_t*          msg;                    /*!< Pointer to current user message being executed */
 
     gsm_evt_t           evt;                    /*!< Callback processing structure */
@@ -620,20 +620,20 @@ typedef struct {
 #endif /* GSM_CFG_CONNS || __DOXYGEN__ */
 #if GSM_CFG_SMS || __DOXYGEN__
     gsm_sms_t           sms;                    /*!< SMS information */
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */ 
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
     gsm_pb_t            pb;                     /*!< Phonebook information */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
     gsm_call_t          call;                   /*!< Call information */
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */ 
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */
     union {
         struct {
             uint8_t     initialized:1;          /*!< Flag indicating GSM library is initialized */
             uint8_t     dev_present:1;          /*!< Flag indicating GSM device is present */
         } f;                                    /*!< Flags structure */
     } status;                                   /*!< Status structure */
-    
+
     uint8_t conn_val_id;                        /*!< Validation ID increased each time device connects to network */
 } gsm_t;
 

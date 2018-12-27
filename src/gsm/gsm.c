@@ -5,24 +5,24 @@
 
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -66,10 +66,10 @@ def_callback(gsm_evt_t* cb) {
 gsmr_t
 gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm.status.f.initialized = 0;               /* Clear possible init flag */
-    
+
     def_evt_link.fn = evt_func != NULL ? evt_func : def_callback;
     gsm.evt_func = &def_evt_link;               /* Set callback function */
-    
+
     if (!gsm_sys_init()) {                      /* Init low-level system */
         goto cleanup;
     }
@@ -109,7 +109,7 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
 
     gsm.status.f.initialized = 1;               /* We are initialized now */
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
-    
+
     /*
      * Call reset command and call default
      * AT commands to prepare basic setup for device
@@ -122,7 +122,7 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     GSM_UNUSED(blocking);                       /* Unused variable */
 #endif /* GSM_CFG_RESET_ON_INIT */
     gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
-    
+
     return gsmOK;
 
 cleanup:
@@ -172,14 +172,14 @@ gsm_reset_with_delay(uint32_t delay, const uint32_t blocking) {
  * \brief           Increase protection counter
  *
  *                  If lock was `0` before func call, lock is enabled and increased
- * \note            Function may be called multiple times to increase locks. 
+ * \note            Function may be called multiple times to increase locks.
  *                  User must take care of calling \ref gsm_core_unlock function
  *                  for the same amount to decrease lock back to `0`
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
 gsm_core_lock(void) {
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     return gsmOK;
 }
 
@@ -192,7 +192,7 @@ gsm_core_lock(void) {
  */
 gsmr_t
 gsm_core_unlock(void) {
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return gsmOK;
 }
 
@@ -205,11 +205,11 @@ gsmr_t
 gsm_evt_register(gsm_evt_fn fn) {
     gsmr_t res = gsmOK;
     gsm_evt_func_t* func, *newFunc;
-    
+
     GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
-    
-    GSM_CORE_PROTECT();                         
-    
+
+    GSM_CORE_PROTECT();
+
     /* Check if function already exists on list */
     for (func = gsm.evt_func; func != NULL; func = func->next) {
         if (func->fn == fn) {
@@ -217,7 +217,7 @@ gsm_evt_register(gsm_evt_fn fn) {
             break;
         }
     }
-    
+
     if (res == gsmOK) {
         newFunc = gsm_mem_alloc(sizeof(*newFunc));  /* Get memory for new function */
         if (newFunc != NULL) {
@@ -234,7 +234,7 @@ gsm_evt_register(gsm_evt_fn fn) {
             res = gsmERRMEM;
         }
     }
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return res;
 }
 
@@ -248,8 +248,8 @@ gsmr_t
 gsm_evt_unregister(gsm_evt_fn fn) {
     gsm_evt_func_t* func, *prev;
     GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
-    
-    GSM_CORE_PROTECT();                         
+
+    GSM_CORE_PROTECT();
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
@@ -258,7 +258,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
             break;
         }
     }
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return gsmOK;
 }
 
@@ -297,7 +297,7 @@ gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
 
 /**
  * \brief           Notify stack if device is present or not
- * 
+ *
  *                  Use this function to notify stack that device is not connected and not ready to communicate with host device
  * \param[in]       present: Flag indicating device is present
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -306,26 +306,26 @@ gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
 gsmr_t
 gsm_device_set_present(uint8_t present, const uint32_t blocking) {
     gsmr_t res = gsmOK;
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
-    
+
     /**
      * \todo: Set stack to default values
      */
 
 #if GSM_CFG_RESET_ON_INIT
     if (gsm.status.f.dev_present) {             /* Is new device present? */
-        GSM_CORE_UNPROTECT();                   
+        GSM_CORE_UNPROTECT();
         res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking); /* Reset with delay */
-        GSM_CORE_PROTECT();                     
+        GSM_CORE_PROTECT();
     }
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
 #endif /* GSM_CFG_RESET_ON_INIT */
-    
+
     gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);       /* Send present event */
-    
-    GSM_CORE_UNPROTECT();                       
+
+    GSM_CORE_UNPROTECT();
     return res;
 }
 
@@ -336,9 +336,9 @@ gsm_device_set_present(uint8_t present, const uint32_t blocking) {
 uint8_t
 gsm_device_is_present(void) {
     uint8_t res;
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     res = gsm.status.f.dev_present;
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return res;
 }
 

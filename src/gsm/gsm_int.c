@@ -5,24 +5,24 @@
 
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
  * publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, 
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -224,13 +224,13 @@ gsmi_send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
 void
 gsmi_send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
     char special = '\\';
-    
+
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     if (str != NULL) {
         if (e) {                                /* Do we have to escape string? */
             while (*str) {                      /* Go through string */
-                if (*str == ',' || *str == '"' || *str == '\\') {   /* Check for special character */    
+                if (*str == ',' || *str == '"' || *str == '\\') {   /* Check for special character */
                     GSM_AT_PORT_SEND_CHR(&special); /* Send special character */
                 }
                 GSM_AT_PORT_SEND_CHR(str);      /* Send character */
@@ -254,7 +254,7 @@ gsmi_send_number(uint32_t num, uint8_t q, uint8_t c) {
     char str[11];
 
     gsmi_number_to_str(num, str);               /* Convert digit to decimal string */
-    
+
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     GSM_AT_PORT_SEND_STR(str);                  /* Send string with number */
@@ -272,7 +272,7 @@ gsmi_send_port(gsm_port_t port, uint8_t q, uint8_t c) {
     char str[6];
 
     gsmi_number_to_str(GSM_PORT2NUM(port), str);/* Convert digit to decimal string */
-    
+
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     GSM_AT_PORT_SEND_STR(str);                  /* Send string with number */
@@ -288,9 +288,9 @@ gsmi_send_port(gsm_port_t port, uint8_t q, uint8_t c) {
 void
 gsmi_send_signed_number(int32_t num, uint8_t q, uint8_t c) {
     char str[11];
-    
+
     gsmi_signed_number_to_str(num, str);        /* Convert digit to decimal string */
-    
+
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     GSM_AT_PORT_SEND_STR(str);                  /* Send string with number */
@@ -348,7 +348,7 @@ gsmi_send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
     //for (size_t i = 0; i < GSM_CFG_MAX_CONNS; i++) {   /* Check all connections */
     //    if (gsm.conns[i].status.f.active) {
     //        gsm.conns[i].status.f.active = 0;
-    //        
+    //
     //        gsm.evt.evt.conn_active_closed.conn = &gsm.conns[i];
     //        gsm.evt.evt.conn_active_closed.client = gsm.conns[i].status.f.client;
     //        gsmi_send_conn_cb(&gsm.conns[i], NULL); /* Send callback function */
@@ -364,7 +364,7 @@ gsmi_send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
 gsmr_t
 gsmi_send_cb(gsm_evt_type_t type) {
     gsm.evt.type = type;                         /* Set callback type to process */
-    
+
     /* Call callback function for all registered functions */
     for (gsm_evt_func_t* link = gsm.evt_func; link != NULL; link = link->next) {
         link->fn(&gsm.evt);
@@ -431,7 +431,7 @@ gsmi_tcpip_process_send_data(void) {
     GSM_AT_PORT_SEND_STR("+CIPSEND=");
     gsmi_send_number(GSM_U32(c->num), 0, 0);    /* Send connection number */
     gsmi_send_number(GSM_U32(gsm.msg->msg.conn_send.sent), 0, 1);   /* Send length number */
-    
+
     /* On UDP connections, IP address and port may be selected */
     if (c->type == GSM_CONN_TYPE_UDP) {
         if (gsm.msg->msg.conn_send.remote_ip != NULL && gsm.msg->msg.conn_send.remote_port) {
@@ -446,7 +446,7 @@ gsmi_tcpip_process_send_data(void) {
 /**
  * \brief           Process data sent and send remaining
  * \param[in]       sent: Status whether data were sent or not,
- *                      info received from GSM with "SEND OK" or "SEND FAIL" 
+ *                      info received from GSM with "SEND OK" or "SEND FAIL"
  * \return          `1` in case we should stop sending or `0` if we still have data to process
  */
 static uint8_t
@@ -592,7 +592,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
     }
 
     /* Check error rgsmonse */
-    if (!is_ok) {                               /* If still not ok, check if error? */                             
+    if (!is_ok) {                               /* If still not ok, check if error? */
         is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10); /* First check +CME coded errors */
         if (!is_error) {                        /* Check basic error aswell */
             is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CMS ERROR", 10); /* First check +CME coded errors */
@@ -671,7 +671,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         } else if (GSM_CHARISNUM(rcv->data[0]) && rcv->data[1] == ',' && rcv->data[2] == ' '
             && (!strncmp(&rcv->data[3], "CLOSE OK" CRLF, 8 + CRLF_LEN) || !strncmp(&rcv->data[3], "CLOSED" CRLF, 6 + CRLF_LEN))) {
             uint8_t forced = 0, num;
-            
+
             num = GSM_CHARTONUM(rcv->data[0]);  /* Get connection number */
             if (CMD_IS_CUR(GSM_CMD_CIPCLOSE) && gsm.msg->msg.conn_close.conn->num == num) {
                 forced = 1;
@@ -800,7 +800,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #endif /* GSM_CFG_CONN */
         }
     }
-    
+
     /*
      * In case of any of these events, simply release semaphore
      * and proceed with next command
@@ -848,7 +848,7 @@ gsmr_t
 gsmi_process_buffer(void) {
     void* data;
     size_t len;
-    
+
     do {
         /*
          * Get length of linear memory in buffer
@@ -861,10 +861,10 @@ gsmi_process_buffer(void) {
              * in linear block to process
              */
             data = gsm_buff_get_linear_block_address(&gsm.buff);
-            
+
             /* Process actual received data */
             gsmi_process(data, len);
-            
+
             /*
              * Once they are processed, simply skip
              * the buffer memory and start over
@@ -889,13 +889,13 @@ gsmi_process(const void* data, size_t data_len) {
     const uint8_t* d;
     static uint8_t ch_prev1, ch_prev2;
     static gsm_unicode_t unicode;
-    
+
     d = data;                                   /* Go to byte format */
     d_len = data_len;
     while (d_len) {                             /* Read entire set of characters from buffer */
         ch = *d++;                              /* Get next character */
         d_len--;                                /* Decrease remaining length */
-        
+
         if (0) {
 #if GSM_CFG_CONN
         } else if (gsm.ipd.read) {              /* Read connection data */
@@ -1038,7 +1038,7 @@ gsmi_process(const void* data, size_t data_len) {
             } else if (ch >= 0x80) {            /* Process only if more than ASCII can hold */
                 res = gsmi_unicode_decode(&unicode, ch);    /* Try to decode unicode format */
             }
-            
+
             if (res == gsmERR) {                /* In case of an ERROR */
                 unicode.r = 0;
             }
@@ -1129,7 +1129,7 @@ gsmi_process(const void* data, size_t data_len) {
                 RECV_RESET();                   /* Invalid character in sequence */
             }
         }
-        
+
         ch_prev2 = ch_prev1;                    /* Save previous character to previous previous */
         ch_prev1 = ch;                          /* Char current to previous */
     }
@@ -1205,7 +1205,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             gsm.sms.enabled = n_cmd == GSM_CMD_IDLE;    /* Set enabled status */
             gsm.evt.evt.sms_enable.status = gsm.sms.enabled ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_SMS_ENABLE);   /* Send to user */
-        }    
+        }
     } else if (CMD_IS_DEF(GSM_CMD_CMGS)) {      /* Send SMS default command */
         if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {   /* Set message format current command */
             SET_NEW_CMD(GSM_CMD_CMGS);          /* Now send actual message */
@@ -1519,7 +1519,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             gsmi_send_string(msg->msg.cpin_add.pin, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
-        }                          
+        }
         case GSM_CMD_CPIN_CHANGE: {             /* Change already active SIM */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPWD=\"SC\"");
@@ -1554,7 +1554,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
                     case GSM_OPERATOR_FORMAT_SHORT_NAME:
                         gsmi_send_string(msg->msg.cops_set.name, 1, 1, 1);
                         break;
-                    default: 
+                    default:
                         gsmi_send_number(GSM_U32(msg->msg.cops_set.num), 0, 1);
                 }
             }
@@ -1648,7 +1648,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
                 gsmi_send_string("TCP", 0, 1, 1);
             } else if (msg->msg.conn_start.type == GSM_CONN_TYPE_UDP) {
                 gsmi_send_string("UDP", 0, 1, 1);
-            } 
+            }
             gsmi_send_string(msg->msg.conn_start.host, 0, 1, 1);
             gsmi_send_port(msg->msg.conn_start.port, 0, 1);
             GSM_AT_PORT_SEND_END();
@@ -1893,7 +1893,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             break;
         }
 #endif /* GSM_CFG_NETWORK */
-        default: 
+        default:
             return gsmERR;                      /* Invalid command */
     }
     return gsmOK;                               /* Valid command */

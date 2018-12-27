@@ -2,27 +2,27 @@
  * \file            gsm_sys_template.c
  * \brief           System dependant functions
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -167,7 +167,7 @@ uint8_t
 gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt) {
     osSemaphoreDef(SEM);                        /* Define semaphore info */
     *p = osSemaphoreCreate(osSemaphore(SEM), 1);    /* Create semaphore with one token */
-    
+
     if (*p && !cnt) {                           /* We have valid entry */
         osSemaphoreWait(*p, 0);                 /* Lock semaphore immediatelly */
     }
@@ -285,7 +285,7 @@ uint32_t
 gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     osEvent evt;
     uint32_t time = osKernelSysTick();          /* Get current time */
-    
+
     evt = osMessageGet(*b, !timeout ? osWaitForever : timeout); /* Get message event */
     if (evt.status == osEventMessage) {         /* Did we get a message? */
         *m = evt.value.p;                       /* Set value */
@@ -316,7 +316,7 @@ gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
 uint8_t
 gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
     osEvent evt;
-    
+
     evt = osMessageGet(*b, 0);                  /* Get message event */
     if (evt.status == osEventMessage) {         /* Did we get a message? */
         *m = evt.value.p;                       /* Set value */
@@ -356,7 +356,7 @@ gsm_sys_mbox_invalid(gsm_sys_mbox_t* b) {
  * \param[in]       thread_func: Thread function to use as thread body
  * \param[in]       arg: Thread function argument
  * \param[in]       stack_size: Size of thread stack in uints of bytes. If set to 0, reserve default stack size
- * \param[in]       prio: Thread priority 
+ * \param[in]       prio: Thread priority
  * \return          1 on success, 0 otherwise
  */
 uint8_t

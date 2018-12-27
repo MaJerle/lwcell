@@ -2,27 +2,27 @@
  * \file            gsm_phonebook.c
  * \brief           Phonebook API
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -47,9 +47,9 @@
 static gsmr_t
 check_enabled(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     res = gsm.pb.enabled ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return res;
 }
 
@@ -62,12 +62,12 @@ check_enabled(void) {
 static gsmr_t
 check_mem(gsm_mem_t mem, uint8_t can_curr) {
     gsmr_t res = gsmERRMEM;
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     if ((mem < GSM_MEM_END && gsm.pb.mem.mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return res;
 }
 
@@ -94,9 +94,9 @@ gsm_pb_enable(const uint32_t blocking) {
  */
 gsmr_t
 gsm_pb_disable(const uint32_t blocking) {
-    GSM_CORE_PROTECT();                         
+    GSM_CORE_PROTECT();
     gsm.pb.enabled = 0;                         /* Clear enabled status */
-    GSM_CORE_UNPROTECT();                       
+    GSM_CORE_UNPROTECT();
     return gsmOK;
 }
 
@@ -119,7 +119,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
-    
+
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;/* First get memory */

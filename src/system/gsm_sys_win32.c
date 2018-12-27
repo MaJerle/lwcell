@@ -2,27 +2,27 @@
  * \file            gsm_sys_win32.c
  * \brief           System dependant functions for WIN32
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -190,9 +190,9 @@ gsm_sys_sem_invalid(gsm_sys_sem_t* p) {
 uint8_t
 gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
     win32_mbox_t* mbox;
-    
+
     *b = NULL;
-    
+
     mbox = malloc(sizeof(*mbox) + size * sizeof(void *));
     if (mbox != NULL) {
         memset(mbox, 0x00, sizeof(*mbox));
@@ -219,9 +219,9 @@ uint32_t
 gsm_sys_mbox_put(gsm_sys_mbox_t* b, void* m) {
     win32_mbox_t* mbox = *b;
     uint32_t time = osKernelSysTick();          /* Get start time */
-  
+
     gsm_sys_sem_wait(&mbox->sem, 0);            /* Wait for access */
-    
+
     /*
      * Since function is blocking until ready to write something to queue,
      * wait and release the semaphores to allow other threads
@@ -248,12 +248,12 @@ gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     win32_mbox_t* mbox = *b;
     uint32_t time = osKernelSysTick();          /* Get current time */
     uint32_t spent_time;
-    
+
     /* Get exclusive access to message queue */
     if ((spent_time = gsm_sys_sem_wait(&mbox->sem, timeout)) == GSM_SYS_TIMEOUT) {
         return spent_time;
     }
-    
+
     /* Make sure we have something to read from queue. */
     while (mbox_is_empty(mbox)) {
         gsm_sys_sem_release(&mbox->sem);        /* Release semaphore and allow other threads to write something */
@@ -271,7 +271,7 @@ gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
         }
         spent_time = gsm_sys_sem_wait(&mbox->sem, timeout); /* Wait again for exclusive access */
     }
-    
+
     /*
      * At this point, semaphore is not empty and
      * we have exclusive access to content
@@ -280,11 +280,11 @@ gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     if (++mbox->out >= mbox->size) {
         mbox->out = 0;
     }
-    
+
     /* Release it only if waiting for it */
     gsm_sys_sem_release(&mbox->sem_not_full);   /* Release semaphore as it is not full */
     gsm_sys_sem_release(&mbox->sem);            /* Release exclusive access to mbox */
-    
+
     return osKernelSysTick() - time;
 }
 
@@ -312,13 +312,13 @@ gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
 uint8_t
 gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
     win32_mbox_t* mbox = *b;
-    
+
     gsm_sys_sem_wait(&mbox->sem, 0);            /* Wait exclusive access */
     if (mbox->in == mbox->out) {
         gsm_sys_sem_release(&mbox->sem);        /* Release access */
         return 0;
     }
-    
+
     *m = mbox->entries[mbox->out];
     mbox->out++;
     if (mbox->out >= mbox->size) {
