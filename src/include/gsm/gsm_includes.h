@@ -47,6 +47,7 @@ extern "C" {
 #include "gsm/gsm_sim.h"
 #include "gsm/gsm_operator.h"
 #include "gsm/gsm_evt.h"
+#include "gsm/gsm_network.h"
 
 #include "system/gsm_sys.h"
 
@@ -59,9 +60,6 @@ extern "C" {
 #if GSM_CFG_PHONEBOOK
 #include "gsm/gsm_phonebook.h"
 #endif /* GSM_CFG_PHONEBOOK */
-#if GSM_CFG_NETWORK
-#include "gsm/gsm_network.h"
-#endif /* GSM_CFG_NETWORK */
 #if GSM_CFG_CONN
 #include "gsm/gsm_conn.h"
 #endif /* GSM_CFG_CONN */
