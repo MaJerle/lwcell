@@ -347,8 +347,7 @@ typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt* evt);
  * \brief           List of possible callback types received to user
  */
 typedef enum gsm_cb_type_t {
-    GSM_EVT_RESET,                              /*!< Device reset detected */
-    GSM_EVT_RESET_FINISH,                       /*!< Reset operation finished */
+    GSM_EVT_RESET,                              /*!< Reset operation finished */
 
     GSM_EVT_DEVICE_PRESENT,                     /*!< Notification when device present status changes */
     GSM_EVT_DEVICE_IDENTIFIED,                  /*!< Device identified event */
@@ -407,7 +406,7 @@ typedef struct gsm_evt {
     union {
         struct {
             gsmr_t res;                         /*!< Reset operation result */
-        } reset_finish;                         /*!< Reset occurred. Use with \ref GSM_EVT_RESET_FINISH event */
+        } reset;                                /*!< Reset occurred. Use with \ref GSM_EVT_RESET event */
 
         struct {
             gsm_sim_state_t state;              /*!< SIM state */

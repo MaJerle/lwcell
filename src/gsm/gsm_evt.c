@@ -50,8 +50,8 @@ gsm_evt_get_type(gsm_evt_t* cc) {
  * \return          Member of \ref gsmr_t enumeration
  */
 gsmr_t
-gsm_evt_reset_finish_get_result(gsm_evt_t* cc) {
-    return cc->evt.reset_finish.res;
+gsm_evt_reset_get_result(gsm_evt_t* cc) {
+    return cc->evt.reset.res;
 }
 
 /**

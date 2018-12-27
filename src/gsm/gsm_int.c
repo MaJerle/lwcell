@@ -83,7 +83,7 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
     gsm.evt.type = GSM_EVT_CONN_SEND;               \
     gsm.evt.evt.conn_data_send.res = err;           \
     gsm.evt.evt.conn_data_send.conn = (m)->msg.conn_send.conn;  \
-    gsm.evt.evt.conn_data_send.sent = (m)->msg.conn_send.sent_all;   \
+    gsm.evt.evt.conn_data_send.sent = (m)->msg.conn_send.sent_all;  \
     gsmi_send_conn_cb((m)->msg.conn_send.conn, NULL);   \
 } while (0)
 
@@ -92,9 +92,9 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
  * \param[in]       m: Connection send message
  * \param[in]       err: Error of type \ref gsmr_t
  */
-#define RESET_FINISH_SEND_EVT(m, err)  do { \
-    gsm.evt.evt.reset_finish.res = err;             \
-    gsmi_send_cb(GSM_EVT_RESET_FINISH);             \
+#define RESET_SEND_EVT(m, err)  do { \
+    gsm.evt.evt.reset.res = err;                    \
+    gsmi_send_cb(GSM_EVT_RESET);                    \
 } while (0)
 
  /**
@@ -1193,7 +1193,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 
         /* Send event */
         if (n_cmd == GSM_CMD_IDLE) {
-            RESET_FINISH_SEND_EVT(msg, gsmOK);
+            RESET_SEND_EVT(msg, gsmOK);
         }
     } else if (CMD_IS_DEF(GSM_CMD_COPS_GET)) {
         if (CMD_IS_CUR(GSM_CMD_COPS_GET)) {
@@ -1974,9 +1974,10 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
 void
 gsmi_process_events_for_timeout(gsm_msg_t* msg) {
     switch (msg->cmd_def) {
+        /* Timeout on reset sequence */
         case GSM_CMD_RESET: {
             /* Timeout on reset */
-            RESET_FINISH_SEND_EVT(msg, gsmTIMEOUT);
+            RESET_SEND_EVT(msg, gsmTIMEOUT);
             break;
         }
 
