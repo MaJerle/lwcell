@@ -62,6 +62,18 @@ gsmr_t      gsm_evt_reset_get_result(gsm_evt_t* cc);
  */
 
 /**
+ * \name            GSM_EVT_RESTORE
+ * \anchor          GSM_EVT_RESTORE
+ * \brief           Event helper functions for \ref GSM_EVT_RESTORE event
+ */
+
+gsmr_t      gsm_evt_restore_get_result(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
  * \name            GSM_EVT_NETWORK_OPERATOR_CURRENT
  * \anchor          GSM_EVT_NETWORK_OPERATOR_CURRENT
  * \brief           Event helper functions for \ref GSM_EVT_OPERATOR_CURRENT event

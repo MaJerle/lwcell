@@ -55,6 +55,16 @@ gsm_evt_reset_get_result(gsm_evt_t* cc) {
 }
 
 /**
+ * \brief           Get restore sequence operation status
+ * \param[in]       cc: Event data
+ * \return          Member of \ref gsmr_t enumeration
+ */
+gsmr_t
+gsm_evt_restore_get_result(gsm_evt_t* cc) {
+    return cc->evt.restore.res;
+}
+
+/**
  * \brief           Get current operator data from event
  * \note            This function may only be used when event type is \ref GSM_EVT_OPERATOR_CURRENT
  * \param[in]       cc: Event data

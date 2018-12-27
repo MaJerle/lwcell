@@ -75,7 +75,7 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 
 /**
  * \brief           Send connection callback for "data send"
- * \param[in]       m: Connection send message
+ * \param[in]       m: Command message
  * \param[in]       err: Error of type \ref gsmr_t
  */
 #define CONN_SEND_DATA_SEND_EVT(m, err)  do { \
@@ -88,13 +88,23 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 } while (0)
 
 /**
- * \brief           Send reset finish event
+ * \brief           Send reset sequence event
+ * \param[in]       m: Command message
+ * \param[in]       err: Error of type \ref gsmr_t
+ */
+#define RESET_SEND_EVT(m, err)  do {                \
+    gsm.evt.evt.reset.res = err;                    \
+    gsmi_send_cb(GSM_EVT_RESET);                    \
+} while (0)
+
+/**
+ * \brief           Send restore sequence event
  * \param[in]       m: Connection send message
  * \param[in]       err: Error of type \ref gsmr_t
  */
-#define RESET_SEND_EVT(m, err)  do { \
-    gsm.evt.evt.reset.res = err;                    \
-    gsmi_send_cb(GSM_EVT_RESET);                    \
+#define RESTORE_SEND_EVT(m, err)  do {              \
+    gsm.evt.evt.restore.res = err;                  \
+    gsmi_send_cb(GSM_EVT_RESTORE);                  \
 } while (0)
 
  /**
@@ -111,7 +121,7 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 
 /**
  * \brief           Send SMS read operation event
- * \param[in]       m: SMS delete message
+ * \param[in]       m: SMS read message
  * \param[in]       err: Error of type \ref gsmr_t
  */
 #define SMS_SEND_READ_EVT(m, err)     do {          \
@@ -122,7 +132,7 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 
 /**
  * \brief           Send SMS read operation event
- * \param[in]       m: SMS delete message
+ * \param[in]       m: SMS list message
  * \param[in]       err: Error of type \ref gsmr_t
  */
 #define SMS_SEND_LIST_EVT(m, err)     do {          \
@@ -135,7 +145,7 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 
 /**
  * \brief           Send SMS send operation event
- * \param[in]       m: SMS delete message
+ * \param[in]       m: SMS send message
  * \param[in]       err: Error of type \ref gsmr_t
  */
 #define SMS_SEND_SEND_EVT(m, err)     do {          \
@@ -1978,6 +1988,13 @@ gsmi_process_events_for_timeout(gsm_msg_t* msg) {
         case GSM_CMD_RESET: {
             /* Timeout on reset */
             RESET_SEND_EVT(msg, gsmTIMEOUT);
+            break;
+        }
+
+        /* Timeout on restore sequence */
+        case GSM_CMD_RESTORE: {
+            /* Timeout on reset */
+            RESTORE_SEND_EVT(msg, gsmTIMEOUT);
             break;
         }
 
