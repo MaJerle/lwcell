@@ -1004,7 +1004,7 @@ gsmi_process(const void* data, size_t data_len) {
             }
             if (ch == '\n' && ch_prev1 == '\r') {
                 if (gsm.msg->msg.sms_read.read == 2) {
-                    //SMS_SEND_READ_EVT(gsm.msg, gsmOK);
+                    
                 }
                 gsm.msg->msg.sms_read.read = 0;
             }

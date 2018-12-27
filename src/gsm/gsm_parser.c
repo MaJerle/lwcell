@@ -649,6 +649,7 @@ gsmi_parse_cmgr(const char* str) {
     }
 
     e = gsm.msg->msg.sms_read.entry;
+    e->length = 0;
     gsmi_parse_sms_status(&str, &e->status);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
@@ -677,6 +678,7 @@ gsmi_parse_cmgl(const char* str) {
     }
 
     e = &gsm.msg->msg.sms_list.entries[gsm.msg->msg.sms_list.ei];
+    e->length = 0;
     e->mem = gsm.msg->msg.sms_list.mem;         /* Manually set memory */
     e->pos = GSM_SZ(gsmi_parse_number(&str));   /* Scan position */
     gsmi_parse_sms_status(&str, &e->status);
