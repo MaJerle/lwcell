@@ -278,7 +278,7 @@ gsm_evt_sms_read_get_entry(gsm_evt_t* cc) {
  * \return          SMS entry
  */
 gsmr_t
-gsm_evt_sms_read_get_res(gsm_evt_t* cc) {
+gsm_evt_sms_read_get_result(gsm_evt_t* cc) {
     return cc->evt.sms_read.res;
 }
 

@@ -187,7 +187,7 @@ gsm_mem_t   gsm_evt_sms_recv_get_mem(gsm_evt_t* cc);
  */
 
 gsm_sms_entry_t*    gsm_evt_sms_read_get_entry(gsm_evt_t* cc);
-gsmr_t              gsm_evt_sms_read_get_res(gsm_evt_t* cc);
+gsmr_t              gsm_evt_sms_read_get_result(gsm_evt_t* cc);
 
 /**
  * \}
