@@ -76,17 +76,15 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 /**
  * \brief           Send connection callback for "data send"
  * \param[in]       m: Connection send message
- * \param[in]       c: Connection handle
- * \param[in]       sa: Number of bytes successfully sent, "sent all"
  * \param[in]       err: Error of type \ref gsmr_t
  */
-#define CONN_SEND_DATA_SEND_EVT(m, c, sa, err)  do { \
+#define CONN_SEND_DATA_SEND_EVT(m, err)  do { \
     CONN_SEND_DATA_FREE(m);                         \
     gsm.evt.type = GSM_EVT_CONN_SEND;               \
     gsm.evt.evt.conn_data_send.res = err;           \
-    gsm.evt.evt.conn_data_send.conn = c;            \
-    gsm.evt.evt.conn_data_send.sent = sa;           \
-    gsmi_send_conn_cb(c, NULL);                     \
+    gsm.evt.evt.conn_data_send.conn = (m)->msg.conn_send.conn;  \
+    gsm.evt.evt.conn_data_send.sent = (m)->msg.conn_send.sent_all;   \
+    gsmi_send_conn_cb((m)->msg.conn_send.conn, NULL);   \
 } while (0)
 
  /**
@@ -424,10 +422,7 @@ gsmi_tcpip_process_send_data(void) {
         gsm.msg->msg.conn_send.val_id != c->val_id  /* Did validation ID change after we set parameter? */
     ) {
         /* Send event to user about failed send event */
-        CONN_SEND_DATA_SEND_EVT(gsm.msg,
-            gsm.msg->msg.conn_send.conn,
-            gsm.msg->msg.conn_send.sent_all,
-            gsmCLOSED);
+        CONN_SEND_DATA_SEND_EVT(gsm.msg, gsmCLOSED);
         return gsmERR;
     }
     gsm.msg->msg.conn_send.sent = GSM_MIN(gsm.msg->msg.conn_send.btw, GSM_CFG_CONN_MAX_DATA_LEN);
@@ -494,29 +489,20 @@ gsmi_process_cipsend_response(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_erro
                 gsm.msg->msg.conn_send.wait_send_ok_err = 0;
                 *is_ok = gsmi_tcpip_process_data_sent(1);    /* Process as data were sent */
                 if (*is_ok && gsm.msg->msg.conn_send.conn->status.f.active) {
-                    CONN_SEND_DATA_SEND_EVT(gsm.msg,
-                        gsm.msg->msg.conn_send.conn,
-                        gsm.msg->msg.conn_send.sent_all,
-                        gsmOK);
+                    CONN_SEND_DATA_SEND_EVT(gsm.msg, gsmOK);
                 }
             } else if (!strncmp(&rcv->data[3], "SEND FAIL" CRLF, 9 + CRLF_LEN)) {
                 gsm.msg->msg.conn_send.wait_send_ok_err = 0;
                 *is_error = gsmi_tcpip_process_data_sent(0);/* Data were not sent due to SEND FAIL or command didn't even start */
                 if (*is_error && gsm.msg->msg.conn_send.conn->status.f.active) {
-                    CONN_SEND_DATA_SEND_EVT(gsm.msg,
-                        gsm.msg->msg.conn_send.conn,
-                        gsm.msg->msg.conn_send.sent_all,
-                        gsmERR);
+                    CONN_SEND_DATA_SEND_EVT(gsm.msg, gsmERR);
                 }
             }
             GSM_UNUSED(num);
         }
     /* Check for an error or if connection closed in the meantime */
     } else if (*is_error) {
-        CONN_SEND_DATA_SEND_EVT(gsm.msg,
-            gsm.msg->msg.conn_send.conn,
-            gsm.msg->msg.conn_send.sent_all,
-            gsmERR);
+        CONN_SEND_DATA_SEND_EVT(gsm.msg, gsmERR);
     }
 }
 
@@ -1997,8 +1983,7 @@ gsmi_process_events_for_timeout(gsm_msg_t* msg) {
          */
         case GSM_CMD_CIPSEND: {
             /* Send data sent error event */
-            CONN_SEND_DATA_SEND_EVT(msg,
-                msg->msg.conn_send.conn, 0, gsmTIMEOUT);
+            CONN_SEND_DATA_SEND_EVT(msg, gsmTIMEOUT);
             break;
         }
 #endif /* GSM_CFG_CONN */
