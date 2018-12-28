@@ -78,6 +78,11 @@ gsm_network_detach(const uint32_t blocking) {
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
 }
 
+/**
+ * \brief           Check network PDP status
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
 gsmr_t
 gsm_network_check_status(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
@@ -97,7 +102,7 @@ gsmr_t
 gsm_network_copy_ip(gsm_ip_t* ip) {
     if (gsm_network_is_attached()) {
         GSM_CORE_PROTECT();
-        memcpy(ip, &gsm.network.ip_addr, sizeof(*ip));
+        memcpy(ip, &gsm.m.network.ip_addr, sizeof(*ip));
         GSM_CORE_UNPROTECT();
         return gsmOK;
     }
@@ -112,7 +117,7 @@ uint8_t
 gsm_network_is_attached(void) {
     uint8_t res;
     GSM_CORE_PROTECT();
-    res = GSM_U8(gsm.network.is_attached);
+    res = GSM_U8(gsm.m.network.is_attached);
     GSM_CORE_UNPROTECT();
     return res;
 }
@@ -143,9 +148,8 @@ gsm_network_rssi(int16_t* rssi, const uint32_t blocking) {
 gsm_network_reg_status_t
 gsm_network_get_reg_status(void) {
     gsm_network_reg_status_t ret;
-
     GSM_CORE_PROTECT();
-    ret = gsm.network.status;
+    ret = gsm.m.network.status;
     GSM_CORE_UNPROTECT();
     return ret;
 }

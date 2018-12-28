@@ -77,7 +77,8 @@ configure_uart(uint32_t baudrate) {
     if (!initialized) {
         static const LPCWSTR com_ports[] = {
             L"\\\\.\\COM23",
-            L"\\\\.\\COM9"
+            L"\\\\.\\COM9",
+            L"\\\\.\\COM8"
         };
         for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); i++) {
             comPort = CreateFile(com_ports[i],

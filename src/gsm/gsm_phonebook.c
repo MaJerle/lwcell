@@ -48,7 +48,7 @@ static gsmr_t
 check_enabled(void) {
     gsmr_t res;
     GSM_CORE_PROTECT();
-    res = gsm.pb.enabled ? gsmOK : gsmERR;
+    res = gsm.m.pb.enabled ? gsmOK : gsmERR;
     GSM_CORE_UNPROTECT();
     return res;
 }
@@ -63,7 +63,7 @@ static gsmr_t
 check_mem(gsm_mem_t mem, uint8_t can_curr) {
     gsmr_t res = gsmERRMEM;
     GSM_CORE_PROTECT();
-    if ((mem < GSM_MEM_END && gsm.pb.mem.mem_available & (1 << (uint32_t)mem)) ||
+    if ((mem < GSM_MEM_END && gsm.m.pb.mem.mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
@@ -95,7 +95,7 @@ gsm_pb_enable(const uint32_t blocking) {
 gsmr_t
 gsm_pb_disable(const uint32_t blocking) {
     GSM_CORE_PROTECT();
-    gsm.pb.enabled = 0;                         /* Clear enabled status */
+    gsm.m.pb.enabled = 0;
     GSM_CORE_UNPROTECT();
     return gsmOK;
 }

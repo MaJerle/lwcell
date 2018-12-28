@@ -312,17 +312,17 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
     if (skip_first) {
         gsmi_parse_number(&str);
     }
-    gsm.network.status = (gsm_network_reg_status_t)gsmi_parse_number(&str);
+    gsm.m.network.status = (gsm_network_reg_status_t)gsmi_parse_number(&str);
 
     /*
      * In case we are connected to network,
      * scan for current network info
      */
-    if (gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED ||
-        gsm.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
+    if (gsm.m.network.status == GSM_NETWORK_REG_STATUS_CONNECTED ||
+        gsm.m.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
         /* Try to get operator */
         /* Notify user in case we are not able to add new command to queue */
-        gsm_operator_get(&gsm.network.curr_operator, 0);
+        gsm_operator_get(&gsm.m.network.curr_operator, 0);
 #if GSM_CFG_NETWORK
     } else if (gsm_network_is_attached()) {
         gsm_network_check_status(0);        /* Do the update */
@@ -330,7 +330,7 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
     }
 
     /* Send callback event */
-    gsmi_send_cb(GSM_EVT_NETWORK_REG);
+    gsmi_send_cb(GSM_EVT_NETWORK_REG_CHANGED);
 
     return 1;
 }
@@ -353,7 +353,7 @@ gsmi_parse_csq(const char* str) {
     } else {
         rssi = 0;
     }
-    gsm.rssi = rssi;                            /* Save RSSI to global variable */
+    gsm.m.rssi = rssi;                          /* Save RSSI to global variable */
     if (gsm.msg->cmd_def == GSM_CMD_CSQ_GET &&
         gsm.msg->msg.csq.rssi != NULL) {
         *gsm.msg->msg.csq.rssi = rssi;          /* Save to user variable */
@@ -374,34 +374,39 @@ gsmi_parse_csq(const char* str) {
  */
 uint8_t
 gsmi_parse_cpin(const char* str, uint8_t send_evt) {
+    gsm_sim_state_t state;
     if (*str == '+') {
         str += 7;
     }
     if (!strncmp(str, "READY", 5)) {
-        gsm.sim.state = GSM_SIM_STATE_READY;
+        state = GSM_SIM_STATE_READY;
     } else if (!strncmp(str, "NOT READY", 9)) {
-        gsm.sim.state = GSM_SIM_STATE_NOT_READY;
+        state = GSM_SIM_STATE_NOT_READY;
     } else if (!strncmp(str, "NOT INSERTED", 14)) {
-        gsm.sim.state = GSM_SIM_STATE_NOT_INSERTED;
+        state = GSM_SIM_STATE_NOT_INSERTED;
     } else if (!strncmp(str, "SIM PIN", 7)) {
-        gsm.sim.state = GSM_SIM_STATE_PIN;
+        state = GSM_SIM_STATE_PIN;
     } else if (!strncmp(str, "SIM PUK", 7)) {
-        gsm.sim.state = GSM_SIM_STATE_PUK;
+        state = GSM_SIM_STATE_PUK;
     } else {
-        gsm.sim.state = GSM_SIM_STATE_NOT_READY;
+        state = GSM_SIM_STATE_NOT_READY;
     }
 
-    /*
-     * In case SIM is ready,
-     * start with basic info about SIM
-     */
-    if (gsm.sim.state == GSM_SIM_STATE_READY) {
-        gsmi_get_sim_info(0);
-    }
+    /* React only on change */
+    if (state != gsm.m.sim.state) {
+        gsm.m.sim.state = state;
+        /*
+         * In case SIM is ready,
+         * start with basic info about SIM
+         */
+        if (gsm.m.sim.state == GSM_SIM_STATE_READY) {
+            gsmi_get_sim_info(0);
+        }
 
-    if (send_evt) {
-        gsm.evt.evt.cpin.state = gsm.sim.state;
-        gsmi_send_cb(GSM_EVT_CPIN);
+        if (send_evt) {
+            gsm.evt.evt.cpin.state = gsm.m.sim.state;
+            gsmi_send_cb(GSM_EVT_SIM_STATE_CHANGED);
+        }
     }
     return 1;
 }
@@ -417,30 +422,30 @@ gsmi_parse_cops(const char* str) {
         str += 7;
     }
 
-    gsm.network.curr_operator.mode = (gsm_operator_mode_t)gsmi_parse_number(&str);
+    gsm.m.network.curr_operator.mode = (gsm_operator_mode_t)gsmi_parse_number(&str);
     if (*str != '\r') {
-        gsm.network.curr_operator.format = (gsm_operator_format_t)gsmi_parse_number(&str);
+        gsm.m.network.curr_operator.format = (gsm_operator_format_t)gsmi_parse_number(&str);
         if (*str != '\r') {
-            switch (gsm.network.curr_operator.format) {
+            switch (gsm.m.network.curr_operator.format) {
                 case GSM_OPERATOR_FORMAT_LONG_NAME:
-                    gsmi_parse_string(&str, gsm.network.curr_operator.data.long_name, sizeof(gsm.network.curr_operator.data.long_name), 1);
+                    gsmi_parse_string(&str, gsm.m.network.curr_operator.data.long_name, sizeof(gsm.m.network.curr_operator.data.long_name), 1);
                     break;
                 case GSM_OPERATOR_FORMAT_SHORT_NAME:
-                    gsmi_parse_string(&str, gsm.network.curr_operator.data.short_name, sizeof(gsm.network.curr_operator.data.short_name), 1);
+                    gsmi_parse_string(&str, gsm.m.network.curr_operator.data.short_name, sizeof(gsm.m.network.curr_operator.data.short_name), 1);
                     break;
                 case GSM_OPERATOR_FORMAT_NUMBER:
-                    gsm.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str));
+                    gsm.m.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str));
                     break;
                 default: break;
             }
         }
     } else {
-        gsm.network.curr_operator.format = GSM_OPERATOR_FORMAT_INVALID;
+        gsm.m.network.curr_operator.format = GSM_OPERATOR_FORMAT_INVALID;
     }
 
     if (CMD_IS_DEF(GSM_CMD_COPS_GET) &&
         gsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
-        memcpy(gsm.msg->msg.cops_get.curr, &gsm.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
+        memcpy(gsm.msg->msg.cops_get.curr, &gsm.m.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
     }
     return 1;
 }
@@ -567,17 +572,17 @@ gsmi_parse_clcc(const char* str, uint8_t send_evt) {
         str += 7;
     }
 
-    gsm.call.id = gsmi_parse_number(&str);
-    gsm.call.dir = (gsm_call_dir_t)gsmi_parse_number(&str);
-    gsm.call.state = (gsm_call_state_t)gsmi_parse_number(&str);
-    gsm.call.type = (gsm_call_type_t)gsmi_parse_number(&str);
-    gsm.call.is_multipart = (gsm_call_type_t)gsmi_parse_number(&str);
-    gsmi_parse_string(&str, gsm.call.number, sizeof(gsm.call.number), 1);
-    gsm.call.addr_type = gsmi_parse_number(&str);
-    gsmi_parse_string(&str, gsm.call.name, sizeof(gsm.call.name), 1);
+    gsm.m.call.id = gsmi_parse_number(&str);
+    gsm.m.call.dir = (gsm_call_dir_t)gsmi_parse_number(&str);
+    gsm.m.call.state = (gsm_call_state_t)gsmi_parse_number(&str);
+    gsm.m.call.type = (gsm_call_type_t)gsmi_parse_number(&str);
+    gsm.m.call.is_multipart = (gsm_call_type_t)gsmi_parse_number(&str);
+    gsmi_parse_string(&str, gsm.m.call.number, sizeof(gsm.m.call.number), 1);
+    gsm.m.call.addr_type = gsmi_parse_number(&str);
+    gsmi_parse_string(&str, gsm.m.call.name, sizeof(gsm.m.call.name), 1);
 
     if (send_evt) {
-        gsm.evt.evt.call_changed.call = &gsm.call;
+        gsm.evt.evt.call_changed.call = &gsm.m.call;
         gsmi_send_cb(GSM_EVT_CALL_CHANGED);
     }
     return 1;
@@ -725,7 +730,7 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
     switch (opt) {                              /* Check expected input string */
         case 0: {                               /* Get list of CPMS options: +CPMS: (("","","",..),("....")("...")) */
             for (i = 0; i < 3; i++) {           /* 3 different memories for "operation","receive","sent" */
-                if (!gsmi_parse_memories_string(&str, &gsm.sms.mem[i].mem_available)) {
+                if (!gsmi_parse_memories_string(&str, &gsm.m.sms.mem[i].mem_available)) {
                     return 0;
                 }
             }
@@ -733,16 +738,16 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
         }
         case 1: {                               /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
             for (i = 0; i < 3; i++) {           /* 3 memories expected */
-                gsm.sms.mem[i].current = gsmi_parse_memory(&str);   /* Parse memory string and save it as current */
-                gsm.sms.mem[i].used = gsmi_parse_number(&str);  /* Get used memory size */
-                gsm.sms.mem[i].total = gsmi_parse_number(&str); /* Get total memory size */
+                gsm.m.sms.mem[i].current = gsmi_parse_memory(&str); /* Parse memory string and save it as current */
+                gsm.m.sms.mem[i].used = gsmi_parse_number(&str);/* Get used memory size */
+                gsm.m.sms.mem[i].total = gsmi_parse_number(&str);   /* Get total memory size */
             }
             break;
         }
         case 2: {                               /* Received statement of set info: +CPMS: 10,20,2,20 */
             for (i = 0; i < 3; i++) {           /* 3 memories expected */
-                gsm.sms.mem[i].used = gsmi_parse_number(&str);  /* Get used memory size */
-                gsm.sms.mem[i].total = gsmi_parse_number(&str); /* Get total memory size */
+                gsm.m.sms.mem[i].used = gsmi_parse_number(&str);/* Get used memory size */
+                gsm.m.sms.mem[i].total = gsmi_parse_number(&str);   /* Get total memory size */
             }
             break;
         }
@@ -768,17 +773,17 @@ gsmi_parse_cpbs(const char* str, uint8_t opt) {
     }
     switch (opt) {                              /* Check expected input string */
         case 0: {                               /* Get list of CPBS options: ("M1","M2","M3",...) */
-            return gsmi_parse_memories_string(&str, &gsm.pb.mem.mem_available);
+            return gsmi_parse_memories_string(&str, &gsm.m.pb.mem.mem_available);
         }
         case 1: {                               /* Received statement of current info: +CPBS: "ME",10,20 */
-            gsm.pb.mem.current = gsmi_parse_memory(&str);   /* Parse memory string and save it as current */
-            gsm.pb.mem.used = gsmi_parse_number(&str);  /* Get used memory size */
-            gsm.pb.mem.total = gsmi_parse_number(&str); /* Get total memory size */
+            gsm.m.pb.mem.current = gsmi_parse_memory(&str); /* Parse memory string and save it as current */
+            gsm.m.pb.mem.used = gsmi_parse_number(&str);/* Get used memory size */
+            gsm.m.pb.mem.total = gsmi_parse_number(&str);   /* Get total memory size */
             break;
         }
         case 2: {                               /* Received statement of set info: +CPBS: 10,20 */
-            gsm.pb.mem.used = gsmi_parse_number(&str);  /* Get used memory size */
-            gsm.pb.mem.total = gsmi_parse_number(&str); /* Get total memory size */
+            gsm.m.pb.mem.used = gsmi_parse_number(&str);/* Get used memory size */
+            gsm.m.pb.mem.total = gsmi_parse_number(&str);   /* Get total memory size */
             break;
         }
     }
@@ -880,11 +885,11 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
         }
 
         /* Check if we have to update status for application */
-        if (gsm.network.is_attached != tmp_pdp_state) {
-            gsm.network.is_attached = tmp_pdp_state;
+        if (gsm.m.network.is_attached != tmp_pdp_state) {
+            gsm.m.network.is_attached = tmp_pdp_state;
 
             /* Notify upper layer */
-            gsmi_send_cb(gsm.network.is_attached ? GSM_EVT_NETWORK_ATTACHED : GSM_EVT_NETWORK_DETACHED);
+            gsmi_send_cb(gsm.m.network.is_attached ? GSM_EVT_NETWORK_ATTACHED : GSM_EVT_NETWORK_DETACHED);
         }
 
         return 1;
@@ -892,7 +897,7 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
 
     /* Parse connection line */
     num = GSM_U8(gsmi_parse_number(&str));
-    conn = &gsm.conns[num];
+    conn = &gsm.m.conns[num];
 
     conn->status.f.bearer = GSM_U8(gsmi_parse_number(&str));
     gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
@@ -927,7 +932,7 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
     }
 
     /* Save last parsed connection */
-    gsm.active_conns_cur_parse_num = num;
+    gsm.m.active_conns_cur_parse_num = num;
 
     return 1;
 }
@@ -955,15 +960,15 @@ gsmi_parse_ipd(const char* str) {
     conn = gsmi_parse_number(&str);             /* Parse number for connection number */
     len = gsmi_parse_number(&str);              /* Parse number for number of bytes to read */
 
-    c = conn < GSM_CFG_MAX_CONNS ? &gsm.conns[conn] : NULL; /* Get connection handle */
+    c = conn < GSM_CFG_MAX_CONNS ? &gsm.m.conns[conn] : NULL;   /* Get connection handle */
     if (c == NULL) {                            /* Invalid connection number */
         return 0;
     }
 
-    gsm.ipd.read = 1;                           /* Start reading network data */
-    gsm.ipd.tot_len = len;                      /* Total number of bytes in this received packet */
-    gsm.ipd.rem_len = len;                      /* Number of remaining bytes to read */
-    gsm.ipd.conn = c;                           /* Pointer to connection we have data for */
+    gsm.m.ipd.read = 1;                         /* Start reading network data */
+    gsm.m.ipd.tot_len = len;                    /* Total number of bytes in this received packet */
+    gsm.m.ipd.rem_len = len;                    /* Number of remaining bytes to read */
+    gsm.m.ipd.conn = c;                         /* Pointer to connection we have data for */
 
     return 1;
 }

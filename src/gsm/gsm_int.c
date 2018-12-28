@@ -132,13 +132,13 @@ gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
 
 /**
  * \brief           Send SMS read operation event
- * \param[in]       m: SMS list message
+ * \param[in]       _m_: SMS list message
  * \param[in]       err: Error of type \ref gsmr_t
  */
-#define SMS_SEND_LIST_EVT(m, err)     do {          \
-    gsm.evt.evt.sms_list.mem = gsm.sms.mem[0].current;  \
-    gsm.evt.evt.sms_list.entries = (m)->msg.sms_list.entries;   \
-    gsm.evt.evt.sms_list.size = (m)->msg.sms_list.ei;   \
+#define SMS_SEND_LIST_EVT(_m_, err)     do {        \
+    gsm.evt.evt.sms_list.mem = gsm.m.sms.mem[0].current;\
+    gsm.evt.evt.sms_list.entries = (_m_)->msg.sms_list.entries; \
+    gsm.evt.evt.sms_list.size = (_m_)->msg.sms_list.ei; \
     gsm.evt.evt.sms_list.res = err;                 \
     gsmi_send_cb(GSM_EVT_SMS_LIST);                 \
 } while (0)
@@ -354,27 +354,63 @@ gsmi_send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
 
 #endif /* GSM_CFG_SMS */
 
+#if GSM_CFG_CONN || __DOXYGEN__
+
 /**
  * \brief           Reset all connections
  * \note            Used to notify upper layer stack to close everything and reset the memory if necessary
  * \param[in]       forced: Flag indicating reset was forced by user
  */
-//static void
-//reset_connections(uint8_t forced) {
-    //
-    //gsm.evt.type = GSM_CB_CONN_CLOSED;
-    //gsm.evt.evt.conn_active_closed.forced = forced;
-    //
-    //for (size_t i = 0; i < GSM_CFG_MAX_CONNS; i++) {   /* Check all connections */
-    //    if (gsm.conns[i].status.f.active) {
-    //        gsm.conns[i].status.f.active = 0;
-    //
-    //        gsm.evt.evt.conn_active_closed.conn = &gsm.conns[i];
-    //        gsm.evt.evt.conn_active_closed.client = gsm.conns[i].status.f.client;
-    //        gsmi_send_conn_cb(&gsm.conns[i], NULL); /* Send callback function */
-    //    }
-    //}
-//}
+static void
+reset_connections(uint8_t forced) {
+    gsm.evt.type = GSM_EVT_CONN_CLOSED;
+    gsm.evt.evt.conn_active_closed.forced = forced;
+    
+    for (size_t i = 0; i < GSM_CFG_MAX_CONNS; i++) {/* Check all connections */
+        if (gsm.m.conns[i].status.f.active) {
+            gsm.m.conns[i].status.f.active = 0;
+    
+            gsm.evt.evt.conn_active_closed.conn = &gsm.m.conns[i];
+            gsm.evt.evt.conn_active_closed.client = gsm.m.conns[i].status.f.client;
+            gsmi_send_conn_cb(&gsm.m.conns[i], NULL);   /* Send callback function */
+        }
+    }
+}
+
+#endif /* GSM_CFG_CONN || __DOXYGEN__ */
+
+/**
+ * \brief           Reset everything after reset was detected
+ * \param[in]       forced: Set to `1` if reset forced by user
+ */
+void
+gsmi_reset_everything(uint8_t forced) {
+    /**
+     * \todo: Put stack to default state:
+     *          - Close all the connection in memory
+     *          - Clear entire data memory
+     *          - Reset GSM structure
+     */
+
+#if GSM_CFG_CONN
+     /* Manually close all connections in memory */
+    reset_connections(forced);
+#endif /* GSM_CFG_CONN */
+
+#if GSM_CFG_NETWORK
+    /* Notify app about detached network PDP context */
+    if (gsm.m.network.is_attached) {
+        gsm.m.network.is_attached = 0;
+        gsmi_send_cb(GSM_EVT_NETWORK_DETACHED);
+    }
+#endif /* GSM_CFG_NETWORK */
+
+    /* Invalid GSM modules */
+    memset(&gsm.m, 0x00, sizeof(gsm.m));
+
+    /* Manually set states */
+    gsm.m.sim.state = (gsm_sim_state_t)-1;
+}
 
 /**
  * \brief           Process callback function to user with specific type
@@ -551,8 +587,8 @@ gsmi_send_conn_error_cb(gsm_msg_t* msg, gsmr_t error) {
 uint8_t
 gsmi_is_valid_conn_ptr(gsm_conn_p conn) {
     uint8_t i = 0;
-    for (i = 0; i < GSM_ARRAYSIZE(gsm.conns); i++) {
-        if (conn == &gsm.conns[i]) {
+    for (i = 0; i < GSM_ARRAYSIZE(gsm.m.conns); i++) {
+        if (conn == &gsm.m.conns[i]) {
             return 1;
         }
     }
@@ -567,7 +603,7 @@ gsmi_is_valid_conn_ptr(gsm_conn_p conn) {
  */
 uint8_t
 gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced) {
-    gsm_conn_t* conn = &gsm.conns[conn_num];
+    gsm_conn_t* conn = &gsm.m.conns[conn_num];
 
     conn->status.f.active = 0;
 
@@ -637,7 +673,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #endif /* GSM_CFG_CONN */
         } else if (!strncmp(rcv->data, "+CREG", 5)) {   /* Check for +CREG indication */
             gsmi_parse_creg(rcv->data, GSM_U8(CMD_IS_CUR(GSM_CMD_CREG_GET)));  /* Parse +CREG rgsmonse */
-        } else if (CMD_IS_CUR(GSM_CMD_CPIN_GET) && !strncmp(rcv->data, "+CPIN", 5)) {  /* Check for +CPIN indication for SIM */
+        } else if (!strncmp(rcv->data, "+CPIN", 5)) {   /* Check for +CPIN indication for SIM */
             gsmi_parse_cpin(rcv->data, !CMD_IS_DEF(GSM_CMD_CPIN_SET));  /* Parse +CPIN rgsmonse */
         } else if (CMD_IS_CUR(GSM_CMD_COPS_GET) && !strncmp(rcv->data, "+COPS", 5)) {
             gsmi_parse_cops(rcv->data);         /* Parse current +COPS */
@@ -710,7 +746,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #endif /* GSM_CFG_CONN */
 #if GSM_CFG_CALL
         } else if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
-            gsm.call.ready = 1;
+            gsm.m.call.ready = 1;
             gsmi_send_cb(GSM_EVT_CALL_READY);   /* Send CALL ready event */
         } else if (rcv->data[0] == 'R' && !strncmp(rcv->data, "RING" CRLF, 4 + CRLF_LEN)) {
             gsmi_send_cb(GSM_EVT_CALL_RING);    /* Send call ring */
@@ -721,21 +757,22 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #endif /* GSM_CFG_CALL */
 #if GSM_CFG_SMS
         } else if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready" CRLF, 9 + CRLF_LEN)) {
-            gsm.sms.ready = 1;                  /* SMS ready flag */
+            gsm.m.sms.ready = 1;                /* SMS ready flag */
             gsmi_send_cb(GSM_EVT_SMS_READY);    /* Send SMS ready event */
 #endif /* GSM_CFG_SMS */
-        } else if (!is_ok && !is_error && !strncmp(rcv->data, "AT+", 3)) {
+        } else if ((CMD_IS_CUR(GSM_CMD_CGMI_GET) || CMD_IS_CUR(GSM_CMD_CGMM_GET) || CMD_IS_CUR(GSM_CMD_CGSN_GET))
+                    && !is_ok && !is_error && strncmp(rcv->data, "AT+", 3)) {
             const char* tmp = rcv->data;
             if (CMD_IS_CUR(GSM_CMD_CGMI_GET)) { /* Check device manufacturer */
-                gsmi_parse_string(&tmp, gsm.model_manufacturer, sizeof(gsm.model_manufacturer), 1);
+                gsmi_parse_string(&tmp, gsm.m.model_manufacturer, sizeof(gsm.m.model_manufacturer), 1);
             } else if (CMD_IS_CUR(GSM_CMD_CGMM_GET)) {  /* Check device model number */
-                gsmi_parse_string(&tmp, gsm.model_number, sizeof(gsm.model_number), 1);
+                gsmi_parse_string(&tmp, gsm.m.model_number, sizeof(gsm.m.model_number), 1);
             } else if (CMD_IS_CUR(GSM_CMD_CGSN_GET)) {  /* Check device serial number */
-                gsmi_parse_string(&tmp, gsm.model_serial_number, sizeof(gsm.model_serial_number), 1);
+                gsmi_parse_string(&tmp, gsm.m.model_serial_number, sizeof(gsm.m.model_serial_number), 1);
             }
         } else if (CMD_IS_CUR(GSM_CMD_CIFSR) && GSM_CHARISNUM(rcv->data[0])) {
             const char* tmp = rcv->data;
-            gsmi_parse_ip(&tmp, &gsm.network.ip_addr);  /* Parse IP address */
+            gsmi_parse_ip(&tmp, &gsm.m.network.ip_addr);/* Parse IP address */
 
             is_ok = 1;                          /* Manually set OK flag as we don't expect OK in CIFSR command */
         }
@@ -761,7 +798,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                     processed = 1;
                     gsmi_parse_cipstatus_conn(rcv->data, 1, &continueScan);
 
-                    if (gsm.active_conns_cur_parse_num == (GSM_CFG_MAX_CONNS - 1)) {
+                    if (gsm.m.active_conns_cur_parse_num == (GSM_CFG_MAX_CONNS - 1)) {
                         is_ok = 1;
                     }
                 } else if (!strncmp(rcv->data, "STATE:", 6)) {
@@ -786,7 +823,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                 uint8_t num = GSM_CHARTONUM(rcv->data[0]);
                 if (num < GSM_CFG_MAX_CONNS) {
                     uint8_t id;
-                    gsm_conn_t* conn = &gsm.conns[num]; /* Get connection handle */
+                    gsm_conn_t* conn = &gsm.m.conns[num];   /* Get connection handle */
 
                     if (!strncmp(&rcv->data[3], "CONNECT OK" CRLF, 10 + CRLF_LEN)) {
                         id = conn->val_id;
@@ -910,22 +947,22 @@ gsmi_process(const void* data, size_t data_len) {
 
         if (0) {
 #if GSM_CFG_CONN
-        } else if (gsm.ipd.read) {              /* Read connection data */
+        } else if (gsm.m.ipd.read) {            /* Read connection data */
             size_t len;
 
-            if (gsm.ipd.buff != NULL) {         /* Do we have active buffer? */
-                gsm.ipd.buff->payload[gsm.ipd.buff_ptr] = ch;   /* Save data character */
+            if (gsm.m.ipd.buff != NULL) {       /* Do we have active buffer? */
+                gsm.m.ipd.buff->payload[gsm.m.ipd.buff_ptr] = ch;   /* Save data character */
             }
-            gsm.ipd.buff_ptr++;
-            gsm.ipd.rem_len--;
+            gsm.m.ipd.buff_ptr++;
+            gsm.m.ipd.rem_len--;
 
             /* Try to read more data directly from buffer */
-            len = GSM_MIN(d_len, GSM_MIN(gsm.ipd.rem_len, gsm.ipd.buff != NULL ? (gsm.ipd.buff->len - gsm.ipd.buff_ptr) : gsm.ipd.rem_len));
+            len = GSM_MIN(d_len, GSM_MIN(gsm.m.ipd.rem_len, gsm.m.ipd.buff != NULL ? (gsm.m.ipd.buff->len - gsm.m.ipd.buff_ptr) : gsm.m.ipd.rem_len));
             GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                 "[IPD] New length to read: %d bytes\r\n", (int)len);
             if (len) {
-                if (gsm.ipd.buff != NULL) {     /* Is buffer valid? */
-                    GSM_MEMCPY(&gsm.ipd.buff->payload[gsm.ipd.buff_ptr], d, len);
+                if (gsm.m.ipd.buff != NULL) {   /* Is buffer valid? */
+                    GSM_MEMCPY(&gsm.m.ipd.buff->payload[gsm.m.ipd.buff_ptr], d, len);
                     GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                         "[IPD] Bytes read: %d\r\n", (int)len);
                 } else {                        /* Simply skip the data in buffer */
@@ -934,17 +971,17 @@ gsmi_process(const void* data, size_t data_len) {
                 }
                 d_len -= len;                   /* Decrease effective length */
                 d += len;                       /* Skip remaining length */
-                gsm.ipd.buff_ptr += len;        /* Forward buffer pointer */
-                gsm.ipd.rem_len -= len;         /* Decrease remaining length */
+                gsm.m.ipd.buff_ptr += len;      /* Forward buffer pointer */
+                gsm.m.ipd.rem_len -= len;       /* Decrease remaining length */
             }
 
             /* Did we reach end of buffer or no more data? */
-            if (!gsm.ipd.rem_len || (gsm.ipd.buff != NULL && gsm.ipd.buff_ptr == gsm.ipd.buff->len)) {
+            if (!gsm.m.ipd.rem_len || (gsm.m.ipd.buff != NULL && gsm.m.ipd.buff_ptr == gsm.m.ipd.buff->len)) {
                 gsmr_t res = gsmOK;
 
                 /* Call user callback function with received data */
-                if (gsm.ipd.buff != NULL) {     /* Do we have valid buffer? */
-                    gsm.ipd.conn->total_recved += gsm.ipd.buff->tot_len;    /* Increase number of bytes received */
+                if (gsm.m.ipd.buff != NULL) {     /* Do we have valid buffer? */
+                    gsm.m.ipd.conn->total_recved += gsm.m.ipd.buff->tot_len;/* Increase number of bytes received */
 
                     /*
                      * Send data buffer to upper layer
@@ -953,17 +990,17 @@ gsmi_process(const void* data, size_t data_len) {
                      * buffer and must free it manually
                      */
                     gsm.evt.type = GSM_EVT_CONN_RECV;
-                    gsm.evt.evt.conn_data_recv.buff = gsm.ipd.buff;
-                    gsm.evt.evt.conn_data_recv.conn = gsm.ipd.conn;
-                    res = gsmi_send_conn_cb(gsm.ipd.conn, NULL);
+                    gsm.evt.evt.conn_data_recv.buff = gsm.m.ipd.buff;
+                    gsm.evt.evt.conn_data_recv.conn = gsm.m.ipd.conn;
+                    res = gsmi_send_conn_cb(gsm.m.ipd.conn, NULL);
 
-                    gsm_pbuf_free(gsm.ipd.buff);    /* Free packet buffer at this point */
+                    gsm_pbuf_free(gsm.m.ipd.buff);  /* Free packet buffer at this point */
                     GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                         "[IPD] Free packet buffer\r\n");
                     if (res == gsmOKIGNOREMORE) {   /* We should ignore more data */
                         GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                             "[IPD] Ignoring more data from this IPD if available\r\n");
-                        gsm.ipd.buff = NULL;    /* Set to NULL to ignore more data if possibly available */
+                        gsm.m.ipd.buff = NULL;  /* Set to NULL to ignore more data if possibly available */
                     }
 
                     /*
@@ -972,24 +1009,24 @@ gsmi_process(const void* data, size_t data_len) {
                      *  - Previous one was successful and more data to read and
                      *  - Connection is not in closing state
                      */
-                    if (gsm.ipd.buff != NULL && gsm.ipd.rem_len && !gsm.ipd.conn->status.f.in_closing) {
-                        size_t new_len = GSM_MIN(gsm.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE);   /* Calculate new buffer length */
+                    if (gsm.m.ipd.buff != NULL && gsm.m.ipd.rem_len && !gsm.m.ipd.conn->status.f.in_closing) {
+                        size_t new_len = GSM_MIN(gsm.m.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE); /* Calculate new buffer length */
 
                         GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                             "[IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
-                        gsm.ipd.buff = gsm_pbuf_new(new_len);   /* Allocate new packet buffer */
+                        gsm.m.ipd.buff = gsm_pbuf_new(new_len); /* Allocate new packet buffer */
 
                         GSM_DEBUGW(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING,
-                            gsm.ipd.buff == NULL, "[IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
+                            gsm.m.ipd.buff == NULL, "[IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
                     } else {
-                        gsm.ipd.buff = NULL;    /* Reset it */
+                        gsm.m.ipd.buff = NULL;    /* Reset it */
                     }
                 }
-                if (!gsm.ipd.rem_len) {         /* Check if we read everything */
-                    gsm.ipd.buff = NULL;        /* Reset buffer pointer */
-                    gsm.ipd.read = 0;           /* Stop reading data */
+                if (!gsm.m.ipd.rem_len) {       /* Check if we read everything */
+                    gsm.m.ipd.buff = NULL;      /* Reset buffer pointer */
+                    gsm.m.ipd.read = 0;         /* Stop reading data */
                 }
-                gsm.ipd.buff_ptr = 0;           /* Reset input buffer pointer */
+                gsm.m.ipd.buff_ptr = 0;         /* Reset input buffer pointer */
             }
 #endif /* GSM_CFG_CONN */
         /*
@@ -1069,13 +1106,13 @@ gsmi_process(const void* data, size_t data_len) {
 
 #if GSM_CFG_CONN
                     /* Check if we have to read data */
-                    if (ch == '\n' && gsm.ipd.read) {
+                    if (ch == '\n' && gsm.m.ipd.read) {
                         size_t len;
                         GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                             "[IPD] Data on connection %d with total size %d byte(s)\r\n",
-                            (int)gsm.ipd.conn->num, (int)gsm.ipd.tot_len);
+                            (int)gsm.m.ipd.conn->num, (int)gsm.m.ipd.tot_len);
 
-                        len = GSM_MIN(gsm.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE);
+                        len = GSM_MIN(gsm.m.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE);
 
                         /*
                          * Read received data in case of:
@@ -1083,19 +1120,19 @@ gsmi_process(const void* data, size_t data_len) {
                          *  - Connection is active and
                          *  - Connection is not in closing mode
                          */
-                        if (gsm.ipd.conn->status.f.active && !gsm.ipd.conn->status.f.in_closing) {
-                            gsm.ipd.buff = gsm_pbuf_new(len);   /* Allocate new packet buffer */
-                            GSM_DEBUGW(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING, gsm.ipd.buff == NULL,
+                        if (gsm.m.ipd.conn->status.f.active && !gsm.m.ipd.conn->status.f.in_closing) {
+                            gsm.m.ipd.buff = gsm_pbuf_new(len); /* Allocate new packet buffer */
+                            GSM_DEBUGW(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING, gsm.m.ipd.buff == NULL,
                                 "[IPD] Buffer allocation failed for %d byte(s)\r\n", (int)len);
                         } else {
-                            gsm.ipd.buff = NULL;    /* Ignore reading on closed connection */
+                            gsm.m.ipd.buff = NULL;  /* Ignore reading on closed connection */
                             GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                                 "[IPD] Connection %d closed or in closing, skipping %d byte(s)\r\n",
-                                (int)gsm.ipd.conn->num, (int)len);
+                                (int)gsm.m.ipd.conn->num, (int)len);
                         }
-                        gsm.ipd.conn->status.f.data_received = 1;   /* We have first received data */
+                        gsm.m.ipd.conn->status.f.data_received = 1; /* We have first received data */
 
-                        gsm.ipd.buff_ptr = 0;   /* Reset buffer write pointer */
+                        gsm.m.ipd.buff_ptr = 0; /* Reset buffer write pointer */
                     }
 #endif /* GSM_CFG_CONN */
 
@@ -1174,6 +1211,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     if (CMD_IS_DEF(GSM_CMD_RESET)) {
         switch (CMD_GET_CUR()) {                /* Check current command */
             case GSM_CMD_RESET: {
+                gsmi_reset_everything(1);       /* Reset everything */
                 SET_NEW_CMD(GSM_CFG_AT_ECHO ? GSM_CMD_ATE1 : GSM_CMD_ATE0); /* Set ECHO mode */
                 gsm_delay(5000);                /* Delay for some time before we can continue after reset */
                 break;
@@ -1207,7 +1245,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         }
     } else if (CMD_IS_DEF(GSM_CMD_COPS_GET)) {
         if (CMD_IS_CUR(GSM_CMD_COPS_GET)) {
-            gsm.evt.evt.operator_current.operator_current = &gsm.network.curr_operator;
+            gsm.evt.evt.operator_current.operator_current = &gsm.m.network.curr_operator;
             gsmi_send_cb(GSM_EVT_NETWORK_OPERATOR_CURRENT);
         }
 #if GSM_CFG_SMS
@@ -1219,8 +1257,8 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         }
         if (!*is_ok || n_cmd == GSM_CMD_IDLE) { /* Stop execution on any command */
             SET_NEW_CMD(GSM_CMD_IDLE);
-            gsm.sms.enabled = n_cmd == GSM_CMD_IDLE;    /* Set enabled status */
-            gsm.evt.evt.sms_enable.status = gsm.sms.enabled ? gsmOK : gsmERR;
+            gsm.m.sms.enabled = n_cmd == GSM_CMD_IDLE;  /* Set enabled status */
+            gsm.evt.evt.sms_enable.status = gsm.m.sms.enabled ? gsmOK : gsmERR;
             gsmi_send_cb(GSM_EVT_SMS_ENABLE);   /* Send to user */
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGS)) {      /* Send SMS default command */
@@ -1240,7 +1278,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         } else if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {/* Set message format current command*/
             SET_NEW_CMD(GSM_CMD_CMGR);          /* Start message read */
         } else if (CMD_IS_CUR(GSM_CMD_CMGR) && *is_ok) {
-            msg->msg.sms_read.mem = gsm.sms.mem[0].current; /* Set current memory */
+            msg->msg.sms_read.mem = gsm.m.sms.mem[0].current;   /* Set current memory */
         }
 
         /* Send event on finish */
@@ -1280,7 +1318,6 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         switch (CMD_GET_CUR()) {
             case GSM_CMD_CNUM: {                /* Get own phone number */
                 if (!*is_ok) {
-                    SET_NEW_CMD(GSM_CMD_CNUM);
                     gsm_delay(1000);            /* Process delay first */
                 }
             }
@@ -1289,7 +1326,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     } else if (CMD_IS_DEF(GSM_CMD_CPIN_SET)) {  /* Set PIN code */
         switch (CMD_GET_CUR()) {
             case GSM_CMD_CPIN_GET: {            /* Get own phone number */
-                if (*is_ok && gsm.sim.state == GSM_SIM_STATE_PIN) {
+                if (*is_ok && gsm.m.sim.state == GSM_SIM_STATE_PIN) {
                     SET_NEW_CMD(GSM_CMD_CPIN_SET);  /* Set command to write PIN */
                 }
                 break;
@@ -1305,14 +1342,14 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         }
 #if GSM_CFG_CALL
     } else if (CMD_IS_DEF(GSM_CMD_CALL_ENABLE)) {
-        gsm.call.enabled = *is_ok;              /* Set enabled status */
-        gsm.evt.evt.call_enable.res = gsm.call.enabled ? gsmOK : gsmERR;
+        gsm.m.call.enabled = *is_ok;            /* Set enabled status */
+        gsm.evt.evt.call_enable.res = gsm.m.call.enabled ? gsmOK : gsmERR;
         gsmi_send_cb(GSM_EVT_CALL_ENABLE);      /* Send to user */
 #endif /* GSM_CFG_CALL */
 #if GSM_CFG_PHONEBOOK
     } else if (CMD_IS_DEF(GSM_CMD_PHONEBOOK_ENABLE)) {
-        gsm.pb.enabled = *is_ok;                /* Set enabled status */
-        gsm.evt.evt.pb_enable.res = gsm.pb.enabled ? gsmOK : gsmERR;
+        gsm.m.pb.enabled = *is_ok;              /* Set enabled status */
+        gsm.evt.evt.pb_enable.res = gsm.m.pb.enabled ? gsmOK : gsmERR;
         gsmi_send_cb(GSM_EVT_PB_ENABLE);        /* Send to user */
     } else if (CMD_IS_DEF(GSM_CMD_CPBW_SET)) {  /* Write phonebook entry */
         if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && *is_ok) {   /* Get current memory */
@@ -1326,7 +1363,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && *is_ok) {
             SET_NEW_CMD(GSM_CMD_CPBR);          /* Read entries */
         } else if (CMD_IS_CUR(GSM_CMD_CPBR)) {
-            gsm.evt.evt.pb_list.mem = gsm.pb.mem.current;
+            gsm.evt.evt.pb_list.mem = gsm.m.pb.mem.current;
             gsm.evt.evt.pb_list.entries = gsm.msg->msg.pb_list.entries;
             gsm.evt.evt.pb_list.size = gsm.msg->msg.pb_list.ei;
             gsm.evt.evt.pb_list.res = *is_ok ? gsmOK : gsmERR;
@@ -1338,7 +1375,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && *is_ok) {
             SET_NEW_CMD(GSM_CMD_CPBF);          /* Read entries */
         } else if (CMD_IS_CUR(GSM_CMD_CPBF)) {
-            gsm.evt.evt.pb_search.mem = gsm.pb.mem.current;
+            gsm.evt.evt.pb_search.mem = gsm.m.pb.mem.current;
             gsm.evt.evt.pb_search.search = gsm.msg->msg.pb_search.search;
             gsm.evt.evt.pb_search.entries = gsm.msg->msg.pb_search.entries;
             gsm.evt.evt.pb_search.size = gsm.msg->msg.pb_search.ei;
@@ -1392,7 +1429,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             /* After second CIP status, define what to do next */
             switch (msg->msg.conn_start.conn_res) {
                 case GSM_CONN_CONNECT_OK: {     /* Successfully connected */
-                    gsm_conn_t* conn = &gsm.conns[msg->msg.conn_start.num]; /* Get connection number */
+                    gsm_conn_t* conn = &gsm.m.conns[msg->msg.conn_start.num];   /* Get connection number */
 
                     gsm.evt.type = GSM_EVT_CONN_ACTIVE; /* Connection just active */
                     gsm.evt.evt.conn_active_closed.client = 1;
@@ -1642,8 +1679,8 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
 
             msg->msg.conn_start.num = 0;        /* Start with max value = invalidated */
             for (int16_t i = GSM_CFG_MAX_CONNS - 1; i >= 0; i--) {  /* Find available connection */
-                if (!gsm.conns[i].status.f.active) {
-                    c = &gsm.conns[i];
+                if (!gsm.m.conns[i].status.f.active) {
+                    c = &gsm.m.conns[i];
                     c->num = GSM_U8(i);
                     msg->msg.conn_start.num = GSM_U8(i);    /* Set connection number for message structure */
                     break;
@@ -1756,14 +1793,14 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_STR("+CPMS=");
             if (CMD_IS_DEF(GSM_CMD_CMGR)) { /* Read SMS original command? */
-                gsmi_send_dev_memory(msg->msg.sms_read.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_read.mem, 1, 0);
+                gsmi_send_dev_memory(msg->msg.sms_read.mem == GSM_MEM_CURRENT ? gsm.m.sms.mem[0].current : msg->msg.sms_read.mem, 1, 0);
             } else if(CMD_IS_DEF(GSM_CMD_CMGD)) {   /* Delete SMS original command? */
-                gsmi_send_dev_memory(msg->msg.sms_delete.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_delete.mem, 1, 0);
+                gsmi_send_dev_memory(msg->msg.sms_delete.mem == GSM_MEM_CURRENT ? gsm.m.sms.mem[0].current : msg->msg.sms_delete.mem, 1, 0);
             } else if(CMD_IS_DEF(GSM_CMD_CMGL)) {   /* List SMS original command? */
-                gsmi_send_dev_memory(msg->msg.sms_list.mem == GSM_MEM_CURRENT ? gsm.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
+                gsmi_send_dev_memory(msg->msg.sms_list.mem == GSM_MEM_CURRENT ? gsm.m.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
             } else if (CMD_IS_DEF(GSM_CMD_CPMS_SET)) {  /* Do we want to set memory for read/delete,sent/write,receive? */
                 for (size_t i = 0; i < 3; i++) {/* Write 3 memories */
-                    gsmi_send_dev_memory(msg->msg.sms_memory.mem[i] == GSM_MEM_CURRENT ? gsm.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
+                    gsmi_send_dev_memory(msg->msg.sms_memory.mem[i] == GSM_MEM_CURRENT ? gsm.m.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
                 }
             }
             GSM_AT_PORT_SEND_END();
@@ -1815,7 +1852,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
                 case GSM_CMD_CPBF: mem = msg->msg.pb_search.mem; break;
                 default: break;
             }
-            gsmi_send_dev_memory(mem == GSM_MEM_CURRENT ? gsm.pb.mem.current : mem, 1, 0);
+            gsmi_send_dev_memory(mem == GSM_MEM_CURRENT ? gsm.m.pb.mem.current : mem, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }

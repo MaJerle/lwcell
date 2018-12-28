@@ -347,18 +347,20 @@ typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt* evt);
  * \brief           List of possible callback types received to user
  */
 typedef enum gsm_cb_type_t {
+    GSM_EVT_INIT_FINISH,                        /*!< Initialization has been finished at this point */
+
     GSM_EVT_RESET,                              /*!< Reset operation finished */
     GSM_EVT_RESTORE,                            /*!< Restore operation finished */
 
     GSM_EVT_DEVICE_PRESENT,                     /*!< Notification when device present status changes */
     GSM_EVT_DEVICE_IDENTIFIED,                  /*!< Device identified event */
 
-    GSM_EVT_INIT_FINISH,                        /*!< Initialization has been finished at this point */
-
     GSM_EVT_SIGNAL_STRENGTH,                    /*!< Signal strength event */
 
+    GSM_EVT_SIM_STATE_CHANGED,                  /*!< SIM card state changed */
+
     GSM_EVT_NETWORK_OPERATOR_CURRENT,           /*!< Current operator event */
-    GSM_EVT_NETWORK_REG,                        /*!< Network registration changed. Available even when \ref GSM_CFG_NETWORK is disabled */
+    GSM_EVT_NETWORK_REG_CHANGED,                /*!< Network registration changed. Available even when \ref GSM_CFG_NETWORK is disabled */
 #if GSM_CFG_NETWORK || __DOXYGEN__
     GSM_EVT_NETWORK_ATTACHED,                   /*!< Attached to network, PDP context active and ready for TCP/IP application */
     GSM_EVT_NETWORK_DETACHED,                   /*!< Detached from network, PDP context not active anymore */
@@ -373,7 +375,6 @@ typedef enum gsm_cb_type_t {
     GSM_EVT_CONN_POLL,                          /*!< Poll for connection if there are any changes */
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */
 
-    GSM_EVT_CPIN,                               /*!< SIM event */
 #if GSM_CFG_SMS || __DOXYGEN__
     GSM_EVT_SMS_ENABLE,                         /*!< SMS enable event */
     GSM_EVT_SMS_READY,                          /*!< SMS ready event */

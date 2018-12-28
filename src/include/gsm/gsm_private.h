@@ -583,6 +583,39 @@ typedef struct {
 } gsm_network_t;
 
 /**
+ * \brief           GSM modules structure
+ */
+typedef struct {
+    /* Device identification */
+    char                model_manufacturer[20]; /*!< Device manufacturer */
+    char                model_number[20];       /*!< Device model number */
+    char                model_serial_number[20];/*!< Device serial number */
+
+    /* Network&operator specific */
+    gsm_sim_t           sim;                    /*!< SIM data */
+    gsm_network_t       network;                /*!< Network status */
+    int16_t             rssi;                   /*!< RSSI signal strength. `0` = invalid, `-53 % -113` = valid */
+
+    /* Device specific */
+#if GSM_CFG_CONN || __DOXYGEN__
+    uint8_t             active_conns_cur_parse_num; /*!< Current connection number used for parsing */
+
+    gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
+    gsm_ipd_t           ipd;                    /*!< Connection incoming data structure */
+    uint8_t conn_val_id;                        /*!< Validation ID increased each time device connects to network */
+#endif /* GSM_CFG_CONNS || __DOXYGEN__ */
+#if GSM_CFG_SMS || __DOXYGEN__
+    gsm_sms_t           sms;                    /*!< SMS information */
+#endif /* GSM_CFG_SMS || __DOXYGEN__ */
+#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+    gsm_pb_t            pb;                     /*!< Phonebook information */
+#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#if GSM_CFG_CALL || __DOXYGEN__
+    gsm_call_t          call;                   /*!< Call information */
+#endif /* GSM_CFG_CALL || __DOXYGEN__ */
+} gsm_modules_t;
+
+/**
  * \brief           GSM global structure
  */
 typedef struct {
@@ -601,40 +634,14 @@ typedef struct {
     gsm_evt_t           evt;                    /*!< Callback processing structure */
     gsm_evt_func_t*     evt_func;               /*!< Callback function linked list */
 
-    /* Device identification */
-    char                model_manufacturer[20]; /*!< Device manufacturer */
-    char                model_number[20];       /*!< Device model number */
-    char                model_serial_number[20];/*!< Device serial number */
+    gsm_modules_t       m;                      /*!< All modules. When resetting, reset structure */
 
-    /* Network&operator specific */
-    gsm_sim_t           sim;                    /*!< SIM data */
-    gsm_network_t       network;                /*!< Network status */
-    int16_t             rssi;                   /*!< RSSI signal strength. `0` = invalid, `-53 % -113` = valid */
-
-    /* Device specific */
-#if GSM_CFG_CONN || __DOXYGEN__
-    uint8_t             active_conns_cur_parse_num; /*!< Current connection number used for parsing */
-
-    gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
-    gsm_ipd_t           ipd;                    /*!< Connection incoming data structure */
-#endif /* GSM_CFG_CONNS || __DOXYGEN__ */
-#if GSM_CFG_SMS || __DOXYGEN__
-    gsm_sms_t           sms;                    /*!< SMS information */
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
-#if GSM_CFG_PHONEBOOK || __DOXYGEN__
-    gsm_pb_t            pb;                     /*!< Phonebook information */
-#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
-#if GSM_CFG_CALL || __DOXYGEN__
-    gsm_call_t          call;                   /*!< Call information */
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
     union {
         struct {
             uint8_t     initialized:1;          /*!< Flag indicating GSM library is initialized */
             uint8_t     dev_present:1;          /*!< Flag indicating GSM device is present */
         } f;                                    /*!< Flags structure */
     } status;                                   /*!< Status structure */
-
-    uint8_t conn_val_id;                        /*!< Validation ID increased each time device connects to network */
 } gsm_t;
 
 /**

@@ -47,6 +47,7 @@ extern "C" {
  * \{
  */
 
+gsm_sim_state_t gsm_sim_get_current_state(void);
 gsmr_t      gsm_sim_pin_enter(const char* pin, const uint32_t blocking);
 gsmr_t      gsm_sim_pin_add(const char* pin, const uint32_t blocking);
 gsmr_t      gsm_sim_pin_remove(const char* pin, const uint32_t blocking);
