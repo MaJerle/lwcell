@@ -91,14 +91,17 @@ check_sms_mem(gsm_mem_t mem, uint8_t can_curr) {
 
 /**
  * \brief           Enable SMS functionality
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_enable(const uint32_t blocking) {
+gsm_sms_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_SMS_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET_OPT;
 
@@ -107,13 +110,18 @@ gsm_sms_enable(const uint32_t blocking) {
 
 /**
  * \brief           Disable SMS functionality
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_disable(const uint32_t blocking) {
+gsm_sms_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_CORE_PROTECT();
     gsm.m.sms.enabled = 0;
+    if (evt_fn != NULL) {
+        evt_fn(gsmOK, evt_arg);
+    }
     GSM_CORE_UNPROTECT();
     return gsmOK;
 }
@@ -122,11 +130,14 @@ gsm_sms_disable(const uint32_t blocking) {
  * \brief           Send SMS text to phone number
  * \param[in]       num: String number
  * \param[in]       text: Text to send. Maximal `160` characters
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_send(const char* num, const char* text, const uint32_t blocking) {
+gsm_sms_send(const char* num, const char* text,
+                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
@@ -135,6 +146,7 @@ gsm_sms_send(const char* num, const char* text, const uint32_t blocking) {
     CHECK_READY();                              /* Check if ready */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGS;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;
     GSM_MSG_VAR_REF(msg).msg.sms_send.num = num;
@@ -150,11 +162,14 @@ gsm_sms_send(const char* num, const char* text, const uint32_t blocking) {
  * \param[in]       pos: Position number in memory to read
  * \param[out]      entry: Pointer to SMS entry structure to fill data to
  * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, const uint32_t blocking) {
+gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
+                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("sms_entry != NULL", entry != NULL); /* Assert input parameters */
@@ -163,6 +178,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, 
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
 
     GSM_MEMSET(entry, 0x00, sizeof(*entry));    /* Reset data structure */
 
@@ -187,11 +203,14 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, 
  * \brief           Delete SMS entry at specific memory and position
  * \param[in]       mem: Memory used to read message from
  * \param[in]       pos: Position number in memory to read
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
+gsm_sms_delete(gsm_mem_t mem, size_t pos,
+                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
@@ -199,6 +218,7 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGD;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;    /* First get memory */
@@ -219,11 +239,14 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
  * \param[in]       etr: Number of entries to read
  * \param[out]      er: Pointer to output variable to save number of entries in array
  * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update, const uint32_t blocking) {
+gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update,
+                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("entires != NULL", entries != NULL); /* Assert input parameters */
@@ -233,6 +256,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
 
     if (er != NULL) {
         *er = 0;
@@ -260,11 +284,14 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
  * \param[in]       mem1: Preferred memory for read/delete SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
  * \param[in]       mem2: Preferred memory for sent/write SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
  * \param[in]       mem3: Preferred memory for received SMS entries. Use \ref GSM_MEM_CURRENT to keep it as is
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, const uint32_t blocking) {
+gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3,
+                                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
@@ -274,6 +301,7 @@ gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, co
     GSM_ASSERT("mem3", check_sms_mem(mem3, 1) == gsmOK);/* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPMS_SET;
 
     /* In case any of memories is set to current, read current status first from device */

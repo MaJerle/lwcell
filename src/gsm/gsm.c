@@ -118,7 +118,7 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
      */
 #if GSM_CFG_RESET_ON_INIT
     if (gsm.status.f.dev_present) {             /* In case device exists */
-        res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking);  /* Send reset sequence with delay */
+        res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL, blocking);  /* Send reset sequence with delay */
     }
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
@@ -145,25 +145,31 @@ cleanup:
 
 /**
  * \brief           Execute reset and send default commands
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_reset(const uint32_t blocking) {
-    return gsm_reset_with_delay(0, blocking);
+gsm_reset(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+    return gsm_reset_with_delay(0, evt_fn, evt_arg, blocking);
 }
 
 /**
  * \brief           Execute reset and send default commands with delay
  * \param[in]       delay: Number of milliseconds to wait before initiating first command to device
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_reset_with_delay(uint32_t delay, const uint32_t blocking) {
+gsm_reset_with_delay(uint32_t delay,
+                        gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
     GSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
 
@@ -283,14 +289,18 @@ gsm_delay(uint32_t ms) {
  * \brief           Set modem function mode
  * \note            Use this function to set modem to normal or low-power mode
  * \param[in]       mode: Mode status. Set to `1` for full functionality or `0` for low-power mode (no functionality)
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
+gsm_set_func_mode(uint8_t mode,
+                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CFUN_SET;
     GSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;
 
@@ -302,11 +312,14 @@ gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
  *
  *                  Use this function to notify stack that device is not connected and not ready to communicate with host device
  * \param[in]       present: Flag indicating device is present
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_device_set_present(uint8_t present, const uint32_t blocking) {
+gsm_device_set_present(uint8_t present,
+                        gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     gsmr_t res = gsmOK;
     GSM_CORE_PROTECT();
     gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
@@ -318,7 +331,7 @@ gsm_device_set_present(uint8_t present, const uint32_t blocking) {
 #if GSM_CFG_RESET_ON_INIT
     if (gsm.status.f.dev_present) {             /* Is new device present? */
         GSM_CORE_UNPROTECT();
-        res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking); /* Reset with delay */
+        res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
         GSM_CORE_PROTECT();
     }
 #else
@@ -342,21 +355,4 @@ gsm_device_is_present(void) {
     res = gsm.status.f.dev_present;
     GSM_CORE_UNPROTECT();
     return res;
-}
-
-/**
-* \brief           Sets baudrate of AT port (usually UART)
-* \param[in]       baud: Baudrate in units of bits per second
-* \param[in]       blocking: Status whether command should be blocking or not
-* \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
-*/
-gsmr_t
-gsm_set_at_baudrate(uint32_t baud, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
-
-    GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_UART;
-    GSM_MSG_VAR_REF(msg).msg.uart.baudrate = baud;
-
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
 }

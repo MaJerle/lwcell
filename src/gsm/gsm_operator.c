@@ -37,14 +37,18 @@
 /**
  * \brief           Get current operator
  * \param[out]      curr: Pointer to output variable to save info about current operator
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_operator_get(gsm_operator_curr_t* curr, const uint32_t blocking) {
+gsm_operator_get(gsm_operator_curr_t* curr,
+                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET;
     GSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
@@ -57,11 +61,14 @@ gsm_operator_get(gsm_operator_curr_t* curr, const uint32_t blocking) {
  * \param[in]       format: Operator data format. This parameter can be a value of \ref gsm_operator_format_t enumeration
  * \param[in]       name: Operator name. This parameter must be valid according to `format` parameter
  * \param[in]       num: Operator number. This parameter must be valid according to `format` parameter
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, const uint32_t blocking) {
+gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num,
+                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     if (mode != GSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
@@ -72,6 +79,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
     }
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_SET;
 
     GSM_MSG_VAR_REF(msg).msg.cops_set.mode = mode;
@@ -87,11 +95,14 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
  * \param[in]       ops: Pointer to array to write found operators
  * \param[in]       opsl: Length of input array in units of elements
  * \param[out]      opf: Pointer to ouput variable to save number of operators found
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, const uint32_t blocking) {
+gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf,
+                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     if (opf != NULL) {
@@ -99,6 +110,7 @@ gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, const uint32_t 
     }
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET_OPT;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;

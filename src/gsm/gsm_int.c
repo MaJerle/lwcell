@@ -665,7 +665,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #if GSM_CFG_NETWORK
         } else if (!strncmp(rcv->data, "+PDP: DEACT", 11)) {
             /* PDP has been deactivated */
-            gsm_network_check_status(0);        /* Update status */
+            gsm_network_check_status(NULL, NULL, 0);/* Update status */
 #endif /* GSM_CFG_NETWORK */
 #if GSM_CFG_CONN
         } else if (!strncmp(rcv->data, "+RECEIVE", 8)) {

@@ -76,7 +76,7 @@ gsmr_t      gsm_evt_restore_get_result(gsm_evt_t* cc);
 /**
  * \name            GSM_EVT_NETWORK_OPERATOR_CURRENT
  * \anchor          GSM_EVT_NETWORK_OPERATOR_CURRENT
- * \brief           Event helper functions for \ref GSM_EVT_OPERATOR_CURRENT event
+ * \brief           Event helper functions for \ref GSM_EVT_NETWORK_OPERATOR_CURRENT event
  */
 
 const gsm_operator_curr_t*  gsm_evt_network_operator_get_current(gsm_evt_t* cc);

@@ -322,10 +322,10 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
         gsm.m.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
         /* Try to get operator */
         /* Notify user in case we are not able to add new command to queue */
-        gsm_operator_get(&gsm.m.network.curr_operator, 0);
+        gsm_operator_get(&gsm.m.network.curr_operator, NULL, NULL, 0);
 #if GSM_CFG_NETWORK
     } else if (gsm_network_is_attached()) {
-        gsm_network_check_status(0);        /* Do the update */
+        gsm_network_check_status(NULL, NULL, 0);    /* Do the update */
 #endif /* GSM_CFG_NETWORK */
     }
 

@@ -47,15 +47,15 @@ extern "C" {
  * \{
  */
 
-gsmr_t      gsm_pb_enable(const uint32_t blocking);
-gsmr_t      gsm_pb_disable(const uint32_t blocking);
+gsmr_t      gsm_pb_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_pb_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
 
-gsmr_t      gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking);
-gsmr_t      gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking);
-gsmr_t      gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking);
-gsmr_t      gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, const uint32_t blocking);
-gsmr_t      gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking);
-gsmr_t      gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking);
+gsmr_t      gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_pb_delete(gsm_mem_t mem, size_t pos, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
 
 /**
  * \}

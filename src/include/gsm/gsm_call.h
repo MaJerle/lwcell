@@ -47,12 +47,12 @@ extern "C" {
  * \{
  */
 
-gsmr_t      gsm_call_enable(const uint32_t blocking);
-gsmr_t      gsm_call_disable(const uint32_t blocking);
+gsmr_t      gsm_call_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_call_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
 
-gsmr_t      gsm_call_start(const char* number, const uint32_t blocking);
-gsmr_t      gsm_call_answer(const uint32_t blocking);
-gsmr_t      gsm_call_hangup(const uint32_t blocking);
+gsmr_t      gsm_call_start(const char* number, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_call_answer(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_call_hangup(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
 
 /**
  * \}

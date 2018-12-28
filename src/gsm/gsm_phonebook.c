@@ -73,14 +73,17 @@ check_mem(gsm_mem_t mem, uint8_t can_curr) {
 
 /**
  * \brief           Enable phonebook functionality
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_enable(const uint32_t blocking) {
+gsm_pb_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_PHONEBOOK_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET_OPT;
 
@@ -89,13 +92,18 @@ gsm_pb_enable(const uint32_t blocking) {
 
 /**
  * \brief           Disable phonebook functionality
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_disable(const uint32_t blocking) {
+gsm_pb_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_CORE_PROTECT();
     gsm.m.pb.enabled = 0;
+    if (evt_fn != NULL) {
+        evt_fn(gsmOK, evt_arg);
+    }
     GSM_CORE_UNPROTECT();
     return gsmOK;
 }
@@ -106,11 +114,14 @@ gsm_pb_disable(const uint32_t blocking) {
  * \param[in]       name: Entry name
  * \param[in]       num: Entry phone number
  * \param[in]       type: Entry phone number type
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking) {
+gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type,
+            gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
@@ -119,7 +130,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
-
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;/* First get memory */
@@ -141,12 +152,15 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
  * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
  * \param[in]       pos: Entry position in memory to read
  * \param[out]      entry: Pointer to entry variable to save data
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, const uint32_t blocking) {
-    return gsm_pb_list(mem, pos, entry, 1, NULL, blocking);
+gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry,
+                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+    return gsm_pb_list(mem, pos, entry, 1, NULL, evt_fn, evt_arg, blocking);
 }
 
 /**
@@ -156,11 +170,14 @@ gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry, const uint32_t blo
  * \param[in]       name: New entry name
  * \param[in]       num: New entry phone number
  * \param[in]       type: New entry phone number type
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type, const uint32_t blocking) {
+gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type,
+            gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
@@ -169,7 +186,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
-
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;/* First get memory */
@@ -190,11 +207,14 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
  * \brief           Delete phonebook entry at desired memory and position
  * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
  * \param[in]       pos: Entry position in memory to delete
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
+gsm_pb_delete(gsm_mem_t mem, size_t pos,
+                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pos > 0", pos > 0);             /* Assert input parameters */
@@ -202,7 +222,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
-
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
@@ -224,11 +244,14 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
  * \param[out]      entries: Pointer to array to save entries
  * \param[in]       etr: Number of entries to read
  * \param[out]      er: Pointer to output variable to save entries listed
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking) {
+gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er,
+            gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("start_index > 0", start_index > 0); /* Assert input parameters */
@@ -238,6 +261,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
 
     if (er != NULL) {
         *er = 0;
@@ -267,11 +291,14 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
  * \param[out]      entries: Pointer to array to save entries
  * \param[in]       etr: Number of entries to read
  * \param[out]      er: Pointer to output variable to save entries found
+ * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er, const uint32_t blocking) {
+gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er,
+                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("search != NULL", search != NULL);   /* Assert input parameters */
@@ -281,6 +308,7 @@ gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t
     GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
 
     if (er != NULL) {
         *er = 0;

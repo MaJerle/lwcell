@@ -47,11 +47,10 @@ extern "C" {
  */
 
 gsmr_t      gsm_init(gsm_evt_fn evt_func, const uint32_t blocking);
-gsmr_t      gsm_reset(const uint32_t blocking);
-gsmr_t      gsm_reset_with_delay(uint32_t delay, const uint32_t blocking);
-gsmr_t      gsm_set_at_baudrate(uint32_t baud, const uint32_t blocking);
+gsmr_t      gsm_reset(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
+gsmr_t      gsm_reset_with_delay(uint32_t delay, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
 
-gsmr_t      gsm_set_func_mode(uint8_t mode, const uint32_t blocking);
+gsmr_t      gsm_set_func_mode(uint8_t mode, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
 
 gsmr_t      gsm_core_lock(void);
 gsmr_t      gsm_core_unlock(void);
@@ -59,7 +58,7 @@ gsmr_t      gsm_core_unlock(void);
 gsmr_t      gsm_evt_register(gsm_evt_fn fn);
 gsmr_t      gsm_evt_unregister(gsm_evt_fn fn);
 
-gsmr_t      gsm_device_set_present(uint8_t present, const uint32_t blocking);
+gsmr_t      gsm_device_set_present(uint8_t present, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking);
 uint8_t     gsm_device_is_present(void);
 
 void        gsm_delay(uint32_t ms);

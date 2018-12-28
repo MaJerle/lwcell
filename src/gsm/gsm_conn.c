@@ -184,18 +184,18 @@ gsmi_conn_init(void) {
  * \param[in]       host: Connection host. In case of IP, write it as string, ex. "192.168.1.1"
  * \param[in]       port: Connection port
  * \param[in]       arg: Pointer to user argument passed to connection if successfully connected
- * \param[in]       evt_fn: Callback function for this connection
+ * \param[in]       conn_evt_fn: Callback function for this connection
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
 gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port,
-                void* const arg, gsm_evt_fn evt_fn, const uint32_t blocking) {
+                void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("host != NULL", host != NULL);   /* Assert input parameters */
     GSM_ASSERT("port > 0", port > 0);           /* Assert input parameters */
-    GSM_ASSERT("evt_fn != NULL", evt_fn != NULL);   /* Assert input parameters */
+    GSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL); /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTART;
@@ -205,7 +205,7 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
     GSM_MSG_VAR_REF(msg).msg.conn_start.type = type;
     GSM_MSG_VAR_REF(msg).msg.conn_start.host = host;
     GSM_MSG_VAR_REF(msg).msg.conn_start.port = port;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = evt_fn;
+    GSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = conn_evt_fn;
     GSM_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
