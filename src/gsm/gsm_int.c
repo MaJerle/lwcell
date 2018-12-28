@@ -1318,7 +1318,12 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         switch (CMD_GET_CUR()) {
             case GSM_CMD_CNUM: {                /* Get own phone number */
                 if (!*is_ok) {
-                    gsm_delay(1000);            /* Process delay first */
+                    /* Sometimes SIM is not ready just after PIN entered */
+                    if (msg->msg.sim_info.cnum_tries < 5) {
+                        msg->msg.sim_info.cnum_tries++;
+                        SET_NEW_CMD(GSM_CMD_CNUM);
+                        gsm_delay(1000);
+                    }
                 }
             }
             default: break;

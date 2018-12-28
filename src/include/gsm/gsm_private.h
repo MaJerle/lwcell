@@ -360,6 +360,9 @@ typedef struct gsm_msg {
             const char* puk;                    /*!< PUK code */
             const char* pin;                    /*!< New PIN code */
         } cpuk_enter;                           /*!< Enter PUK and new PIN */
+        struct {
+            size_t cnum_tries;                  /*!< Number of tries */
+        } sim_info;                             /*!< Get information for SIM card */
 
         struct {
             int16_t* rssi;                      /*!< Pointer to RSSI variable */
