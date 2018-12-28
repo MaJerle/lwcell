@@ -931,7 +931,7 @@ mqtt_closed_cb(gsm_mqtt_client_p client, uint8_t forced) {
         request_delete(client, request);        /* Delete request */
         request_send_err_callback(client, status, arg); /* Send error callback to user */
     }
-    memset(client->requests, 0x00, sizeof(client->requests));
+    GSM_MEMSET(client->requests, 0x00, sizeof(client->requests));
 
     client->is_sending = client->sent_total = client->written_total = 0;
     client->parser_state = MQTT_PARSER_STATE_INIT;
@@ -1030,7 +1030,7 @@ gsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len) {
 
     client = gsm_mem_alloc(sizeof(*client));    /* Allocate memory for client structure */
     if (client != NULL) {
-        memset(client, 0x00, sizeof(*client));  /* Reset memory */
+        GSM_MEMSET(client, 0x00, sizeof(*client));
         client->conn_state = GSM_MQTT_CONN_DISCONNECTED;/* Set to disconnected mode */
 
         if (!gsm_buff_init(&client->tx_buff, tx_buff_len)) {

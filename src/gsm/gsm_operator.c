@@ -48,7 +48,7 @@ gsm_operator_get(gsm_operator_curr_t* curr, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET;
     GSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
 }
 
 /**
@@ -79,7 +79,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
     GSM_MSG_VAR_REF(msg).msg.cops_set.name = name;
     GSM_MSG_VAR_REF(msg).msg.cops_set.num = num;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
 }
 
 /**
@@ -104,5 +104,5 @@ gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, const uint32_t 
     GSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 120000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 120000);
 }

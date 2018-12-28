@@ -306,7 +306,7 @@ mem_free(void* ptr) {
          */
         block->size &= ~mem_alloc_bit;              /* Clear allocated bit */
         mem_available_bytes += block->size;         /* Increase available bytes back */
-        /* memset(ptr, 0x00, block->size - MEMBLOCK_METASIZE); */
+        /* GSM_MEMSET(ptr, 0x00, block->size - MEMBLOCK_METASIZE); */
         mem_insertfreeblock(block);                 /* Insert block to list of free blocks */
     }
 }
@@ -335,7 +335,7 @@ mem_calloc(size_t num, size_t size) {
     size_t tot_len = num * size;
 
     if ((ptr = mem_alloc(tot_len)) != NULL) {       /* Try to allocate memory */
-        memset(ptr, 0x00, tot_len);                 /* Reset entire memory */
+        GSM_MEMSET(ptr, 0x00, tot_len);             /* Reset entire memory */
     }
     return ptr;
 }
@@ -359,7 +359,7 @@ mem_realloc(void* ptr, size_t size) {
     oldSize = mem_getusersize(ptr);                 /* Get size of old pointer */
     newPtr = mem_alloc(size);                       /* Try to allocate new memory block */
     if (newPtr != NULL) {                           /* Check success */
-        memcpy(newPtr, ptr, size > oldSize ? oldSize : size);   /* Copy old data to new array */
+        GSM_MEMCPY(newPtr, ptr, size > oldSize ? oldSize : size);   /* Copy old data to new array */
         mem_free(ptr);                              /* Free old pointer */
         return newPtr;                              /* Return new pointer */
     }

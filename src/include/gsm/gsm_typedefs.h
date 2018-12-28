@@ -570,6 +570,14 @@ typedef struct {
     size_t ptr;                                 /*!< Current buffer pointer */
 } gsm_linbuff_t;
 
+/**
+ * \ingroup         GSM_TYPEDEFS
+ * \brief           Function declaration for API function command event callback function
+ * \param[in]       res: Operation result, member of \ref gsmr_t enumeration
+ * \param[in]       arg: Custom user argument
+ */
+typedef void (*gsm_api_cmd_evt_fn) (gsmr_t res, void* arg);
+
 #if !__DOXYGEN__
 
 /**

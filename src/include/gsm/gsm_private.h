@@ -327,10 +327,13 @@ typedef struct gsm_msg {
     uint8_t         i;                          /*!< Variable to indicate order number of subcommands */
     gsm_sys_sem_t   sem;                        /*!< Semaphore for the message */
     uint8_t         is_blocking;                /*!< Status if command is blocking */
-    uint8_t         is_device;                  /*!< Is message device specific? */
     uint32_t        block_time;                 /*!< Maximal blocking time in units of milliseconds. Use 0 to for non-blocking call */
     gsmr_t          res;                        /*!< Result of message operation */
     gsmr_t          (*fn)(struct gsm_msg *);    /*!< Processing callback function to process packet */
+
+    gsm_api_cmd_evt_fn evt_fn;                  /*!< Command callback API function */
+    void*           evt_arg;                    /*!< Command callback API callback parameter */
+    
     union {
         struct {
             uint32_t delay;                     /*!< Delay to use before sending first reset AT command */
@@ -694,13 +697,18 @@ extern size_t               gsm_dev_mem_map_size;
 
 #define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
 #define GSM_MSG_VAR_ALLOC(name)                 do {\
-    (name) = gsm_mem_alloc(sizeof(*(name)));          \
+    (name) = gsm_mem_alloc(sizeof(*(name)));        \
     GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "MSG VAR: Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
     GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "MSG VAR: Error allocating %d bytes\r\n", sizeof(*(name))); \
-    if (!(name)) {                                  \
+    if ((name) == NULL) {                           \
         return gsmERRMEM;                           \
     }                                               \
-    memset(name, 0x00, sizeof(*(name)));            \
+    GSM_MEMSET(name, 0x00, sizeof(*(name)));        \
+    (name)->is_blocking = (blocking);               \
+} while (0)
+#define GSM_MSG_VAR_SET_EVT(name) do {              \
+    (name)->evt_fn = (evt_fn);                      \
+    (name)->evt_arg = (evt_arg);                    \
 } while (0)
 #define GSM_MSG_VAR_REF(name)                   (*(name))
 #define GSM_MSG_VAR_FREE(name)                  do {\
@@ -754,8 +762,7 @@ uint8_t     gsmi_is_valid_conn_ptr(gsm_conn_p conn);
 gsmr_t      gsmi_send_cb(gsm_evt_type_t type);
 gsmr_t      gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn cb);
 void        gsmi_conn_init(void);
-gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t block, uint32_t max_block_time);
-gsmr_t      gsmi_send_device_msg_to_producer_mbox(gsm_msg_t* msg, uint32_t block, uint32_t max_block_time);
+gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t max_block_time);
 uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
 uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
 void        gsmi_conn_start_timeout(gsm_conn_p conn);

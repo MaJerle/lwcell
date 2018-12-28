@@ -98,6 +98,11 @@ gsm_thread_producer(void* const arg) {
             msg->res = res;                     /* Save response */
         }
 
+        /* Send event function to user */
+        if (msg->evt_fn != NULL) {
+            msg->evt_fn(msg->res, msg->evt_arg);/* Send event with user argument */
+        }
+
         /*
          * In case message is blocking,
          * release semaphore and notify finished with processing

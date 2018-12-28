@@ -167,7 +167,7 @@ gsm_reset_with_delay(uint32_t delay, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
     GSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -223,7 +223,7 @@ gsm_evt_register(gsm_evt_fn fn) {
     if (res == gsmOK) {
         newFunc = gsm_mem_alloc(sizeof(*newFunc));  /* Get memory for new function */
         if (newFunc != NULL) {
-            memset(newFunc, 0x00, sizeof(*newFunc));/* Reset memory */
+            GSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));/* Reset memory */
             newFunc->fn = fn;                   /* Set function pointer */
             if (gsm.evt_func == NULL) {
                 gsm.evt_func = newFunc;         /* This should never happen! */
@@ -294,7 +294,7 @@ gsm_set_func_mode(uint8_t mode, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CFUN_SET;
     GSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -358,5 +358,5 @@ gsm_set_at_baudrate(uint32_t baud, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_UART;
     GSM_MSG_VAR_REF(msg).msg.uart.baudrate = baud;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 2000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
 }

@@ -167,7 +167,7 @@ gsmi_get_sim_info(const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_SIM_PROCESS_BASIC_CMDS;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CNUM;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -406,7 +406,7 @@ gsmi_reset_everything(uint8_t forced) {
 #endif /* GSM_CFG_NETWORK */
 
     /* Invalid GSM modules */
-    memset(&gsm.m, 0x00, sizeof(gsm.m));
+    GSM_MEMSET(&gsm.m, 0x00, sizeof(gsm.m));
 
     /* Manually set states */
     gsm.m.sim.state = (gsm_sim_state_t)-1;
@@ -1962,11 +1962,11 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
  * \brief           Send message from API function to producer queue for further processing
  * \param[in]       msg: New message to process
  * \param[in]       process_fn: callback function used to process message
- * \param[in]       block_time: Time used to block function. Use 0 for non-blocking call
+ * \param[in]       max_block_time: Maximal time command can block in units of milliseconds
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t block, uint32_t max_block_time) {
+gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t max_block_time) {
     gsmr_t res = msg->res = gsmOK;
 
     /* Check here if stack is even enabled or shall we disable new command entry? */
@@ -1982,7 +1982,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
         return res;
     }
 
-    if (block) {                                /* In case message is blocking */
+    if (msg->is_blocking) {                     /* In case message is blocking */
         if (!gsm_sys_sem_create(&msg->sem, 0)) {/* Create semaphore and lock it immediatelly */
             GSM_MSG_VAR_FREE(msg);              /* Release memory and return */
             return gsmERRMEM;
@@ -1991,10 +1991,9 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     if (!msg->cmd) {                            /* Set start command if not set by user */
         msg->cmd = msg->cmd_def;                /* Set it as default */
     }
-    msg->is_blocking = block;                   /* Set status if message is blocking */
     msg->block_time = max_block_time;           /* Set blocking status if necessary */
     msg->fn = process_fn;                       /* Save processing function to be called as callback */
-    if (block) {
+    if (msg->is_blocking) {
         gsm_sys_mbox_put(&gsm.mbox_producer, msg);  /* Write message to producer queue and wait until written */
     } else {
         if (!gsm_sys_mbox_putnow(&gsm.mbox_producer, msg)) {    /* Write message to producer queue immediatelly */
@@ -2002,7 +2001,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
             res = gsmERR;
         }
     }
-    if (block && res == gsmOK) {                /* In case we have blocking request */
+    if (msg->is_blocking && res == gsmOK) {     /* In case we have blocking request */
         uint32_t time;
         time = gsm_sys_sem_wait(&msg->sem, max_block_time); /* Wait forever for semaphore access for max block time */
         if (GSM_SYS_TIMEOUT == time) {          /* If semaphore was not accessed in given time */

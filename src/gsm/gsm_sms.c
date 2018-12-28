@@ -102,7 +102,7 @@ gsm_sms_enable(const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_SMS_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET_OPT;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -141,7 +141,7 @@ gsm_sms_send(const char* num, const char* text, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.sms_send.text = text;
     GSM_MSG_VAR_REF(msg).msg.sms_send.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -164,7 +164,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, 
 
     GSM_MSG_VAR_ALLOC(msg);
 
-    memset(entry, 0x00, sizeof(*entry));        /* Reset data structure */
+    GSM_MEMSET(entry, 0x00, sizeof(*entry));    /* Reset data structure */
 
     entry->mem = mem;                           /* Set memory */
     entry->pos = pos;                           /* Set device position */
@@ -180,7 +180,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, 
     GSM_MSG_VAR_REF(msg).msg.sms_read.update = update;
     GSM_MSG_VAR_REF(msg).msg.sms_read.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -208,7 +208,7 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.sms_delete.mem = mem;
     GSM_MSG_VAR_REF(msg).msg.sms_delete.pos = pos;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
 }
 
 /**
@@ -237,7 +237,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
     if (er != NULL) {
         *er = 0;
     }
-    memset(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    GSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGL;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;    /* First get memory */
@@ -252,7 +252,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
     GSM_MSG_VAR_REF(msg).msg.sms_list.update = update;
     GSM_MSG_VAR_REF(msg).msg.sms_list.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -284,7 +284,7 @@ gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, co
     GSM_MSG_VAR_REF(msg).msg.sms_memory.mem[1] = mem2;
     GSM_MSG_VAR_REF(msg).msg.sms_memory.mem[2] = mem3;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */

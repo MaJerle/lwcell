@@ -445,7 +445,7 @@ gsmi_parse_cops(const char* str) {
 
     if (CMD_IS_DEF(GSM_CMD_COPS_GET) &&
         gsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
-        memcpy(gsm.msg->msg.cops_get.curr, &gsm.m.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
+        GSM_MEMCPY(gsm.msg->msg.cops_get.curr, &gsm.m.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
     }
     return 1;
 }
@@ -470,7 +470,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     } u;
 
     if (reset) {                                /* Check for reset status */
-        memset(&u, 0x00, sizeof(u));            /* Reset everything */
+        GSM_MEMSET(&u, 0x00, sizeof(u));       	/* Reset everything */
         u.f.ch_prev = 0;
         return 1;
     }

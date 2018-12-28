@@ -136,7 +136,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
     GSM_MSG_VAR_REF(msg).msg.conn_send.fau = fau;
     GSM_MSG_VAR_REF(msg).msg.conn_send.val_id = conn_get_val_id(conn);
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -208,7 +208,7 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
     GSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = evt_fn;
     GSM_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -233,7 +233,7 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.conn_close.val_id = conn_get_val_id(conn);
 
     flush_buff(conn);                           /* First flush buffer */
-    res = gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);
+    res = gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
     if (res == gsmOK && !blocking) {            /* Function succedded in non-blocking mode */
         GSM_CORE_PROTECT();
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
@@ -378,7 +378,7 @@ gsm_get_conns_status(const uint32_t blocking) {
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 1000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
 }
 
 /**

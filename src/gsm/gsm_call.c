@@ -79,7 +79,7 @@ gsm_call_enable(const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CALL_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CLCC_SET;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -113,7 +113,7 @@ gsm_call_start(const char* number, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;
     GSM_MSG_VAR_REF(msg).msg.call_start.number = number;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -129,7 +129,7 @@ gsm_call_answer(const uint32_t blocking) {
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATA;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -145,7 +145,7 @@ gsm_call_hangup(const uint32_t blocking) {
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATH;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */

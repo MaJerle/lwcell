@@ -51,21 +51,24 @@ gsm_sim_get_current_state(void) {
 /**
  * \brief           Enter pin code to unlock SIM
  * \param[in]       pin: Pin code in string format
+ * \param[in]       evt_fn: Callback function called when command finishes
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_enter(const char* pin, const uint32_t blocking) {
+gsm_sim_pin_enter(const char* pin, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
     GSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 30000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 30000);
 }
 
 /**
@@ -73,81 +76,93 @@ gsm_sim_pin_enter(const char* pin, const uint32_t blocking) {
  * \note            Use this function only if your SIM card doesn't have PIN code.
  *                  If you wish to change current pin, use \ref gsm_sim_pin_change instead
  * \param[in]       pin: Current SIM pin code
+ * \param[in]       evt_fn: Callback function called when command finishes
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_add(const char* pin, const uint32_t blocking) {
+gsm_sim_pin_add(const char* pin, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_ADD;
     GSM_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
  * \brief           Change current pin code
  * \param[in]       pin: Current pin code
  * \param[in]       new_pin: New pin code
+ * \param[in]       evt_fn: Callback function called when command finishes
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_change(const char* pin, const char* new_pin, const uint32_t blocking) {
+gsm_sim_pin_change(const char* pin, const char* new_pin, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
     GSM_ASSERT("new_pin != NULL", new_pin != NULL); /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_CHANGE;
     GSM_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
     GSM_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
  * \brief           Remove pin code from SIM
  * \param[in]       pin: Current pin code
+ * \param[in]       evt_fn: Callback function called when command finishes
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_remove(const char* pin, const uint32_t blocking) {
+gsm_sim_pin_remove(const char* pin, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_REMOVE;
     GSM_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
  * \brief           Enter PUK code and new PIN to unlock SIM card
  * \param[in]       puk: PUK code associated with SIM card
  * \param[in]       new_pin: New PIN code to use
+ * \param[in]       evt_fn: Callback function called when command finishes
+ * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_puk_enter(const char* puk, const char* new_pin, const uint32_t blocking) {
+gsm_sim_puk_enter(const char* puk, const char* new_pin, gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("puk != NULL", puk != NULL);     /* Assert input parameters */
     GSM_ASSERT("new_pin != NULL", new_pin != NULL); /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
     GSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
     GSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 10000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }

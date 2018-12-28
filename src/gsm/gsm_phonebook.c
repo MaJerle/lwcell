@@ -84,7 +84,7 @@ gsm_pb_enable(const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_PHONEBOOK_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET_OPT;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -133,7 +133,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     GSM_MSG_VAR_REF(msg).msg.pb_write.num = num;
     GSM_MSG_VAR_REF(msg).msg.pb_write.type = type;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -183,7 +183,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
     GSM_MSG_VAR_REF(msg).msg.pb_write.num = num;
     GSM_MSG_VAR_REF(msg).msg.pb_write.type = type;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -214,7 +214,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos, const uint32_t blocking) {
     GSM_MSG_VAR_REF(msg).msg.pb_write.pos = pos;
     GSM_MSG_VAR_REF(msg).msg.pb_write.del = 1;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -242,7 +242,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
     if (er != NULL) {
         *er = 0;
     }
-    memset(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    GSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBR;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
@@ -256,7 +256,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
     GSM_MSG_VAR_REF(msg).msg.pb_list.etr = etr;
     GSM_MSG_VAR_REF(msg).msg.pb_list.er = er;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -285,7 +285,7 @@ gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t
     if (er != NULL) {
         *er = 0;
     }
-    memset(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    GSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBF;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET;    /* First get memory */
@@ -299,7 +299,7 @@ gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t
     GSM_MSG_VAR_REF(msg).msg.pb_search.etr = etr;
     GSM_MSG_VAR_REF(msg).msg.pb_search.er = er;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, blocking, 60000);
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
