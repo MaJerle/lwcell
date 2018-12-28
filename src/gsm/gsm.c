@@ -65,6 +65,8 @@ def_callback(gsm_evt_t* cb) {
  */
 gsmr_t
 gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
+    gsmr_t res = gsmOK;
+
     gsm.status.f.initialized = 0;               /* Clear possible init flag */
 
     def_evt_link.fn = evt_func != NULL ? evt_func : def_callback;
@@ -116,14 +118,14 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
      */
 #if GSM_CFG_RESET_ON_INIT
     if (gsm.status.f.dev_present) {             /* In case device exists */
-        gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking);    /* Send reset sequence with delay */
+        res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, blocking);  /* Send reset sequence with delay */
     }
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
 #endif /* GSM_CFG_RESET_ON_INIT */
     gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
 
-    return gsmOK;
+    return res;
 
 cleanup:
     if (gsm_sys_mbox_isvalid(&gsm.mbox_producer)) {
