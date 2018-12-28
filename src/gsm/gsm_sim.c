@@ -36,6 +36,7 @@
 
 /**
  * \brief           Get current cached SIM state from stack
+ * \note            Information is always valid, starting after successful device reset using \ref gsm_reset function call
  * \return          Member of \ref gsm_sim_state_t enumeration
  */
 gsm_sim_state_t
