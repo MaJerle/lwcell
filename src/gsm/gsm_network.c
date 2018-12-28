@@ -102,7 +102,7 @@ gsmr_t
 gsm_network_copy_ip(gsm_ip_t* ip) {
     if (gsm_network_is_attached()) {
         GSM_CORE_PROTECT();
-        memcpy(ip, &gsm.m.network.ip_addr, sizeof(*ip));
+        GSM_MEMCPY(ip, &gsm.m.network.ip_addr, sizeof(*ip));
         GSM_CORE_UNPROTECT();
         return gsmOK;
     }
