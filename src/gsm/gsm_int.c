@@ -674,7 +674,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         } else if (!strncmp(rcv->data, "+CREG", 5)) {   /* Check for +CREG indication */
             gsmi_parse_creg(rcv->data, GSM_U8(CMD_IS_CUR(GSM_CMD_CREG_GET)));  /* Parse +CREG rgsmonse */
         } else if (!strncmp(rcv->data, "+CPIN", 5)) {   /* Check for +CPIN indication for SIM */
-            gsmi_parse_cpin(rcv->data, !CMD_IS_DEF(GSM_CMD_CPIN_SET));  /* Parse +CPIN rgsmonse */
+            gsmi_parse_cpin(rcv->data, 1 /* !CMD_IS_DEF(GSM_CMD_CPIN_SET) */);  /* Parse +CPIN rgsmonse */
         } else if (CMD_IS_CUR(GSM_CMD_COPS_GET) && !strncmp(rcv->data, "+COPS", 5)) {
             gsmi_parse_cops(rcv->data);         /* Parse current +COPS */
 #if GSM_CFG_SMS
