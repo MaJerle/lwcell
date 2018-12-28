@@ -35,6 +35,19 @@
 #include "gsm/gsm_mem.h"
 
 /**
+ * \brief           Get current cached SIM state from stack
+ * \return          Member of \ref gsm_sim_state_t enumeration
+ */
+gsm_sim_state_t
+gsm_sim_get_current_state(void) {
+    gsm_sim_state_t state;
+    GSM_CORE_PROTECT();
+    state = gsm.m.sim.state;
+    GSM_CORE_UNPROTECT();
+    return state;
+}
+
+/**
  * \brief           Enter pin code to unlock SIM
  * \param[in]       pin: Pin code in string format
  * \param[in]       blocking: Status whether command should be blocking or not
