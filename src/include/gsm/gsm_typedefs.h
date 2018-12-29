@@ -353,8 +353,8 @@ typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt* evt);
 typedef enum gsm_cb_type_t {
     GSM_EVT_INIT_FINISH,                        /*!< Initialization has been finished at this point */
 
-    GSM_EVT_RESET,                              /*!< Reset operation finished */
-    GSM_EVT_RESTORE,                            /*!< Restore operation finished */
+    GSM_EVT_RESET,                              /*!< Device reset operation finished */
+    GSM_EVT_RESTORE,                            /*!< Device restore operation finished */
 
     GSM_EVT_DEVICE_PRESENT,                     /*!< Notification when device present status changes */
     GSM_EVT_DEVICE_IDENTIFIED,                  /*!< Device identified event */

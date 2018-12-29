@@ -45,8 +45,8 @@
 void
 gsm_thread_producer(void* const arg) {
     gsm_sys_sem_t* sem = arg;
-    gsm_t* e = &gsm;                            /* Thread argument is main structure */
-    gsm_msg_t* msg;                             /* Message structure */
+    gsm_t* e = &gsm;
+    gsm_msg_t* msg;
     gsmr_t res;
     uint32_t time;
 
@@ -58,14 +58,27 @@ gsm_thread_producer(void* const arg) {
     GSM_CORE_PROTECT();
     while (1) {
         GSM_CORE_UNPROTECT();
-        time = gsm_sys_mbox_get(&gsm.mbox_producer, (void **)&msg, 0);  /* Get message from queue */
+        time = gsm_sys_mbox_get(&e->mbox_producer, (void **)&msg, 0);   /* Get message from queue */
+        GSM_THREAD_PRODUCER_HOOK();             /* Execute producer thread hook */
         GSM_CORE_PROTECT();
         if (time == GSM_SYS_TIMEOUT || msg == NULL) {   /* Check valid message */
             continue;
         }
 
+        res = gsmOK;                            /* Start with OK */
+        /*
+         * This check is performed when adding command to queue
+         * Do it again here to prevent long timeouts,
+         * if device present flag changes
+         */
+        if (!e->status.f.dev_present) {
+            if (!CMD_IS_DEF(GSM_CMD_RESET)) {
+                res = gsmERRNODEVICE;
+            }
+        }
+
         /* For reset message, we can have delay! */
-        if (CMD_IS_DEF(GSM_CMD_RESET) && msg->msg.reset.delay) {
+        if (res == gsmOK && CMD_IS_DEF(GSM_CMD_RESET) && msg->msg.reset.delay) {
             gsm_delay(msg->msg.reset.delay);
         }
 
@@ -74,25 +87,28 @@ gsm_thread_producer(void* const arg) {
          * Usually it should be function to transmit data to AT port
          */
         e->msg = msg;
-        if (msg->fn != NULL) {                  /* Check for callback processing function */
+        if (res == gsmOK && msg->fn != NULL) {  /* Check for callback processing function */
             GSM_CORE_UNPROTECT();
-            gsm_sys_sem_wait(&e->sem_sync, 0000);	/* Lock semaphore, should be unlocked before! */
+            gsm_sys_sem_wait(&e->sem_sync, 0);
             GSM_CORE_PROTECT();
             res = msg->fn(msg);                 /* Process this message, check if command started at least */
             if (res == gsmOK) {                 /* We have valid data and data were sent */
                 GSM_CORE_UNPROTECT();
-                time = gsm_sys_sem_wait(&e->sem_sync, msg->block_time); /* Wait for synchronization semaphore */
+                time = gsm_sys_sem_wait(&e->sem_sync, msg->block_time); /* Wait for synchronization semaphore from processing thread or timeout */
                 GSM_CORE_PROTECT();
-                gsm_sys_sem_release(&e->sem_sync);  /* Release protection and start over later */
                 if (time == GSM_SYS_TIMEOUT) {  /* Sync timeout occurred? */
                     gsmi_process_events_for_timeout(msg);   /* Manually call callbacks on commands */
                     res = gsmTIMEOUT;           /* Timeout on command */
+                } else {
+                    gsm_sys_sem_release(&e->sem_sync);
                 }
             } else {
                 gsm_sys_sem_release(&e->sem_sync);  /* We failed, release semaphore automatically */
             }
         } else {
-            res = gsmERR;                       /* Simply set error message */
+            if (res == gsmOK) {
+                res = gsmERR;                   /* Simply set error message */
+            }
         }
         if (res != gsmOK) {
             msg->res = res;                     /* Save response */
@@ -109,11 +125,11 @@ gsm_thread_producer(void* const arg) {
          * otherwise directly free memory of message structure
          */
         if (msg->is_blocking) {
-            gsm_sys_sem_release(&msg->sem);     /* Release semaphore only */
+            gsm_sys_sem_release(&msg->sem);
         } else {
-            GSM_MSG_VAR_FREE(msg);              /* Release message structure */
+            GSM_MSG_VAR_FREE(msg);
         }
-        gsm.msg = NULL;
+        e->msg = NULL;
     }
 }
 
@@ -128,6 +144,7 @@ gsm_thread_producer(void* const arg) {
 void
 gsm_thread_process(void* const arg) {
     gsm_sys_sem_t* sem = arg;
+    gsm_t* e = &gsm;
     gsm_msg_t* msg;
     uint32_t time;
 
@@ -140,7 +157,8 @@ gsm_thread_process(void* const arg) {
     GSM_CORE_PROTECT();
     while (1) {
         GSM_CORE_UNPROTECT();
-        time = gsmi_get_from_mbox_with_timeout_checks(&gsm.mbox_process, (void **)&msg, 10);    /* Get message from queue */
+        time = gsmi_get_from_mbox_with_timeout_checks(&e->mbox_process, (void **)&msg, 10);
+        GSM_THREAD_PROCESS_HOOK();              /* Execute process thread hook */
         GSM_CORE_PROTECT();
 
         if (time == GSM_SYS_TIMEOUT || msg == NULL) {
@@ -150,12 +168,13 @@ gsm_thread_process(void* const arg) {
 #else
     while (1) {
         /*
-        * Check for next timeout event only here
-        *
-        * If there are no timeouts to process, we can wait unlimited time.
-        * In case new timeout occurs, thread will wake up by writing new element to mbox process queue
-        */
-        time = gsmi_get_from_mbox_with_timeout_checks(&gsm.mbox_process, (void **)&msg, 0);
+         * Check for next timeout event only here
+         *
+         * If there are no timeouts to process, we can wait unlimited time.
+         * In case new timeout occurs, thread will wake up by writing new element to mbox process queue
+         */
+        time = gsmi_get_from_mbox_with_timeout_checks(&e->mbox_process, (void **)&msg, 0);
+        GSM_THREAD_PROCESS_HOOK();              /* Execute process thread hook */
         GSM_UNUSED(time);
 #endif /* !GSM_CFG_INPUT_USE_PROCESS */
     }

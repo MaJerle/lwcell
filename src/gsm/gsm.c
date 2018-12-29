@@ -324,18 +324,19 @@ gsm_device_set_present(uint8_t present,
     GSM_CORE_PROTECT();
     gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
 
-    /**
-     * \todo: Set stack to default values
-     */
-
+    if (!gsm.status.f.dev_present) {
+        gsmi_reset_everything(1);               /* Reset everything */
+    }
 #if GSM_CFG_RESET_ON_INIT
-    if (gsm.status.f.dev_present) {             /* Is new device present? */
+    else {
         GSM_CORE_UNPROTECT();
         res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
         GSM_CORE_PROTECT();
     }
 #else
-    GSM_UNUSED(blocking);                       /* Unused variable */
+    GSM_UNUSED(evt_fn);
+    GSM_UNUSED(evt_arg);
+    ESP_UNUSED(blocking);
 #endif /* GSM_CFG_RESET_ON_INIT */
 
     gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);       /* Send present event */

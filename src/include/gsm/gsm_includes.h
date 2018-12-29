@@ -48,7 +48,6 @@ extern "C" {
 #include "gsm/gsm_operator.h"
 #include "gsm/gsm_evt.h"
 #include "gsm/gsm_network.h"
-
 #include "system/gsm_sys.h"
 
 #if GSM_CFG_SMS || __DOXYGEN__

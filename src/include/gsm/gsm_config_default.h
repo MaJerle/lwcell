@@ -1,6 +1,6 @@
 /**
  * \file            gsm_config_default.h
- * \brief           Default configuration for GSM
+ * \brief           Default configuration for GSM-AT library
  */
 
 /*
@@ -70,10 +70,10 @@
  *                  To speed up this possibilities, you can set memory alignment and library
  *                  will try to allocate memory on aligned boundaries.
  *
- * \note            Some CPUs such ARM Cortex-M0 dont't support unaligned memory access.
+ * \note            Some CPUs such ARM Cortex-M0 don't support unaligned memory access.
  *                  This CPUs must have set correct memory alignment value.
  *
- * \note            This value must be power of 2
+ * \note            This value must be power of `2`
  */
 #ifndef GSM_CFG_MEM_ALIGNMENT
 #define GSM_CFG_MEM_ALIGNMENT               4
@@ -89,11 +89,11 @@
 
 /**
  * \brief           Maximal number of bytes we can send at single command to GSM
- * \note            Value can not exceed `2048` bytes or no data will be ever send
+ * \note            Value can not exceed `1460` bytes or no data will be ever send
  *
  * \note            This is limitation of GSM AT commands and on systems where RAM
- *                  is not an issue, it should be set to maximal value (2048)
- *                  to optimize speed performance of sending data
+ *                  is not an issue, it should be set to maximal value (`1460`)
+ *                  to optimize data transfer speed performance
  */
 #ifndef GSM_CFG_CONN_MAX_DATA_LEN
 #define GSM_CFG_CONN_MAX_DATA_LEN           1460
@@ -110,10 +110,9 @@
 #endif
 
 /**
- * \brief           Maximal data buffer for Input Data Packet, used on TCP/IP commands
+ * \brief           Maximum single buffer size for network receive data (TCP/UDP connections)
  *
- * \note            If +IPD length is larger that this value,
- *                  multiple pbuf entries will be created to hold entire +IPD
+ * \note            When GSM sends buffer buffer than maximal, multiple buffers are created
  */
 #ifndef GSM_CFG_IPD_MAX_BUFF_SIZE
 #define GSM_CFG_IPD_MAX_BUFF_SIZE           1460
@@ -340,6 +339,24 @@
  */
 #ifndef GSM_CFG_INPUT_USE_PROCESS
 #define GSM_CFG_INPUT_USE_PROCESS           0
+#endif
+
+/**
+ * \brief           Producer thread hook, called each time thread wakes-up and does the processing.
+ *
+ *                  It can be used to check if thread is alive.
+ */
+#ifndef GSM_THREAD_PRODUCER_HOOK
+#define GSM_THREAD_PRODUCER_HOOK()
+#endif
+
+/**
+ * \brief           Process thread hook, called each time thread wakes-up and does the processing.
+ *
+ *                  It can be used to check if thread is alive.
+ */
+#ifndef GSM_THREAD_PROCESS_HOOK
+#define GSM_THREAD_PROCESS_HOOK()
 #endif
 
 /**
