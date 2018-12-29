@@ -80,6 +80,17 @@ typedef enum {
 } gsmr_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
+ * \brief           GSM device model type
+ */
+typedef enum {
+#define GSM_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte)     GSM_DEVICE_MODEL_ ## name,
+#include "gsm/gsm_models.h"
+    GSM_DEVICE_MODEL_END,                       /*!< End of device model */
+    GSM_DEVICE_MODEL_UNKNOWN,                   /*!< Unknown device model */
+} gsm_device_model_t;
+
+/**
  * \ingroup         GSM_SIM
  * \brief           SIM state
  */
@@ -266,7 +277,9 @@ typedef enum {
     GSM_NETWORK_REG_STATUS_CONNECTED = 0x01,    /*!< Device is connected to network */
     GSM_NETWORK_REG_STATUS_SEARCHING = 0x02,    /*!< Network search is in progress */
     GSM_NETWORK_REG_STATUS_DENIED = 0x03,       /*!< Registration denied */
-    GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING = 0x05 /*!< Device is connected and is roaming */
+    GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING = 0x05,/*!< Device is connected and is roaming */
+    GSM_NETWORK_REG_STATUS_CONNECTED_SMS_ONLY = 0x06,   /*!< Device is connected to home network in SMS-only mode */
+    GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING_SMS_ONLY = 0x07/*!< Device is roaming in SMS-only mode */
 } gsm_network_reg_status_t;
 
 /**

@@ -43,9 +43,9 @@ static gsm_recv_t recv_buff;
 static gsmr_t gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error);
 
 /**
- * \brief           Memory map
+ * \brief           Memory mapping
  */
-gsm_dev_mem_map_t
+const gsm_dev_mem_map_t
 gsm_dev_mem_map[] = {
 #define GSM_DEV_MEMORY_ENTRY(name, str_code)    { GSM_MEM_ ## name, str_code },
 #include "gsm/gsm_memories.h"
@@ -54,8 +54,23 @@ gsm_dev_mem_map[] = {
 /**
  * \brief           Size of device memory mapping array
  */
-size_t
+const size_t
 gsm_dev_mem_map_size = GSM_ARRAYSIZE(gsm_dev_mem_map);
+
+/**
+ * \brief           List of supported devices
+ */
+const gsm_dev_model_map_t
+gsm_dev_model_map[] = {
+#define GSM_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte)     { GSM_DEVICE_MODEL_ ## name, str_id, is_2g, is_lte },
+#include "gsm/gsm_models.h"
+};
+
+/**
+ * \brief           Size of device models mapping array
+ */
+const size_t
+gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 
 /**
  * \brief           Free connection send data memory
@@ -410,6 +425,7 @@ gsmi_reset_everything(uint8_t forced) {
 
     /* Manually set states */
     gsm.m.sim.state = (gsm_sim_state_t)-1;
+    gsm.m.model = GSM_DEVICE_MODEL_UNKNOWN;
 }
 
 /**
@@ -767,6 +783,12 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                 gsmi_parse_string(&tmp, gsm.m.model_manufacturer, sizeof(gsm.m.model_manufacturer), 1);
             } else if (CMD_IS_CUR(GSM_CMD_CGMM_GET)) {  /* Check device model number */
                 gsmi_parse_string(&tmp, gsm.m.model_number, sizeof(gsm.m.model_number), 1);
+                for (size_t i = 0; i < gsm_dev_model_map_size; i++) {
+                    if (strstr(gsm.m.model_number, gsm_dev_model_map[i].id_str) != NULL) {
+                        gsm.m.model = gsm_dev_model_map[i].model;
+                        break;
+                    }
+                }
             } else if (CMD_IS_CUR(GSM_CMD_CGSN_GET)) {  /* Check device serial number */
                 gsmi_parse_string(&tmp, gsm.m.model_serial_number, sizeof(gsm.m.model_serial_number), 1);
             }

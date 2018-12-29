@@ -596,6 +596,7 @@ typedef struct {
     char                model_manufacturer[20]; /*!< Device manufacturer */
     char                model_number[20];       /*!< Device model number */
     char                model_serial_number[20];/*!< Device serial number */
+    gsm_device_model_t  model;                  /*!< Device model */
 
     /* Network&operator specific */
     gsm_sim_t           sim;                    /*!< SIM data */
@@ -659,6 +660,16 @@ typedef struct {
 } gsm_dev_mem_map_t;
 
 /**
+ * \brief           Device models map between model and other information
+ */
+typedef struct {
+    gsm_device_model_t model;                   /*!< Device model */
+    const char* id_str;                         /*!< Model string identification */
+    uint8_t is_2g;                              /*!< Status if modem is 2G */
+    uint8_t is_lte;                             /*!< Status if modem is LTE */
+} gsm_dev_model_map_t;
+
+/**
  * \ingroup         GSM_UNICODE
  * \brief           Unicode support structure
  */
@@ -684,8 +695,11 @@ typedef struct {
 
 extern gsm_t                gsm;
 
-extern gsm_dev_mem_map_t    gsm_dev_mem_map[];
-extern size_t               gsm_dev_mem_map_size;
+extern const gsm_dev_mem_map_t  gsm_dev_mem_map[];
+extern const size_t         gsm_dev_mem_map_size;
+
+extern const gsm_dev_model_map_t    gsm_dev_model_map[];
+extern const size_t         gsm_dev_model_map_size;
 
 #define CMD_IS_CUR(c)       (gsm.msg != NULL && gsm.msg->cmd == (c))
 #define CMD_IS_DEF(c)       (gsm.msg != NULL && gsm.msg->cmd_def == (c))
