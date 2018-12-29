@@ -59,7 +59,7 @@ def_callback(gsm_evt_t* cb) {
  * \brief           Init and prepare GSM stack
  * \note            When \ref GSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device.
  *                  In this case, `blocking` parameter indicates if we shall wait or not for response
- * \param[in]       evt_func: Event callback function
+ * \param[in]       evt_func: Global event callback function for all major events
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          Member of \ref gsmr_t enumeration
  */
