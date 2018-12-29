@@ -80,6 +80,7 @@ typedef enum {
 } gsmr_t;
 
 /**
+ * \ingroup         GSM_SIM
  * \brief           SIM state
  */
 typedef enum {
@@ -139,6 +140,7 @@ typedef enum {
 } gsm_conn_type_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           Available device memories
  */
 typedef enum {
@@ -150,6 +152,7 @@ typedef enum {
 } gsm_mem_t;
 
 /**
+ * \ingroup         GSM_TYPEDEFS
  * \brief           GSM number type
  */
 typedef enum {
@@ -255,6 +258,7 @@ typedef struct {
 } gsm_operator_curr_t;
 
 /**
+ * \ingroup         GSM_NETWORK
  * \brief           Network Registration status
  */
 typedef enum {

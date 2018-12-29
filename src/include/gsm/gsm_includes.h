@@ -51,19 +51,19 @@ extern "C" {
 
 #include "system/gsm_sys.h"
 
-#if GSM_CFG_SMS
+#if GSM_CFG_SMS || __DOXYGEN__
 #include "gsm/gsm_sms.h"
 #endif /* GSM_CFG_SMS */
-#if GSM_CFG_CALL
+#if GSM_CFG_CALL || __DOXYGEN__
 #include "gsm/gsm_call.h"
 #endif /* GSM_CFG_CALL */
-#if GSM_CFG_PHONEBOOK
+#if GSM_CFG_PHONEBOOK || __DOXYGEN__
 #include "gsm/gsm_phonebook.h"
 #endif /* GSM_CFG_PHONEBOOK */
-#if GSM_CFG_CONN
+#if GSM_CFG_CONN || __DOXYGEN__
 #include "gsm/gsm_conn.h"
 #endif /* GSM_CFG_CONN */
-#if GSM_CFG_NETCONN
+#if GSM_CFG_NETCONN || __DOXYGEN__
 #include "gsm/gsm_netconn.h"
 #endif /* GSM_CFG_NETCONN */
 

@@ -65,7 +65,7 @@ typedef struct gsm_mqtt_client_api_buf {
 } gsm_mqtt_client_api_buf_t;
 
 /**
- * \brief           Pointer to \ref gsm_mqtt_client_api_t structure
+ * \brief           Pointer to \ref gsm_mqtt_client_api structure
  */
 typedef struct gsm_mqtt_client_api* gsm_mqtt_client_api_p;
 
