@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_PARSER_H
-#define __GSM_PARSER_H
+#ifndef GSM_HDR_PARSER_H
+#define GSM_HDR_PARSER_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -72,4 +72,4 @@ uint8_t     gsmi_parse_ipd(const char* str);
 }
 #endif /* defined(__cplusplus) */
 
-#endif /* __GSM_PARSER_H */
+#endif /* GSM_HDR_PARSER_H */

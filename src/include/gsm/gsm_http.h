@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_HTTP_H
-#define __GSM_HTTP_H
+#ifndef GSM_HDR_HTTP_H
+#define GSM_HDR_HTTP_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -59,4 +59,4 @@ extern "C" {
 }
 #endif
 
-#endif /* __GSM_HTTP_H */
+#endif /* GSM_HDR_HTTP_H */

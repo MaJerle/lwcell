@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_MEM_H
-#define __GSM_MEM_H
+#ifndef GSM_HDR_MEM_H
+#define GSM_HDR_MEM_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -74,4 +74,4 @@ uint8_t gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t size);
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_MEM_H */
+#endif /* GSM_HDR_MEM_H */

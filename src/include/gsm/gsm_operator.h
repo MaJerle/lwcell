@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_OPERATOR_H
-#define __GSM_OPERATOR_H
+#ifndef GSM_HDR_OPERATOR_H
+#define GSM_HDR_OPERATOR_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -61,4 +61,4 @@ gsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, gsm
 }
 #endif
 
-#endif /* __GSM_OPERATOR_H */
+#endif /* GSM_HDR_OPERATOR_H */

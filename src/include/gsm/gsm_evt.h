@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_EVT_H
-#define __GSM_EVT_H
+#ifndef GSM_HDR_EVT_H
+#define GSM_HDR_EVT_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -253,4 +253,4 @@ const gsm_call_t*  gsm_evt_call_changed_get_call(gsm_evt_t* cc);
 }
 #endif
 
-#endif /* __GSM_PING_H */
+#endif /* GSM_HDR_EVT_H */

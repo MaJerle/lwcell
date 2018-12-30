@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_PHONEBOOK_H
-#define __GSM_PHONEBOOK_H
+#ifndef GSM_HDR_PHONEBOOK_H
+#define GSM_HDR_PHONEBOOK_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -66,4 +66,4 @@ gsmr_t      gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* ent
 }
 #endif
 
-#endif /* __GSM_PHONEBOOK_H */
+#endif /* GSM_HDR_PHONEBOOK_H */

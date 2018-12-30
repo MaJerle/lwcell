@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_SMS_H
-#define __GSM_SMS_H
+#ifndef GSM_HDR_SMS_H
+#define GSM_HDR_SMS_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -65,4 +65,4 @@ gsmr_t      gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_me
 }
 #endif
 
-#endif /* __GSM_SMS_H */
+#endif /* GSM_HDR_SMS_H */

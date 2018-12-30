@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_SIM_H
-#define __GSM_SIM_H
+#ifndef GSM_HDR_SIM_H
+#define GSM_HDR_SIM_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -63,4 +63,4 @@ gsmr_t      gsm_sim_puk_enter(const char* puk, const char* new_pin, gsm_api_cmd_
 }
 #endif
 
-#endif /* __GSM_SIM_H */
+#endif /* GSM_HDR_SIM_H */

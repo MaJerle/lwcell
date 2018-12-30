@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_NETCONN_H
-#define __GSM_NETCONN_H
+#ifndef GSM_HDR_NETCONN_H
+#define GSM_HDR_NETCONN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -87,4 +87,4 @@ gsmr_t          gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_por
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_NETCONN_H */
+#endif /* GSM_HDR_NETCONN_H */

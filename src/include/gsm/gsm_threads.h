@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_THREADS_H
-#define __GSM_THREADS_H
+#ifndef GSM_HDR_THREADS_H
+#define GSM_HDR_THREADS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,4 +46,4 @@ void    gsm_thread_process(void* const arg);
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_THREADS_H */
+#endif /* GSM_HDR_THREADS_H */

@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_INPUT_H
-#define __GSM_INPUT_H
+#ifndef GSM_HDR_INPUT_H
+#define GSM_HDR_INPUT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,4 +58,4 @@ gsmr_t      gsm_input_process(const void* data, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_INPUT_H */
+#endif /* GSM_HDR_INPUT_H */

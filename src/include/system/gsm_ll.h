@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_LL_H
-#define __GSM_LL_H
+#ifndef GSM_HDR_LL_H
+#define GSM_HDR_LL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,4 +57,4 @@ gsmr_t      gsm_ll_deinit(gsm_ll_t* ll);
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_LL_H */
+#endif /* GSM_HDR_LL_H */

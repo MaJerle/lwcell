@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_APP_MQTT_CLIENT_API_H
-#define __GSM_APP_MQTT_CLIENT_API_H
+#ifndef GSM_HDR_APP_MQTT_CLIENT_API_H
+#define GSM_HDR_APP_MQTT_CLIENT_API_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -93,4 +93,4 @@ void                    gsm_mqtt_client_api_buf_free(gsm_mqtt_client_api_buf_p p
 }
 #endif
 
-#endif /* __GSM_APP_MQTT_CLIENT_H */
+#endif /* GSM_HDR_APP_MQTT_CLIENT_H */

@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_DEFS_H
-#define __GSM_DEFS_H
+#ifndef GSM_HDR_DEFS_H
+#define GSM_HDR_DEFS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -612,4 +612,4 @@ typedef struct {
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_DEFS_H */
+#endif /* GSM_HDR_DEFS_H */

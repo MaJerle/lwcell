@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_PBUF_H
-#define __GSM_PBUF_H
+#ifndef GSM_HDR_PBUF_H
+#define GSM_HDR_PBUF_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -80,4 +80,4 @@ void            gsm_pbuf_set_ip(gsm_pbuf_p pbuf, const gsm_ip_t* ip, gsm_port_t 
 }
 #endif
 
-#endif /* __GSM_PBUF_H */
+#endif /* GSM_HDR_PBUF_H */

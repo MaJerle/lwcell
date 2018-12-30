@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_SYSTEM_H
-#define __GSM_SYSTEM_H
+#ifndef GSM_HDR_SYSTEM_H
+#define GSM_HDR_SYSTEM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -127,4 +127,4 @@ typedef osPriority          gsm_sys_thread_prio_t;
 };
 #endif /* __cplusplus */
 
-#endif /* __GSM_SYSTEM_H */
+#endif /* GSM_HDR_SYSTEM_H */

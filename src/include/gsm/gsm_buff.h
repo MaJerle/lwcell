@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_BUFF_H
-#define __GSM_BUFF_H
+#ifndef GSM_HDR_BUFF_H
+#define GSM_HDR_BUFF_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -68,4 +68,4 @@ size_t      gsm_buff_skip(gsm_buff_t* buff, size_t len);
 }
 #endif
 
-#endif /* __GSM_BUFF_H */
+#endif /* GSM_HDR_BUFF_H */

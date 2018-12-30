@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_TIMEOUT_H
-#define __GSM_TIMEOUT_H
+#ifndef GSM_HDR_TIMEOUT_H
+#define GSM_HDR_TIMEOUT_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -59,4 +59,4 @@ gsmr_t          gsm_timeout_remove(gsm_timeout_fn fn);
 }
 #endif
 
-#endif /* __GSM_TIMEOUT_H */
+#endif /* GSM_HDR_TIMEOUT_H */

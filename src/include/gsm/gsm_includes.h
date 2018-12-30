@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_INCLUDES_H
-#define __GSM_INCLUDES_H
+#ifndef GSM_HDR_INCLUDES_H
+#define GSM_HDR_INCLUDES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,4 +70,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_INCLUDES_H */
+#endif /* GSM_HDR_INCLUDES_H */

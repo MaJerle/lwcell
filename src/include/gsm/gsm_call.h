@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_CALL_H
-#define __GSM_CALL_H
+#ifndef GSM_HDR_CALL_H
+#define GSM_HDR_CALL_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -63,4 +63,4 @@ gsmr_t      gsm_call_hangup(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint
 }
 #endif
 
-#endif /* __GSM_CALL_H */
+#endif /* GSM_HDR_CALL_H */

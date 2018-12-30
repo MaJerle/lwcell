@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_UNICODE_H
-#define __GSM_UNICODE_H
+#ifndef GSM_HDR_UNICODE_H
+#define GSM_HDR_UNICODE_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -58,4 +58,4 @@ gsmr_t          gsmi_unicode_decode(gsm_unicode_t* uni, uint8_t ch);
 }
 #endif
 
-#endif /* __GSM_UNICODE_H */
+#endif /* GSM_HDR_UNICODE_H */

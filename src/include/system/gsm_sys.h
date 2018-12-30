@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_MAIN_SYS_H
-#define __GSM_MAIN_SYS_H
+#ifndef GSM_HDR_MAIN_SYS_H
+#define GSM_HDR_MAIN_SYS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -121,4 +121,4 @@ uint8_t     gsm_sys_thread_yield(void);
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_MAIN_LL_H */
+#endif /* GSM_HDR_MAIN_LL_H */

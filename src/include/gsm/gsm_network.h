@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_NETWORK_H
-#define __GSM_NETWORK_H
+#ifndef GSM_HDR_NETWORK_H
+#define GSM_HDR_NETWORK_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -67,4 +67,4 @@ gsmr_t      gsm_network_check_status(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, c
 }
 #endif
 
-#endif /* __GSM_NETWORK_H */
+#endif /* GSM_HDR_NETWORK_H */

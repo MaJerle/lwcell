@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_CONN_H
-#define __GSM_CONN_H
+#ifndef GSM_HDR_CONN_H
+#define GSM_HDR_CONN_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -76,4 +76,4 @@ gsm_port_t  gsm_conn_get_local_port(gsm_conn_p conn);
 }
 #endif
 
-#endif /* __GSM_CONN_H */
+#endif /* GSM_HDR_CONN_H */

@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_PING_H
-#define __GSM_PING_H
+#ifndef GSM_HDR_PING_H
+#define GSM_HDR_PING_H
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -56,4 +56,4 @@ extern "C" {
 }
 #endif
 
-#endif /* __GSM_PING_H */
+#endif /* GSM_HDR_PING_H */

@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __GSM_DEFAULT_CONFIG_H
-#define __GSM_DEFAULT_CONFIG_H
+#ifndef GSM_HDR_DEFAULT_CONFIG_H
+#define GSM_HDR_DEFAULT_CONFIG_H
 
 /**
  * \defgroup        GSM_CONFIG Configuration
@@ -611,4 +611,4 @@ void *  my_memset(void* dst, int b, size_t len);
 
 #endif /* !__DOXYGEN__ */
 
-#endif /* __GSM_DEFAULT_CONFIG_H */
+#endif /* GSM_HDR_DEFAULT_CONFIG_H */
