@@ -34,7 +34,7 @@
 #define __GSM_DEFAULT_CONFIG_H
 
 /**
- * \defgroup        GSM_CONF Configuration
+ * \defgroup        GSM_CONFIG Configuration
  * \brief           Configuration parameters
  * \{
  *
@@ -45,7 +45,7 @@
  *
  * \note            Value must be set to 1 in the current revision
  *
- * \note            Check \ref GSM_CONF_OS group for more configuration related to operating system
+ * \note            Check \ref GSM_CONFIG_OS group for more configuration related to operating system
  *
  */
 #ifndef GSM_CFG_OS
@@ -171,7 +171,7 @@
 #endif
 
 /**
- * \defgroup        GSM_CONF_DBG Debugging
+ * \defgroup        GSM_CONFIG_DBG Debugging
  * \brief           Debugging configurations
  * \{
  */
@@ -312,7 +312,7 @@
  */
 
 /**
- * \defgroup        GSM_CONF_OS OS configuration
+ * \defgroup        GSM_CONFIG_OS OS configuration
  * \brief           Operating system dependant configuration
  * \{
  */
@@ -375,13 +375,13 @@
  */
 
 /**
- * \defgroup        GSM_CONF_MODULES Modules
+ * \defgroup        GSM_CONFIG_MODULES Modules
  * \brief           Configuration of specific modules
  * \{
  */
 
 /**
- * \defgroup        GSM_CONF_MODULES_NETCONN Netconn module
+ * \defgroup        GSM_CONFIG_MODULES_NETCONN Netconn module
  * \brief           Configuration of netconn API module
  * \{
  */
@@ -433,7 +433,7 @@
  */
 
 /**
- * \defgroup        GSM_CONF_MODULES_MQTT MQTT client module
+ * \defgroup        GSM_CONFIG_MODULES_MQTT MQTT client module
  * \brief           Configuration of MQTT and MQTT API client modules
  * \{
  */
@@ -548,7 +548,7 @@
 #endif
 
 /**
- * \defgroup        GSM_CONF_STD_LIB Standard library
+ * \defgroup        GSM_CONFIG_STD_LIB Standard library
  * \brief           Standard C library configuration
  * \{
  *
