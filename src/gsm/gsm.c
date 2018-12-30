@@ -56,12 +56,14 @@ def_callback(gsm_evt_t* cb) {
 }
 
 /**
- * \brief           Init and prepare GSM stack
+ * \brief           Init and prepare GSM stack for device operation
+ * \note            Function must be called from operating system thread context!
+ *
  * \note            When \ref GSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device.
- *                  In this case, `blocking` parameter indicates if we shall wait or not for response
  * \param[in]       evt_func: Global event callback function for all major events
- * \param[in]       blocking: Status whether command should be blocking or not
- * \return          Member of \ref gsmr_t enumeration
+ * \param[in]       blocking: Status whether command should be blocking or not.
+ *                      Used when \ref GSM_CFG_RESET_ON_INIT is enabled.
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
 gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
@@ -313,7 +315,8 @@ gsm_set_func_mode(uint8_t mode,
 /**
  * \brief           Notify stack if device is present or not
  *
- *                  Use this function to notify stack that device is not connected and not ready to communicate with host device
+ *                  Use this function to notify stack that device is not physically connected
+ *                      and not ready to communicate with host device
  * \param[in]       present: Flag indicating device is present
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
@@ -332,21 +335,21 @@ gsm_device_set_present(uint8_t present,
         if (!gsm.status.f.dev_present) {
             /* Manually reset stack to default device state */
             gsmi_reset_everything(1);
-        }
-#if GSM_CFG_RESET_ON_INIT
-        else {
+        } else {
+#if GSM_CFG_RESET_ON_DEVICE_PRESENT
             GSM_CORE_UNPROTECT();
             res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
             GSM_CORE_PROTECT();
+#endif /* GSM_CFG_RESET_ON_DEVICE_PRESENT */
         }
-#else
-        GSM_UNUSED(evt_fn);
-        GSM_UNUSED(evt_arg);
-        ESP_UNUSED(blocking);
-#endif /* GSM_CFG_RESET_ON_INIT */
         gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);   /* Send present event */
     }
     GSM_CORE_UNPROTECT();
+
+    GSM_UNUSED(evt_fn);
+    GSM_UNUSED(evt_arg);
+    GSM_UNUSED(blocking);
+
     return res;
 }
 

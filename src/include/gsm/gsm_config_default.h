@@ -153,6 +153,17 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` reset sequence after \ref gsm_device_set_present call
+ *
+ * \note            When this functionality is disabled, user must manually call \ref gsm_reset to send
+ *                  reset sequence to GSM device.
+ */
+#ifndef GSM_CFG_RESET_ON_DEVICE_PRESENT
+#define GSM_CFG_RESET_ON_DEVICE_PRESENT     1
+#endif
+
+
+/**
  * \brief           Default delay (milliseconds unit) before sending first AT command on reset sequence
  */
 #ifndef GSM_CFG_RESET_DELAY_DEFAULT
