@@ -784,7 +784,7 @@ void        gsmi_conn_start_timeout(gsm_conn_p conn);
 gsmr_t      gsmi_get_sim_info(const uint32_t blocking);
 
 void        gsmi_reset_everything(uint8_t forced);
-void        gsmi_process_events_for_timeout(gsm_msg_t* msg);
+void        gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, gsmr_t err);
 
 /**
  * \}

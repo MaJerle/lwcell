@@ -1994,9 +1994,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     /* Check here if stack is even enabled or shall we disable new command entry? */
     GSM_CORE_PROTECT();
     if (!gsm.status.f.dev_present) {
-        if (!CMD_IS_DEF(GSM_CMD_RESET)) {       /* Only reset is allowed */
-            res = gsmERRNODEVICE;               /* No device connected */
-        }
+        res = gsmERRNODEVICE;                   /* No device connected */
     }
     GSM_CORE_UNPROTECT();
     if (res != gsmOK) {
@@ -2041,71 +2039,71 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
 }
 
 /**
- * \brief           Process events in case of timeout on command
+ * \brief           Process events in case of timeout on command or invalid message (if device is not present)
+ *
+ *                  Function is called from processing thread:
+ *
+ *                      - On command timeout error
+ *                      - If command was sent to queue and before processed, device present status changed
+ *
  * \param[in]       msg: Current message
+ * \param[in]       err: Error message to send
  */
 void
-gsmi_process_events_for_timeout(gsm_msg_t* msg) {
+gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, gsmr_t err) {
     switch (msg->cmd_def) {
-        /* Timeout on reset sequence */
         case GSM_CMD_RESET: {
-            /* Timeout on reset */
-            RESET_SEND_EVT(msg, gsmTIMEOUT);
+            /* Reset command error */
+            RESET_SEND_EVT(msg, err);
             break;
         }
 
-        /* Timeout on restore sequence */
         case GSM_CMD_RESTORE: {
-            /* Timeout on reset */
-            RESTORE_SEND_EVT(msg, gsmTIMEOUT);
+            /* Restore command error */
+            RESTORE_SEND_EVT(msg, err);
             break;
         }
 
 #if GSM_CFG_CONN
-        /*
-         * Timeout on "connection start" command.
-         * Report connection error event
-         */
         case GSM_CMD_CIPSTART: {
-            gsmi_send_conn_error_cb(msg, gsmTIMEOUT);
+            /* Start connection error */
+            gsmi_send_conn_error_cb(msg, err);
             break;
         }
 
-        /*
-         * Timeout on "send data" command.
-         * Report data send error event
-         */
         case GSM_CMD_CIPSEND: {
-            /* Send data sent error event */
-            CONN_SEND_DATA_SEND_EVT(msg, gsmTIMEOUT);
+            /* Send data error event */
+            CONN_SEND_DATA_SEND_EVT(msg, err);
             break;
         }
 #endif /* GSM_CFG_CONN */
+
 #if GSM_CFG_SMS
         case GSM_CMD_CMGS: {
             /* Send error event */
-            SMS_SEND_SEND_EVT(msg, gsmTIMEOUT);
+            SMS_SEND_SEND_EVT(msg, err);
             break;
         }
 
         case GSM_CMD_CMGR: {
             /* Read error event */
-            SMS_SEND_READ_EVT(msg, gsmTIMEOUT);
+            SMS_SEND_READ_EVT(msg, err);
             break;
         }
 
         case GSM_CMD_CMGL: {
             /* List error event */
-            SMS_SEND_LIST_EVT(msg, gsmTIMEOUT);
+            SMS_SEND_LIST_EVT(msg, err);
             break;
         }
 
         case GSM_CMD_CMGD: {
             /* Delete error event */
-            SMS_SEND_DELETE_EVT(msg, gsmTIMEOUT);
+            SMS_SEND_DELETE_EVT(msg, err);
             break;
         }
 #endif /* GSM_CFG_SMS */
+
         default: break;
     }
 }

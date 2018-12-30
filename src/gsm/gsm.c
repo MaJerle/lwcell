@@ -91,12 +91,12 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     /* Create threads */
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
     if (!gsm_sys_thread_create(&gsm.thread_producer, "gsm_producer", gsm_thread_producer, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
-        gsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore */
+        gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore */
         goto cleanup;
     }
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in producer thread */
     if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_producer", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
-        gsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore */
+        gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore */
         goto cleanup;
     }
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in producer thread */
@@ -109,8 +109,12 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
     gsm_ll_init(&gsm.ll);                       /* Init low-level communication */
 
+    GSM_CORE_PROTECT();
     gsm.status.f.initialized = 1;               /* We are initialized now */
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
+
+    gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
+    GSM_CORE_UNPROTECT();
 
     /*
      * Call reset command and call default
@@ -123,7 +127,6 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
 #endif /* GSM_CFG_RESET_ON_INIT */
-    gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
 
     return res;
 
@@ -322,25 +325,27 @@ gsm_device_set_present(uint8_t present,
                         gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     gsmr_t res = gsmOK;
     GSM_CORE_PROTECT();
-    gsm.status.f.dev_present = GSM_U8(!!present);   /* Device is present */
+    present = present ? 1 : 0;
+    if (present != gsm.status.f.dev_present) {
+        gsm.status.f.dev_present = present;
 
-    if (!gsm.status.f.dev_present) {
-        gsmi_reset_everything(1);               /* Reset everything */
-    }
+        if (!gsm.status.f.dev_present) {
+            /* Manually reset stack to default device state */
+            gsmi_reset_everything(1);
+        }
 #if GSM_CFG_RESET_ON_INIT
-    else {
-        GSM_CORE_UNPROTECT();
-        res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
-        GSM_CORE_PROTECT();
-    }
+        else {
+            GSM_CORE_UNPROTECT();
+            res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
+            GSM_CORE_PROTECT();
+        }
 #else
-    GSM_UNUSED(evt_fn);
-    GSM_UNUSED(evt_arg);
-    ESP_UNUSED(blocking);
+        GSM_UNUSED(evt_fn);
+        GSM_UNUSED(evt_arg);
+        ESP_UNUSED(blocking);
 #endif /* GSM_CFG_RESET_ON_INIT */
-
-    gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);       /* Send present event */
-
+        gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);   /* Send present event */
+    }
     GSM_CORE_UNPROTECT();
     return res;
 }

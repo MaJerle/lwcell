@@ -72,9 +72,7 @@ gsm_thread_producer(void* const arg) {
          * if device present flag changes
          */
         if (!e->status.f.dev_present) {
-            if (!CMD_IS_DEF(GSM_CMD_RESET)) {
-                res = gsmERRNODEVICE;
-            }
+            res = gsmERRNODEVICE;
         }
 
         /* For reset message, we can have delay! */
@@ -97,7 +95,6 @@ gsm_thread_producer(void* const arg) {
                 time = gsm_sys_sem_wait(&e->sem_sync, msg->block_time); /* Wait for synchronization semaphore from processing thread or timeout */
                 GSM_CORE_PROTECT();
                 if (time == GSM_SYS_TIMEOUT) {  /* Sync timeout occurred? */
-                    gsmi_process_events_for_timeout(msg);   /* Manually call callbacks on commands */
                     res = gsmTIMEOUT;           /* Timeout on command */
                 } else {
                     gsm_sys_sem_release(&e->sem_sync);
@@ -111,6 +108,9 @@ gsm_thread_producer(void* const arg) {
             }
         }
         if (res != gsmOK) {
+            /* Process global callbacks */
+            gsmi_process_events_for_timeout_or_error(msg, res);
+
             msg->res = res;                     /* Save response */
         }
 
