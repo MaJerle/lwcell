@@ -79,7 +79,7 @@ check_mem(gsm_mem_t mem, uint8_t can_curr) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+gsm_pb_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
@@ -98,7 +98,7 @@ gsm_pb_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking)
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_pb_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+gsm_pb_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     gsm_core_lock();
     gsm.m.pb.enabled = 0;
     if (evt_fn != NULL) {
@@ -121,7 +121,7 @@ gsm_pb_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking
  */
 gsmr_t
 gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t type,
-            gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+            const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
@@ -159,7 +159,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
  */
 gsmr_t
 gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry,
-                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     return gsm_pb_list(mem, pos, entry, 1, NULL, evt_fn, evt_arg, blocking);
 }
 
@@ -177,7 +177,7 @@ gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry,
  */
 gsmr_t
 gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_number_type_t type,
-            gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+            const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
@@ -214,7 +214,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
  */
 gsmr_t
 gsm_pb_delete(gsm_mem_t mem, size_t pos,
-                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pos > 0", pos > 0);             /* Assert input parameters */
@@ -251,7 +251,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos,
  */
 gsmr_t
 gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t etr, size_t* er,
-            gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+            const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("start_index > 0", start_index > 0); /* Assert input parameters */
@@ -298,7 +298,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
  */
 gsmr_t
 gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t etr, size_t* er,
-                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("search != NULL", search != NULL);   /* Assert input parameters */

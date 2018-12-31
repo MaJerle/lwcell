@@ -156,7 +156,7 @@ cleanup:
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_reset(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+gsm_reset(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     return gsm_reset_with_delay(0, evt_fn, evt_arg, blocking);
 }
 
@@ -170,7 +170,7 @@ gsm_reset(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
  */
 gsmr_t
 gsm_reset_with_delay(uint32_t delay,
-                        gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                        const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
@@ -305,7 +305,7 @@ gsm_delay(uint32_t ms) {
  */
 gsmr_t
 gsm_set_func_mode(uint8_t mode,
-                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                    const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
@@ -329,7 +329,7 @@ gsm_set_func_mode(uint8_t mode,
  */
 gsmr_t
 gsm_device_set_present(uint8_t present,
-                        gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                        const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     gsmr_t res = gsmOK;
     gsm_core_lock();
     present = present ? 1 : 0;

@@ -58,7 +58,7 @@ gsm_sim_get_current_state(void) {
  */
 gsmr_t
 gsm_sim_pin_enter(const char* pin,
-                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                    const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -84,7 +84,7 @@ gsm_sim_pin_enter(const char* pin,
  */
 gsmr_t
 gsm_sim_pin_add(const char* pin,
-                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                    const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -108,7 +108,7 @@ gsm_sim_pin_add(const char* pin,
  */
 gsmr_t
 gsm_sim_pin_change(const char* pin, const char* new_pin, 
-                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                    const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -133,7 +133,7 @@ gsm_sim_pin_change(const char* pin, const char* new_pin,
  */
 gsmr_t
 gsm_sim_pin_remove(const char* pin,
-                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                    const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
@@ -157,7 +157,7 @@ gsm_sim_pin_remove(const char* pin,
  */
 gsmr_t
 gsm_sim_puk_enter(const char* puk, const char* new_pin,
-                    gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                    const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("puk != NULL", puk != NULL);     /* Assert input parameters */

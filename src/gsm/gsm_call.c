@@ -74,7 +74,7 @@ check_ready(void) {
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_call_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+gsm_call_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
@@ -93,7 +93,7 @@ gsm_call_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blockin
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
-gsm_call_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+gsm_call_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     gsm_core_lock();
     gsm.m.call.enabled = 0;
     if (evt_fn != NULL) {
@@ -113,7 +113,7 @@ gsm_call_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocki
  */
 gsmr_t
 gsm_call_start(const char* number,
-                gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("number != NULL", number != NULL);   /* Assert input parameters */
@@ -136,7 +136,7 @@ gsm_call_start(const char* number,
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_call_answer(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+gsm_call_answer(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();
@@ -156,7 +156,7 @@ gsm_call_answer(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blockin
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_call_hangup(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
+gsm_call_hangup(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();
