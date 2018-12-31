@@ -42,9 +42,9 @@
 gsm_sim_state_t
 gsm_sim_get_current_state(void) {
     gsm_sim_state_t state;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     state = gsm.m.sim.state;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return state;
 }
 

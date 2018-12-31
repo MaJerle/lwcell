@@ -77,6 +77,7 @@ typedef enum {
     gsmERRCONNFAIL,                             /*!< Connection failed to access point */
     gsmERRWIFINOTCONNECTED,                     /*!< Wifi not connected to access point */
     gsmERRNODEVICE,                             /*!< Device is not present */
+    gsmERRBLOCKING,                             /*!< Blocking mode command is not allowed */
 } gsmr_t;
 
 /**

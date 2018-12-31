@@ -111,12 +111,12 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
     gsm_ll_init(&gsm.ll);                       /* Init low-level communication */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     gsm.status.f.initialized = 1;               /* We are initialized now */
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
 
     gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
 
     /*
      * Call reset command and call default
@@ -182,7 +182,7 @@ gsm_reset_with_delay(uint32_t delay,
 }
 
 /**
- * \brief           Increase protection counter
+ * \brief           Lock stack from multi-thread access
  *
  *                  If lock was `0` before func call, lock is enabled and increased
  * \note            Function may be called multiple times to increase locks.
@@ -192,12 +192,15 @@ gsm_reset_with_delay(uint32_t delay,
  */
 gsmr_t
 gsm_core_lock(void) {
-    GSM_CORE_PROTECT();
+    gsm_sys_protect();
+    gsm.locked_cnt++;
     return gsmOK;
 }
 
 /**
- * \brief           Decrease protection counter
+ * \brief           Unlock stack for multi-thread access
+ *
+ *                  Used conjunction with \ref gsm_core_lock function
  *
  *                  If lock was non-zero before func call, it is decreased.
  *                  When `lock == 0`, protection is disabled
@@ -205,7 +208,8 @@ gsm_core_lock(void) {
  */
 gsmr_t
 gsm_core_unlock(void) {
-    GSM_CORE_UNPROTECT();
+    gsm.locked_cnt++;
+    gsm_sys_unprotect();
     return gsmOK;
 }
 
@@ -221,7 +225,7 @@ gsm_evt_register(gsm_evt_fn fn) {
 
     GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
 
     /* Check if function already exists on list */
     for (func = gsm.evt_func; func != NULL; func = func->next) {
@@ -247,7 +251,7 @@ gsm_evt_register(gsm_evt_fn fn) {
             res = gsmERRMEM;
         }
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -262,7 +266,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
     gsm_evt_func_t* func, *prev;
     GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
@@ -271,7 +275,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
             break;
         }
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return gsmOK;
 }
 
@@ -327,7 +331,7 @@ gsmr_t
 gsm_device_set_present(uint8_t present,
                         gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
     gsmr_t res = gsmOK;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     present = present ? 1 : 0;
     if (present != gsm.status.f.dev_present) {
         gsm.status.f.dev_present = present;
@@ -337,14 +341,14 @@ gsm_device_set_present(uint8_t present,
             gsmi_reset_everything(1);
         } else {
 #if GSM_CFG_RESET_ON_DEVICE_PRESENT
-            GSM_CORE_UNPROTECT();
+            gsm_core_unlock();
             res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
-            GSM_CORE_PROTECT();
+            gsm_core_lock();
 #endif /* GSM_CFG_RESET_ON_DEVICE_PRESENT */
         }
         gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);   /* Send present event */
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
 
     GSM_UNUSED(evt_fn);
     GSM_UNUSED(evt_arg);
@@ -360,8 +364,8 @@ gsm_device_set_present(uint8_t present,
 uint8_t
 gsm_device_is_present(void) {
     uint8_t res;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     res = gsm.status.f.dev_present;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }

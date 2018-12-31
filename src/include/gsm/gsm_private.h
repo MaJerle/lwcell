@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef GSM_HDR_PRIV_H
-#define GSM_HDR_PRIV_H
+#ifndef __GSM_PRIV_H
+#define __GSM_PRIV_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -626,6 +626,8 @@ typedef struct {
  * \brief           GSM global structure
  */
 typedef struct {
+    size_t              locked_cnt;             /*!< Counter how many times (recursive) stack is currently locked */
+
     gsm_sys_sem_t       sem_sync;               /*!< Synchronization semaphore between threads */
     gsm_sys_mbox_t      mbox_producer;          /*!< Producer message queue handle */
     gsm_sys_mbox_t      mbox_process;           /*!< Consumer message queue handle */
@@ -758,16 +760,6 @@ extern const size_t         gsm_dev_model_map_size;
 
 #define GSM_PORT2NUM(port)                  ((uint32_t)(port))
 
-/**
- * \brief           Protect (count up) OS protection (mutex)
- */
-#define GSM_CORE_PROTECT()                  gsm_sys_protect()
-
-/**
- * \brief           Unprotect (count down) OS protection (mutex)
- */
-#define GSM_CORE_UNPROTECT()                gsm_sys_unprotect()
-
 const char * gsmi_dbg_msg_to_string(gsm_cmd_t cmd);
 gsmr_t      gsmi_process(const void* data, size_t len);
 gsmr_t      gsmi_process_buffer(void);
@@ -796,4 +788,4 @@ void        gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, gsmr_t err)
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_PRIV_H */
+#endif /* __GSM_PRIV_H */

@@ -55,12 +55,12 @@ gsm_thread_producer(void* const arg) {
         gsm_sys_sem_release(sem);               /* Release semaphore */
     }
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     while (1) {
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
         time = gsm_sys_mbox_get(&e->mbox_producer, (void **)&msg, 0);   /* Get message from queue */
         GSM_THREAD_PRODUCER_HOOK();             /* Execute producer thread hook */
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         if (time == GSM_SYS_TIMEOUT || msg == NULL) {   /* Check valid message */
             continue;
         }
@@ -86,14 +86,14 @@ gsm_thread_producer(void* const arg) {
          */
         e->msg = msg;
         if (res == gsmOK && msg->fn != NULL) {  /* Check for callback processing function */
-            GSM_CORE_UNPROTECT();
+            gsm_core_unlock();
             gsm_sys_sem_wait(&e->sem_sync, 0);
-            GSM_CORE_PROTECT();
+            gsm_core_lock();
             res = msg->fn(msg);                 /* Process this message, check if command started at least */
             if (res == gsmOK) {                 /* We have valid data and data were sent */
-                GSM_CORE_UNPROTECT();
+                gsm_core_unlock();
                 time = gsm_sys_sem_wait(&e->sem_sync, msg->block_time); /* Wait for synchronization semaphore from processing thread or timeout */
-                GSM_CORE_PROTECT();
+                gsm_core_lock();
                 if (time == GSM_SYS_TIMEOUT) {  /* Sync timeout occurred? */
                     res = gsmTIMEOUT;           /* Timeout on command */
                 } else {
@@ -154,12 +154,12 @@ gsm_thread_process(void* const arg) {
     }
 
 #if !GSM_CFG_INPUT_USE_PROCESS
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     while (1) {
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
         time = gsmi_get_from_mbox_with_timeout_checks(&e->mbox_process, (void **)&msg, 10);
         GSM_THREAD_PROCESS_HOOK();              /* Execute process thread hook */
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
 
         if (time == GSM_SYS_TIMEOUT || msg == NULL) {
             GSM_UNUSED(time);                   /* Unused variable */

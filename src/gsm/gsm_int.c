@@ -1992,11 +1992,16 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     gsmr_t res = msg->res = gsmOK;
 
     /* Check here if stack is even enabled or shall we disable new command entry? */
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
+    /* If locked more than 1 time, means we were called from callback or internally */
+    if (gsm.locked_cnt > 1 && msg->is_blocking) {
+        res = gsmERRBLOCKING;                   /* Blocking mode not allowed */
+    }
+    /* Check if device present */
     if (!gsm.status.f.dev_present) {
         res = gsmERRNODEVICE;                   /* No device connected */
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     if (res != gsmOK) {
         GSM_MSG_VAR_FREE(msg);                  /* Free memory and return */
         return res;

@@ -101,9 +101,9 @@ gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t tim
         }
         wait_time = get_next_timeout_diff();    /* Get time to wait for next timeout execution */
         if (wait_time == 0 || gsm_sys_mbox_get(b, m, wait_time) == GSM_SYS_TIMEOUT) {
-            GSM_CORE_PROTECT();
+            gsm_core_lock();
             process_next_timeout();             /* Process with next timeout */
-            GSM_CORE_UNPROTECT();
+            gsm_core_unlock();
         }
         break;
     } while (1);

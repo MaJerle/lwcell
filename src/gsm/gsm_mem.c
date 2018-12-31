@@ -401,9 +401,9 @@ mem_getminfree(void) {
 void *
 gsm_mem_alloc(uint32_t size) {
     void* ptr;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     ptr = mem_calloc(1, size);                      /* Allocate memory and return pointer */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL, "MEM: Allocation failed: %d bytes\r\n", (int)size);
     GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL, "MEM: Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
@@ -418,9 +418,9 @@ gsm_mem_alloc(uint32_t size) {
  */
 void *
 gsm_mem_realloc(void* ptr, size_t size) {
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     ptr = mem_realloc(ptr, size);                   /* Reallocate and return pointer */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL, "MEM: Reallocation failed: %d bytes\r\n", (int)size);
     GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL, "MEM: Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
@@ -435,9 +435,9 @@ gsm_mem_realloc(void* ptr, size_t size) {
 void *
 gsm_mem_calloc(size_t num, size_t size) {
     void* ptr;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     ptr = mem_calloc(num, size);                   /* Allocate memory and clear it to 0. Then return pointer */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL, "MEM: Callocation failed: %d bytes\r\n", (int)size * (int)num);
     GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL, "MEM: Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
     return ptr;
@@ -451,9 +451,9 @@ void
 gsm_mem_free(void* ptr) {
     GSM_DEBUGF(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, "MEM: Free size: %d, address: %p\r\n",
         (int)MEM_BLOCK_USER_SIZE(ptr), ptr);
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     mem_free(ptr);                                  /* Free already allocated memory */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
 }
 
 /**

@@ -216,12 +216,12 @@ gsm_netconn_new(gsm_netconn_type_t type) {
     static uint8_t first = 1;
 
     /* Register only once! */
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     if (first) {
         first = 0;
         gsm_evt_register(gsm_evt);              /* Register global event function */
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     a = gsm_mem_calloc(1, sizeof(*a));          /* Allocate memory for core object */
     if (a != NULL) {
         a->type = type;                         /* Save netconn type */
@@ -231,14 +231,14 @@ gsm_netconn_new(gsm_netconn_type_t type) {
                 "[NETCONN] Cannot create receive MBOX\r\n");
             goto free_ret;
         }
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         if (netconn_list == NULL) {             /* Add new netconn to the existing list */
             netconn_list = a;
         } else {
             a->next = netconn_list;             /* Add it to beginning of the list */
             netconn_list = a;
         }
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
     }
     return a;
 free_ret:
@@ -262,7 +262,7 @@ gsmr_t
 gsm_netconn_delete(gsm_netconn_p nc) {
     GSM_ASSERT("netconn != NULL", nc != NULL);  /* Assert input parameters */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     flush_mboxes(nc, 0);                        /* Clear mboxes */
 
     /* Remove netconn from linkedlist */
@@ -279,7 +279,7 @@ gsm_netconn_delete(gsm_netconn_p nc) {
             }
         }
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
 
     gsm_mem_free(nc);                           /* Free the memory */
     nc = NULL;

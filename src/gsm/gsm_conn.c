@@ -43,11 +43,11 @@
  */
 #define CONN_CHECK_CLOSED_IN_CLOSING(conn) do { \
     gsmr_t r = gsmOK;                           \
-    GSM_CORE_PROTECT();                         \
+    gsm_core_lock();                         \
     if (conn->status.f.in_closing || !conn->status.f.active) {  \
         r = gsmCLOSED;                          \
     }                                           \
-    GSM_CORE_UNPROTECT();                       \
+    gsm_core_unlock();                       \
     if (r != gsmOK) {                           \
         return r;                               \
     }                                           \
@@ -89,9 +89,9 @@ gsmi_conn_start_timeout(gsm_conn_p conn) {
 uint8_t
 conn_get_val_id(gsm_conn_p conn) {
     uint8_t val_id;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     val_id = conn->val_id;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
 
     return val_id;
 }
@@ -147,7 +147,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 static gsmr_t
 flush_buff(gsm_conn_p conn) {
     gsmr_t res = gsmOK;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     if (conn != NULL && conn->buff.buff != NULL) {  /* Do we have something ready? */
         /*
          * If there is nothing to write or if write was not successful,
@@ -165,7 +165,7 @@ flush_buff(gsm_conn_p conn) {
         }
         conn->buff.buff = NULL;
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -235,11 +235,11 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     flush_buff(conn);                           /* First flush buffer */
     res = gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
     if (res == gsmOK && !blocking) {            /* Function succedded in non-blocking mode */
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
             "[CONN] Connection %d set to closing state\r\n", (int)conn->num);
         conn->status.f.in_closing = 1;          /* Connection is in closing mode but not yet closed */
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
     }
     return res;
 }
@@ -285,7 +285,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
     GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
     GSM_ASSERT("btw > 0", btw > 0);             /* Assert input parameters */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     if (conn->buff.buff != NULL) {              /* Check if memory available */
         size_t to_copy;
         to_copy = GSM_MIN(btw, conn->buff.len - conn->buff.ptr);
@@ -296,7 +296,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
             btw -= to_copy;
         }
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     res = flush_buff(conn);                     /* Flush currently written memory if exists */
     if (btw) {                                  /* Check for remaining data */
         res = conn_send(conn, NULL, 0, d, btw, bw, 0, blocking);
@@ -345,9 +345,9 @@ gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf) {
  */
 gsmr_t
 gsm_conn_set_arg(gsm_conn_p conn, void* const arg) {
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     conn->arg = arg;                            /* Set argument for connection */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return gsmOK;
 }
 
@@ -360,9 +360,9 @@ gsm_conn_set_arg(gsm_conn_p conn, void* const arg) {
 void *
 gsm_conn_get_arg(gsm_conn_p conn) {
     void* arg;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     arg = conn->arg;                            /* Set argument for connection */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return arg;
 }
 
@@ -390,9 +390,9 @@ uint8_t
 gsm_conn_is_client(gsm_conn_p conn) {
     uint8_t res = 0;
     if (conn != NULL && gsmi_is_valid_conn_ptr(conn)) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         res = conn->status.f.active && conn->status.f.client;
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
     }
     return res;
 }
@@ -406,9 +406,9 @@ uint8_t
 gsm_conn_is_active(gsm_conn_p conn) {
     uint8_t res = 0;
     if (conn != NULL && gsmi_is_valid_conn_ptr(conn)) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         res = conn->status.f.active;
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
     }
     return res;
 }
@@ -422,9 +422,9 @@ uint8_t
 gsm_conn_is_closed(gsm_conn_p conn) {
     uint8_t res = 0;
     if (conn != NULL && gsmi_is_valid_conn_ptr(conn)) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         res = !conn->status.f.active;
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
     }
     return res;
 }
@@ -583,9 +583,9 @@ gsm_conn_get_total_recved_count(gsm_conn_p conn) {
 
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     tot = conn->total_recved;                   /* Get total received bytes */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
 
     return tot;
 }
@@ -601,9 +601,9 @@ gsm_conn_get_total_recved_count(gsm_conn_p conn) {
 uint8_t
 gsm_conn_get_remote_ip(gsm_conn_p conn, gsm_ip_t* ip) {
     if (conn != NULL && ip != NULL) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         GSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip));  /* Copy data */
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
         return 1;
     }
     return 0;
@@ -618,9 +618,9 @@ gsm_port_t
 gsm_conn_get_remote_port(gsm_conn_p conn) {
     gsm_port_t port = 0;
     if (conn != NULL) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         port = conn->remote_port;
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
     }
     return port;
 }
@@ -634,9 +634,9 @@ gsm_port_t
 gsm_conn_get_local_port(gsm_conn_p conn) {
     gsm_port_t port = 0;
     if (conn != NULL) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         port = conn->local_port;
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
     }
     return port;
 }

@@ -103,9 +103,9 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
      */
     cnt = 0;
     for (p = pbuf; p != NULL;) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         ref = --p->ref;                         /* Decrease current value and save it */
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
         if (ref == 0) {                         /* Did we reach 0 and are ready to free it? */
             GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
                 "[PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
@@ -203,9 +203,9 @@ gsmr_t
 gsm_pbuf_ref(gsm_pbuf_p pbuf) {
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);   /* Assert input parameters */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     pbuf->ref++;                                /* Increase reference count for pbuf */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return gsmOK;
 }
 

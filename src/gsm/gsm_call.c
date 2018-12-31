@@ -47,9 +47,9 @@
 static gsmr_t
 check_enabled(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     res = gsm.m.call.enabled ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -60,9 +60,9 @@ check_enabled(void) {
 static gsmr_t
 check_ready(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     res = gsm.m.call.ready ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -94,12 +94,12 @@ gsm_call_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blockin
  */
 gsmr_t
 gsm_call_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     gsm.m.call.enabled = 0;
     if (evt_fn != NULL) {
         evt_fn(gsmOK, evt_arg);
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return gsmOK;
 }
 

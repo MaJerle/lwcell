@@ -85,9 +85,9 @@ gsm_input_process(const void* data, size_t len) {
     gsm_recv_total_len += len;                  /* Update total number of received bytes */
     gsm_recv_calls++;                           /* Update number of calls */
 
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     res = gsmi_process(data, len);              /* Process input data */
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 

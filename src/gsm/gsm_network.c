@@ -111,9 +111,9 @@ gsm_network_check_status(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_
 gsmr_t
 gsm_network_copy_ip(gsm_ip_t* ip) {
     if (gsm_network_is_attached()) {
-        GSM_CORE_PROTECT();
+        gsm_core_lock();
         GSM_MEMCPY(ip, &gsm.m.network.ip_addr, sizeof(*ip));
-        GSM_CORE_UNPROTECT();
+        gsm_core_unlock();
         return gsmOK;
     }
     return gsmERR;
@@ -126,9 +126,9 @@ gsm_network_copy_ip(gsm_ip_t* ip) {
 uint8_t
 gsm_network_is_attached(void) {
     uint8_t res;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     res = GSM_U8(gsm.m.network.is_attached);
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -162,8 +162,8 @@ gsm_network_rssi(int16_t* rssi,
 gsm_network_reg_status_t
 gsm_network_get_reg_status(void) {
     gsm_network_reg_status_t ret;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     ret = gsm.m.network.status;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return ret;
 }

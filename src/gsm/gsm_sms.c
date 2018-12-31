@@ -52,9 +52,9 @@
 static gsmr_t
 check_enabled(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     res = gsm.m.sms.enabled ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -65,9 +65,9 @@ check_enabled(void) {
 static gsmr_t
 check_ready(void) {
     gsmr_t res;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     res = gsm.m.sms.ready ? gsmOK : gsmERR;
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -80,12 +80,12 @@ check_ready(void) {
 static gsmr_t
 check_sms_mem(gsm_mem_t mem, uint8_t can_curr) {
     gsmr_t res = gsmERRMEM;
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     if ((mem < GSM_MEM_END && gsm.m.sms.mem[GSM_SMS_OPERATION_IDX].mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return res;
 }
 
@@ -117,12 +117,12 @@ gsm_sms_enable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking
  */
 gsmr_t
 gsm_sms_disable(gsm_api_cmd_evt_fn evt_fn, void* evt_arg, const uint32_t blocking) {
-    GSM_CORE_PROTECT();
+    gsm_core_lock();
     gsm.m.sms.enabled = 0;
     if (evt_fn != NULL) {
         evt_fn(gsmOK, evt_arg);
     }
-    GSM_CORE_UNPROTECT();
+    gsm_core_unlock();
     return gsmOK;
 }
 
