@@ -208,7 +208,7 @@ gsm_core_lock(void) {
  */
 gsmr_t
 gsm_core_unlock(void) {
-    gsm.locked_cnt++;
+    gsm.locked_cnt--;
     gsm_sys_unprotect();
     return gsmOK;
 }
