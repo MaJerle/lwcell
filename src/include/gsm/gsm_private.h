@@ -720,7 +720,7 @@ extern const size_t         gsm_dev_model_map_size;
         return gsmERRMEM;                           \
     }                                               \
     GSM_MEMSET(name, 0x00, sizeof(*(name)));        \
-    (name)->is_blocking = (blocking);               \
+    (name)->is_blocking = GSM_U8(blocking);         \
 } while (0)
 #define GSM_MSG_VAR_SET_EVT(name) do {              \
     (name)->evt_fn = (evt_fn);                      \
