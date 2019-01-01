@@ -55,7 +55,7 @@ extern "C" {
  */
 #define GSM_ASSERT(msg, c)   do {   \
     if (!(c)) {                     \
-        GSM_DEBUGF(GSM_CFG_DBG_ASSERT, "Wrong parameters on file %s and line %d: %s\r\n", __FILE__, __LINE__, msg); \
+        GSM_DEBUGF(GSM_CFG_DBG_ASSERT, "Wrong parameters on file %s and line %d: %s\r\n", __FILE__, (int)__LINE__, msg);\
         return gsmPARERR;           \
     }                               \
 } while (0)
