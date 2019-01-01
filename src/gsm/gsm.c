@@ -108,6 +108,7 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm_buff_init(&gsm.buff, GSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
 #endif /* !GSM_CFG_INPUT_USE_PROCESS */
 
+    gsm_core_lock();
     gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
     gsm_ll_init(&gsm.ll);                       /* Init low-level communication */
 
@@ -116,19 +117,21 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
 
     gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
-    gsm_core_unlock();
 
     /*
      * Call reset command and call default
      * AT commands to prepare basic setup for device
      */
 #if GSM_CFG_RESET_ON_INIT
-    if (gsm.status.f.dev_present) {             /* In case device exists */
+    if (gsm.status.f.dev_present) {
+        gsm_core_unlock();
         res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL, blocking);  /* Send reset sequence with delay */
+        gsm_core_lock();
     }
 #else
     GSM_UNUSED(blocking);                       /* Unused variable */
 #endif /* GSM_CFG_RESET_ON_INIT */
+    gsm_core_unlock();
 
     return res;
 
