@@ -203,9 +203,7 @@ gsmr_t
 gsm_pbuf_ref(gsm_pbuf_p pbuf) {
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);   /* Assert input parameters */
 
-    gsm_core_lock();
     pbuf->ref++;                                /* Increase reference count for pbuf */
-    gsm_core_unlock();
     return gsmOK;
 }
 
