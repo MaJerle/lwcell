@@ -631,7 +631,7 @@ typedef struct {
     gsm_sys_sem_t       sem_sync;               /*!< Synchronization semaphore between threads */
     gsm_sys_mbox_t      mbox_producer;          /*!< Producer message queue handle */
     gsm_sys_mbox_t      mbox_process;           /*!< Consumer message queue handle */
-    gsm_sys_thread_t    thread_producer;        /*!< Producer thread handle */
+    gsm_sys_thread_t    thread_produce;         /*!< Producer thread handle */
     gsm_sys_thread_t    thread_process;         /*!< Processing thread handle */
 #if !GSM_CFG_INPUT_USE_PROCESS || __DOXYGEN__
     gsm_buff_t          buff;                   /*!< Input processing buffer */

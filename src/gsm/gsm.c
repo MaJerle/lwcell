@@ -92,12 +92,12 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
 
     /* Create threads */
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
-    if (!gsm_sys_thread_create(&gsm.thread_producer, "gsm_producer", gsm_thread_producer, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
+    if (!gsm_sys_thread_create(&gsm.thread_produce, "gsm_produce", gsm_thread_producer, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
         gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore */
         goto cleanup;
     }
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in producer thread */
-    if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_producer", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
+    if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_process", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
         gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore */
         goto cleanup;
     }
