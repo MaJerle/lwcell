@@ -929,7 +929,7 @@ gsmi_process_buffer(void) {
         if (len) {
             /*
              * Get memory address of first element
-             * in linear block to process
+             * in linear block of data to process
              */
             data = gsm_buff_get_linear_block_address(&gsm.buff);
 
@@ -937,7 +937,7 @@ gsmi_process_buffer(void) {
             gsmi_process(data, len);
 
             /*
-             * Once they are processed, simply skip
+             * Once data is processed, simply skip
              * the buffer memory and start over
              */
             gsm_buff_skip(&gsm.buff, len);
@@ -1201,8 +1201,8 @@ gsmi_process(const void* data, size_t data_len) {
             }
         }
 
-        ch_prev2 = ch_prev1;                    /* Save previous character to previous previous */
-        ch_prev1 = ch;                          /* Char current to previous */
+        ch_prev2 = ch_prev1;                    /* Save previous character as previous previous */
+        ch_prev1 = ch;                          /* Set current as previous */
     }
     return gsmOK;
 }
