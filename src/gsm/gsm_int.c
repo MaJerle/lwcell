@@ -897,15 +897,15 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             } else {
                 gsm.msg->i++;                   /* Number of continue calls */
             }
-        }
 
-        /*
-         * When the command is finished,
-         * release synchronization semaphore
-         * from user thread and start with next command
-         */
-        if (res != gsmCONT) {                   /* Do we have to continue to wait for command? */
-            gsm_sys_sem_release(&gsm.sem_sync); /* Release semaphore */
+            /*
+             * When the command is finished,
+             * release synchronization semaphore
+             * from user thread and start with next command
+             */
+            if (res != gsmCONT) {                   /* Do we have to continue to wait for command? */
+                gsm_sys_sem_release(&gsm.sem_sync); /* Release semaphore */
+            }
         }
     }
 }
