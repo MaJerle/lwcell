@@ -39,7 +39,7 @@ extern "C" {
 
 #include "gsm/gsm.h"
 
-void    gsm_thread_producer(void* const arg);
+void    gsm_thread_produce(void* const arg);
 void    gsm_thread_process(void* const arg);
 
 #ifdef __cplusplus

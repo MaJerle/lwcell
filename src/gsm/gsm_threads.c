@@ -41,9 +41,10 @@
 
 /**
  * \brief           User thread to process input packets from API functions
+ * \param[in]       arg: User argument. Semaphore to release when thread starts
  */
 void
-gsm_thread_producer(void* const arg) {
+gsm_thread_produce(void* const arg) {
     gsm_sys_sem_t* sem = arg;
     gsm_t* e = &gsm;
     gsm_msg_t* msg;
@@ -84,11 +85,17 @@ gsm_thread_producer(void* const arg) {
          * Try to call function to process this message
          * Usually it should be function to transmit data to AT port
          */
-        e->msg = msg;
         if (res == gsmOK && msg->fn != NULL) {  /* Check for callback processing function */
+            /* 
+             * Obtain semaphore 
+             * This code should not block at any point.
+             * If it blocks, severe problems occurred and program should 
+             * immediate terminate
+             */
             gsm_core_unlock();
             gsm_sys_sem_wait(&e->sem_sync, 0);
             gsm_core_lock();
+            e->msg = msg;
             res = msg->fn(msg);                 /* Process this message, check if command started at least */
             if (res == gsmOK) {                 /* We have valid data and data were sent */
                 gsm_core_unlock();
@@ -139,6 +146,7 @@ gsm_thread_producer(void* const arg) {
  *                  This thread is also used to handle timeout events
  *                  in correct time order as it is never blocked by user command
  *
+ * \param[in]       arg: User argument. Semaphore to release when thread starts
  * \sa              GSM_CFG_INPUT_USE_PROCESS
  */
 void

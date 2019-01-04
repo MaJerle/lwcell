@@ -92,25 +92,25 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
 
     /* Create threads */
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
-    if (!gsm_sys_thread_create(&gsm.thread_produce, "gsm_produce", gsm_thread_producer, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
-        gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore */
+    if (!gsm_sys_thread_create(&gsm.thread_produce, "gsm_produce", gsm_thread_produce, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
+        gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
     }
-    gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in producer thread */
+    gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
     if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_process", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
-        gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore */
+        gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
     }
-    gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in producer thread */
-    gsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore */
-
-#if !GSM_CFG_INPUT_USE_PROCESS
-    gsm_buff_init(&gsm.buff, GSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
-#endif /* !GSM_CFG_INPUT_USE_PROCESS */
+    gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
+    gsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore manually */
 
     gsm_core_lock();
     gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
     gsm_ll_init(&gsm.ll);                       /* Init low-level communication */
+
+#if !GSM_CFG_INPUT_USE_PROCESS
+    gsm_buff_init(&gsm.buff, GSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
+#endif /* !GSM_CFG_INPUT_USE_PROCESS */
 
     gsm.status.f.initialized = 1;               /* We are initialized now */
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
