@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_OPERATOR_H
 #define GSM_HDR_OPERATOR_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -56,7 +55,6 @@ gsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, con
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

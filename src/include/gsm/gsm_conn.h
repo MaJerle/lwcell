@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_CONN_H
 #define GSM_HDR_CONN_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -71,7 +70,6 @@ gsm_port_t  gsm_conn_get_local_port(gsm_conn_p conn);
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

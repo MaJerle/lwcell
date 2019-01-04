@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_CALL_H
 #define GSM_HDR_CALL_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,7 +57,6 @@ gsmr_t      gsm_call_hangup(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

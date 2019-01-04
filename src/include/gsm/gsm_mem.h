@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_MEM_H
 #define GSM_HDR_MEM_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -69,7 +68,6 @@ uint8_t gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t size);
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

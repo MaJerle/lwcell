@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_BUFF_H
 #define GSM_HDR_BUFF_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -63,7 +62,6 @@ size_t      gsm_buff_skip(gsm_buff_t* buff, size_t len);
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

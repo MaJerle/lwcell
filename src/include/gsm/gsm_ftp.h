@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_FTP_H
 #define GSM_HDR_FTP_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,7 +53,6 @@ extern "C" {
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

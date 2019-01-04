@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_APP_MQTT_CLIENT_H
 #define GSM_HDR_APP_MQTT_CLIENT_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -201,7 +200,6 @@ void                gsm_mqtt_client_set_arg(gsm_mqtt_client_p client, void* arg)
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

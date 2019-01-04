@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_EVT_H
 #define GSM_HDR_EVT_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -248,7 +247,6 @@ const gsm_call_t*  gsm_evt_call_changed_get_call(gsm_evt_t* cc);
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

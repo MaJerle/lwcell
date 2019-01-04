@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_SIM_H
 #define GSM_HDR_SIM_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,7 +57,6 @@ gsmr_t      gsm_sim_puk_enter(const char* puk, const char* new_pin, const gsm_ap
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif

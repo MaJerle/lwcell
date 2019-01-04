@@ -33,7 +33,6 @@
 #ifndef GSM_HDR_PBUF_H
 #define GSM_HDR_PBUF_H
 
-/* C++ detection */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -75,7 +74,6 @@ void            gsm_pbuf_set_ip(gsm_pbuf_p pbuf, const gsm_ip_t* ip, gsm_port_t 
  * \}
  */
 
-/* C++ detection */
 #ifdef __cplusplus
 }
 #endif
