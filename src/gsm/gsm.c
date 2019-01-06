@@ -79,25 +79,35 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     }
 
     if (!gsm_sys_sem_create(&gsm.sem_sync, 1)) {/* Create sync semaphore between threads */
+        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+            "[CORE] Cannot allocate sync semaphore!\r\n");
         goto cleanup;
     }
 
     /* Create message queues */
     if (!gsm_sys_mbox_create(&gsm.mbox_producer, GSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {  /* Producer */
+        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+            "[CORE] Cannot allocate producer mbox queue!\r\n");
         goto cleanup;
     }
-    if (!gsm_sys_mbox_create(&gsm.mbox_process, GSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {  /* Process */
+    if (!gsm_sys_mbox_create(&gsm.mbox_process, GSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {    /* Process */
+        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+            "[CORE] Cannot allocate process mbox queue!\r\n");
         goto cleanup;
     }
 
     /* Create threads */
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
     if (!gsm_sys_thread_create(&gsm.thread_produce, "gsm_produce", gsm_thread_produce, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
+        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+            "[CORE] Cannot create producing thread!\r\n");
         gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
     }
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
     if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_process", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
+        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+            "[CORE] Cannot allocate processing thread!\r\n");
         gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
     }

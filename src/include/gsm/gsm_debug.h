@@ -76,13 +76,14 @@ extern "C" {
 
 #define GSM_DBG_TYPE_TRACE          0x40    /*!< Debug trace messages for program flow */
 #define GSM_DBG_TYPE_STATE          0x20    /*!< Debug state messages (such as state machines) */
+#define GSM_DBG_TYPE_ALL            (GSM_DBG_TYPE_TRACE | GSM_DBG_TYPE_STATE)   /*!< All debug types */
 
 /**
  * \}
  */
 
 #if GSM_CFG_DBG && !defined(GSM_CFG_DBG_OUT)
-#warning "GSM_CFG_DBG_OUT is not enabled but debugging is enabled"
+#warning "ESP_CFG_DBG_OUT is not defined but debugging is enabled!"
 #endif
 
 #if (GSM_CFG_DBG && defined(GSM_CFG_DBG_OUT)) || __DOXYGEN__

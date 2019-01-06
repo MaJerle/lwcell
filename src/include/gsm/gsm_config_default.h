@@ -217,6 +217,15 @@
 #endif
 
 /**
+ * \brief           Set debug level for init function
+ *
+ *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ */
+#ifndef GSM_CFG_DBG_INIT
+#define GSM_CFG_DBG_INIT                    GSM_DBG_OFF
+#endif
+
+/**
  * \brief           Set debug level for memory manager
  *
  *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
