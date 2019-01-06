@@ -1,6 +1,6 @@
 /**
  * \file            gsm_parser.h
- * \brief           Parser of AT rgsmonses
+ * \brief           Parser of AT responses
  */
 
 /*

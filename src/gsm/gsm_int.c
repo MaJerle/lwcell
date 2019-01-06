@@ -657,13 +657,13 @@ gsmi_parse_received(gsm_recv_t* rcv) {
         return;
     }
 
-    /* Check OK rgsmonse */
+    /* Check OK response */
     is_ok = rcv->len == (2 + CRLF_LEN) && !strcmp(rcv->data, "OK" CRLF);    /* Check if received string is OK */
     if (!is_ok) {                               /* Check for SHUT OK string */
         is_ok = rcv->len == (7 + CRLF_LEN) && !strcmp(rcv->data, "SEND OK" CRLF);
     }
 
-    /* Check error rgsmonse */
+    /* Check error response */
     if (!is_ok) {                               /* If still not ok, check if error? */
         is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10); /* First check +CME coded errors */
         if (!is_error) {                        /* Check basic error aswell */
@@ -688,28 +688,28 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             gsmi_parse_ipd(rcv->data);          /* Parse IPD */
 #endif /* GSM_CFG_CONN */
         } else if (!strncmp(rcv->data, "+CREG", 5)) {   /* Check for +CREG indication */
-            gsmi_parse_creg(rcv->data, GSM_U8(CMD_IS_CUR(GSM_CMD_CREG_GET)));  /* Parse +CREG rgsmonse */
+            gsmi_parse_creg(rcv->data, GSM_U8(CMD_IS_CUR(GSM_CMD_CREG_GET)));  /* Parse +CREG response */
         } else if (!strncmp(rcv->data, "+CPIN", 5)) {   /* Check for +CPIN indication for SIM */
-            gsmi_parse_cpin(rcv->data, 1 /* !CMD_IS_DEF(GSM_CMD_CPIN_SET) */);  /* Parse +CPIN rgsmonse */
+            gsmi_parse_cpin(rcv->data, 1 /* !CMD_IS_DEF(GSM_CMD_CPIN_SET) */);  /* Parse +CPIN response */
         } else if (CMD_IS_CUR(GSM_CMD_COPS_GET) && !strncmp(rcv->data, "+COPS", 5)) {
             gsmi_parse_cops(rcv->data);         /* Parse current +COPS */
 #if GSM_CFG_SMS
         } else if (CMD_IS_CUR(GSM_CMD_CMGS) && !strncmp(rcv->data, "+CMGS", 5)) {
-            gsmi_parse_cmgs(rcv->data, &gsm.msg->msg.sms_send.pos);  /* Parse +CMGS rgsmonse */
+            gsmi_parse_cmgs(rcv->data, &gsm.msg->msg.sms_send.pos);  /* Parse +CMGS response */
         } else if (CMD_IS_CUR(GSM_CMD_CMGR) && !strncmp(rcv->data, "+CMGR", 5)) {
-            if (gsmi_parse_cmgr(rcv->data)) {   /* Parse +CMGR rgsmonse */
+            if (gsmi_parse_cmgr(rcv->data)) {   /* Parse +CMGR response */
                 gsm.msg->msg.sms_read.read = 2; /* Set read flag and process the data */
             } else {
                 gsm.msg->msg.sms_read.read = 1; /* Read but ignore data */
             }
         } else if (CMD_IS_CUR(GSM_CMD_CMGL) && !strncmp(rcv->data, "+CMGL", 5)) {
-            if (gsmi_parse_cmgl(rcv->data)) {   /* Parse +CMGL rgsmonse */
+            if (gsmi_parse_cmgl(rcv->data)) {   /* Parse +CMGL response */
                 gsm.msg->msg.sms_list.read = 2; /* Set read flag and process the data */
             } else {
                 gsm.msg->msg.sms_list.read = 1; /* Read but ignore data */
             }
         } else if (!strncmp(rcv->data, "+CMTI", 5)) {
-            gsmi_parse_cmti(rcv->data, 1);      /* Parse +CMTI rgsmonse with received SMS */
+            gsmi_parse_cmti(rcv->data, 1);      /* Parse +CMTI response with received SMS */
         } else if (CMD_IS_CUR(GSM_CMD_CPMS_GET_OPT) && !strncmp(rcv->data, "+CPMS", 5)) {
             gsmi_parse_cpms(rcv->data, 0);      /* Parse +CPMS with SMS memories info */
         } else if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && !strncmp(rcv->data, "+CPMS", 5)) {
@@ -719,15 +719,15 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #endif /* GSM_CFG_SMS */
 #if GSM_CFG_CALL
         } else if (!strncmp(rcv->data, "+CLCC", 5)) {
-            gsmi_parse_clcc(rcv->data, 1);      /* Parse +CLCC rgsmonse with call info change */
+            gsmi_parse_clcc(rcv->data, 1);      /* Parse +CLCC response with call info change */
 #endif /* GSM_CFG_CALL */
 #if GSM_CFG_PHONEBOOK
         } else if (CMD_IS_CUR(GSM_CMD_CPBS_GET_OPT) && !strncmp(rcv->data, "+CPBS", 5)) {
-            gsmi_parse_cpbs(rcv->data, 0);      /* Parse +CPBS rgsmonse */
+            gsmi_parse_cpbs(rcv->data, 0);      /* Parse +CPBS response */
         } else if (CMD_IS_CUR(GSM_CMD_CPBS_GET) && !strncmp(rcv->data, "+CPBS", 5)) {
-            gsmi_parse_cpbs(rcv->data, 1);      /* Parse +CPBS rgsmonse */
+            gsmi_parse_cpbs(rcv->data, 1);      /* Parse +CPBS response */
         } else if (CMD_IS_CUR(GSM_CMD_CPBS_SET) && !strncmp(rcv->data, "+CPBS", 5)) {
-            gsmi_parse_cpbs(rcv->data, 2);      /* Parse +CPBS rgsmonse */
+            gsmi_parse_cpbs(rcv->data, 2);      /* Parse +CPBS response */
         } else if (CMD_IS_CUR(GSM_CMD_CPBR) && !strncmp(rcv->data, "+CPBR", 5)) {
             gsmi_parse_cpbr(rcv->data);         /* Parse +CPBR statement */
         } else if (CMD_IS_CUR(GSM_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
@@ -1161,7 +1161,7 @@ gsmi_process(const void* data, size_t data_len) {
                     /*
                      * Do we have a special sequence "> "?
                      *
-                     * Check if any command active which may expect that kind of rgsmonse
+                     * Check if any command active which may expect that kind of response
                      */
                     if (ch_prev2 == '\n' && ch_prev1 == '>' && ch == ' ') {
                         if (0) {
@@ -2032,7 +2032,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
         if (GSM_SYS_TIMEOUT == time) {          /* If semaphore was not accessed in given time */
             res = gsmERR;                       /* Semaphore not released in time */
         } else {
-            res = msg->res;                     /* Set rgsmonse status from message rgsmonse */
+            res = msg->res;                     /* Set response status from message response */
         }
         if (gsm_sys_sem_isvalid(&msg->sem)) {   /* In case we have valid semaphore */
             gsm_sys_sem_delete(&msg->sem);      /* Delete semaphore object */

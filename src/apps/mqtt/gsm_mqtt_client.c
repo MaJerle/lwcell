@@ -92,7 +92,7 @@ typedef enum {
     MQTT_MSG_TYPE_UNSUBSCRIBE = 0x0A,           /*!< Unsubscribe from topics */
     MQTT_MSG_TYPE_UNSUBACK =    0x0B,           /*!< Unsubscribe acknowledgement */
     MQTT_MSG_TYPE_PINGREQ =     0x0C,           /*!< Ping request */
-    MQTT_MSG_TYPE_PINGRGSM =    0x0D,           /*!< Ping rgsmonse */
+    MQTT_MSG_TYPE_PINGRGSM =    0x0D,           /*!< Ping response */
     MQTT_MSG_TYPE_DISCONNECT =  0x0E,           /*!< Disconnect notification */
 } mqtt_msg_type_t;
 
@@ -115,7 +115,7 @@ typedef enum {
 
 /* Requests status */
 #define MQTT_REQUEST_FLAG_IN_USE        0x01    /*!< Request object is allocated and in use */
-#define MQTT_REQUEST_FLAG_PENDING       0x02    /*!< Request object is pending waiting for rgsmonse from server */
+#define MQTT_REQUEST_FLAG_PENDING       0x02    /*!< Request object is pending waiting for response from server */
 #define MQTT_REQUEST_FLAG_SUBSCRIBE     0x04    /*!< Request object has subscribe type */
 #define MQTT_REQUEST_FLAG_UNSUBSCRIBE   0x08    /*!< Request object has unsubscribe type */
 
@@ -353,13 +353,13 @@ output_check_enough_memory(gsm_mqtt_client_p client, uint16_t rem_len) {
  * \brief           Write and send acknowledge/record
  * \param[in]       client: MQTT client
  * \param[in]       msg_type: Message type to rgsmond
- * \param[in]       pkt_id: Packet ID to send rgsmonse for
+ * \param[in]       pkt_id: Packet ID to send response for
  * \param[in]       qos: Quality of service for packet
  * \return          `1` on success, `0` otherwise
  */
 static uint8_t
-write_ack_rec_rel_rgsm(gsm_mqtt_client_p client, mqtt_msg_type_t msg_type, uint16_t pkt_id, gsm_mqtt_qos_t qos) {
-    if (output_check_enough_memory(client, 2)) {/* Check memory for rgsmonse packet */
+write_ack_rec_rel_resp(gsm_mqtt_client_p client, mqtt_msg_type_t msg_type, uint16_t pkt_id, gsm_mqtt_qos_t qos) {
+    if (output_check_enough_memory(client, 2)) {/* Check memory for response packet */
         write_fixed_header(client, msg_type, 0, qos, 0, 2); /* Write fixed header with 2 more bytes for packet id */
         write_u16(client, pkt_id);              /* Write packet ID */
         send_data(client);                      /* Flush data to output */
@@ -551,7 +551,7 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
                 GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending publish rgsm: %s on pkt_id: %d\r\n", \
                             mqtt_msg_type_to_str(rgsm_msg_type), (int)pkt_id);
 
-                write_ack_rec_rel_rgsm(client, rgsm_msg_type, pkt_id, qos);
+                write_ack_rec_rel_resp(client, rgsm_msg_type, pkt_id, qos);
             }
 
             /* Notify application layer about received packet */
@@ -567,7 +567,7 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
             break;
         }
         case MQTT_MSG_TYPE_PINGRGSM: {          /* Rgsmond to PINGREQ received */
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Ping rgsmonse received\r\n");
+            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Ping response received\r\n");
 
             client->evt.type = GSM_MQTT_EVT_KEEP_ALIVE;
             client->evt_fn(client, &client->evt);
@@ -582,9 +582,9 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
             pkt_id = client->rx_buff[0] << 8 | client->rx_buff[1];  /* Get packet ID */
 
             if (msg_type == MQTT_MSG_TYPE_PUBREC) { /* Publish record received from server */
-                write_ack_rec_rel_rgsm(client, MQTT_MSG_TYPE_PUBREL, pkt_id, (gsm_mqtt_qos_t)1);    /* Send back publish release message */
+                write_ack_rec_rel_resp(client, MQTT_MSG_TYPE_PUBREL, pkt_id, (gsm_mqtt_qos_t)1);    /* Send back publish release message */
             } else if (msg_type == MQTT_MSG_TYPE_PUBREL) {  /* Publish release was received */
-                write_ack_rec_rel_rgsm(client, MQTT_MSG_TYPE_PUBCOMP, pkt_id, (gsm_mqtt_qos_t)0);   /* Send back publish complete */
+                write_ack_rec_rel_resp(client, MQTT_MSG_TYPE_PUBCOMP, pkt_id, (gsm_mqtt_qos_t)0);   /* Send back publish complete */
             } else if (msg_type == MQTT_MSG_TYPE_SUBACK
                     || msg_type == MQTT_MSG_TYPE_UNSUBACK
                     || msg_type == MQTT_MSG_TYPE_PUBACK

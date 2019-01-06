@@ -37,6 +37,7 @@
 #define GSM_CFG_DBG_MQTT_API_TRACE              (GSM_CFG_DBG_MQTT_API | GSM_DBG_TYPE_TRACE)
 #define GSM_CFG_DBG_MQTT_API_STATE              (GSM_CFG_DBG_MQTT_API | GSM_DBG_TYPE_STATE)
 #define GSM_CFG_DBG_MQTT_API_TRACE_WARNING      (GSM_CFG_DBG_MQTT_API | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING)
+#define GSM_CFG_DBG_MQTT_API_TRACE_SEVERE       (GSM_CFG_DBG_MQTT_API | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_SEVERE)
 
 /**
  * \brief           MQTT API client structure
@@ -47,11 +48,15 @@ struct gsm_mqtt_client_api {
     gsm_sys_sem_t sync_sem;                     /*!< Synchronization semaphore */
     gsm_sys_mutex_t mutex;                      /*!< Mutex handle */
     uint8_t release_sem;                        /*!< Set to `1` to release semaphore */
-    gsm_mqtt_conn_status_t connect_rgsm;        /*!< Rgsmonse when connecting to server */
-    gsmr_t sub_pub_rgsm;                        /*!< Subscribe/Unsubscribe/Publish rgsmonse */
+    gsm_mqtt_conn_status_t connect_resp;        /*!< Response when connecting to server */
+    gsmr_t sub_pub_resp;                        /*!< Subscribe/Unsubscribe/Publish response */
 } gsm_mqtt_client_api_t;
 
-static uint8_t mqtt_closed = 0xFF;
+/**
+ * \brief           Variable used as pointer for message queue when MQTT connection is closed
+ */
+static uint8_t
+mqtt_closed = 0xFF;
 
 /**
  * \brief           Release user semaphore
@@ -81,7 +86,7 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
                 "[MQTT API] Connect event with status: %d\r\n", (int)status);
 
-            api_client->connect_rgsm = status;
+            api_client->connect_resp = status;
 
             /*
              * By MQTT 3.1.1 specification, broker must close connection
@@ -148,34 +153,34 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
             break;
         }
         case GSM_MQTT_EVT_PUBLISH: {
-            api_client->sub_pub_rgsm = gsm_mqtt_client_evt_publish_get_result(client, evt);
+            api_client->sub_pub_resp = gsm_mqtt_client_evt_publish_get_result(client, evt);
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Publish event with rgsmonse: %d\r\n",
-                (int)api_client->sub_pub_rgsm);
+                "[MQTT API] Publish event with response: %d\r\n",
+                (int)api_client->sub_pub_resp);
 
             release_sem(api_client);            /* Release semaphore */
             break;
         }
         case GSM_MQTT_EVT_SUBSCRIBE: {
-            api_client->sub_pub_rgsm = gsm_mqtt_client_evt_subscribe_get_result(client, evt);
+            api_client->sub_pub_resp = gsm_mqtt_client_evt_subscribe_get_result(client, evt);
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Subscribe event with rgsmonse: %d\r\n",
-                (int)api_client->sub_pub_rgsm);
+                "[MQTT API] Subscribe event with response: %d\r\n",
+                (int)api_client->sub_pub_resp);
 
             release_sem(api_client);            /* Release semaphore */
             break;
         }
         case GSM_MQTT_EVT_UNSUBSCRIBE: {
-            api_client->sub_pub_rgsm = gsm_mqtt_client_evt_unsubscribe_get_result(client, evt);
+            api_client->sub_pub_resp = gsm_mqtt_client_evt_unsubscribe_get_result(client, evt);
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Unsubscribe event with rgsmonse: %d\r\n",
-                (int)api_client->sub_pub_rgsm);
+                "[MQTT API] Unsubscribe event with response: %d\r\n",
+                (int)api_client->sub_pub_resp);
 
             release_sem(api_client);            /* Release semaphore */
             break;
@@ -183,7 +188,7 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
         case GSM_MQTT_EVT_DISCONNECT: {
             uint8_t is_accepted = gsm_mqtt_client_evt_disconnect_is_accepted(client, evt);
             /* Disconnect event happened */
-            //api_client->connect_rgsm = MQTT_CONN_STATUS_TCP_FAILED;
+            //api_client->connect_resp = MQTT_CONN_STATUS_TCP_FAILED;
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
@@ -223,7 +228,7 @@ gsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len) {
             /* Create receive mbox queue */
             if (gsm_sys_mbox_create(&client->rcv_mbox, 5)) {
                 /* Create synchronization semaphore */
-                if (gsm_sys_sem_create(&client->sync_sem, 5)) {
+                if (gsm_sys_sem_create(&client->sync_sem, 1)) {
                     /* Create mutex */
                     if (gsm_sys_mutex_create(&client->mutex)) {
                         gsm_mqtt_client_set_arg(client->mc, client);/* Set client to mqtt client argument */
@@ -307,7 +312,7 @@ gsm_mqtt_client_api_connect(gsm_mqtt_client_api_p client, const char* host,
     }
 
     gsm_sys_mutex_lock(&client->mutex);
-    client->connect_rgsm = GSM_MQTT_CONN_STATUS_TCP_FAILED;
+    client->connect_resp = GSM_MQTT_CONN_STATUS_TCP_FAILED;
     gsm_sys_sem_wait(&client->sync_sem, 0);
     client->release_sem = 1;
     if (gsm_mqtt_client_connect(client->mc, host, port, mqtt_evt, info) == gsmOK) {
@@ -319,7 +324,7 @@ gsm_mqtt_client_api_connect(gsm_mqtt_client_api_p client, const char* host,
     client->release_sem = 0;
     gsm_sys_sem_release(&client->sync_sem);
     gsm_sys_mutex_unlock(&client->mutex);
-    return client->connect_rgsm;
+    return client->connect_resp;
 }
 
 /**
@@ -369,7 +374,7 @@ gsm_mqtt_client_api_subscribe(gsm_mqtt_client_api_p client, const char* topic,
     client->release_sem = 1;
     if (gsm_mqtt_client_subscribe(client->mc, topic, qos, NULL) == gsmOK) {
         gsm_sys_sem_wait(&client->sync_sem, 0);
-        res = client->sub_pub_rgsm;
+        res = client->sub_pub_resp;
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
             "[MQTT API] Cannot subscribe to topic %s\r\n", topic);
@@ -399,7 +404,7 @@ gsm_mqtt_client_api_unsubscribe(gsm_mqtt_client_api_p client, const char* topic)
     client->release_sem = 1;
     if (gsm_mqtt_client_unsubscribe(client->mc, topic, NULL) == gsmOK) {
         gsm_sys_sem_wait(&client->sync_sem, 0);
-        res = client->sub_pub_rgsm;
+        res = client->sub_pub_resp;
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
             "[MQTT API] Cannot unsubscribe from topic %s\r\n", topic);
@@ -436,7 +441,7 @@ gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, con
     client->release_sem = 1;
     if (gsm_mqtt_client_publish(client->mc, topic, data, GSM_U16(btw), qos, 1, NULL) == gsmOK) {
         gsm_sys_sem_wait(&client->sync_sem, 0);
-        res = client->sub_pub_rgsm;
+        res = client->sub_pub_resp;
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
             "[MQTT API] Cannot publish new packet\r\n");
