@@ -410,6 +410,12 @@ gsmi_reset_everything(uint8_t forced) {
 #if GSM_CFG_CONN
      /* Manually close all connections in memory */
     reset_connections(forced);
+
+    /* Check if IPD active */
+    if (gsm.m.ipd.buff != NULL) {
+        gsm_pbuf_free(gsm.m.ipd.buff);
+        gsm.m.ipd.buff = NULL;
+    }
 #endif /* GSM_CFG_CONN */
 
 #if GSM_CFG_NETWORK
@@ -960,6 +966,11 @@ gsmi_process(const void* data, size_t data_len) {
     const uint8_t* d;
     static uint8_t ch_prev1, ch_prev2;
     static gsm_unicode_t unicode;
+
+    /* Check status if device is available */
+    if (!gsm.status.f.dev_present) {
+        return gsmERRNODEVICE;
+    }
 
     d = data;                                   /* Go to byte format */
     d_len = data_len;

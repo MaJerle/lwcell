@@ -609,7 +609,7 @@ typedef struct {
 
     gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
     gsm_ipd_t           ipd;                    /*!< Connection incoming data structure */
-    uint8_t conn_val_id;                        /*!< Validation ID increased each time device connects to network */
+    uint8_t             conn_val_id;            /*!< Validation ID increased each time device connects to network */
 #endif /* GSM_CFG_CONNS || __DOXYGEN__ */
 #if GSM_CFG_SMS || __DOXYGEN__
     gsm_sms_t           sms;                    /*!< SMS information */
