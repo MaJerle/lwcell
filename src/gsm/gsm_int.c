@@ -962,8 +962,8 @@ gsmi_process_buffer(void) {
 gsmr_t
 gsmi_process(const void* data, size_t data_len) {
     uint8_t ch;
+    const uint8_t* d = data;
     size_t d_len = data_len;
-    const uint8_t* d;
     static uint8_t ch_prev1, ch_prev2;
     static gsm_unicode_t unicode;
 
@@ -972,8 +972,6 @@ gsmi_process(const void* data, size_t data_len) {
         return gsmERRNODEVICE;
     }
 
-    d = data;                                   /* Go to byte format */
-    d_len = data_len;
     while (d_len) {                             /* Read entire set of characters from buffer */
         ch = *d++;                              /* Get next character */
         d_len--;                                /* Decrease remaining length */
