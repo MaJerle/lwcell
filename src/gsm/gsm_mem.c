@@ -75,14 +75,14 @@ mem_insertfreeblock(mem_block_t* nb) {
      * If the new inserted block and block before create a one big block (contiguous)
      * then try to merge them together
      */
-    addr = (uint8_t *)ptr;
+    addr = (void *)ptr;
     if ((uint8_t *)(addr + ptr->size) == (uint8_t *)nb) {
         ptr->size += nb->size;                      /* Expand size of block before new inserted */
         nb = ptr;                                   /* Set new block pointer to block before (expanded block) */
     }
 
     /* Check if new block and its size is the same address as next free block newBlock points to */
-    addr = (uint8_t *)nb;
+    addr = (void *)nb;
     if ((uint8_t *)(addr + nb->size) == (uint8_t *)ptr->next) {
         if (ptr->next == end_block) {               /* Does it points to the end? */
             nb->next = end_block;                   /* Set end block pointer */
@@ -115,9 +115,7 @@ static uint8_t
 mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
     uint8_t* mem_start_addr;
     size_t mem_size;
-    mem_block_t* first_block;
-    mem_block_t* prev_end_block = NULL;
-    size_t i;
+    mem_block_t *first_block, *prev_end_block = NULL;
 
     if (end_block != NULL) {                        /* Regions already defined */
         return 0;
@@ -125,7 +123,7 @@ mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
 
     /* Check if region address are linear and rising */
     mem_start_addr = (uint8_t *)0;
-    for (i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         if (mem_start_addr >= (uint8_t *)regions[i].start_addr) {   /* Check if previous greater than current */
             return 0;                               /* Return as invalid and failed */
         }
@@ -155,7 +153,7 @@ mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
         }
 
         /*
-         * StartBlock is fixed variable for start list of free blocks
+         * start_block is fixed variable for start list of free blocks
          *
          * Set free blocks linked list on initialized
          *
@@ -210,7 +208,7 @@ mem_assignmem(const gsm_mem_region_t* regions, size_t len) {
 /**
  * \brief           Allocate memory of specific size
  * \param[in]       size: Number of bytes to allocate
- * \return          NULL on failure or memory address on success
+ * \return          Memory address on success, `NULL` otherwise
  */
 static void *
 mem_alloc(size_t size) {
@@ -283,7 +281,8 @@ mem_alloc(size_t size) {
 
 /**
  * \brief           Free memory
- * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_alloc, \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
+ * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_alloc,
+ *                      \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
  */
 static void
 mem_free(void* ptr) {
@@ -314,7 +313,7 @@ mem_free(void* ptr) {
 /**
  * \brief           Get block size in units of bytes
  * \param[in]       ptr: Memory address
- * \return          0 on failure or number of bytes on success
+ * \return          Size of memory on success, `0` otherwise
  */
 static size_t
 mem_getusersize(void* ptr) {
@@ -327,7 +326,7 @@ mem_getusersize(void* ptr) {
 /**
  * \brief           Allocate memory of specific size
  * \param[in]       size: Number of bytes to allocate
- * \return          NULL on failure or memory address on success
+ * \return          Memory address on success, `NULL` otherwise
  */
 static void *
 mem_calloc(size_t num, size_t size) {
@@ -343,9 +342,10 @@ mem_calloc(size_t num, size_t size) {
 /**
  * \brief           Reallocate memory to specific size
  * \note            After new memory is allocated, content of old one is copied to new memory
- * \param[in]       ptr: Pointer to current allocated memory to resize, returned using \ref gsm_mem_alloc, \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
+ * \param[in]       ptr: Pointer to current allocated memory to resize, returned using
+ *                      \ref gsm_mem_alloc, \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
  * \param[in]       size: Number of bytes to allocate on new memory
- * \return          NULL on failure or memory address on success
+ * \return          Memory address on success, `NULL` otherwise
  */
 static void *
 mem_realloc(void* ptr, size_t size) {
@@ -353,17 +353,17 @@ mem_realloc(void* ptr, size_t size) {
     size_t oldSize;
 
     if (ptr == NULL) {                              /* If pointer is not valid */
-        return mem_alloc(size);                     /* Only allocate memory */
+        newPtr = mem_alloc(size);                   /* Only allocate memory */
+        return newPtr;
     }
 
     oldSize = mem_getusersize(ptr);                 /* Get size of old pointer */
     newPtr = mem_alloc(size);                       /* Try to allocate new memory block */
     if (newPtr != NULL) {                           /* Check success */
-        GSM_MEMCPY(newPtr, ptr, size > oldSize ? oldSize : size);   /* Copy old data to new array */
+        GSM_MEMCPY(newPtr, ptr, GSM_MIN(size, oldSize));/* Copy old data to new array */
         mem_free(ptr);                              /* Free old pointer */
-        return newPtr;                              /* Return new pointer */
     }
-    return NULL;
+    return newPtr;
 }
 
 /**
@@ -396,33 +396,38 @@ mem_getminfree(void) {
 /**
  * \brief           Allocate memory of specific size
  * \param[in]       size: Number of bytes to allocate
- * \return          NULL on failure or memory address on success
+ * \return          Memory address on success, `NULL` otherwise
  */
 void *
-gsm_mem_alloc(uint32_t size) {
+gsm_mem_alloc(size_t size) {
     void* ptr;
     gsm_core_lock();
     ptr = mem_calloc(1, size);                      /* Allocate memory and return pointer */
     gsm_core_unlock();
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL, "MEM: Allocation failed: %d bytes\r\n", (int)size);
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL, "MEM: Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL,
+        "[MEM] Allocation failed: %d bytes\r\n", (int)size);
+    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL,
+        "[MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
 /**
  * \brief           Reallocate memory to specific size
  * \note            After new memory is allocated, content of old one is copied to new memory
- * \param[in]       ptr: Pointer to current allocated memory to resize, returned using \ref gsm_mem_alloc, \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
+ * \param[in]       ptr: Pointer to current allocated memory to resize, returned using \ref gsm_mem_alloc,
+ *                      \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
  * \param[in]       size: Number of bytes to allocate on new memory
- * \return          NULL on failure or memory address on success
+ * \return          Memory address on success, `NULL` otherwise
  */
 void *
 gsm_mem_realloc(void* ptr, size_t size) {
     gsm_core_lock();
     ptr = mem_realloc(ptr, size);                   /* Reallocate and return pointer */
     gsm_core_unlock();
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL, "MEM: Reallocation failed: %d bytes\r\n", (int)size);
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL, "MEM: Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL,
+        "[MEM] Reallocation failed: %d bytes\r\n", (int)size);
+    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL,
+        "[MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
@@ -430,7 +435,7 @@ gsm_mem_realloc(void* ptr, size_t size) {
  * \brief           Allocate memory of specific size and set memory to zero
  * \param[in]       num: Number of elements to allocate
  * \param[in]       size: Size of each element
- * \return          NULL on failure or memory address on success
+ * \return          Memory address on success, `NULL` otherwise
  */
 void *
 gsm_mem_calloc(size_t num, size_t size) {
@@ -438,18 +443,25 @@ gsm_mem_calloc(size_t num, size_t size) {
     gsm_core_lock();
     ptr = mem_calloc(num, size);                   /* Allocate memory and clear it to 0. Then return pointer */
     gsm_core_unlock();
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL, "MEM: Callocation failed: %d bytes\r\n", (int)size * (int)num);
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL, "MEM: Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
+    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL,
+        "[MEM] Callocation failed: %d bytes\r\n", (int)size * (int)num);
+    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL,
+        "[MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
     return ptr;
 }
 
 /**
  * \brief           Free memory
- * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_alloc, \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
+ * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_alloc,
+ *                      \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
  */
 void
 gsm_mem_free(void* ptr) {
-    GSM_DEBUGF(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, "MEM: Free size: %d, address: %p\r\n",
+    if (ptr == NULL) {
+        return;
+    }
+    GSM_DEBUGF(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE,
+        "[MEM] Free size: %d, address: %p\r\n",
         (int)MEM_BLOCK_USER_SIZE(ptr), ptr);
     gsm_core_lock();
     mem_free(ptr);                                  /* Free already allocated memory */
@@ -488,7 +500,7 @@ gsm_mem_getminfree(void) {
  * \note            You can allocate multiple regions by assigning start address and region size in units of bytes
  * \param[in]       regions: Pointer to list of regions to use for allocations
  * \param[in]       len: Number of regions to use
- * \return          1 on success, 0 otherwise
+ * \return          `1` on success, `0` otherwise
  */
 uint8_t
 gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t len) {

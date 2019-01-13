@@ -366,7 +366,7 @@ write_ack_rec_rel_resp(gsm_mqtt_client_p client, mqtt_msg_type_t msg_type, uint1
         write_u16(client, pkt_id);              /* Write packet ID */
         send_data(client);                      /* Flush data to output */
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
-            "[MQTT] Rgsmonse %s written to output memory\r\n", mqtt_msg_type_to_str(msg_type));
+            "[MQTT] Response %s written to output memory\r\n", mqtt_msg_type_to_str(msg_type));
         return 1;
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
@@ -401,10 +401,14 @@ send_data(gsm_mqtt_client_p client) {
 
     len = gsm_buff_get_linear_block_length(&client->tx_buff);   /* Get length of linear memory */
     if (len) {                                  /* Anything to send? */
+        gsmr_t res;
         addr = gsm_buff_get_linear_block_address(&client->tx_buff); /* Get address of linear memory */
-        if (gsm_conn_send(client->conn, addr, len, NULL, 0) == gsmOK) {
+        if ((res = gsm_conn_send(client->conn, addr, len, NULL, 0)) == gsmOK) {
             client->written_total += len;       /* Increase number of bytes written to queue */
             client->is_sending = 1;             /* Remember active sending flag */
+        } else {
+            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE_WARNING,
+                "[MQTT] Cannot send data with error: %d\r\n", (int)res);
         }
     }
 }
@@ -975,7 +979,7 @@ mqtt_conn_cb(gsm_evt_t* evt) {
             gsm_mqtt_client_p client;
             client = gsm_evt_conn_error_get_arg(evt);   /* Get connection argument */
             if (client != NULL) {
-                client->conn_state = GSM_MQTT_CONN_DISCONNECTED;    /* Set back to disconnected state */
+                client->conn_state = GSM_MQTT_CONN_DISCONNECTED;/* Set back to disconnected state */
                 /* Notify user upper layer */
                 client->evt.type = GSM_MQTT_EVT_CONNECT;
                 client->evt.evt.connect.status = GSM_MQTT_CONN_STATUS_TCP_FAILED;   /* TCP connection failed */
@@ -1186,7 +1190,7 @@ gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void*
 
     gsm_core_lock();
     if (client->conn_state != GSM_MQTT_CONNECTED) {
-        res = gsmERR;
+        res = gsmCLOSED;
     } else if ((raw_len = output_check_enough_memory(client, rem_len)) != 0) {
         pkt_id = qos_u8 > 0 ? create_packet_id(client) : 0; /* Create new packet ID */
         request = request_create(client, pkt_id, arg);  /* Create request for packet */
@@ -1215,11 +1219,11 @@ gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void*
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
                 "[MQTT] Pkt publish start. QoS: %d, pkt_id: %d\r\n", (int)qos_u8, (int)pkt_id);
         } else {
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] No free request available\r\n");
+            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] No free request available to publish message\r\n");
             res = gsmERRMEM;
         }
     } else {
-        GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] No enough memory to publish message\r\n");
+        GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Not enough memory to publish message\r\n");
         res = gsmERRMEM;
     }
     gsm_core_unlock();

@@ -54,7 +54,7 @@ typedef struct {
     size_t size;                                /*!< Size in units of bytes of region */
 } gsm_mem_region_t;
 
-void*   gsm_mem_alloc(uint32_t size);
+void*   gsm_mem_alloc(size_t size);
 void*   gsm_mem_realloc(void* ptr, size_t size);
 void*   gsm_mem_calloc(size_t num, size_t size);
 void    gsm_mem_free(void* ptr);

@@ -714,8 +714,8 @@ extern const size_t         gsm_dev_model_map_size;
 #define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
 #define GSM_MSG_VAR_ALLOC(name)                 do {\
     (name) = gsm_mem_alloc(sizeof(*(name)));        \
-    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "MSG VAR: Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
-    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "MSG VAR: Error allocating %d bytes\r\n", sizeof(*(name))); \
+    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
+    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", sizeof(*(name))); \
     if ((name) == NULL) {                           \
         return gsmERRMEM;                           \
     }                                               \
@@ -728,7 +728,7 @@ extern const size_t         gsm_dev_model_map_size;
 } while (0)
 #define GSM_MSG_VAR_REF(name)                   (*(name))
 #define GSM_MSG_VAR_FREE(name)                  do {\
-    GSM_DEBUGF(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, "MSG VAR: Free memory: %p\r\n", (name)); \
+    GSM_DEBUGF(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (name)); \
     gsm_mem_free(name);                             \
     (name) = NULL;                                  \
 } while (0)
@@ -744,12 +744,12 @@ extern const size_t         gsm_dev_model_map_size;
 #define RECV_LEN()                          recv_buff.len
 #define RECV_IDX(index)                     recv_buff.data[index]
 
-#define GSM_AT_PORT_SEND_BEGIN()            do { GSM_AT_PORT_SEND_STR("AT"); } while (0)
-#define GSM_AT_PORT_SEND_END()              do { GSM_AT_PORT_SEND_STR(CRLF); } while (0)
+#define GSM_AT_PORT_SEND_BEGIN()            GSM_AT_PORT_SEND_STR("AT")
+#define GSM_AT_PORT_SEND_END()              GSM_AT_PORT_SEND_STR(CRLF)
 
-#define GSM_AT_PORT_SEND_STR(str)           gsm.ll.send_fn((const uint8_t *)(str), (uint16_t)strlen(str))
-#define GSM_AT_PORT_SEND_CHR(ch)            gsm.ll.send_fn((const uint8_t *)(ch), (uint16_t)1)
-#define GSM_AT_PORT_SEND(d, l)              gsm.ll.send_fn((const uint8_t *)(d), (uint16_t)(l))
+#define GSM_AT_PORT_SEND_STR(str)           gsm.ll.send_fn((const uint8_t *)(str), (size_t)strlen(str))
+#define GSM_AT_PORT_SEND_CHR(ch)            gsm.ll.send_fn((const uint8_t *)(ch), (size_t)1)
+#define GSM_AT_PORT_SEND(d, l)              gsm.ll.send_fn((const uint8_t *)(d), (size_t)(l))
 
 #define GSM_AT_PORT_SEND_QUOTE_COND(q)      do { if ((q)) { GSM_AT_PORT_SEND_STR("\""); } } while (0)
 #define GSM_AT_PORT_SEND_COMMA_COND(c)      do { if ((c)) { GSM_AT_PORT_SEND_STR(","); } } while (0)
