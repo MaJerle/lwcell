@@ -599,6 +599,7 @@ gsmi_send_conn_error_cb(gsm_msg_t* msg, gsmr_t error) {
 
     /* Call callback specified by user on connection startup */
     gsm.msg->msg.conn_start.evt_func(&gsm.evt);
+    GSM_UNUSED(msg);
 }
 
 /**

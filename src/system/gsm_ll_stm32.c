@@ -114,6 +114,7 @@ usart_ll_thread(void const * arg) {
             }
         }
     }
+    GSM_UNUSED(arg);
 }
 
 /**
@@ -357,6 +358,7 @@ gsm_ll_deinit(gsm_ll_t* ll) {
         osThreadTerminate(tmp);
     }
     initialized = 0;
+    GSM_UNUSED(ll);
     return gsmOK;
 }
 

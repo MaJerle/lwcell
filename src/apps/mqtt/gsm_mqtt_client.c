@@ -199,6 +199,7 @@ request_create(gsm_mqtt_client_p client, uint16_t packet_id, void* arg) {
 static void
 request_delete(gsm_mqtt_client_p client, gsm_mqtt_request_t* request) {
     request->status = 0;                        /* Reset status to make request unused */
+    GSM_UNUSED(client);
 }
 
 /**
@@ -210,6 +211,7 @@ static void
 request_set_pending(gsm_mqtt_client_p client, gsm_mqtt_request_t* request) {
     request->timeout_start_time = gsm_sys_now();/* Set timeout start time */
     request->status |= MQTT_REQUEST_FLAG_PENDING;   /* Set pending flag */
+    GSM_UNUSED(client);
 }
 
 /**
@@ -936,6 +938,8 @@ mqtt_closed_cb(gsm_mqtt_client_p client, uint8_t forced) {
     client->is_sending = client->sent_total = client->written_total = 0;
     client->parser_state = MQTT_PARSER_STATE_INIT;
     gsm_buff_reset(&client->tx_buff);           /* Reset TX buffer */
+
+    GSM_UNUSED(forced);
 
     return 1;
 }

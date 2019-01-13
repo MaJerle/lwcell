@@ -441,7 +441,7 @@ gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, con
     gsm_sys_mutex_lock(&client->mutex);
     gsm_sys_sem_wait(&client->sync_sem, 0);
     client->release_sem = 1;
-    if (gsm_mqtt_client_publish(client->mc, topic, data, GSM_U16(btw), qos, 1, NULL) == gsmOK) {
+    if (gsm_mqtt_client_publish(client->mc, topic, data, GSM_U16(btw), qos, retain, NULL) == gsmOK) {
         gsm_sys_sem_wait(&client->sync_sem, 0);
         res = client->sub_pub_resp;
     } else {

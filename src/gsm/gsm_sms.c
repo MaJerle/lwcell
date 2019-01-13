@@ -123,6 +123,7 @@ gsm_sms_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
         evt_fn(gsmOK, evt_arg);
     }
     gsm_core_unlock();
+    GSM_UNUSED(blocking);
     return gsmOK;
 }
 

@@ -47,11 +47,12 @@ gsm_t gsm;
 
 /**
  * \brief           Default callback function for events
- * \param[in]       cb: Pointer to callback data structure
+ * \param[in]       evt: Pointer to callback data structure
  * \return          Member of \ref gsmr_t enumeration
  */
 static gsmr_t
-def_callback(gsm_evt_t* cb) {
+def_callback(gsm_evt_t* evt) {
+    GSM_UNUSED(evt);
     return gsmOK;
 }
 
