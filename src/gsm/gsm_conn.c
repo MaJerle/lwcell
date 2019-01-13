@@ -87,7 +87,7 @@ gsmi_conn_start_timeout(gsm_conn_p conn) {
  * \return          Connection current validation ID
  */
 uint8_t
-conn_get_val_id(gsm_conn_p conn) {
+gsmi_conn_get_val_id(gsm_conn_p conn) {
     uint8_t val_id;
     gsm_core_lock();
     val_id = conn->val_id;
@@ -134,7 +134,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
     GSM_MSG_VAR_REF(msg).msg.conn_send.remote_ip = ip;
     GSM_MSG_VAR_REF(msg).msg.conn_send.remote_port = port;
     GSM_MSG_VAR_REF(msg).msg.conn_send.fau = fau;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.val_id = conn_get_val_id(conn);
+    GSM_MSG_VAR_REF(msg).msg.conn_send.val_id = gsmi_conn_get_val_id(conn);
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
@@ -230,7 +230,7 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPCLOSE;
     GSM_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
-    GSM_MSG_VAR_REF(msg).msg.conn_close.val_id = conn_get_val_id(conn);
+    GSM_MSG_VAR_REF(msg).msg.conn_close.val_id = gsmi_conn_get_val_id(conn);
 
     flush_buff(conn);                           /* First flush buffer */
     res = gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
