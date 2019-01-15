@@ -313,16 +313,19 @@ gsm_buff_get_linear_block_address(gsm_buff_t* buff) {
  */
 size_t
 gsm_buff_get_linear_block_length(gsm_buff_t* buff) {
-    size_t len;
+    size_t w, r, len;
 
     if (buff == NULL) {
         return 0;
     }
 
-    if (buff->w > buff->r) {
-        len = buff->w - buff->r;
-    } else if (buff->r > buff->w) {
-        len = buff->size - buff->r;
+    /* Operate on temporary values in case they change in between */
+    w = buff->w;
+    r = buff->r;
+    if (w > r) {
+        len = w - r;
+    } else if (r > w) {
+        len = buff->size - r;
     } else {
         len = 0;
     }
@@ -350,7 +353,7 @@ gsm_buff_skip(gsm_buff_t* buff, size_t len) {
     }
     buff->r += len;                             /* Advance buffer */
     if (buff->r >= buff->size) {                /* Subtract possible overflow */
-        buff->r -= buff->size;                  /* Do subtract */
+        buff->r -= buff->size;
     }
     return len;
 }
