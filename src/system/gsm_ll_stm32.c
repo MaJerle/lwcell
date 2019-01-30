@@ -107,7 +107,7 @@ usart_ll_thread(void const * arg) {
             } else {
                 gsm_input_process(&usart_mem[old_pos], sizeof(usart_mem) - old_pos);
                 if (pos) {
-                    esp_input_process(&usart_mem[0], pos);
+                    gsm_input_process(&usart_mem[0], pos);
                 }
             }
             old_pos = pos;
