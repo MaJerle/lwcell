@@ -1493,9 +1493,14 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 
     /* Check if new command was set for execution */
     if (n_cmd != GSM_CMD_IDLE) {
+        gsmr_t res;
         msg->cmd = n_cmd;
-        if (msg->fn(msg) == gsmOK) {
+        if ((res = msg->fn(msg)) == gsmOK) {
             return gsmCONT;
+        } else {
+            *is_ok = 0;
+            *is_error = 1;
+            return res;
         }
     } else {
         msg->cmd = GSM_CMD_IDLE;

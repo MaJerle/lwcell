@@ -159,7 +159,7 @@ netconn_evt(gsm_evt_t* evt) {
             }
             nc->rcv_packets++;                  /* Increase number of received packets */
             GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE,
-                "[NETCONN] Received pbuf contains %s bytes. Handle written to receive mbox\r\n",
+                "[NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
                 (int)gsm_pbuf_length(pbuf, 0));
             break;
         }
