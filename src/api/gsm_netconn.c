@@ -148,26 +148,18 @@ netconn_evt(gsm_evt_t* evt) {
             pbuf = gsm_evt_conn_recv_get_buff(evt);/* Get received buff */
 
             gsm_conn_recved(conn, pbuf);        /* Notify stack about received data */
-            nc->rcv_packets++;                  /* Increase number of received packets */
 
-            /*
-             * First increase reference number to prevent
-             * other thread to process the incoming packet
-             * and free it while we still need it here
-             *
-             * In case of problems writing packet to queue,
-             * simply force free to decrease reference counter back to previous value
-             */
             gsm_pbuf_ref(pbuf);                 /* Increase reference counter */
-            if (!nc || !gsm_sys_mbox_isvalid(&nc->mbox_receive)
+            if (nc == NULL || !gsm_sys_mbox_isvalid(&nc->mbox_receive)
                 || !gsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
                 GSM_DEBUGF(GSM_CFG_DBG_NETCONN,
                     "[NETCONN] Ignoring more data for receive!\r\n");
                 gsm_pbuf_free(pbuf);            /* Free pbuf */
                 return gsmOKIGNOREMORE;         /* Return OK to free the memory and ignore further data */
             }
+            nc->rcv_packets++;                  /* Increase number of received packets */
             GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE,
-                "[NETCONN] Written %d bytes to receive mbox\r\n",
+                "[NETCONN] Received pbuf contains %s bytes. Handle written to receive mbox\r\n",
                 (int)gsm_pbuf_length(pbuf, 0));
             break;
         }
