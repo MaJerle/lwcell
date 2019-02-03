@@ -319,7 +319,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
     gsmr_t res;
 
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
-    GSM_ASSERT("nc->type must be TCP or SSL\r\n", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);/* Assert input parameters */
+    GSM_ASSERT("nc->type must be TCP or SSL", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);/* Assert input parameters */
     GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     /*
@@ -398,7 +398,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
 gsmr_t
 gsm_netconn_flush(gsm_netconn_p nc) {
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
-    GSM_ASSERT("nc->type must be TCP or SSL\r\n", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);/* Assert input parameters */
+    GSM_ASSERT("nc->type must be TCP or SSL", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);/* Assert input parameters */
     GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
 
     /*
@@ -425,8 +425,8 @@ gsm_netconn_flush(gsm_netconn_p nc) {
 gsmr_t
 gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
-    GSM_ASSERT("nc->type must be UDP\r\n", nc->type == GSM_NETCONN_TYPE_UDP);   /* Assert input parameters */
-    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
+    GSM_ASSERT("nc->type must be UDP", nc->type == GSM_NETCONN_TYPE_UDP);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));/* Assert input parameters */
 
     return gsm_conn_send(nc->conn, data, btw, NULL, 1);
 }
@@ -444,8 +444,8 @@ gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
 gsmr_t
 gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
-    GSM_ASSERT("nc->type must be UDP\r\n", nc->type == GSM_NETCONN_TYPE_UDP);   /* Assert input parameters */
-    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));    /* Assert input parameters */
+    GSM_ASSERT("nc->type must be UDP", nc->type == GSM_NETCONN_TYPE_UDP);   /* Assert input parameters */
+    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));/* Assert input parameters */
 
     return gsm_conn_sendto(nc->conn, ip, port, data, btw, NULL, 1);
 }
