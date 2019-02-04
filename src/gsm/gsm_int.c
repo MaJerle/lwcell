@@ -506,7 +506,7 @@ gsmi_tcpip_process_send_data(void) {
     gsm.msg->msg.conn_send.sent = GSM_MIN(gsm.msg->msg.conn_send.btw, GSM_CFG_CONN_MAX_DATA_LEN);
 
     GSM_AT_PORT_SEND_BEGIN();
-    GSM_AT_PORT_SEND_STR("+CIPSEND=");
+    GSM_AT_PORT_SEND_CONST_STR("+CIPSEND=");
     gsmi_send_number(GSM_U32(c->num), 0, 0);    /* Send connection number */
     gsmi_send_number(GSM_U32(gsm.msg->msg.conn_send.sent), 0, 1);   /* Send length number */
 
@@ -1519,7 +1519,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
     switch (CMD_GET_CUR()) {                    /* Check current message we want to send over AT */
         case GSM_CMD_RESET: {                   /* Reset modem with AT commands */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CFUN=1,1");  /* Second "1" means reset */
+            GSM_AT_PORT_SEND_CONST_STR("+CFUN=1,1");
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1532,93 +1532,93 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_ATE1: {
             GSM_AT_PORT_SEND_BEGIN();
             if (CMD_IS_CUR(GSM_CMD_ATE0)) {
-                GSM_AT_PORT_SEND_STR("E0");
+                GSM_AT_PORT_SEND_CONST_STR("E0");
             } else {
-                GSM_AT_PORT_SEND_STR("E1");
+                GSM_AT_PORT_SEND_CONST_STR("E1");
             }
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CMEE_SET: {                /* Enable detailed error messages */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CMEE=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CMEE=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CLCC_SET: {                /* Enable detailed call info */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CLCC=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CLCC=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CGMI_GET: {                /* Get manufacturer */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CGMI");
+            GSM_AT_PORT_SEND_CONST_STR("+CGMI");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CGMM_GET: {                /* Get model */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CGMM");
+            GSM_AT_PORT_SEND_CONST_STR("+CGMM");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CGSN_GET: {                /* Get serial number */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CGSN");
+            GSM_AT_PORT_SEND_CONST_STR("+CGSN");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CREG_SET: {                /* Enable +CREG message */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CREG=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CREG=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CREG_GET: {                /* Get network registration status */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CREG?");
+            GSM_AT_PORT_SEND_CONST_STR("+CREG?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CFUN_SET: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CFUN=");
+            GSM_AT_PORT_SEND_CONST_STR("+CFUN=");
             /**
              * \todo: If CFUN command forced, check value
              */
             if (CMD_IS_DEF(GSM_CMD_RESET)
                 || (CMD_IS_DEF(GSM_CMD_CFUN_SET) && msg->msg.cfun.mode)) {
-                GSM_AT_PORT_SEND_STR("1");
+                GSM_AT_PORT_SEND_CONST_STR("1");
             } else {
-                GSM_AT_PORT_SEND_STR("0");
+                GSM_AT_PORT_SEND_CONST_STR("0");
             }
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPIN_GET: {                /* Read current SIM status */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPIN?");
+            GSM_AT_PORT_SEND_CONST_STR("+CPIN?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPIN_SET: {                /* Set SIM pin code */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPIN=");
+            GSM_AT_PORT_SEND_CONST_STR("+CPIN=");
             gsmi_send_string(msg->msg.cpin_enter.pin, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPIN_ADD: {                /* Add new pin code */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CLCK=\"SC\",1,");
+            GSM_AT_PORT_SEND_CONST_STR("+CLCK=\"SC\",1,");
             gsmi_send_string(msg->msg.cpin_add.pin, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPIN_CHANGE: {             /* Change already active SIM */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPWD=\"SC\"");
+            GSM_AT_PORT_SEND_CONST_STR("+CPWD=\"SC\"");
             gsmi_send_string(msg->msg.cpin_change.current_pin, 0, 1, 1);
             gsmi_send_string(msg->msg.cpin_change.new_pin, 0, 1, 1);
             GSM_AT_PORT_SEND_END();
@@ -1626,14 +1626,14 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CPIN_REMOVE: {             /* Remove current PIN */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CLCK=\"SC\",0,");
+            GSM_AT_PORT_SEND_CONST_STR("+CLCK=\"SC\",0,");
             gsmi_send_string(msg->msg.cpin_remove.pin, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GMM_CMD_CPUK_SET: {                /* Enter PUK and set new PIN */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPIN=");
+            GSM_AT_PORT_SEND_CONST_STR("+CPIN=");
             gsmi_send_string(msg->msg.cpuk_enter.puk, 0, 1, 0);
             gsmi_send_string(msg->msg.cpuk_enter.pin, 0, 1, 1);
             GSM_AT_PORT_SEND_END();
@@ -1641,7 +1641,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_COPS_SET: {                /* Set current operator */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+COPS=");
+            GSM_AT_PORT_SEND_CONST_STR("+COPS=");
             gsmi_send_number(GSM_U32(msg->msg.cops_set.mode), 0, 0);
             if (msg->msg.cops_set.mode != GSM_OPERATOR_MODE_AUTO) {
                 gsmi_send_number(GSM_U32(msg->msg.cops_set.format), 0, 1);
@@ -1659,56 +1659,56 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_COPS_GET: {                /* Get current operator */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+COPS?");
+            GSM_AT_PORT_SEND_CONST_STR("+COPS?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_COPS_GET_OPT: {            /* Get list of available operators */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+COPS=?");
+            GSM_AT_PORT_SEND_CONST_STR("+COPS=?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CSQ_GET: {                 /* Get signal strength */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CSQ");
+            GSM_AT_PORT_SEND_CONST_STR("+CSQ");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CNUM: {                    /* Get SIM number */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CNUM");
+            GSM_AT_PORT_SEND_CONST_STR("+CNUM");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CIPSHUT: {                 /* Shut down network connection and put to reset state */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPSHUT");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPSHUT");
             GSM_AT_PORT_SEND_END();
             break;
         }
 #if GSM_CFG_CONN
         case GSM_CMD_CIPMUX: {                  /* Enable multiple connections */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPMUX=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPMUX=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CIPHEAD: {                 /* Enable information on receive data about connection and length */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPHEAD=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPHEAD=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CIPSRIP: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPSRIP=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPSRIP=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CIPSSL: {                  /* Set SSL configuration */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPSSL=");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPSSL=");
             gsmi_send_number((msg->msg.conn_start.type == GSM_CONN_TYPE_SSL) ? 1 : 0, 0, 0);
             GSM_AT_PORT_SEND_END();
             break;
@@ -1738,7 +1738,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             }
 
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPSTART=");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPSTART=");
             gsmi_send_number(GSM_U32(c->num), 0, 0);
             if (msg->msg.conn_start.type == GSM_CONN_TYPE_TCP) {
                 gsmi_send_string("TCP", 0, 1, 1);
@@ -1758,7 +1758,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
                 return gsmERR;
             }
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPCLOSE=");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPCLOSE=");
             gsmi_send_number(GSM_U32(msg->msg.conn_close.conn ? msg->msg.conn_close.conn->num : GSM_CFG_MAX_CONNS), 0, 0);
             GSM_AT_PORT_SEND_END();
             break;
@@ -1768,7 +1768,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CIPSTATUS: {               /* Get status of device and all connections */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPSTATUS");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPSTATUS");
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1776,7 +1776,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
 #if GSM_CFG_SMS
         case GSM_CMD_CMGF: {                    /* Select SMS message format */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CMGF=");
+            GSM_AT_PORT_SEND_CONST_STR("+CMGF=");
             if (CMD_IS_DEF(GSM_CMD_CMGS)) {
                 gsmi_send_number(GSM_U32(!!msg->msg.sms_send.format), 0, 0);
             } else if (CMD_IS_DEF(GSM_CMD_CMGR)) {
@@ -1784,21 +1784,21 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             } else if (CMD_IS_DEF(GSM_CMD_CMGL)) {
                 gsmi_send_number(GSM_U32(!!msg->msg.sms_list.format), 0, 0);
             } else {
-                GSM_AT_PORT_SEND_STR("1");      /* Force text mode */
+                GSM_AT_PORT_SEND_CONST_STR("1");
             }
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CMGS: {                    /* Send SMS */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CMGS=");
+            GSM_AT_PORT_SEND_CONST_STR("+CMGS=");
             gsmi_send_string(msg->msg.sms_send.num, 0, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CMGR: {                    /* Read message */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CMGR=");
+            GSM_AT_PORT_SEND_CONST_STR("+CMGR=");
             gsmi_send_number(GSM_U32(msg->msg.sms_read.pos), 0, 0);
             gsmi_send_number(GSM_U32(!msg->msg.sms_read.update), 0, 1);
             GSM_AT_PORT_SEND_END();
@@ -1806,14 +1806,14 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CMGD: {                    /* Delete SMS message */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CMGD=");
+            GSM_AT_PORT_SEND_CONST_STR("+CMGD=");
             gsmi_send_number(GSM_U32(msg->msg.sms_delete.pos), 0, 0);
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CMGL: {                    /* Delete SMS message */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CMGL=");
+            GSM_AT_PORT_SEND_CONST_STR("+CMGL=");
             gsmi_send_sms_stat(msg->msg.sms_list.status, 1, 0);
             gsmi_send_number(GSM_U32(!msg->msg.sms_list.update), 0, 1);
             GSM_AT_PORT_SEND_END();
@@ -1821,19 +1821,19 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CPMS_GET_OPT: {            /* Get available SMS storages */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPMS=?");
+            GSM_AT_PORT_SEND_CONST_STR("+CPMS=?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPMS_GET: {                /* Get current SMS storage info */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPMS?");
+            GSM_AT_PORT_SEND_CONST_STR("+CPMS?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPMS_SET: {                /* Set active SMS storage(s) */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPMS=");
+            GSM_AT_PORT_SEND_CONST_STR("+CPMS=");
             if (CMD_IS_DEF(GSM_CMD_CMGR)) { /* Read SMS original command? */
                 gsmi_send_dev_memory(msg->msg.sms_read.mem == GSM_MEM_CURRENT ? gsm.m.sms.mem[0].current : msg->msg.sms_read.mem, 1, 0);
             } else if(CMD_IS_DEF(GSM_CMD_CMGD)) {   /* Delete SMS original command? */
@@ -1852,21 +1852,21 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
 #if GSM_CFG_CALL
         case GSM_CMD_ATD: {                     /* Start new call */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("D");
+            GSM_AT_PORT_SEND_CONST_STR("D");
             gsmi_send_string(msg->msg.call_start.number, 0, 0, 0);
-            GSM_AT_PORT_SEND_STR(";");          /* Voice call includes semicolon at the end */
+            GSM_AT_PORT_SEND_CONST_STR(";");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_ATA: {                     /* Answer phone call */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("A");
+            GSM_AT_PORT_SEND_CONST_STR("A");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_ATH: {                     /* Disconnect existing connection (hang-up phone call) */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("H");
+            GSM_AT_PORT_SEND_CONST_STR("H");
             GSM_AT_PORT_SEND_END();
             break;
         }
@@ -1874,20 +1874,20 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
 #if GSM_CFG_PHONEBOOK
         case GSM_CMD_CPBS_GET_OPT: {            /* Get available phonebook storages */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPBS=?");
+            GSM_AT_PORT_SEND_CONST_STR("+CPBS=?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPBS_GET: {                /* Get current memory info */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPBS?");
+            GSM_AT_PORT_SEND_CONST_STR("+CPBS?");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CPBS_SET: {                /* Get current memory info */
             gsm_mem_t mem;
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPBS=");
+            GSM_AT_PORT_SEND_CONST_STR("+CPBS=");
             switch (CMD_GET_DEF()) {
                 case GSM_CMD_CPBW_SET: mem = msg->msg.pb_write.mem; break;
                 case GSM_CMD_CPBR: mem = msg->msg.pb_list.mem; break;
@@ -1900,7 +1900,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CPBW_SET: {                /* Write/Delete new/old entry */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPBW=");
+            GSM_AT_PORT_SEND_CONST_STR("+CPBW=");
             if (msg->msg.pb_write.pos) {        /* Write number if more than 0 */
                 gsmi_send_number(GSM_U32(msg->msg.pb_write.pos), 0, 0);
             }
@@ -1914,7 +1914,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CPBR: {                    /* Read entires */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPBR=");
+            GSM_AT_PORT_SEND_CONST_STR("+CPBR=");
             gsmi_send_number(GSM_U32(msg->msg.pb_list.start_index), 0, 0);
             gsmi_send_number(GSM_U32(msg->msg.pb_list.etr), 0, 1);
             GSM_AT_PORT_SEND_END();
@@ -1922,7 +1922,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CPBF: {                    /* Find entires */
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CPBF=");
+            GSM_AT_PORT_SEND_CONST_STR("+CPBF=");
             gsmi_send_string(msg->msg.pb_search.search, 1, 1, 0);
             GSM_AT_PORT_SEND_END();
             break;
@@ -1932,44 +1932,44 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_NETWORK_ATTACH:
         case GSM_CMD_CGACT_SET_0: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CGACT=0");
+            GSM_AT_PORT_SEND_CONST_STR("+CGACT=0");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CGACT_SET_1: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CGACT=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CGACT=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_NETWORK_DETACH:
         case GSM_CMD_CGATT_SET_0: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CGATT=0");
+            GSM_AT_PORT_SEND_CONST_STR("+CGATT=0");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CGATT_SET_1: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CGATT=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CGATT=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CIPMUX_SET: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPMUX=1");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPMUX=1");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CIPRXGET_SET: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIPRXGET=0");
+            GSM_AT_PORT_SEND_CONST_STR("+CIPRXGET=0");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CSTT_SET: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CSTT=");
+            GSM_AT_PORT_SEND_CONST_STR("+CSTT=");
             gsmi_send_string(msg->msg.network_attach.apn, 1, 1, 0);
             gsmi_send_string(msg->msg.network_attach.user, 1, 1, 1);
             gsmi_send_string(msg->msg.network_attach.pass, 1, 1, 1);
@@ -1978,13 +1978,13 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         }
         case GSM_CMD_CIICR: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIICR");
+            GSM_AT_PORT_SEND_CONST_STR("+CIICR");
             GSM_AT_PORT_SEND_END();
             break;
         }
         case GSM_CMD_CIFSR: {
             GSM_AT_PORT_SEND_BEGIN();
-            GSM_AT_PORT_SEND_STR("+CIFSR");
+            GSM_AT_PORT_SEND_CONST_STR("+CIFSR");
             GSM_AT_PORT_SEND_END();
             break;
         }
