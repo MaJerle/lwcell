@@ -89,7 +89,7 @@ usart_ll_thread(void const * arg) {
     static size_t old_pos;
 
     GSM_UNUSED(arg);
-    
+
     while (1) {
         /* Wait for the event message from DMA or USART */
         evt = osMessageGet(usart_ll_mbox_id, osWaitForever);
@@ -298,7 +298,7 @@ configure_uart(uint32_t baudrate) {
         LL_GPIO_SetOutputPin(GSM_RESET_PORT, GSM_RESET_PIN);
         osDelay(3000);
     }
-#endif /* GSM_RESET_PIN */
+#endif /* defined(GSM_RESET_PIN) */
 }
 
 /**
