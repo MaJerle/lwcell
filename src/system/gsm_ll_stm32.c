@@ -88,6 +88,8 @@ usart_ll_thread(void const * arg) {
     size_t pos;
     static size_t old_pos;
 
+    GSM_UNUSED(arg);
+    
     while (1) {
         /* Wait for the event message from DMA or USART */
         evt = osMessageGet(usart_ll_mbox_id, osWaitForever);
@@ -116,7 +118,6 @@ usart_ll_thread(void const * arg) {
             }
         }
     }
-    GSM_UNUSED(arg);
 }
 
 /**
