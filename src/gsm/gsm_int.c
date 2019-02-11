@@ -2043,7 +2043,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     }
     if (msg->is_blocking && res == gsmOK) {     /* In case we have blocking request */
         uint32_t time;
-        time = gsm_sys_sem_wait(&msg->sem, max_block_time); /* Wait forever for semaphore access for max block time */
+        time = gsm_sys_sem_wait(&msg->sem, 0);  /* Wait forever for semaphore */
         if (GSM_SYS_TIMEOUT == time) {          /* If semaphore was not accessed in given time */
             res = gsmERR;                       /* Semaphore not released in time */
         } else {
