@@ -783,13 +783,24 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             gsm.m.sms.ready = 1;                /* SMS ready flag */
             gsmi_send_cb(GSM_EVT_SMS_READY);    /* Send SMS ready event */
 #endif /* GSM_CFG_SMS */
-        } else if ((CMD_IS_CUR(GSM_CMD_CGMI_GET) || CMD_IS_CUR(GSM_CMD_CGMM_GET) || CMD_IS_CUR(GSM_CMD_CGSN_GET))
+        } else if ((CMD_IS_CUR(GSM_CMD_CGMI_GET) || CMD_IS_CUR(GSM_CMD_CGMM_GET) || CMD_IS_CUR(GSM_CMD_CGSN_GET) || CMD_IS_CUR(GSM_CMD_CGMR_GET))
                     && !is_ok && !is_error && strncmp(rcv->data, "AT+", 3)) {
             const char* tmp = rcv->data;
+            size_t tocopy;
             if (CMD_IS_CUR(GSM_CMD_CGMI_GET)) { /* Check device manufacturer */
                 gsmi_parse_string(&tmp, gsm.m.model_manufacturer, sizeof(gsm.m.model_manufacturer), 1);
+                if (CMD_IS_DEF(GSM_CMD_CGMI_GET)) {
+                    tocopy = GSM_MIN(sizeof(gsm.m.model_manufacturer), gsm.msg->msg.device_info.len);
+                    GSM_MEMCPY(gsm.msg->msg.device_info.str, gsm.m.model_manufacturer, tocopy);
+                    gsm.msg->msg.device_info.str[tocopy - 1] = 0;
+                }
             } else if (CMD_IS_CUR(GSM_CMD_CGMM_GET)) {  /* Check device model number */
                 gsmi_parse_string(&tmp, gsm.m.model_number, sizeof(gsm.m.model_number), 1);
+                if (CMD_IS_DEF(GSM_CMD_CGMM_GET)) {
+                    tocopy = GSM_MIN(sizeof(gsm.m.model_number), gsm.msg->msg.device_info.len);
+                    GSM_MEMCPY(gsm.msg->msg.device_info.str, gsm.m.model_number, tocopy);
+                    gsm.msg->msg.device_info.str[tocopy - 1] = 0;
+                }
                 for (size_t i = 0; i < gsm_dev_model_map_size; i++) {
                     if (strstr(gsm.m.model_number, gsm_dev_model_map[i].id_str) != NULL) {
                         gsm.m.model = gsm_dev_model_map[i].model;
@@ -798,6 +809,21 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                 }
             } else if (CMD_IS_CUR(GSM_CMD_CGSN_GET)) {  /* Check device serial number */
                 gsmi_parse_string(&tmp, gsm.m.model_serial_number, sizeof(gsm.m.model_serial_number), 1);
+                if (CMD_IS_DEF(GSM_CMD_CGSN_GET)) {
+                    tocopy = GSM_MIN(sizeof(gsm.m.model_serial_number), gsm.msg->msg.device_info.len);
+                    GSM_MEMCPY(gsm.msg->msg.device_info.str, gsm.m.model_serial_number, tocopy);
+                    gsm.msg->msg.device_info.str[tocopy - 1] = 0;
+                }
+            } else if (CMD_IS_CUR(GSM_CMD_CGMR_GET)) {  /* Check device revision */
+                if (!strncmp(tmp, "Revision:", 9)) {
+                    tmp += 9;
+                }
+                gsmi_parse_string(&tmp, gsm.m.model_revision, sizeof(gsm.m.model_revision), 1);
+                if (CMD_IS_DEF(GSM_CMD_CGMR_GET)) {
+                    tocopy = GSM_MIN(sizeof(gsm.m.model_revision), gsm.msg->msg.device_info.len);
+                    GSM_MEMCPY(gsm.msg->msg.device_info.str, gsm.m.model_revision, tocopy);
+                    gsm.msg->msg.device_info.str[tocopy - 1] = 0;
+                }
             }
         } else if (CMD_IS_CUR(GSM_CMD_CIFSR) && GSM_CHARISNUM(rcv->data[0])) {
             const char* tmp = rcv->data;
@@ -1254,7 +1280,8 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             case GSM_CMD_CMEE_SET:  SET_NEW_CMD(GSM_CMD_CGMI_GET); break;   /* Get manufacturer */
             case GSM_CMD_CGMI_GET:  SET_NEW_CMD(GSM_CMD_CGMM_GET); break;   /* Get model */
             case GSM_CMD_CGMM_GET:  SET_NEW_CMD(GSM_CMD_CGSN_GET); break;   /* Get product serial number */
-            case GSM_CMD_CGSN_GET: {
+            case GSM_CMD_CGSN_GET:  SET_NEW_CMD(GSM_CMD_CGMR_GET); break;   /* Get product revision */
+            case GSM_CMD_CGMR_GET: {
                 /*
                  * At this point we have modem info.
                  * It is now time to send info to user
@@ -1569,6 +1596,12 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CGSN_GET: {                /* Get serial number */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_CONST_STR("+CGSN");
+            GSM_AT_PORT_SEND_END();
+            break;
+        }
+        case GSM_CMD_CGMR_GET: {                /* Get revision */
+            GSM_AT_PORT_SEND_BEGIN();
+            GSM_AT_PORT_SEND_CONST_STR("+CGMR");
             GSM_AT_PORT_SEND_END();
             break;
         }

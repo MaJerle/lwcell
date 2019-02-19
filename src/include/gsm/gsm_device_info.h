@@ -1,6 +1,6 @@
-/**
- * \file            gsm_includes.h
- * \brief           All main includes
+/**	
+ * \file            gsm_device_info.h
+ * \brief           Basic device information
  */
 
 /*
@@ -30,45 +30,33 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef GSM_HDR_INCLUDES_H
-#define GSM_HDR_INCLUDES_H
+#ifndef GSM_HDR_DEVICE_INFO_H
+#define GSM_HDR_DEVICE_INFO_H
 
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif
 
-#include "gsm_config.h"
-#include "gsm/gsm_typedefs.h"
-#include "gsm/gsm_buff.h"
-#include "gsm/gsm_input.h"
-#include "gsm/gsm_debug.h"
-#include "gsm/gsm_utilities.h"
-#include "gsm/gsm_pbuf.h"
-#include "gsm/gsm_sim.h"
-#include "gsm/gsm_operator.h"
-#include "gsm/gsm_evt.h"
-#include "gsm/gsm_network.h"
-#include "gsm/gsm_device_info.h"
-#include "system/gsm_sys.h"
+#include "gsm/gsm.h"
 
-#if GSM_CFG_SMS || __DOXYGEN__
-#include "gsm/gsm_sms.h"
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
-#if GSM_CFG_CALL || __DOXYGEN__
-#include "gsm/gsm_call.h"
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
-#if GSM_CFG_PHONEBOOK || __DOXYGEN__
-#include "gsm/gsm_phonebook.h"
-#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
-#if GSM_CFG_CONN || __DOXYGEN__
-#include "gsm/gsm_conn.h"
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
-#if GSM_CFG_NETCONN || __DOXYGEN__
-#include "gsm/gsm_netconn.h"
-#endif /* GSM_CFG_NETCONN || __DOXYGEN__ */
+/**
+ * \ingroup         GSM
+ * \defgroup        GSM_DEVICE_INFO Device information
+ * \brief           Basic device information
+ * \{
+ */
+
+gsmr_t      gsm_device_get_manufacturer(char* manuf, size_t len, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+gsmr_t      gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+gsmr_t      gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+gsmr_t      gsm_device_get_serial_number(char* serial, size_t len, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif
 
-#endif /* GSM_HDR_INCLUDES_H */
+#endif /* GSM_HDR_DEVICE_INFO_H */

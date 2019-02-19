@@ -72,6 +72,8 @@ typedef enum {
     GSM_CMD_CIPRXGET_SET,
     GSM_CMD_CSTT_SET,
 
+
+
     /* AT commands according to the V.25TER */
     GSM_CMD_CALL_ENABLE,
     GSM_CMD_A,                                  /*!< Re-issues the Last Command Given */
@@ -368,6 +370,11 @@ typedef struct gsm_msg {
         } sim_info;                             /*!< Get information for SIM card */
 
         struct {
+            char* str;                          /*!< Pointer to output string array */
+            size_t len;                         /*!< Length of output string array including trailing zero memory */
+        } device_info;                          /*!< All kind of device info, serial number, model, manufacturer, revision */
+
+        struct {
             int16_t* rssi;                      /*!< Pointer to RSSI variable */
         } csq;                                  /*!< Signal strength */
         struct {
@@ -596,6 +603,7 @@ typedef struct {
     char                model_manufacturer[20]; /*!< Device manufacturer */
     char                model_number[20];       /*!< Device model number */
     char                model_serial_number[20];/*!< Device serial number */
+    char                model_revision[20];     /*!< Device revision */
     gsm_device_model_t  model;                  /*!< Device model */
 
     /* Network&operator specific */
