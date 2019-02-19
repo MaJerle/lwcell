@@ -1365,6 +1365,9 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             case GSM_CMD_CPIN_GET: {            /* Get own phone number */
                 if (*is_ok && gsm.m.sim.state == GSM_SIM_STATE_PIN) {
                     SET_NEW_CMD(GSM_CMD_CPIN_SET);  /* Set command to write PIN */
+                } else if (gsm.m.sim.state != GSM_SIM_STATE_READY) {
+                    *is_ok = 0;
+                    *is_error = 1;
                 }
                 break;
             }
