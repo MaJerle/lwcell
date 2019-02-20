@@ -200,8 +200,8 @@ gsm_reset_with_delay(uint32_t delay,
  *
  *                  If lock was `0` before func call, lock is enabled and increased
  * \note            Function may be called multiple times to increase locks.
- *                  User must take care of calling \ref gsm_core_unlock function
- *                  for the same amount to decrease lock back to `0`
+ *                  User must take care of calling \ref gsm_core_unlock
+ *                  the same amount of time to make sure lock gets back to `0`
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -214,10 +214,10 @@ gsm_core_lock(void) {
 /**
  * \brief           Unlock stack for multi-thread access
  *
- *                  Used conjunction with \ref gsm_core_lock function
+ *                  Used in conjunction with \ref gsm_core_lock function
  *
- *                  If lock was non-zero before func call, it is decreased.
- *                  When `lock == 0`, protection is disabled
+ *                  If lock was non-zero before function call, lock is decreased.
+ *                  In case of `lock == 0`, protection is disabled
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -237,7 +237,7 @@ gsm_evt_register(gsm_evt_fn fn) {
     gsmr_t res = gsmOK;
     gsm_evt_func_t* func, *newFunc;
 
-    GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
+    GSM_ASSERT("fn != NULL", fn != NULL);       /* Assert input parameters */
 
     gsm_core_lock();
 
@@ -278,7 +278,7 @@ gsm_evt_register(gsm_evt_fn fn) {
 gsmr_t
 gsm_evt_unregister(gsm_evt_fn fn) {
     gsm_evt_func_t* func, *prev;
-    GSM_ASSERT("cb_fn != NULL", fn != NULL);    /* Assert input parameters */
+    GSM_ASSERT("fn != NULL", fn != NULL);       /* Assert input parameters */
 
     gsm_core_lock();
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
