@@ -186,36 +186,6 @@ gsmi_get_sim_info(const uint32_t blocking) {
 }
 
 /**
- * \brief           Create 2-characters long hex from byte
- * \param[in]       num: Number to convert to string
- * \param[out]      str: Pointer to string to save result to
- */
-void
-gsmi_byte_to_str(uint8_t num, char* str) {
-    sprintf(str, "%02X", (unsigned)num);        /* Currently use sprintf only */
-}
-
-/**
- * \brief           Create string from number
- * \param[in]       num: Number to convert to string
- * \param[out]      str: Pointer to string to save result to
- */
-void
-gsmi_number_to_str(uint32_t num, char* str) {
-    sprintf(str, "%u", (unsigned)num);          /* Currently use sprintf only */
-}
-
-/**
- * \brief           Create string from signed number
- * \param[in]       num: Number to convert to string
- * \param[out]      str: Pointer to string to save result to
- */
-void
-gsmi_signed_number_to_str(int32_t num, char* str) {
-    sprintf(str, "%d", (signed)num);            /* Currently use sprintf only */
-}
-
-/**
  * \brief           Send IP or MAC address to AT port
  * \param[in]       d: Pointer to IP or MAC address
  * \param[in]       is_ip: Set to `1` when sending IP, `0` when MAC
@@ -237,9 +207,9 @@ gsmi_send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     ch = is_ip ? '.' : ':';                     /* Get delimiter character */
     for (uint8_t i = 0; i < (is_ip ? 4 : 6); i++) { /* Process byte by byte */
         if (is_ip) {                            /* In case of IP ... */
-            gsmi_number_to_str(ip->ip[i], str); /* ... go to decimal format ... */
+            gsm_u8_to_str(ip->ip[i], str);      /* ... go to decimal format ... */
         } else {                                /* ... in case of MAC ... */
-            gsmi_byte_to_str(mac->mac[i], str); /* ... go to HEX format */
+            gsm_u8_to_hex_str(mac->mac[i], str, 2); /* ... go to HEX format */
         }
         GSM_AT_PORT_SEND_STR(str);              /* Send str */
         if (i < (is_ip ? 4 : 6) - 1) {          /* Check end if characters */
@@ -288,7 +258,7 @@ void
 gsmi_send_number(uint32_t num, uint8_t q, uint8_t c) {
     char str[11];
 
-    gsmi_number_to_str(num, str);               /* Convert digit to decimal string */
+    gsm_u32_to_str(num, str);                   /* Convert digit to decimal string */
 
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
@@ -306,7 +276,7 @@ void
 gsmi_send_port(gsm_port_t port, uint8_t q, uint8_t c) {
     char str[6];
 
-    gsmi_number_to_str(GSM_PORT2NUM(port), str);/* Convert digit to decimal string */
+    gsm_u16_to_str(GSM_PORT2NUM(port), str);    /* Convert digit to decimal string */
 
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
@@ -324,7 +294,7 @@ void
 gsmi_send_signed_number(int32_t num, uint8_t q, uint8_t c) {
     char str[11];
 
-    gsmi_signed_number_to_str(num, str);        /* Convert digit to decimal string */
+    gsm_i32_to_str(num, str);                   /* Convert digit to decimal string */
 
     GSM_AT_PORT_SEND_COMMA_COND(c);             /* Send comma */
     GSM_AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
