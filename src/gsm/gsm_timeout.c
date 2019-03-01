@@ -122,13 +122,16 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
     gsm_timeout_t* to;
     uint32_t now, diff = 0;
 
+    GSM_ASSERT("fn != NULL", fn != NULL);
+
     to = gsm_mem_calloc(1, sizeof(*to));        /* Allocate memory for timeout structure */
     if (to == NULL) {
         return gsmERR;
     }
 
+    gsm_core_lock();
     now = gsm_sys_now();                        /* Get current time */
-    if (first_timeout) {
+    if (first_timeout != NULL) {
         diff = now - last_timeout_time;         /* Get difference between current and last processed time */
     }
 
@@ -146,9 +149,8 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
      */
     if (first_timeout == NULL) {
         first_timeout = to;                     /* Set as first element */
-        last_timeout_time = gsm_sys_now();      /* Reset last timeout time to current time */
+        last_timeout_time = now;                /* Reset last timeout time to current time */
     } else {                                    /* Find where to place a new timeout */
-        gsm_timeout_t* t;
         /*
          * First check if we have to put new timeout
          * to beginning of linked list.
@@ -159,7 +161,7 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
             to->next = first_timeout;           /* Set first timeout as next of new one */
             first_timeout = to;                 /* Set new timeout as first */
         } else {                                /* Go somewhere in between current list */
-            for (t = first_timeout; t != NULL; t = t->next) {
+            for (gsm_timeout_t* t = first_timeout; t != NULL; t = t->next) {
                 to->time -= t->time;            /* Decrease new timeout time by time in a linked list */
                 /*
                  * Enter between 2 entries on a list in case:
@@ -170,7 +172,7 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
                 if (t->next == NULL || t->next->time > to->time) {
                     if (t->next != NULL) {      /* Check if there is next element */
                         t->next->time -= to->time;  /* Decrease difference time to next one */
-                    } else if (to->time > time) {
+                    } else if (to->time > time) {   /* Overflow of time check */
                         to->time = time + first_timeout->time;
                     }
                     to->next = t->next;         /* Change order of elements */
@@ -180,6 +182,7 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
             }
         }
     }
+    gsm_core_unlock();
     gsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Insert dummy value to wakeup process thread */
     return gsmOK;
 }
@@ -191,9 +194,10 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
  */
 gsmr_t
 gsm_timeout_remove(gsm_timeout_fn fn) {
-    gsm_timeout_t *t, *t_prev;
+    uint8_t success = 0;
 
-    for (t = first_timeout, t_prev = NULL; t != NULL;
+    esp_core_lock();
+    for (gsm_timeout_t* t = first_timeout, *t_prev = NULL; t != NULL;
             t_prev = t, t = t->next) {          /* Check all entries */
         if (t->fn == fn) {                      /* Do we have a match from callback point of view? */
 
@@ -222,5 +226,6 @@ gsm_timeout_remove(gsm_timeout_fn fn) {
             return gsmOK;
         }
     }
-    return gsmERR;
+    gsm_core_unlock();
+    return success ? gsmOK : gsmERR;
 }
