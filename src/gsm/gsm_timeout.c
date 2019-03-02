@@ -196,7 +196,7 @@ gsmr_t
 gsm_timeout_remove(gsm_timeout_fn fn) {
     uint8_t success = 0;
 
-    esp_core_lock();
+    gsm_core_lock();
     for (gsm_timeout_t* t = first_timeout, *t_prev = NULL; t != NULL;
             t_prev = t, t = t->next) {          /* Check all entries */
         if (t->fn == fn) {                      /* Do we have a match from callback point of view? */
