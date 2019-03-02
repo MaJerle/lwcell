@@ -139,9 +139,9 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
         res = gsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL, blocking);  /* Send reset sequence with delay */
         gsm_core_lock();
     }
-#else
+#else /* GSM_CFG_RESET_ON_INIT */
     GSM_UNUSED(blocking);                       /* Unused variable */
-#endif /* GSM_CFG_RESET_ON_INIT */
+#endif /* !GSM_CFG_RESET_ON_INIT */
     gsm_core_unlock();
 
     return res;

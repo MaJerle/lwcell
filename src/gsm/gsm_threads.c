@@ -173,7 +173,7 @@ gsm_thread_process(void* const arg) {
             GSM_UNUSED(time);                   /* Unused variable */
         }
         gsmi_process_buffer();                  /* Process input data */
-#else
+#else /* GSM_CFG_INPUT_USE_PROCESS */
     while (1) {
         /*
          * Check for next timeout event only here
