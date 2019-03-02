@@ -140,9 +140,11 @@ uart_thread(void* param) {
     gsm_sys_sem_t sem;
     FILE* file = NULL;
 
-    while (com_port == NULL);
-
     gsm_sys_sem_create(&sem, 0);                /* Create semaphore for delay functions */
+
+    while (com_port == NULL) {
+        gsm_sys_sem_wait(&sem, 1);              /* Add some delay with yield */
+    }
 
     fopen_s(&file, "log_file.txt", "w+");       /* Open debug file in write mode */
     while (1) {
@@ -158,7 +160,11 @@ uart_thread(void* param) {
                     printf("%c", data_buffer[i]);
                 }
                 /* Send received data to input processing module */
+#if GSM_CFG_INPUT_USE_PROCESS
                 gsm_input_process(data_buffer, (size_t)bytes_read);
+#else /* GSM_CFG_INPUT_USE_PROCESS */
+                gsm_input(data_buffer, (size_t)bytes_read);
+#endif /* !GSM_CFG_INPUT_USE_PROCESS */
 
                 /* Write received data to output debug file */
                 if (file != NULL) {
