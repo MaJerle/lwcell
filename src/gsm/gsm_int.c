@@ -1426,7 +1426,11 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         switch (msg->i) {
             case 0: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CGACT_SET_0); break;
             case 1: SET_NEW_CMD(GSM_CMD_CGACT_SET_1); break;
+#if GSM_CFG_NETWORK_IGNORE_CGACT_RESULT
+            case 2: SET_NEW_CMD(GSM_CMD_CGATT_SET_0); break;
+#else /* GSM_CFG_NETWORK_IGNORE_CGACT_RESULT */
             case 2: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CGATT_SET_0); break;
+#endif /* !GSM_CFG_NETWORK_IGNORE_CGACT_RESULT */
             case 3: SET_NEW_CMD(GSM_CMD_CGATT_SET_1); break;
             case 4: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CIPSHUT); break;
             case 5: SET_NEW_CMD_CHECK_ERROR(GSM_CMD_CIPMUX_SET); break;

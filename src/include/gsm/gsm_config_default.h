@@ -482,6 +482,16 @@
 #endif
 
 /**
+ * \brief           Ignores (`1`) or not (`0`) result from `AT+CGACT` command.
+ *
+ * \note            This may be used for data-only SIM cards where command might fail
+ *                  when trying to attach to network for data transfer
+ */
+#ifndef GSM_CFG_NETWORK_IGNORE_CGACT_RESULT
+#define GSM_CFG_NETWORK_IGNORE_CGACT_RESULT 0
+#endif
+
+/**
  * \brief           Enables (`1`) or disables (`0`) connection API.
  *
  * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
