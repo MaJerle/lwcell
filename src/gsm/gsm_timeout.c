@@ -223,7 +223,8 @@ gsm_timeout_remove(gsm_timeout_fn fn) {
             }
             gsm_mem_free(t);
             t = NULL;
-            return gsmOK;
+            success = 1;
+            break;
         }
     }
     gsm_core_unlock();
