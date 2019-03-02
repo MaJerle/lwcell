@@ -724,6 +724,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             num = GSM_CHARTONUM(rcv->data[0]);  /* Get connection number */
             if (CMD_IS_CUR(GSM_CMD_CIPCLOSE) && gsm.msg->msg.conn_close.conn->num == num) {
                 forced = 1;
+                is_ok = 1;                      /* If forced and connection is closed, command is OK */
             }
 
             /* Manually stop send command? */
