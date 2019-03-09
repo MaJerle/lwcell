@@ -1,5 +1,5 @@
 /**
- * \file            gsm_utilities.h
+ * \file            gsm_utils.h
  * \brief           Utilities
  */
 

@@ -42,7 +42,7 @@ extern "C" {
 #include "gsm/gsm_buff.h"
 #include "gsm/gsm_input.h"
 #include "gsm/gsm_debug.h"
-#include "gsm/gsm_utilities.h"
+#include "gsm/gsm_utils.h"
 #include "gsm/gsm_pbuf.h"
 #include "gsm/gsm_sim.h"
 #include "gsm/gsm_operator.h"

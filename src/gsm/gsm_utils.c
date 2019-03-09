@@ -1,5 +1,5 @@
 /**
- * \file            gsm_utilities.c
+ * \file            gsm_utils.c
  * \brief           Utilities
  */
 
@@ -31,7 +31,7 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
 #include "gsm/gsm_private.h"
-#include "gsm/gsm_utilities.h"
+#include "gsm/gsm_utils.h"
 #include "stdint.h"
 
 /**
