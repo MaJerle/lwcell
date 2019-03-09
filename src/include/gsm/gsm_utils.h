@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef GSM_HDR_UTILITIES_H
-#define GSM_HDR_UTILITIES_H
+#ifndef GSM_HDR_UTILS_H
+#define GSM_HDR_UTILS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +41,7 @@ extern "C" {
 
 /**
  * \ingroup         GSM
- * \defgroup        GSM_UTILITIES Utilities
+ * \defgroup        GSM_UTILS Utilities
  * \brief           Utilities
  * \{
  */
