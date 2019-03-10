@@ -456,6 +456,25 @@ gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, con
 }
 
 /**
+ * \brief           Check if client MQTT connection is active
+ * \param[in]       client: MQTT API client handle
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsm_mqtt_client_api_is_connected(gsm_mqtt_client_api_p client) {
+    uint8_t ret;
+
+    if (client == NULL) {
+        return 0;
+    }
+
+    gsm_sys_mutex_lock(&client->mutex);
+    ret = gsm_mqtt_client_is_connected(client->mc);
+    gsm_sys_mutex_unlock(&client->mutex);
+    return ret;
+}
+
+/**
  * \brief           Receive next packet in specific timeout time
  * \note            This function can be called from separate thread
  *                      than the rest of API function, which allows you to

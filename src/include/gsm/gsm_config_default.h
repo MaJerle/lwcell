@@ -447,6 +447,13 @@
  * \{
  */
 
+/**
+ * \brief           Maximal number of open MQTT requests at a time
+ *
+ */
+#ifndef GSM_CFG_MQTT_MAX_REQUESTS
+#define GSM_CFG_MQTT_MAX_REQUESTS           8
+#endif
 
 /**
  * \brief           Set debug level for MQTT client module

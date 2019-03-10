@@ -48,15 +48,6 @@ extern "C" {
  */
 
 /**
- * \brief           Maximal number of open connections at a time
- *
- * \note            This is default value. To change it, override value in `gsm_config.h` configuration file
- */
-#ifndef GSM_CFG_MQTT_MAX_REQUESTS
-#define GSM_CFG_MQTT_MAX_REQUESTS       8
-#endif
-
-/**
  * \brief           Quality of service enumeration
  */
 typedef enum {
