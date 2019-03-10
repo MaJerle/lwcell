@@ -49,8 +49,8 @@ extern "C" {
 gsm_evt_type_t  gsm_evt_get_type(gsm_evt_t* cc);
 
 /**
- * \name            GSM_EVT_RESET
  * \anchor          GSM_EVT_RESET
+ * \name            Reset event
  * \brief           Event helper functions for \ref GSM_EVT_RESET event
  */
 
@@ -61,8 +61,8 @@ gsmr_t      gsm_evt_reset_get_result(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_RESTORE
  * \anchor          GSM_EVT_RESTORE
+ * \name            Restore event
  * \brief           Event helper functions for \ref GSM_EVT_RESTORE event
  */
 
@@ -73,8 +73,8 @@ gsmr_t      gsm_evt_restore_get_result(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_NETWORK_OPERATOR_CURRENT
  * \anchor          GSM_EVT_NETWORK_OPERATOR_CURRENT
+ * \name            Current network operator
  * \brief           Event helper functions for \ref GSM_EVT_NETWORK_OPERATOR_CURRENT event
  */
 
@@ -85,8 +85,8 @@ const gsm_operator_curr_t*  gsm_evt_network_operator_get_current(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_RECV
  * \anchor          GSM_EVT_CONN_RECV
+ * \name            Connection data received
  * \brief           Event helper functions for \ref GSM_EVT_CONN_RECV event
  */
 
@@ -98,8 +98,8 @@ gsm_conn_p  gsm_evt_conn_recv_get_conn(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_SEND
  * \anchor          GSM_EVT_CONN_SEND
+ * \name            Connection data send
  * \brief           Event helper functions for \ref GSM_EVT_CONN_SEND event
  */
 
@@ -112,8 +112,8 @@ gsmr_t      gsm_evt_conn_send_get_result(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_ACTIVE
  * \anchor          GSM_EVT_CONN_ACTIVE
+ * \name            Connection active
  * \brief           Event helper functions for \ref GSM_EVT_CONN_ACTIVE event
  */
 
@@ -125,8 +125,8 @@ uint8_t     gsm_evt_conn_active_is_client(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_CLOSED
  * \anchor          GSM_EVT_CONN_CLOSED
+ * \name            Connection closed
  * \brief           Event helper functions for \ref GSM_EVT_CONN_CLOSED event
  */
 
@@ -139,8 +139,8 @@ uint8_t     gsm_evt_conn_closed_is_forced(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_POLL
  * \anchor          GSM_EVT_CONN_POLL
+ * \name            Connection poll
  * \brief           Event helper functions for \ref GSM_EVT_CONN_POLL event
  */
 
@@ -151,8 +151,8 @@ gsm_conn_p  gsm_evt_conn_poll_get_conn(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CONN_ERROR
  * \anchor          GSM_EVT_CONN_ERROR
+ * \name            Connection error
  * \brief           Event helper functions for \ref GSM_EVT_CONN_ERROR event
  */
 
@@ -167,8 +167,8 @@ void*               gsm_evt_conn_error_get_arg(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_SIGNAL_STRENGTH
  * \anchor          GSM_EVT_SIGNAL_STRENGTH
+ * \name            Signal strength
  * \brief           Event helper functions for \ref GSM_EVT_CONN_RECV event
  */
 
@@ -179,8 +179,8 @@ int16_t gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_SMS_RECV
  * \anchor          GSM_EVT_SMS_RECV
+ * \name            SMS received
  * \brief           Event helper functions for \ref GSM_EVT_SMS_RECV event
  */
 
@@ -192,8 +192,8 @@ gsm_mem_t   gsm_evt_sms_recv_get_mem(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_SMS_READ
  * \anchor          GSM_EVT_SMS_READ
+ * \name            SMS content read
  * \brief           Event helper functions for \ref GSM_EVT_SMS_READ event
  */
 
@@ -205,8 +205,8 @@ gsmr_t              gsm_evt_sms_read_get_result(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_SMS_SEND
  * \anchor          GSM_EVT_SMS_SEND
+ * \name            SMS send
  * \brief           Event helper functions for \ref GSM_EVT_SMS_SEND event
  */
 
@@ -218,8 +218,8 @@ size_t  gsm_evt_sms_send_get_pos(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_SMS_DELETE
  * \anchor          GSM_EVT_SMS_DELETE
+ * \name            SMS delete
  * \brief           Event helper functions for \ref GSM_EVT_SMS_DELETE event
  */
 
@@ -232,8 +232,8 @@ gsm_mem_t   gsm_evt_sms_delete_get_mem(gsm_evt_t* cc);
  */
 
 /**
- * \name            GSM_EVT_CALL_CHANGED
  * \anchor          GSM_EVT_CALL_CHANGED
+ * \name            Call status changed
  * \brief           Event helper functions for \ref GSM_EVT_CALL_CHANGED event
  */
 

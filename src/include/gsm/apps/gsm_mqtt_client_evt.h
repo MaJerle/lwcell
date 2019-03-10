@@ -56,8 +56,8 @@ extern "C" {
 #define gsm_mqtt_client_evt_get_type(client, evt)                   ((gsm_mqtt_evt_type_t)(evt)->type)
 
 /**
- * \name            GSM_APP_MQTT_CLIENT_EVT_CONNECT Connect event
  * \anchor          GSM_APP_MQTT_CLIENT_EVT_CONNECT
+ * \name            Connect event
  * \{
  *
  * \note            Use these functions on \ref GSM_MQTT_EVT_CONNECT event
@@ -77,8 +77,8 @@ extern "C" {
  */
 
 /**
- * \name            GSM_APP_MQTT_CLIENT_EVT_DISCONNECT Connect event
  * \anchor          GSM_APP_MQTT_CLIENT_EVT_DISCONNECT
+ * \name            Disconnect event
  * \{
  *
  * \note            Use these functions on \ref GSM_MQTT_EVT_DISCONNECT event
@@ -97,8 +97,8 @@ extern "C" {
  */
 
 /**
- * \name            GSM_APP_MQTT_CLIENT_EVT_SUB_UNSUB Subscribe/unsubscribe event
  * \anchor          GSM_APP_MQTT_CLIENT_EVT_SUB_UNSUB
+ * \name            Subscribe/unsubscribe event
  * \{
  *
  * \note            Use these functions on \ref GSM_MQTT_EVT_SUBSCRIBE or \ref GSM_MQTT_EVT_UNSUBSCRIBE events
@@ -145,8 +145,8 @@ extern "C" {
  */
 
 /**
- * \name            GSM_APP_MQTT_CLIENT_EVT_PUBLISH_RECV Publish receive event
  * \anchor          GSM_APP_MQTT_CLIENT_EVT_PUBLISH_RECV
+ * \name            Publish receive event
  * \{
  *
  * \note            Use these functions on \ref GSM_MQTT_EVT_PUBLISH_RECV event
@@ -211,8 +211,8 @@ extern "C" {
  */
 
 /**
- * \name            GSM_APP_MQTT_CLIENT_EVT_PUBLISH Publish event
  * \anchor          GSM_APP_MQTT_CLIENT_EVT_PUBLISH
+ * \name            Publish event
  * \{
  *
  * \note            Use these functions on \ref GSM_MQTT_EVT_PUBLISH event
