@@ -283,7 +283,7 @@ gsm_netconn_delete(gsm_netconn_p nc) {
  * \param[in]       nc: Netconn handle
  * \param[in]       host: Pointer to host, such as domain name or IP address in string format
  * \param[in]       port: Target port to use
- * \return          gsmOK if successfully connected, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK if successfully connected, member of \ref gsmr_t otherwise
  */
 gsmr_t
 gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
@@ -455,8 +455,10 @@ gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const 
  * \param[in]       nc: Netconn handle used to receive from
  * \param[in]       pbuf: Pointer to pointer to save new receive buffer to.
  *                     When function returns, user must check for valid pbuf value `pbuf != NULL`
- * \return          \ref gsmOK when new data ready, \ref gsmCLOSED when connection closed by remote side,
- *                  \ref gsmTIMEOUT when receive timeout occurs or any other member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK when new data ready,
+ * \return          \ref gsmCLOSED when connection closed by remote side,
+ * \return          \ref gsmTIMEOUT when receive timeout occurs
+ * \return          Any other member of \ref gsmr_t otherwise
  */
 gsmr_t
 gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf) {
@@ -526,8 +528,9 @@ gsm_netconn_getconnnum(gsm_netconn_p nc) {
 /**
  * \brief           Set timeout value for receiving data.
  *
- *                  When enabled, \ref gsm_netconn_receive will only block for up to
- *                  \e timeout value and will return if no new data within this time
+ * When enabled, \ref gsm_netconn_receive will only block for up to
+ * \e timeout value and will return if no new data within this time
+ *
  * \param[in]       nc: Netconn handle
  * \param[in]       timeout: Timeout in units of milliseconds.
  *                  Set to `0` to disable timeout for \ref gsm_netconn_receive function
