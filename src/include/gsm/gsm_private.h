@@ -278,7 +278,7 @@ typedef struct gsm_conn {
             uint8_t in_closing:1;               /*!< Status if connection is in closing mode.
                                                     When in closing mode, ignore any possible received data from function */
             uint8_t bearer:1;                   /*!< Bearer used. Can be `1` or `0` */
-        } f;
+        } f;                                    /*!< Connection flags */
     } status;                                   /*!< Connection status union with flag bits */
 } gsm_conn_t;
 
@@ -339,10 +339,10 @@ typedef struct gsm_msg {
     union {
         struct {
             uint32_t delay;                     /*!< Delay to use before sending first reset AT command */
-        } reset;
+        } reset;                                /*!< Reset device */
         struct {
             uint32_t baudrate;                  /*!< Baudrate for AT port */
-        } uart;
+        } uart;                                 /*!< UART configuration */
 
         struct {
             uint8_t mode;                       /*!< Functionality mode */
@@ -392,7 +392,7 @@ typedef struct gsm_msg {
             gsm_operator_format_t format;       /*!< Operator format to print */
             const char* name;                   /*!< Short or long name, according to format */
             uint32_t num;                       /*!< Number in case format is number */
-        } cops_set;
+        } cops_set;                             /*!< Set operator settings */
 
 #if GSM_CFG_CONN || __DOXYGEN__
         /* Connection based commands */
@@ -409,7 +409,7 @@ typedef struct gsm_msg {
         struct {
             gsm_conn_t* conn;                   /*!< Pointer to connection to close */
             uint8_t val_id;                     /*!< Connection current validation ID when command was sent to queue */
-        } conn_close;
+        } conn_close;                           /*!< Close connection */
         struct {
             gsm_conn_t* conn;                   /*!< Pointer to connection to send data */
             size_t btw;                         /*!< Number of remaining bytes to write */
@@ -426,7 +426,6 @@ typedef struct gsm_msg {
             uint8_t val_id;                     /*!< Connection current validation ID when command was sent to queue */
         } conn_send;                            /*!< Structure to send data on connection */
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */
-
 #if GSM_CFG_SMS || __DOXYGEN__
         struct {
             const char* num;                    /*!< Phone number */
@@ -494,10 +493,10 @@ typedef struct gsm_msg {
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
 #if GSM_CFG_NETWORK || __DOXYGEN__
         struct {
-            const char* apn;
-            const char* user;
-            const char* pass;
-        } network_attach;
+            const char* apn;                    /*!< APN address */
+            const char* user;                   /*!< APN username */
+            const char* pass;                   /*!< APN password */
+        } network_attach;                       /*!< Settings for network attach */
 #endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
     } msg;                                      /*!< Group of different possible message contents */
 } gsm_msg_t;

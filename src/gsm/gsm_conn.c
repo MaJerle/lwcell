@@ -576,6 +576,7 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
 /**
  * \brief           Get total number of bytes ever received on connection and sent to user
  * \param[in]       conn: Connection handle
+ * \return          Count of received bytes on connection
  */
 size_t
 gsm_conn_get_total_recved_count(gsm_conn_p conn) {

@@ -440,7 +440,7 @@ typedef struct gsm_evt {
 
         struct {
             int16_t rssi;                       /*!< Strength in units of dBm */
-        } rssi;                                 /*<! Signal strength event. Use with \ref GSM_EVT_SIGNAL_STRENGTH event */
+        } rssi;                                 /*!< Signal strength event. Use with \ref GSM_EVT_SIGNAL_STRENGTH event */
 
 #if GSM_CFG_CONN || __DOXYGEN__
         struct {
@@ -461,8 +461,8 @@ typedef struct gsm_evt {
         } conn_error;                           /*!< Client connection start error. Use with \ref GSM_EVT_CONN_ERROR event */
         struct {
             gsm_conn_p conn;                    /*!< Pointer to connection */
-            uint8_t client;                     /*!< Set to 1 if connection is/was client mode */
-            uint8_t forced;                     /*!< Set to 1 if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
+            uint8_t client;                     /*!< Set to `1` if connection is/was client mode */
+            uint8_t forced;                     /*!< Set to `1` if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
         } conn_active_closed;                   /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref GSM_EVT_CONN_CLOSED events */
         struct {
             gsm_conn_p conn;                    /*!< Set connection pointer */
