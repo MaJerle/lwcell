@@ -55,9 +55,9 @@
 /**
  * \brief           Default system port implementation
  *
- *                  According to selected port, stack will automatically include apropriate file
+ * According to selected port, stack will automatically include appropriate file
  *
- *                  Parameter can be a value of \ref GSM_SYS_PORTS choices
+ * Parameter can be a value of \ref GSM_SYS_PORTS choices
  */
 #ifndef GSM_CFG_SYS_PORT
 #define GSM_CFG_SYS_PORT                    GSM_SYS_PORT_CMSIS_OS
@@ -102,8 +102,8 @@
 /**
  * \brief           Set number of retries for send data command.
  *
- *                  Sometimes it can happen that AT+SEND command fails due to different problems.
- *                  Trying to send the same data multiple times can raise chances we are successful.
+ * Sometimes it may happen that `AT+SEND` command fails due to different problems.
+ * Trying to send the same data multiple times can raise chances we are successful.
  */
 #ifndef GSM_CFG_MAX_SEND_RETRIES
 #define GSM_CFG_MAX_SEND_RETRIES            3
@@ -178,7 +178,8 @@
 
 /**
  * \brief           Set global debug support.
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ *
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  *
  * \note            Set to \ref GSM_DBG_OFF to globally disable all debugs
  */
@@ -207,10 +208,10 @@
 /**
  * \brief           Enabled debug types
  *
- *                  When debug is globally enabled with \ref GSM_CFG_DBG parameter,
- *                  user must enable debug types such as TRACE or STATE messages.
+ * When debug is globally enabled with \ref GSM_CFG_DBG parameter,
+ * user must enable debug types such as TRACE or STATE messages.
  *
- *                  Check \ref GSM_DBG_TYPE for possible options. Separate values with `bitwise OR` operator
+ * Check \ref GSM_DBG_TYPE for possible options. Separate values with `bitwise OR` operator
  */
 #ifndef GSM_CFG_DBG_TYPES_ON
 #define GSM_CFG_DBG_TYPES_ON                0
@@ -219,7 +220,7 @@
 /**
  * \brief           Set debug level for init function
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_INIT
 #define GSM_CFG_DBG_INIT                    GSM_DBG_OFF
@@ -228,7 +229,7 @@
 /**
  * \brief           Set debug level for memory manager
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_MEM
 #define GSM_CFG_DBG_MEM                     GSM_DBG_OFF
@@ -237,7 +238,7 @@
 /**
  * \brief           Set debug level for input module
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_INPUT
 #define GSM_CFG_DBG_INPUT                   GSM_DBG_OFF
@@ -246,7 +247,7 @@
 /**
  * \brief           Set debug level for GSM threads
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_THREAD
 #define GSM_CFG_DBG_THREAD                  GSM_DBG_OFF
@@ -255,7 +256,7 @@
 /**
  * \brief           Set debug level for asserting of input variables
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_ASSERT
 #define GSM_CFG_DBG_ASSERT                  GSM_DBG_OFF
@@ -264,7 +265,7 @@
 /**
  * \brief           Set debug level for incoming data received from device
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_IPD
 #define GSM_CFG_DBG_IPD                     GSM_DBG_OFF
@@ -273,7 +274,7 @@
 /**
  * \brief           Set debug level for packet buffer manager
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_PBUF
 #define GSM_CFG_DBG_PBUF                    GSM_DBG_OFF
@@ -282,7 +283,7 @@
 /**
  * \brief           Set debug level for connections
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_CONN
 #define GSM_CFG_DBG_CONN                    GSM_DBG_OFF
@@ -291,7 +292,7 @@
 /**
  * \brief           Set debug level for dynamic variable allocations
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_VAR
 #define GSM_CFG_DBG_VAR                     GSM_DBG_OFF
@@ -300,7 +301,7 @@
 /**
  * \brief           Set debug level for netconn sequential API
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_NETCONN
 #define GSM_CFG_DBG_NETCONN                 GSM_DBG_OFF
@@ -329,7 +330,7 @@
 /**
  * \brief           Set number of message queue entries for procuder thread
  *
- *                  Message queue is used for storing memory address to command data
+ * Message queue is used for storing memory address to command data
  */
 #ifndef GSM_CFG_THREAD_PRODUCER_MBOX_SIZE
 #define GSM_CFG_THREAD_PRODUCER_MBOX_SIZE   16
@@ -338,7 +339,7 @@
 /**
  * \brief           Set number of message queue entries for processing thread
  *
- *                  Message queue is used to notify processing thread about new received data on AT port
+ * Message queue is used to notify processing thread about new received data on AT port
  */
 #ifndef GSM_CFG_THREAD_PROCESS_MBOX_SIZE
 #define GSM_CFG_THREAD_PROCESS_MBOX_SIZE    16
@@ -347,8 +348,8 @@
 /**
  * \brief           Enables `1` or disables `0` direct support for processing input data
  *
- *                  When this mode is enabled, no overhead is included for copying data
- *                  to receive buffer because bytes are processed directly.
+ * When this mode is enabled, no overhead is included for copying data
+ * to receive buffer because bytes are processed directly.
  *
  * \note            This mode can only be used when \ref GSM_CFG_OS is enabled
  *
@@ -364,7 +365,7 @@
 /**
  * \brief           Producer thread hook, called each time thread wakes-up and does the processing.
  *
- *                  It can be used to check if thread is alive.
+ * It can be used to check if thread is alive.
  */
 #ifndef GSM_THREAD_PRODUCER_HOOK
 #define GSM_THREAD_PRODUCER_HOOK()
@@ -373,7 +374,7 @@
 /**
  * \brief           Process thread hook, called each time thread wakes-up and does the processing.
  *
- *                  It can be used to check if thread is alive.
+ * It can be used to check if thread is alive.
  */
 #ifndef GSM_THREAD_PROCESS_HOOK
 #define GSM_THREAD_PROCESS_HOOK()
@@ -408,9 +409,9 @@
 /**
  * \brief           Enables `1` or disables `0` receive timeout feature
  *
- *                  When this option is enabled, user will get an option
- *                  to set timeout value for receive data on netconn,
- *                  before function returns timeout error.
+ * When this option is enabled, user will get an option
+ * to set timeout value for receive data on netconn,
+ * before function returns timeout error.
  *
  * \note            Even if this option is enabled, user must still manually set timeout,
  *                  by default time will be set to 0 which means no timeout.
@@ -422,7 +423,7 @@
 /**
  * \brief           Accept queue length for new client when netconn server is used
  *
- *                  Defines number of maximal clients waiting in accept queue of server connection
+ * Defines number of maximal clients waiting in accept queue of server connection
  */
 #ifndef GSM_CFG_NETCONN_ACCEPT_QUEUE_LEN
 #define GSM_CFG_NETCONN_ACCEPT_QUEUE_LEN    5
@@ -431,7 +432,7 @@
 /**
  * \brief           Receive queue length for pbuf entries
  *
- *                  Defines maximal number of pbuf data packet references for receive
+ * Defines maximal number of pbuf data packet references for receive
  */
 #ifndef GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN
 #define GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN   8
@@ -458,7 +459,7 @@
 /**
  * \brief           Set debug level for MQTT client module
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_MQTT
 #define GSM_CFG_DBG_MQTT                    GSM_DBG_OFF
@@ -467,7 +468,7 @@
 /**
  * \brief           Set debug level for MQTT API client module
  *
- *                  Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
+ * Possible values are \ref GSM_DBG_ON or \ref GSM_DBG_OFF
  */
 #ifndef GSM_CFG_DBG_MQTT_API
 #define GSM_CFG_DBG_MQTT_API                GSM_DBG_OFF
@@ -478,18 +479,18 @@
  */
 
 /**
- * \brief           Enables (`1`) or disables (`0`) network functionality
+ * \brief           Enables `1` or disables `0` network functionality
  *                      used for TCP/IP communication
  *
- *                  Network must be enabled to use all GPRS/LTE functions such
- *                  as connection API, FTP, HTTP, etc.
+ * Network must be enabled to use all GPRS/LTE functions such
+ * as connection API, FTP, HTTP, etc.
  */
 #ifndef GSM_CFG_NETWORK
 #define GSM_CFG_NETWORK                     0
 #endif
 
 /**
- * \brief           Ignores (`1`) or not (`0`) result from `AT+CGACT` command.
+ * \brief           Ignores `1` or not `0` result from `AT+CGACT` command.
  *
  * \note            This may be used for data-only SIM cards where command might fail
  *                  when trying to attach to network for data transfer
@@ -499,7 +500,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) connection API.
+ * \brief           Enables `1` or disables `0` connection API.
  *
  * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
  */
@@ -508,7 +509,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) SMS API.
+ * \brief           Enables `1` or disables `0` SMS API.
  *
  */
 #ifndef GSM_CFG_SMS
@@ -516,7 +517,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) call API.
+ * \brief           Enables `1` or disables `0` call API.
  *
  */
 #ifndef GSM_CFG_CALL
@@ -524,7 +525,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) phonebook API.
+ * \brief           Enables `1` or disables `0` phonebook API.
  *
  */
 #ifndef GSM_CFG_PHONEBOOK
@@ -532,7 +533,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) HTTP API.
+ * \brief           Enables `1` or disables `0` HTTP API.
  *
  * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
  */
@@ -541,7 +542,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) FTP API.
+ * \brief           Enables `1` or disables `0` FTP API.
  *
  * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
  */
@@ -550,7 +551,7 @@
 #endif
 
 /**
- * \brief           Enables (`1`) or disables (`0`) PING API.
+ * \brief           Enables `1` or disables `0` PING API.
  *
  * \note            \ref GSM_CFG_NETWORK must be enabled to use connection feature
  */
@@ -565,7 +566,7 @@
 /**
  * \brief           Poll interval for connections in units of milliseconds
  *
- *                  Value indicates interval time to call poll event on active connections.
+ * Value indicates interval time to call poll event on active connections.
  *
  * \note            Single poll interval applies for all connections
  */
@@ -585,10 +586,11 @@
 /**
  * \brief           Memory copy function declaration
  *
- *                  User is able to change the memory function, in case
- *                  hardware supports copy operation, it may implement its own
+ * User is able to change the memory function, in case
+ * hardware supports copy operation, it may implement its own
  *
- *                  Function prototype must be similar to:
+ * Function prototype must be similar to:
+ *
  * \code{c}
 void *  my_memcpy(void* dst, const void* src, size_t len);
 \endcode
@@ -605,7 +607,8 @@ void *  my_memcpy(void* dst, const void* src, size_t len);
 /**
  * \brief           Memory set function declaration
  *
- *                  Function prototype must be similar to:
+ * Function prototype must be similar to:
+ *
  * \code{c}
 void *  my_memset(void* dst, int b, size_t len);
 \endcode
