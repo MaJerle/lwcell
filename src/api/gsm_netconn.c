@@ -513,7 +513,7 @@ gsm_netconn_close(gsm_netconn_p nc) {
 /**
  * \brief           Get connection number used for netconn
  * \param[in]       nc: Netconn handle
- * \return          `-1` on failure, connection number otherwise
+ * \return          `-1` on failure, connection number between `0` and \ref GSM_CFG_MAX_CONNS otherwise
  */
 int8_t
 gsm_netconn_getconnnum(gsm_netconn_p nc) {

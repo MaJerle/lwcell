@@ -58,9 +58,11 @@ def_callback(gsm_evt_t* evt) {
 
 /**
  * \brief           Init and prepare GSM stack for device operation
- * \note            Function must be called from operating system thread context!
+ * \note            Function must be called from operating system thread context.
+ *                  It creates necessary threads and waits them to start, thus running operating system is important.
+ *                  - When \ref GSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device
+ *                      otherwise manual call to \ref gsm_reset is required to setup device
  *
- * \note            When \ref GSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device.
  * \param[in]       evt_func: Global event callback function for all major events
  * \param[in]       blocking: Status whether command should be blocking or not.
  *                      Used when \ref GSM_CFG_RESET_ON_INIT is enabled.
@@ -196,9 +198,10 @@ gsm_reset_with_delay(uint32_t delay,
 }
 
 /**
- * \brief           Lock stack from multi-thread access
+ * \brief           Lock stack from multi-thread access, enable atomic access to core
  *
- *                  If lock was `0` before func call, lock is enabled and increased
+ * If lock was `0` prior funcion call, lock is enabled and increased
+ *
  * \note            Function may be called multiple times to increase locks.
  *                  User must take care of calling \ref gsm_core_unlock
  *                  the same amount of time to make sure lock gets back to `0`
@@ -214,10 +217,11 @@ gsm_core_lock(void) {
 /**
  * \brief           Unlock stack for multi-thread access
  *
- *                  Used in conjunction with \ref gsm_core_lock function
+ * Used in conjunction with \ref gsm_core_lock function
  *
- *                  If lock was non-zero before function call, lock is decreased.
- *                  In case of `lock == 0`, protection is disabled
+ * If lock was non-zero before function call, lock is decreased.
+ * In case of `lock == 0`, protection is disabled and other threads may access to core
+ *
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -272,7 +276,7 @@ gsm_evt_register(gsm_evt_fn fn) {
 /**
  * \brief           Unregister callback function for global (non-connection based) events
  * \note            Function must be first registered using \ref gsm_evt_register
- * \param[in]       fn: Callback function to call on specific event
+ * \param[in]       fn: Callback function to remove from event list
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
@@ -295,17 +299,27 @@ gsm_evt_unregister(gsm_evt_fn fn) {
 
 /**
  * \brief           Delay for amount of milliseconds
+ *
+ * Delay is based on operating system semaphores. 
+ * It locks semaphore and waits for timeout in `ms` time.
+ * Based on operating system, thread may be put to \e blocked list during delay and may improve execution speed
+ *
  * \param[in]       ms: Milliseconds to delay
+ * \return          `1` on success, `0` otherwise
  */
-void
+uint8_t
 gsm_delay(uint32_t ms) {
     gsm_sys_sem_t sem;
-    if (ms != 0) {
-        gsm_sys_sem_create(&sem, 0);            /* Create semaphore in locked state */
-        gsm_sys_sem_wait(&sem, ms);             /* Wait for semaphore, timeout should occur */
-        gsm_sys_sem_release(&sem);              /* Release semaphore */
-        gsm_sys_sem_delete(&sem);               /* Delete semaphore */
+    if (!ms) {
+        return 1;
     }
+    if (gsm_sys_sem_create(&sem, 0)) {
+        gsm_sys_sem_wait(&sem, ms);
+        gsm_sys_sem_release(&sem);
+        gsm_sys_sem_delete(&sem);
+        return 1;
+    }
+    return 0;
 }
 
 /**
@@ -333,8 +347,9 @@ gsm_set_func_mode(uint8_t mode,
 /**
  * \brief           Notify stack if device is present or not
  *
- *                  Use this function to notify stack that device is not physically connected
- *                      and not ready to communicate with host device
+ * Use this function to notify stack that device is not physically connected
+ * and not ready to communicate with host device
+ *
  * \param[in]       present: Flag indicating device is present
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
