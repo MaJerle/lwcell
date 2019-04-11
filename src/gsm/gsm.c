@@ -203,7 +203,7 @@ gsm_reset_with_delay(uint32_t delay,
  * If lock was `0` prior funcion call, lock is enabled and increased
  *
  * \note            Function may be called multiple times to increase locks.
- *                  User must take care of calling \ref gsm_core_unlock
+ *                  Application must take care to call \ref gsm_core_unlock
  *                  the same amount of time to make sure lock gets back to `0`
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
@@ -220,7 +220,7 @@ gsm_core_lock(void) {
  * Used in conjunction with \ref gsm_core_lock function
  *
  * If lock was non-zero before function call, lock is decreased.
- * In case of `lock == 0`, protection is disabled and other threads may access to core
+ * When `lock == 0`, protection is disabled and other threads may access to core
  *
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
