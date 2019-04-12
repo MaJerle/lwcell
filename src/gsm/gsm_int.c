@@ -38,8 +38,42 @@
 #include "gsm/gsm_unicode.h"
 #include "system/gsm_ll.h"
 
-static gsm_recv_t recv_buff;
+#if !__DOXYGEN__
+/**
+ * \brief           Receive character structure to handle full line terminated with `\n` character
+ */
+typedef struct {
+    char data[128];                             /*!< Received characters */
+    uint8_t len;                                /*!< Length of valid characters */
+} gsm_recv_t;
 
+/* Receive character macros */
+#define RECV_ADD(ch)                        do { recv_buff.data[recv_buff.len++] = ch; recv_buff.data[recv_buff.len] = 0; } while (0)
+#define RECV_RESET()                        do { recv_buff.len = 0; recv_buff.data[0] = 0; } while (0)
+#define RECV_LEN()                          recv_buff.len
+#define RECV_IDX(index)                     recv_buff.data[index]
+
+/* Beginning and end of every AT command */
+#define GSM_AT_PORT_SEND_BEGIN()            GSM_AT_PORT_SEND_CONST_STR("AT")
+#define GSM_AT_PORT_SEND_END()              GSM_AT_PORT_SEND(CRLF, CRLF_LEN)
+
+/* Send data over AT port */
+#define GSM_AT_PORT_SEND_STR(str)           gsm.ll.send_fn((const uint8_t *)(str), (size_t)strlen(str))
+#define GSM_AT_PORT_SEND_CONST_STR(str)     gsm.ll.send_fn((const uint8_t *)(str), (size_t)(sizeof(str) - 1))
+#define GSM_AT_PORT_SEND_CHR(ch)            gsm.ll.send_fn((const uint8_t *)(ch), (size_t)1)
+#define GSM_AT_PORT_SEND(d, l)              gsm.ll.send_fn((const uint8_t *)(d), (size_t)(l))
+
+/* Send special characters over AT port with condition */
+#define GSM_AT_PORT_SEND_QUOTE_COND(q)      do { if ((q)) { GSM_AT_PORT_SEND_CONST_STR("\""); } } while (0)
+#define GSM_AT_PORT_SEND_COMMA_COND(c)      do { if ((c)) { GSM_AT_PORT_SEND_CONST_STR(","); } } while (0)
+#define GSM_AT_PORT_SEND_EQUAL_COND(e)      do { if ((e)) { GSM_AT_PORT_SEND_CONST_STR("="); } } while (0)
+
+/* Send special characters */
+#define GSM_AT_PORT_SEND_CTRL_Z()           GSM_AT_PORT_SEND_STR("\x1A")
+#define GSM_AT_PORT_SEND_ESC()              GSM_AT_PORT_SEND_STR("\x1B")
+#endif /* !__DOXYGEN__ */
+
+static gsm_recv_t recv_buff;
 static gsmr_t gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error);
 
 /**

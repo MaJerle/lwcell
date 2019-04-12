@@ -597,19 +597,6 @@ typedef struct {
  */
 typedef void (*gsm_api_cmd_evt_fn) (gsmr_t res, void* arg);
 
-#if !__DOXYGEN__
-
-/**
- * \ingroup         GSM_PRIVATE
- * \brief           Receive character structure to handle full line terminated with `\n` character
- */
-typedef struct {
-    char data[128];                             /*!< Received characters */
-    uint8_t len;                                /*!< Length of line */
-} gsm_recv_t;
-
-#endif /* !__DOXYGEN__ */
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

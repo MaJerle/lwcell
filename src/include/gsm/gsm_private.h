@@ -746,26 +746,6 @@ extern const size_t         gsm_dev_model_map_size;
 #define GSM_CHARHEXTONUM(x)                 (((x) >= '0' && (x) <= '9') ? ((x) - '0') : (((x) >= 'a' && (x) <= 'f') ? ((x) - 'a' + 10) : (((x) >= 'A' && (x) <= 'F') ? ((x) - 'A' + 10) : 0)))
 #define GSM_ISVALIDASCII(x)                 (((x) >= 32 && (x) <= 126) || (x) == '\r' || (x) == '\n')
 
-#define RECV_ADD(ch)                        do { recv_buff.data[recv_buff.len++] = ch; recv_buff.data[recv_buff.len] = 0; } while (0)
-#define RECV_RESET()                        do { recv_buff.len = 0; recv_buff.data[0] = 0; } while (0)
-#define RECV_LEN()                          recv_buff.len
-#define RECV_IDX(index)                     recv_buff.data[index]
-
-#define GSM_AT_PORT_SEND_BEGIN()            GSM_AT_PORT_SEND_CONST_STR("AT")
-#define GSM_AT_PORT_SEND_END()              GSM_AT_PORT_SEND(CRLF, CRLF_LEN)
-
-#define GSM_AT_PORT_SEND_STR(str)           gsm.ll.send_fn((const uint8_t *)(str), (size_t)strlen(str))
-#define GSM_AT_PORT_SEND_CONST_STR(str)     gsm.ll.send_fn((const uint8_t *)(str), (size_t)(sizeof(str) - 1))
-#define GSM_AT_PORT_SEND_CHR(ch)            gsm.ll.send_fn((const uint8_t *)(ch), (size_t)1)
-#define GSM_AT_PORT_SEND(d, l)              gsm.ll.send_fn((const uint8_t *)(d), (size_t)(l))
-
-#define GSM_AT_PORT_SEND_QUOTE_COND(q)      do { if ((q)) { GSM_AT_PORT_SEND_CONST_STR("\""); } } while (0)
-#define GSM_AT_PORT_SEND_COMMA_COND(c)      do { if ((c)) { GSM_AT_PORT_SEND_CONST_STR(","); } } while (0)
-#define GSM_AT_PORT_SEND_EQUAL_COND(e)      do { if ((e)) { GSM_AT_PORT_SEND_CONST_STR("="); } } while (0)
-
-#define GSM_AT_PORT_SEND_CTRL_Z()           GSM_AT_PORT_SEND_STR("\x1A")
-#define GSM_AT_PORT_SEND_ESC()              GSM_AT_PORT_SEND_STR("\x1B")
-
 #define GSM_PORT2NUM(port)                  ((uint32_t)(port))
 
 const char * gsmi_dbg_msg_to_string(gsm_cmd_t cmd);
