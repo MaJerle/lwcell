@@ -53,15 +53,15 @@ typedef struct {
 #define RECV_LEN()                          recv_buff.len
 #define RECV_IDX(index)                     recv_buff.data[index]
 
-/* Beginning and end of every AT command */
-#define GSM_AT_PORT_SEND_BEGIN()            GSM_AT_PORT_SEND_CONST_STR("AT")
-#define GSM_AT_PORT_SEND_END()              GSM_AT_PORT_SEND(CRLF, CRLF_LEN)
-
 /* Send data over AT port */
 #define GSM_AT_PORT_SEND_STR(str)           gsm.ll.send_fn((const uint8_t *)(str), (size_t)strlen(str))
 #define GSM_AT_PORT_SEND_CONST_STR(str)     gsm.ll.send_fn((const uint8_t *)(str), (size_t)(sizeof(str) - 1))
 #define GSM_AT_PORT_SEND_CHR(ch)            gsm.ll.send_fn((const uint8_t *)(ch), (size_t)1)
 #define GSM_AT_PORT_SEND(d, l)              gsm.ll.send_fn((const uint8_t *)(d), (size_t)(l))
+
+/* Beginning and end of every AT command */
+#define GSM_AT_PORT_SEND_BEGIN()            GSM_AT_PORT_SEND_CONST_STR("AT")
+#define GSM_AT_PORT_SEND_END()              GSM_AT_PORT_SEND(CRLF, CRLF_LEN)
 
 /* Send special characters over AT port with condition */
 #define GSM_AT_PORT_SEND_QUOTE_COND(q)      do { if ((q)) { GSM_AT_PORT_SEND_CONST_STR("\""); } } while (0)
