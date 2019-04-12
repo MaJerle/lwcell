@@ -61,7 +61,7 @@ gsmr_t      gsm_evt_unregister(gsm_evt_fn fn);
 gsmr_t      gsm_device_set_present(uint8_t present, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 uint8_t     gsm_device_is_present(void);
 
-void        gsm_delay(uint32_t ms);
+uint8_t     gsm_delay(uint32_t ms);
 
 /**
  * \}
