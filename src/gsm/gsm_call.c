@@ -68,7 +68,7 @@ check_ready(void) {
 
 /**
  * \brief           Enable call functionality
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -87,7 +87,7 @@ gsm_call_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
 
 /**
  * \brief           Disable call functionality
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -105,7 +105,7 @@ gsm_call_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uin
 
 /**
  * \brief           Start a new voice call
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       number: Phone number to call, including country code starting with `+` sign
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -130,7 +130,7 @@ gsm_call_start(const char* number,
 
 /**
  * \brief           Answer to an incoming call
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -150,7 +150,7 @@ gsm_call_answer(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
 
 /**
  * \brief           Hang-up incoming or active call
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise

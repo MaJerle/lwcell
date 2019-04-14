@@ -37,7 +37,7 @@
 /**
  * \brief           Get current operator
  * \param[out]      curr: Pointer to output variable to save info about current operator
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -61,7 +61,7 @@ gsm_operator_get(gsm_operator_curr_t* curr,
  * \param[in]       format: Operator data format. This parameter can be a value of \ref gsm_operator_format_t enumeration
  * \param[in]       name: Operator name. This parameter must be valid according to `format` parameter
  * \param[in]       num: Operator number. This parameter must be valid according to `format` parameter
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -95,7 +95,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
  * \param[in]       ops: Pointer to array to write found operators
  * \param[in]       opsl: Length of input array in units of elements
  * \param[out]      opf: Pointer to ouput variable to save number of operators found
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise

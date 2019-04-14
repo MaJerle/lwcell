@@ -73,7 +73,7 @@ check_mem(gsm_mem_t mem, uint8_t can_curr) {
 
 /**
  * \brief           Enable phonebook functionality
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -92,7 +92,7 @@ gsm_pb_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32
 
 /**
  * \brief           Disable phonebook functionality
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -114,7 +114,7 @@ gsm_pb_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint3
  * \param[in]       name: Entry name
  * \param[in]       num: Entry phone number
  * \param[in]       type: Entry phone number type
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -152,7 +152,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
  * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
  * \param[in]       pos: Entry position in memory to read
  * \param[out]      entry: Pointer to entry variable to save data
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -170,7 +170,7 @@ gsm_pb_read(gsm_mem_t mem, size_t pos, gsm_pb_entry_t* entry,
  * \param[in]       name: New entry name
  * \param[in]       num: New entry phone number
  * \param[in]       type: New entry phone number type
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -207,7 +207,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
  * \brief           Delete phonebook entry at desired memory and position
  * \param[in]       mem: Memory to use to save entry. Use \ref GSM_MEM_CURRENT to use current memory
  * \param[in]       pos: Entry position in memory to delete
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -244,7 +244,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos,
  * \param[out]      entries: Pointer to array to save entries
  * \param[in]       etr: Number of entries to read
  * \param[out]      er: Pointer to output variable to save entries listed
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -291,7 +291,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
  * \param[out]      entries: Pointer to array to save entries
  * \param[in]       etr: Number of entries to read
  * \param[out]      er: Pointer to output variable to save entries found
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise

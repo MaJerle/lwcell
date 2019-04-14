@@ -91,7 +91,7 @@ check_sms_mem(gsm_mem_t mem, uint8_t can_curr) {
 
 /**
  * \brief           Enable SMS functionality
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -110,7 +110,7 @@ gsm_sms_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint3
 
 /**
  * \brief           Disable SMS functionality
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -131,7 +131,7 @@ gsm_sms_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  * \brief           Send SMS text to phone number
  * \param[in]       num: String number
  * \param[in]       text: Text to send. Maximal `160` characters
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -163,7 +163,7 @@ gsm_sms_send(const char* num, const char* text,
  * \param[in]       pos: Position number in memory to read
  * \param[out]      entry: Pointer to SMS entry structure to fill data to
  * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -204,7 +204,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
  * \brief           Delete SMS entry at specific memory and position
  * \param[in]       mem: Memory used to read message from
  * \param[in]       pos: Position number in memory to read
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -240,7 +240,7 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos,
  * \param[in]       etr: Number of entries to read
  * \param[out]      er: Pointer to output variable to save number of entries in array
  * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
@@ -285,7 +285,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
  * \param[in]       mem1: Preferred memory for read/delete SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
  * \param[in]       mem2: Preferred memory for sent/write SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
  * \param[in]       mem3: Preferred memory for received SMS entries. Use \ref GSM_MEM_CURRENT to keep it as is
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise

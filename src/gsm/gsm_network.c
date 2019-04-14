@@ -41,7 +41,7 @@
  * \param[in]       apn: APN name
  * \param[in]       user: User name to attach. Set to `NULL` if not used
  * \param[in]       pass: User password to attach. Set to `NULL` if not used
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -66,7 +66,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass,
 
 /**
  * \brief           Detach from network
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -87,7 +87,7 @@ gsm_network_detach(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
 
 /**
  * \brief           Check network PDP status
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -137,7 +137,7 @@ gsm_network_is_attached(void) {
 /**
  * \brief           Read RSSI signal from network operator
  * \param[out]      rssi: RSSI output variable. When set to `0`, RSSI is not valid
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise

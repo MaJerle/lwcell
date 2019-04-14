@@ -38,7 +38,7 @@
  * \brief           Get device manufacturer
  * \param[in]       manuf: Pointer to output string array to save manufacturer info
  * \param[in]       len: Length of string array including `NULL` termination
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -64,7 +64,7 @@ gsm_device_get_manufacturer(char* manuf, size_t len, const gsm_api_cmd_evt_fn ev
  * \brief           Get device model name
  * \param[in]       model: Pointer to output string array to save model info
  * \param[in]       len: Length of string array including `NULL` termination
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -90,7 +90,7 @@ gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn,
  * \brief           Get device revision
  * \param[in]       rev: Pointer to output string array to save revision info
  * \param[in]       len: Length of string array including `NULL` termination
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -116,7 +116,7 @@ gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn,
  * \brief           Get device serial number
  * \param[in]       serial: Pointer to output string array to save serial number info
  * \param[in]       len: Length of string array including `NULL` termination
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise

@@ -51,7 +51,7 @@ gsm_sim_get_current_state(void) {
 /**
  * \brief           Enter pin code to unlock SIM
  * \param[in]       pin: Pin code in string format
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -77,7 +77,7 @@ gsm_sim_pin_enter(const char* pin,
  * \note            Use this function only if your SIM card doesn't have PIN code.
  *                  If you wish to change current pin, use \ref gsm_sim_pin_change instead
  * \param[in]       pin: Current SIM pin code
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -101,7 +101,7 @@ gsm_sim_pin_add(const char* pin,
  * \brief           Change current pin code
  * \param[in]       pin: Current pin code
  * \param[in]       new_pin: New pin code
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -126,7 +126,7 @@ gsm_sim_pin_change(const char* pin, const char* new_pin,
 /**
  * \brief           Remove pin code from SIM
  * \param[in]       pin: Current pin code
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
@@ -150,7 +150,7 @@ gsm_sim_pin_remove(const char* pin,
  * \brief           Enter PUK code and new PIN to unlock SIM card
  * \param[in]       puk: PUK code associated with SIM card
  * \param[in]       new_pin: New PIN code to use
- * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
