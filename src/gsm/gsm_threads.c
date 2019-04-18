@@ -93,22 +93,36 @@ gsm_thread_produce(void* const arg) {
              * immediate terminate
              */
             gsm_core_unlock();
-            gsm_sys_sem_wait(&e->sem_sync, 0);
+            gsm_sys_sem_wait(&e->sem_sync, 0);  /* First call */
             gsm_core_lock();
             e->msg = msg;
             res = msg->fn(msg);                 /* Process this message, check if command started at least */
             if (res == gsmOK) {                 /* We have valid data and data were sent */
                 gsm_core_unlock();
-                time = gsm_sys_sem_wait(&e->sem_sync, msg->block_time); /* Wait for synchronization semaphore from processing thread or timeout */
+                time = gsm_sys_sem_wait(&e->sem_sync, msg->block_time); /* Second call; Wait for synchronization semaphore from processing thread or timeout */
                 gsm_core_lock();
                 if (time == GSM_SYS_TIMEOUT) {  /* Sync timeout occurred? */
                     res = gsmTIMEOUT;           /* Timeout on command */
-                } else {
-                    gsm_sys_sem_release(&e->sem_sync);
                 }
-            } else {
-                gsm_sys_sem_release(&e->sem_sync);  /* We failed, release semaphore automatically */
             }
+
+            /*
+             * Manually release semaphore in all cases:
+             *
+             * Case 1: msg->fn function fails, command did not start,
+             *           application needs to release previously acquired semaphore
+             * Case 2: If time == TIMEOUT, acquiring on second call was not successful,
+             *           application has to manually release semaphore, taken on first call
+             * Case 3: If time != TIMEOUT, acquiring on second call was successful,
+             *           which effectively means that another thread successfuly released semaphore,
+             *           application has to release semaphore, now taken on second call
+             *
+             * If application would not manually release semaphore,
+             * and if command would return with timeout (or fail),
+             * it would not be possible to start a new command after,
+             * because semaphore would be still locked
+             */
+            gsm_sys_sem_release(&e->sem_sync);
         } else {
             if (res == gsmOK) {
                 res = gsmERR;                   /* Simply set error message */
