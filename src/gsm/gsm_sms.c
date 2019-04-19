@@ -173,7 +173,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
                 const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("sms_entry != NULL", entry != NULL); /* Assert input parameters */
+    GSM_ASSERT("entry != NULL", entry != NULL); /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */
