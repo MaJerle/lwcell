@@ -233,6 +233,32 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos,
 }
 
 /**
+ * \brief           Delete all SMS entries with specific status
+ * \param[in]       status: SMS status. This parameter can be one of all possible types in \ref gsm_sms_status_t enumeration
+ * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
+ * \param[in]       evt_arg: Custom argument for event callback function
+ * \param[in]       blocking: Status whether command should be blocking or not
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ */
+gsmr_t
+gsm_sms_delete_all(gsm_sms_status_t status,
+                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    GSM_MSG_VAR_DEFINE(msg);
+
+    CHECK_ENABLED();                            /* Check if enabled */
+    CHECK_READY();                              /* Check if ready */
+
+    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGDA;
+    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;    /* By default format = 1 */
+    GSM_MSG_VAR_REF(msg).msg.sms_delete_all.status = status;
+
+    /* This command may take a while */
+    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+}
+
+/**
  * \brief           List SMS from SMS memory
  * \param[in]       mem: Memory to read entries from. Use \ref GSM_MEM_CURRENT to read from current memory
  * \param[in]       stat: SMS status to read, either `read`, `unread`, `sent`, `unsent` or `all`

@@ -235,6 +235,7 @@ typedef enum {
     GSM_CMD_CMGS,                               /*!< Send SMS Message */
     GSM_CMD_CMGW,                               /*!< Write SMS Message to Memory */
     GSM_CMD_CMSS,                               /*!< Send SMS Message from Storage */
+    GSM_CMD_CMGDA,                              /*!< MASS SMS delete */
     GSM_CMD_CNMI,                               /*!< New SMS Message Indications */
     GSM_CMD_CPMS_SET,                           /*!< Set preferred SMS Message Storage */
     GSM_CMD_CPMS_GET,                           /*!< Get preferred SMS Message Storage */
@@ -445,6 +446,9 @@ typedef struct gsm_msg {
             gsm_mem_t mem;                      /*!< Memory to delete from */
             size_t pos;                         /*!< SMS position in memory */
         } sms_delete;                           /*!< Delete SMS message */
+        struct {
+            gsm_sms_status_t status;            /*!< SMS status to delete */
+        } sms_delete_all;                       /*!< Mass delete SMS messages */
         struct {
             gsm_mem_t mem;                      /*!< Memory to use for read */
             gsm_sms_status_t status;            /*!< SMS entries status */

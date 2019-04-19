@@ -1351,14 +1351,18 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGD)) {      /* Delete SMS message*/
         if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
-            SET_NEW_CMD(GSM_CMD_CPMS_SET);  /* Set memory */
+            SET_NEW_CMD(GSM_CMD_CPMS_SET);      /* Set memory */
         } else if (CMD_IS_CUR(GSM_CMD_CPMS_SET) && *is_ok) {
-            SET_NEW_CMD(GSM_CMD_CMGD);      /* Delete message */
+            SET_NEW_CMD(GSM_CMD_CMGD);          /* Delete message */
         }
 
         /* Send event on finish */
         if (n_cmd == GSM_CMD_IDLE) {
             SMS_SEND_DELETE_EVT(msg, *is_ok ? gsmOK : gsmERR);
+        }
+    } else if (CMD_IS_DEF(GSM_CMD_CMGDA)) {
+        if (CMD_IS_CUR(GSM_CMD_CMGF) && *is_ok) {
+            SET_NEW_CMD(GSM_CMD_CMGDA);         /* Mass storage */
         }
     } else if (CMD_IS_DEF(GSM_CMD_CMGL)) {      /* List SMS messages */
         if (CMD_IS_CUR(GSM_CMD_CPMS_GET) && *is_ok) {
@@ -1829,6 +1833,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             } else if (CMD_IS_DEF(GSM_CMD_CMGL)) {
                 gsmi_send_number(GSM_U32(!!msg->msg.sms_list.format), 0, 0);
             } else {
+                /* Used for all other operations like delete all messages, etc */
                 GSM_AT_PORT_SEND_CONST_STR("1");
             }
             GSM_AT_PORT_SEND_END();
@@ -1856,6 +1861,22 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             GSM_AT_PORT_SEND_END();
             break;
         }
+        case GSM_CMD_CMGDA: {                   /* Mass delete SMS messages */
+            GSM_AT_PORT_SEND_BEGIN();
+            GSM_AT_PORT_SEND_CONST_STR("+CMGDA=");
+            switch (msg->msg.sms_delete_all.status) {
+                case GSM_SMS_STATUS_READ:   gsmi_send_string("DEL READ", 0, 1, 0); break;
+                case GSM_SMS_STATUS_UNREAD: gsmi_send_string("DEL UNREAD", 0, 1, 0); break;
+                case GSM_SMS_STATUS_SENT:   gsmi_send_string("DEL SENT", 0, 1, 0); break;
+                case GSM_SMS_STATUS_UNSENT: gsmi_send_string("DEL UNSENT", 0, 1, 0); break;
+                case GSM_SMS_STATUS_INBOX:  gsmi_send_string("DEL INBOX", 0, 1, 0); break;
+                case GSM_SMS_STATUS_ALL:    gsmi_send_string("DEL ALL", 0, 1, 0); break;
+                default: break;
+            }
+            GSM_AT_PORT_SEND_END();
+            break;
+        }
+                           
         case GSM_CMD_CMGL: {                    /* Delete SMS message */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_CONST_STR("+CMGL=");

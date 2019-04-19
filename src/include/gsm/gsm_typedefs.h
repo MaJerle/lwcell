@@ -182,6 +182,7 @@ typedef enum {
     GSM_SMS_STATUS_UNREAD,                      /*!< SMS status is unread */
     GSM_SMS_STATUS_SENT,                        /*!< SMS status is sent */
     GSM_SMS_STATUS_UNSENT,                      /*!< SMS status is unsent */
+    GSM_SMS_STATUS_INBOX,                       /*!< SMS status, used only for mass delete operation */
 } gsm_sms_status_t;
 
 /**
