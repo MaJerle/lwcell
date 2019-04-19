@@ -97,6 +97,7 @@ gsm_thread_produce(void* const arg) {
             gsm_core_lock();
             e->msg = msg;
             res = msg->fn(msg);                 /* Process this message, check if command started at least */
+            time = ~GSM_SYS_TIMEOUT;            /* Reset time */
             if (res == gsmOK) {                 /* We have valid data and data were sent */
                 gsm_core_unlock();
                 time = gsm_sys_sem_wait(&e->sem_sync, msg->block_time); /* Second call; Wait for synchronization semaphore from processing thread or timeout */
@@ -105,6 +106,13 @@ gsm_thread_produce(void* const arg) {
                     res = gsmTIMEOUT;           /* Timeout on command */
                 }
             }
+
+            GSM_DEBUGW(GSM_CFG_DBG_THREAD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_SEVERE,
+                res == gsmTIMEOUT,
+                "[THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
+            GSM_DEBUGW(GSM_CFG_DBG_THREAD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_SEVERE,
+                res != gsmOK && res != gsmTIMEOUT,
+                "[THREAD] Could not start command execution of command %d\r\n", (int)msg->cmd);
 
             /*
              * Manually release semaphore in all cases:
