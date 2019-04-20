@@ -142,7 +142,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 /**
  * \brief           Flush buffer on connection
  * \param[in]       conn: Connection to flush buffer on
- * \return          gsmOK if data flushed and put to queue, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK if data flushed and put to queue, member of \ref gsmr_t otherwise
  */
 static gsmr_t
 flush_buff(gsm_conn_p conn) {

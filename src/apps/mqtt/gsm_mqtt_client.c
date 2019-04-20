@@ -1114,7 +1114,7 @@ gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t p
 /**
  * \brief           Disconnect from MQTT server
  * \param[in]       client: MQTT client
- * \return          gsmOK if request sent to queue or member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK if request sent to queue or member of \ref gsmr_t otherwise
  */
 gsmr_t
 gsm_mqtt_client_disconnect(gsm_mqtt_client_p client) {
