@@ -1,6 +1,6 @@
 /**	
  * \file            gsm_buff.h
- * \brief           Buffer manager
+ * \brief           Ring buffer manager
  */
 
 /*
@@ -46,21 +46,38 @@ extern "C" {
  * \{
  */
 
-uint8_t     gsm_buff_init(gsm_buff_t* buff, size_t size);
-void        gsm_buff_free(gsm_buff_t* buff);
+/* --- Buffer unique part starts --- */
+/* Prefix for all buffer functions and typedefs */
+/**
+ * \brief           Buffer function/typedef prefix string
+ */
+#define BUF_PREF(x)                     gsm_ ## x
+/* --- Buffer unique part ends --- */
 
-size_t      gsm_buff_write(gsm_buff_t* buff, const void* data, size_t count);
-size_t      gsm_buff_read(gsm_buff_t* buff, void* data, size_t count);
+uint8_t     BUF_PREF(buff_init)(BUF_PREF(buff_t)* buff, size_t size);
+void        BUF_PREF(buff_free)(BUF_PREF(buff_t)* buff);
+void        BUF_PREF(buff_reset)(BUF_PREF(buff_t)* buff);
 
-size_t      gsm_buff_get_free(gsm_buff_t* buff);
-size_t      gsm_buff_get_full(gsm_buff_t* buff);
+/* Read/Write functions */
+size_t      BUF_PREF(buff_write)(BUF_PREF(buff_t)* buff, const void* data, size_t count);
+size_t      BUF_PREF(buff_read)(BUF_PREF(buff_t)* buff, void* data, size_t count);
+size_t      BUF_PREF(buff_peek)(BUF_PREF(buff_t)* buff, size_t skip_count, void* data, size_t count);
 
-void        gsm_buff_reset(gsm_buff_t* buff);
-size_t      gsm_buff_peek(gsm_buff_t* buff, size_t skip_count, void* data, size_t count);
+/* Buffer size information */
+size_t      BUF_PREF(buff_get_free)(BUF_PREF(buff_t)* buff);
+size_t      BUF_PREF(buff_get_full)(BUF_PREF(buff_t)* buff);
 
-void *      gsm_buff_get_linear_block_address(gsm_buff_t* buff);
-size_t      gsm_buff_get_linear_block_length(gsm_buff_t* buff);
-size_t      gsm_buff_skip(gsm_buff_t* buff, size_t len);
+/* Read data block management */
+void *      BUF_PREF(buff_get_linear_block_read_address)(BUF_PREF(buff_t)* buff);
+size_t      BUF_PREF(buff_get_linear_block_read_length)(BUF_PREF(buff_t)* buff);
+size_t      BUF_PREF(buff_skip)(BUF_PREF(buff_t)* buff, size_t len);
+
+/* Write data block management */
+void *      BUF_PREF(buff_get_linear_block_write_address)(BUF_PREF(buff_t)* buff);
+size_t      BUF_PREF(buff_get_linear_block_write_length)(BUF_PREF(buff_t)* buff);
+size_t      BUF_PREF(buff_advance)(BUF_PREF(buff_t)* buff, size_t len);
+
+#undef BUF_PREF         /* Prefix not needed anymore */
 
 /**
  * \}

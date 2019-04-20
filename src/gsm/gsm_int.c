@@ -963,13 +963,13 @@ gsmi_process_buffer(void) {
          * Get length of linear memory in buffer
          * we can process directly as memory
          */
-        len = gsm_buff_get_linear_block_length(&gsm.buff);
+        len = gsm_buff_get_linear_block_read_length(&gsm.buff);
         if (len) {
             /*
              * Get memory address of first element
              * in linear block of data to process
              */
-            data = gsm_buff_get_linear_block_address(&gsm.buff);
+            data = gsm_buff_get_linear_block_read_address(&gsm.buff);
 
             /* Process actual received data */
             gsmi_process(data, len);
