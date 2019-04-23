@@ -540,7 +540,7 @@ typedef size_t  (*gsm_ll_send_fn)(const void* data, size_t len);
 
 /**
  * \ingroup         GSM_LL
- * \brief           Function prototype for hardware reset of ESP device
+ * \brief           Function prototype for hardware reset of GSM device
  * \param[in]       state: State indicating reset. When set to `1`, reset must be active (usually pin active low),
  *                      or set to `0` when reset is cleared
  * \return          `1` on successful action, `0` otherwise
