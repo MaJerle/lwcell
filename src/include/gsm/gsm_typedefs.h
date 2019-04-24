@@ -371,6 +371,10 @@ typedef enum gsm_cb_type_t {
     GSM_EVT_RESET,                              /*!< Device reset operation finished */
     GSM_EVT_RESTORE,                            /*!< Device restore operation finished */
 
+    GSM_EVT_CMD_TIMEOUT,                        /*!< Timeout on command.
+                                                        When application receives this event,
+                                                        it may reset system as there was (maybe) a problem in device */
+
     GSM_EVT_DEVICE_PRESENT,                     /*!< Notification when device present status changes */
     GSM_EVT_DEVICE_IDENTIFIED,                  /*!< Device identified event */
 

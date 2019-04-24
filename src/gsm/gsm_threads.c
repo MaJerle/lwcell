@@ -107,6 +107,11 @@ gsm_thread_produce(void* const arg) {
                 }
             }
 
+            /* Notify application on command timeout */
+            if (res == gsmTIMEOUT) {
+                gsmi_send_cb(GSM_EVT_CMD_TIMEOUT);
+            }
+
             GSM_DEBUGW(GSM_CFG_DBG_THREAD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_SEVERE,
                 res == gsmTIMEOUT,
                 "[THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
