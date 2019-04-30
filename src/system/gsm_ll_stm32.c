@@ -288,18 +288,22 @@ configure_uart(uint32_t baudrate) {
     if (usart_ll_thread_id == NULL) {
         usart_ll_thread_id = osThreadCreate(osThread(usart_ll_thread), usart_ll_mbox_id);
     }
+}
 
 #if defined(GSM_RESET_PIN)
-    /* Reset device on first init */
-    if (!initialized) {
-        /* Timings selected by hardware application note */
+/**
+ * \brief           Hardware reset callback
+ */
+static uint8_t
+reset_device(uint8_t state) {
+    if (state) {                                /* Activate reset line */
         LL_GPIO_ResetOutputPin(GSM_RESET_PORT, GSM_RESET_PIN);
-        osDelay(100);
+    } else {
         LL_GPIO_SetOutputPin(GSM_RESET_PORT, GSM_RESET_PIN);
-        osDelay(3000);
     }
-#endif /* defined(GSM_RESET_PIN) */
+    return 1;
 }
+#endif /* defined(GSM_RESET_PIN) */
 
 /**
  * \brief           Send data to GSM device
@@ -334,6 +338,9 @@ gsm_ll_init(gsm_ll_t* ll) {
 
     if (!initialized) {
         ll->send_fn = send_data;                /* Set callback function to send data */
+#if defined(GSM_RESET_PIN)
+        ll->reset_fn = reset_device;            /* Set callback for hardware reset */
+#endif /* defined(GSM_RESET_PIN) */
 
         gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations */
     }

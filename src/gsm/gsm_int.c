@@ -1561,6 +1561,14 @@ gsmr_t
 gsmi_initiate_cmd(gsm_msg_t* msg) {
     switch (CMD_GET_CUR()) {                    /* Check current message we want to send over AT */
         case GSM_CMD_RESET: {                   /* Reset modem with AT commands */
+            /* Try with hardware reset */
+            if (gsm.ll.reset_fn != NULL && gsm.ll.reset_fn(1)) {
+                gsm_delay(2);
+                gsm.ll.reset_fn(0);
+                gsm_delay(500);
+            }
+
+            /* Send manual AT command */
             GSM_AT_PORT_SEND_BEGIN();
             GSM_AT_PORT_SEND_CONST_STR("+CFUN=1,1");
             GSM_AT_PORT_SEND_END();
