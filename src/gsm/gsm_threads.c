@@ -67,6 +67,8 @@ gsm_thread_produce(void* const arg) {
         }
 
         res = gsmOK;                            /* Start with OK */
+        e->msg = msg;                           /* Set message handle */
+
         /*
          * This check is performed when adding command to queue
          * Do it again here to prevent long timeouts,
@@ -77,8 +79,11 @@ gsm_thread_produce(void* const arg) {
         }
 
         /* For reset message, we can have delay! */
-        if (res == gsmOK && CMD_IS_DEF(GSM_CMD_RESET) && msg->msg.reset.delay) {
-            gsm_delay(msg->msg.reset.delay);
+        if (res == gsmOK && msg->cmd_def == GSM_CMD_RESET) {
+            if (msg->msg.reset.delay) {
+                gsm_delay(msg->msg.reset.delay);
+            }
+            gsmi_reset_everything(1);           /* Reset stack before trying to reset */
         }
 
         /*
@@ -127,7 +132,7 @@ gsm_thread_produce(void* const arg) {
              * Case 2: If time == TIMEOUT, acquiring on second call was not successful,
              *           application has to manually release semaphore, taken on first call
              * Case 3: If time != TIMEOUT, acquiring on second call was successful,
-             *           which effectively means that another thread successfuly released semaphore,
+             *           which effectively means that another thread successfully released semaphore,
              *           application has to release semaphore, now taken on second call
              *
              * If application would not manually release semaphore,
