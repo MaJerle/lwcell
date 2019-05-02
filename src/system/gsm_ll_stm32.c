@@ -377,16 +377,15 @@ gsm_ll_deinit(gsm_ll_t* ll) {
  */
 void
 GSM_USART_IRQHANDLER(void) {
-    if (LL_USART_IsActiveFlag_IDLE(GSM_USART)) {
-        LL_USART_ClearFlag_IDLE(GSM_USART);
-        if (usart_ll_mbox_id != NULL) {
-            osMessagePut(usart_ll_mbox_id, 0, 0);
-        }
-    }
+    LL_USART_ClearFlag_IDLE(GSM_USART);
     LL_USART_ClearFlag_PE(GSM_USART);
     LL_USART_ClearFlag_FE(GSM_USART);
     LL_USART_ClearFlag_ORE(GSM_USART);
     LL_USART_ClearFlag_NE(GSM_USART);
+
+    if (usart_ll_mbox_id != NULL) {
+        osMessagePut(usart_ll_mbox_id, 0, 0);
+    }
 }
 
 /**
@@ -396,6 +395,7 @@ void
 GSM_USART_DMA_RX_IRQHANDLER(void) {
     GSM_USART_DMA_RX_CLEAR_TC;
     GSM_USART_DMA_RX_CLEAR_HT;
+
     if (usart_ll_mbox_id != NULL) {
         osMessagePut(usart_ll_mbox_id, 0, 0);
     }
