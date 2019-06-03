@@ -277,7 +277,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("entires != NULL", entries != NULL); /* Assert input parameters */
-    GSM_ASSERT("etr > 0", etr > 0);             /* Assert input parameters */
+    GSM_ASSERT("etr", etr);             /* Assert input parameters */
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);  /* Assert input parameters */

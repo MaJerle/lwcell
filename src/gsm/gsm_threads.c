@@ -122,7 +122,7 @@ gsm_thread_produce(void* const arg) {
                 "[THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
             GSM_DEBUGW(GSM_CFG_DBG_THREAD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_SEVERE,
                 res != gsmOK && res != gsmTIMEOUT,
-                "[THREAD] Could not start command execution of command %d\r\n", (int)msg->cmd);
+                "[THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
 
             /*
              * Manually release semaphore in all cases:

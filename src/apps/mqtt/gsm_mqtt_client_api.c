@@ -436,7 +436,7 @@ gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, con
     GSM_ASSERT("client != NULL", client != NULL);
     GSM_ASSERT("topic != NULL", topic != NULL);
     GSM_ASSERT("data != NULL", data != NULL);
-    GSM_ASSERT("btw > 0", btw > 0);
+    GSM_ASSERT("btw", btw);
 
     gsm_sys_mutex_lock(&client->mutex);
     gsm_sys_sem_wait(&client->sync_sem, 0);

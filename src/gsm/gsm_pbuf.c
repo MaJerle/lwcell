@@ -222,7 +222,7 @@ gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
 
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);   /* Assert input parameters */
     GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
-    GSM_ASSERT("len > 0", len > 0);             /* Assert input parameters */
+    GSM_ASSERT("len", len);             /* Assert input parameters */
     GSM_ASSERT("pbuf->tot_len >= len", pbuf->tot_len >= len);   /* Assert input parameters */
 
     /* Skip if necessary and check if we are in valid range */
@@ -498,7 +498,7 @@ gsm_pbuf_advance(gsm_pbuf_p pbuf, int len) {
     if (pbuf == NULL || !len) {
         return 0;
     }
-    if (len > 0) {                              /* When we want to decrease size */
+    if (len) {                              /* When we want to decrease size */
         if ((size_t)len <= pbuf->len) {         /* Is there space to decrease? */
             process = 1;
         }

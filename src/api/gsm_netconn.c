@@ -291,7 +291,7 @@ gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
 
     GSM_ASSERT("nc != NULL", nc != NULL);       /* Assert input parameters */
     GSM_ASSERT("host != NULL", host != NULL);   /* Assert input parameters */
-    GSM_ASSERT("port > 0", port);               /* Assert input parameters */
+    GSM_ASSERT("port", port);               /* Assert input parameters */
 
     /*
      * Start a new connection as client and:
@@ -406,7 +406,7 @@ gsm_netconn_flush(gsm_netconn_p nc) {
      * flush them out to network
      */
     if (nc->buff.buff != NULL) {                /* Check remaining data */
-        if (nc->buff.ptr > 0) {                 /* Do we have data in current buffer? */
+        if (nc->buff.ptr) {                     /* Do we have data in current buffer? */
             gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1);  /* Send data */
         }
         gsm_mem_free(nc->buff.buff);            /* Free memory */

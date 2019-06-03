@@ -116,7 +116,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
     GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
-    GSM_ASSERT("btw > 0", btw > 0);             /* Assert input parameters */
+    GSM_ASSERT("btw", btw);             /* Assert input parameters */
 
     if (bw != NULL) {
         *bw = 0;
@@ -194,7 +194,7 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("host != NULL", host != NULL);   /* Assert input parameters */
-    GSM_ASSERT("port > 0", port > 0);           /* Assert input parameters */
+    GSM_ASSERT("port", port);           /* Assert input parameters */
     GSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL); /* Assert input parameters */
 
     GSM_MSG_VAR_ALLOC(msg);
@@ -283,7 +283,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
 
     GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
     GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
-    GSM_ASSERT("btw > 0", btw > 0);             /* Assert input parameters */
+    GSM_ASSERT("btw", btw);             /* Assert input parameters */
 
     gsm_core_lock();
     if (conn->buff.buff != NULL) {              /* Check if memory available */
