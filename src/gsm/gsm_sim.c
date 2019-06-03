@@ -61,7 +61,7 @@ gsm_sim_pin_enter(const char* pin,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
+    GSM_ASSERT("pin != NULL", pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -87,7 +87,7 @@ gsm_sim_pin_add(const char* pin,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
+    GSM_ASSERT("pin != NULL", pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -111,8 +111,8 @@ gsm_sim_pin_change(const char* pin, const char* new_pin,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
-    GSM_ASSERT("new_pin != NULL", new_pin != NULL); /* Assert input parameters */
+    GSM_ASSERT("pin != NULL", pin != NULL);
+    GSM_ASSERT("new_pin != NULL", new_pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -136,7 +136,7 @@ gsm_sim_pin_remove(const char* pin,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);     /* Assert input parameters */
+    GSM_ASSERT("pin != NULL", pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -160,8 +160,8 @@ gsm_sim_puk_enter(const char* puk, const char* new_pin,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("puk != NULL", puk != NULL);     /* Assert input parameters */
-    GSM_ASSERT("new_pin != NULL", new_pin != NULL); /* Assert input parameters */
+    GSM_ASSERT("puk != NULL", puk != NULL);
+    GSM_ASSERT("new_pin != NULL", new_pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);

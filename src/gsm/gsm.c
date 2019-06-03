@@ -241,7 +241,7 @@ gsm_evt_register(gsm_evt_fn fn) {
     gsmr_t res = gsmOK;
     gsm_evt_func_t* func, *newFunc;
 
-    GSM_ASSERT("fn != NULL", fn != NULL);       /* Assert input parameters */
+    GSM_ASSERT("fn != NULL", fn != NULL);
 
     gsm_core_lock();
 
@@ -282,7 +282,7 @@ gsm_evt_register(gsm_evt_fn fn) {
 gsmr_t
 gsm_evt_unregister(gsm_evt_fn fn) {
     gsm_evt_func_t* func, *prev;
-    GSM_ASSERT("fn != NULL", fn != NULL);       /* Assert input parameters */
+    GSM_ASSERT("fn != NULL", fn != NULL);
 
     gsm_core_lock();
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {

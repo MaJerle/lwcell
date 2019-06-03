@@ -152,7 +152,7 @@ mqtt_evt_fn_default(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
 static uint16_t
 create_packet_id(gsm_mqtt_client_p client) {
     client->last_packet_id++;
-    if (client->last_packet_id == 0) {
+    if (!client->last_packet_id) {
         client->last_packet_id = 1;
     }
     return client->last_packet_id;
@@ -178,7 +178,7 @@ request_create(gsm_mqtt_client_p client, uint16_t packet_id, void* arg) {
 
     /* Try to find a new request which does not have IN_USE flag set */
     for (request = NULL, i = 0; i < GSM_CFG_MQTT_MAX_REQUESTS; i++) {
-        if ((client->requests[i].status & MQTT_REQUEST_FLAG_IN_USE) == 0) {
+        if (!(client->requests[i].status & MQTT_REQUEST_FLAG_IN_USE)) {
             request = &client->requests[i];     /* We have empty request */
             break;
         }
@@ -447,8 +447,7 @@ sub_unsub(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void*
     uint32_t rem_len;
     gsm_mqtt_request_t* request;
 
-    len_topic = GSM_U16(strlen(topic));         /* Get length of topic */
-    if (len_topic == 0) {
+    if (!(len_topic = GSM_U16(strlen(topic)))) {
         return 0;
     }
 
@@ -676,7 +675,7 @@ mqtt_parse_incoming(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
                     client->msg_rem_len <<= 7;  /* Shift remaining length by 7 bits */
                     client->msg_rem_len |= (ch & 0x7F);
                     /* TODO: Ignore too-big messages */
-                    if ((ch & 0x80) == 0) {     /* Is this last entry? */
+                    if (!(ch & 0x80)) {         /* Is this last entry? */
                         GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
                             "[MQTT] Remaining length received: %d bytes\r\n", (int)client->msg_rem_len);
 
@@ -1091,9 +1090,9 @@ gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t p
     gsmr_t res = gsmERR;
 
     GSM_ASSERT("client != NULL", client != NULL);   /* t input parameters */
-    GSM_ASSERT("host != NULL", host != NULL);   /* Assert input parameters */
-    GSM_ASSERT("port", port);           /* Assert input parameters */
-    GSM_ASSERT("info != NULL", info != NULL);   /* Assert input parameters */
+    GSM_ASSERT("host != NULL", host != NULL);
+    GSM_ASSERT("port", port);
+    GSM_ASSERT("info != NULL", info != NULL);
 
     gsm_core_lock();
     if (gsm_network_is_attached() && client->conn_state == GSM_MQTT_CONN_DISCONNECTED) {
@@ -1174,7 +1173,7 @@ gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void*
     gsm_mqtt_request_t* request = NULL;
     gsmr_t res = gsmOK;
 
-    if ((len_topic = GSM_U16(strlen(topic))) == 0) {    /* Get length of topic */
+    if (!(len_topic = GSM_U16(strlen(topic)))) {    /* Get length of topic */
         return gsmERR;
     }
 

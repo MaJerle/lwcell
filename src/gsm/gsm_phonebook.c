@@ -124,10 +124,10 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
-    GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
+    GSM_ASSERT("name != NULL", name != NULL);
+    GSM_ASSERT("num != NULL", num != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -180,10 +180,10 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
-    GSM_ASSERT("num != NULL", num != NULL);     /* Assert input parameters */
+    GSM_ASSERT("name != NULL", name != NULL);
+    GSM_ASSERT("num != NULL", num != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -217,9 +217,9 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos,
                 const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pos", pos);             /* Assert input parameters */
+    GSM_ASSERT("pos", pos);
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -254,11 +254,11 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("start_index", start_index); /* Assert input parameters */
-    GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
-    GSM_ASSERT("etr", etr);             /* Assert input parameters */
+    GSM_ASSERT("start_index", start_index);
+    GSM_ASSERT("entries != NULL", entries != NULL);
+    GSM_ASSERT("etr", etr);
     CHECK_ENABLED();
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -301,11 +301,11 @@ gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t
                 const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("search != NULL", search != NULL);   /* Assert input parameters */
-    GSM_ASSERT("entries != NULL", entries != NULL); /* Assert input parameters */
-    GSM_ASSERT("etr", etr);             /* Assert input parameters */
+    GSM_ASSERT("search != NULL", search != NULL);
+    GSM_ASSERT("entries != NULL", entries != NULL);
+    GSM_ASSERT("etr", etr);
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);  /* Assert input parameters */
+    GSM_ASSERT("mem", check_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);

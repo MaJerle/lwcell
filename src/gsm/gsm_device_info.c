@@ -48,8 +48,8 @@ gsm_device_get_manufacturer(char* manuf, size_t len, const gsm_api_cmd_evt_fn ev
                             void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("manuf != NULL", manuf != NULL); /* Assert input parameters */
-    GSM_ASSERT("len", len);             /* Assert input parameters */
+    GSM_ASSERT("manuf != NULL", manuf != NULL);
+    GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -74,8 +74,8 @@ gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn,
                             void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("model != NULL", model != NULL); /* Assert input parameters */
-    GSM_ASSERT("len", len);             /* Assert input parameters */
+    GSM_ASSERT("model != NULL", model != NULL);
+    GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -100,8 +100,8 @@ gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn,
                             void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("rev != NULL", rev != NULL);     /* Assert input parameters */
-    GSM_ASSERT("len", len);             /* Assert input parameters */
+    GSM_ASSERT("rev != NULL", rev != NULL);
+    GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);
@@ -126,8 +126,8 @@ gsm_device_get_serial_number(char* serial, size_t len, const gsm_api_cmd_evt_fn 
                             void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("serial != NULL", serial != NULL);   /* Assert input parameters */
-    GSM_ASSERT("len", len);             /* Assert input parameters */
+    GSM_ASSERT("serial != NULL", serial != NULL);
+    GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg);

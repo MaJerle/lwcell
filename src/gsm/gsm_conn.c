@@ -114,9 +114,9 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
             size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
-    GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
-    GSM_ASSERT("btw", btw);             /* Assert input parameters */
+    GSM_ASSERT("conn != NULL", conn != NULL);
+    GSM_ASSERT("data != NULL", data != NULL);
+    GSM_ASSERT("btw", btw);
 
     if (bw != NULL) {
         *bw = 0;
@@ -193,9 +193,9 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
                 void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("host != NULL", host != NULL);   /* Assert input parameters */
-    GSM_ASSERT("port", port);           /* Assert input parameters */
-    GSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL); /* Assert input parameters */
+    GSM_ASSERT("host != NULL", host != NULL);
+    GSM_ASSERT("port", port);
+    GSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTART;
@@ -222,7 +222,7 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     gsmr_t res = gsmOK;
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
+    GSM_ASSERT("conn != NULL", conn != NULL);
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
 
@@ -259,7 +259,7 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
 gsmr_t
 gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data,
                 size_t btw, size_t* bw, const uint32_t blocking) {
-    GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
+    GSM_ASSERT("conn != NULL", conn != NULL);
 
     flush_buff(conn);                           /* Flush currently written memory if exists */
     return conn_send(conn, ip, port, data, btw, bw, 0, blocking);
@@ -281,9 +281,9 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
     gsmr_t res;
     const uint8_t* d = data;
 
-    GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
-    GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
-    GSM_ASSERT("btw", btw);             /* Assert input parameters */
+    GSM_ASSERT("conn != NULL", conn != NULL);
+    GSM_ASSERT("data != NULL", data != NULL);
+    GSM_ASSERT("btw", btw);
 
     gsm_core_lock();
     if (conn->buff.buff != NULL) {              /* Check if memory available */
@@ -480,7 +480,7 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
 
     const uint8_t* d = data;
 
-    GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
+    GSM_ASSERT("conn != NULL", conn != NULL);
 
     /*
      * Steps during write process:
@@ -582,7 +582,7 @@ size_t
 gsm_conn_get_total_recved_count(gsm_conn_p conn) {
     size_t tot;
 
-    GSM_ASSERT("conn != NULL", conn != NULL);   /* Assert input parameters */
+    GSM_ASSERT("conn != NULL", conn != NULL);
 
     gsm_core_lock();
     tot = conn->total_recved;                   /* Get total received bytes */

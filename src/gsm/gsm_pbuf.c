@@ -95,7 +95,7 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
     gsm_pbuf_p p, pn;
     size_t ref, cnt;
 
-    GSM_ASSERT("pbuf != NULL", pbuf != NULL);   /* Assert input parameters */
+    GSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
     /*
      * Free all pbufs until first ->ref > 1 is reached
@@ -106,7 +106,7 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
         gsm_core_lock();
         ref = --p->ref;                         /* Decrease current value and save it */
         gsm_core_unlock();
-        if (ref == 0) {                         /* Did we reach 0 and are ready to free it? */
+        if (!ref) {                             /* Did we reach 0 and are ready to free it? */
             GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
                 "[PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
             pn = p->next;                       /* Save next entry */
@@ -133,8 +133,8 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
  */
 gsmr_t
 gsm_pbuf_cat(gsm_pbuf_p head, const gsm_pbuf_p tail) {
-    GSM_ASSERT("head != NULL", head != NULL);   /* Assert input parameters */
-    GSM_ASSERT("tail != NULL", tail != NULL);   /* Assert input parameters */
+    GSM_ASSERT("head != NULL", head != NULL);
+    GSM_ASSERT("tail != NULL", tail != NULL);
 
     /*
      * For all pbuf packets in head,
@@ -201,7 +201,7 @@ gsm_pbuf_unchain(gsm_pbuf_p head) {
  */
 gsmr_t
 gsm_pbuf_ref(gsm_pbuf_p pbuf) {
-    GSM_ASSERT("pbuf != NULL", pbuf != NULL);   /* Assert input parameters */
+    GSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
     pbuf->ref++;                                /* Increase reference count for pbuf */
     return gsmOK;
@@ -220,10 +220,10 @@ gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
     const uint8_t* d = data;
     size_t copy_len;
 
-    GSM_ASSERT("pbuf != NULL", pbuf != NULL);   /* Assert input parameters */
-    GSM_ASSERT("data != NULL", data != NULL);   /* Assert input parameters */
-    GSM_ASSERT("len", len);             /* Assert input parameters */
-    GSM_ASSERT("pbuf->tot_len >= len", pbuf->tot_len >= len);   /* Assert input parameters */
+    GSM_ASSERT("pbuf != NULL", pbuf != NULL);
+    GSM_ASSERT("data != NULL", data != NULL);
+    GSM_ASSERT("len", len);
+    GSM_ASSERT("pbuf->tot_len >= len", pbuf->tot_len >= len);
 
     /* Skip if necessary and check if we are in valid range */
     if (offset) {
@@ -269,7 +269,7 @@ gsm_pbuf_copy(gsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
     size_t tot, tc;
     uint8_t* d = data;
 
-    if (pbuf == NULL || data == NULL || !len || pbuf->tot_len < offset) {   /* Assert input parameters */
+    if (pbuf == NULL || data == NULL || !len || pbuf->tot_len < offset) {
         return 0;
     }
 

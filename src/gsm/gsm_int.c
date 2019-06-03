@@ -1494,7 +1494,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 #endif /* GSM_CFG_NETWORK */
 #if GSM_CFG_CONN
     } else if (CMD_IS_DEF(GSM_CMD_CIPSTART)) {
-        if (msg->i == 0 && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) { /* Was the current command status info? */
+        if (!msg->i && CMD_IS_CUR(GSM_CMD_CIPSTATUS)) { /* Was the current command status info? */
             if (*is_ok) {
                 SET_NEW_CMD(GSM_CMD_CIPSSL);    /* Set SSL */
             }

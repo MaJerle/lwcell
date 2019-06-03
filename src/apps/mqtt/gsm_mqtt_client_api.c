@@ -307,7 +307,7 @@ gsm_mqtt_conn_status_t
 gsm_mqtt_client_api_connect(gsm_mqtt_client_api_p client, const char* host,
                             gsm_port_t port, const gsm_mqtt_client_info_t* info) {
     if (client == NULL || host == NULL
-        || port == 0 || info == NULL) {
+        || !port || info == NULL) {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
             "[MQTT API] Invalid parameters in function\r\n");
         return GSM_MQTT_CONN_STATUS_TCP_FAILED;
@@ -493,7 +493,7 @@ gsm_mqtt_client_api_receive(gsm_mqtt_client_api_p client, gsm_mqtt_client_api_bu
     *p = NULL;
 
     /* Get new entry from mbox */
-    if (timeout == 0) {
+    if (!timeout) {
         if (!gsm_sys_mbox_getnow(&client->rcv_mbox, (void **)p)) {
             return gsmTIMEOUT;
         }

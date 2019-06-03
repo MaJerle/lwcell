@@ -72,9 +72,9 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
     GSM_MSG_VAR_DEFINE(msg);
 
     if (mode != GSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
-        GSM_ASSERT("format valid", format < GSM_OPERATOR_FORMAT_INVALID);   /* Assert input parameters */
+        GSM_ASSERT("format valid", format < GSM_OPERATOR_FORMAT_INVALID);
         if (format != GSM_OPERATOR_FORMAT_NUMBER) {
-            GSM_ASSERT("name != NULL", name != NULL);   /* Assert input parameters */
+            GSM_ASSERT("name != NULL", name != NULL);
         }
     }
 
