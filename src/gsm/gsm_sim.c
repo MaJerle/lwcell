@@ -64,7 +64,7 @@ gsm_sim_pin_enter(const char* pin,
     GSM_ASSERT("pin != NULL", pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
     GSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
@@ -90,7 +90,7 @@ gsm_sim_pin_add(const char* pin,
     GSM_ASSERT("pin != NULL", pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_ADD;
     GSM_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
 
@@ -115,7 +115,7 @@ gsm_sim_pin_change(const char* pin, const char* new_pin,
     GSM_ASSERT("new_pin != NULL", new_pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_CHANGE;
     GSM_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
     GSM_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
@@ -139,7 +139,7 @@ gsm_sim_pin_remove(const char* pin,
     GSM_ASSERT("pin != NULL", pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_REMOVE;
     GSM_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
 
@@ -164,7 +164,7 @@ gsm_sim_puk_enter(const char* puk, const char* new_pin,
     GSM_ASSERT("new_pin != NULL", new_pin != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
     GSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
     GSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;

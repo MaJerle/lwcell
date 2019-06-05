@@ -48,7 +48,7 @@ gsm_operator_get(gsm_operator_curr_t* curr,
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET;
     GSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
@@ -79,7 +79,7 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
     }
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_SET;
 
     GSM_MSG_VAR_REF(msg).msg.cops_set.mode = mode;
@@ -110,7 +110,7 @@ gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf,
     }
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET_OPT;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
     GSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;

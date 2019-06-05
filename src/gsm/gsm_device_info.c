@@ -52,7 +52,7 @@ gsm_device_get_manufacturer(char* manuf, size_t len, const gsm_api_cmd_evt_fn ev
     GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGMI_GET;
     GSM_MSG_VAR_REF(msg).msg.device_info.str = manuf;
     GSM_MSG_VAR_REF(msg).msg.device_info.len = len;
@@ -78,7 +78,7 @@ gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn,
     GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGMM_GET;
     GSM_MSG_VAR_REF(msg).msg.device_info.str = model;
     GSM_MSG_VAR_REF(msg).msg.device_info.len = len;
@@ -104,7 +104,7 @@ gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn,
     GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGMR_GET;
     GSM_MSG_VAR_REF(msg).msg.device_info.str = rev;
     GSM_MSG_VAR_REF(msg).msg.device_info.len = len;
@@ -130,7 +130,7 @@ gsm_device_get_serial_number(char* serial, size_t len, const gsm_api_cmd_evt_fn 
     GSM_ASSERT("len", len);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGSN_GET;
     GSM_MSG_VAR_REF(msg).msg.device_info.str = serial;
     GSM_MSG_VAR_REF(msg).msg.device_info.len = len;

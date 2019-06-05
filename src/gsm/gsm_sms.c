@@ -101,7 +101,7 @@ gsm_sms_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint3
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_SMS_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET_OPT;
 
@@ -147,7 +147,7 @@ gsm_sms_send(const char* num, const char* text,
     CHECK_READY();                              /* Check if ready */
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGS;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;
     GSM_MSG_VAR_REF(msg).msg.sms_send.num = num;
@@ -179,7 +179,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
     GSM_MEMSET(entry, 0x00, sizeof(*entry));    /* Reset data structure */
 
@@ -219,7 +219,7 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos,
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGD;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
         GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;    /* First get memory */
@@ -249,7 +249,7 @@ gsm_sms_delete_all(gsm_sms_status_t status,
     CHECK_READY();                              /* Check if ready */
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGDA;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;    /* By default format = 1 */
     GSM_MSG_VAR_REF(msg).msg.sms_delete_all.status = status;
@@ -283,7 +283,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
     GSM_ASSERT("mem", check_sms_mem(mem, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
     if (er != NULL) {
         *er = 0;
@@ -328,7 +328,7 @@ gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3,
     GSM_ASSERT("mem3", check_sms_mem(mem3, 1) == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPMS_SET;
 
     /* In case any of memories is set to current, read current status first from device */

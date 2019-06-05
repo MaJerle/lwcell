@@ -52,7 +52,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass,
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
 #if GSM_CFG_CONN
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS;
@@ -76,7 +76,7 @@ gsm_network_detach(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_DETACH;
 #if GSM_CFG_CONN
     /* GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS; */
@@ -97,7 +97,7 @@ gsm_network_check_status(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, c
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
@@ -148,7 +148,7 @@ gsm_network_rssi(int16_t* rssi,
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CSQ_GET;
     GSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;
 

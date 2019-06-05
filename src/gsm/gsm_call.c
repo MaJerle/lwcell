@@ -78,7 +78,7 @@ gsm_call_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CALL_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CLCC_SET;
 
@@ -121,7 +121,7 @@ gsm_call_start(const char* number,
     GSM_ASSERT("call_ready", check_ready() == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;
     GSM_MSG_VAR_REF(msg).msg.call_start.number = number;
 
@@ -142,7 +142,7 @@ gsm_call_answer(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
     CHECK_ENABLED();
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATA;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
@@ -162,7 +162,7 @@ gsm_call_hangup(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
     CHECK_ENABLED();
 
     GSM_MSG_VAR_ALLOC(msg);
-    GSM_MSG_VAR_SET_EVT(msg);
+    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATH;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
