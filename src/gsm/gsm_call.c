@@ -118,7 +118,7 @@ gsm_call_start(const char* number,
 
     GSM_ASSERT("number != NULL", number != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_ASSERT("call_ready", check_ready() == gsmOK);
+    GSM_ASSERT("check_ready == gsmOK", check_ready() == gsmOK);
 
     GSM_MSG_VAR_ALLOC(msg);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);

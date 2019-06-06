@@ -291,7 +291,7 @@ gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
 
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("host != NULL", host != NULL);
-    GSM_ASSERT("port", port);
+    GSM_ASSERT("port > 0", port > 0);
 
     /*
      * Start a new connection as client and:
@@ -335,7 +335,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
     /* Step 1 */
     if (nc->buff.buff != NULL) {                /* Is there a write buffer ready to accept more data? */
         len = GSM_MIN(nc->buff.len - nc->buff.ptr, btw);    /* Get number of bytes we can write to buffer */
-        if (len) {
+        if (len > 0) {
             GSM_MEMCPY(&nc->buff.buff[nc->buff.ptr], data, len);/* Copy memory to temporary write buffer */
             d += len;
             nc->buff.ptr += len;
@@ -368,7 +368,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
         btw -= sent;                            /* Decrease remaining data to send */
     }
 
-    if (!btw) {                                 /* Sent everything? */
+    if (btw == 0) {                             /* Sent everything? */
         return gsmOK;
     }
 
@@ -406,7 +406,7 @@ gsm_netconn_flush(gsm_netconn_p nc) {
      * flush them out to network
      */
     if (nc->buff.buff != NULL) {                /* Check remaining data */
-        if (nc->buff.ptr) {                     /* Do we have data in current buffer? */
+        if (nc->buff.ptr > 0) {                 /* Do we have data in current buffer? */
             gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1);  /* Send data */
         }
         gsm_mem_free(nc->buff.buff);            /* Free memory */

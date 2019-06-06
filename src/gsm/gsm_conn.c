@@ -116,7 +116,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 
     GSM_ASSERT("conn != NULL", conn != NULL);
     GSM_ASSERT("data != NULL", data != NULL);
-    GSM_ASSERT("btw", btw);
+    GSM_ASSERT("btw > 0", btw > 0);
 
     if (bw != NULL) {
         *bw = 0;
@@ -153,7 +153,7 @@ flush_buff(gsm_conn_p conn) {
          * If there is nothing to write or if write was not successful,
          * simply free the memory and stop execution
          */
-        if (conn->buff.ptr) {                   /* Anything to send at the moment? */
+        if (conn->buff.ptr > 0) {               /* Anything to send at the moment? */
             res = conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0);
         } else {
             res = gsmERR;
@@ -194,7 +194,7 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("host != NULL", host != NULL);
-    GSM_ASSERT("port", port);
+    GSM_ASSERT("port > 0", port > 0);
     GSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL);
 
     GSM_MSG_VAR_ALLOC(msg);
@@ -283,13 +283,13 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
 
     GSM_ASSERT("conn != NULL", conn != NULL);
     GSM_ASSERT("data != NULL", data != NULL);
-    GSM_ASSERT("btw", btw);
+    GSM_ASSERT("btw > 0", btw > 0);
 
     gsm_core_lock();
     if (conn->buff.buff != NULL) {              /* Check if memory available */
         size_t to_copy;
         to_copy = GSM_MIN(btw, conn->buff.len - conn->buff.ptr);
-        if (to_copy) {
+        if (to_copy > 0) {
             GSM_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, to_copy);
             conn->buff.ptr += to_copy;
             d += to_copy;
@@ -298,7 +298,7 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
     }
     gsm_core_unlock();
     res = flush_buff(conn);                     /* Flush currently written memory if exists */
-    if (btw) {                                  /* Check for remaining data */
+    if (btw > 0) {                              /* Check for remaining data */
         res = conn_send(conn, NULL, 0, d, btw, bw, 0, blocking);
     }
     return res;
@@ -325,7 +325,7 @@ gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf) {
     len = gsm_pbuf_length(pbuf, 1);             /* Get length of pbuf */
     if (conn->tcp_available_data > len) {
         conn->tcp_available_data -= len;        /* Decrease for available length */
-        if (conn->tcp_available_data) {
+        if (conn->tcp_available_data > 0) {
             /* Start new manual receive here... */
         }
     }
@@ -548,7 +548,7 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
         GSM_DEBUGW(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE, conn->buff.buff == NULL,
             "[CONN] Cannot allocate new write buffer\r\n");
     }
-    if (btw) {
+    if (btw > 0) {
         if (conn->buff.buff != NULL) {
             GSM_MEMCPY(conn->buff.buff, d, btw);    /* Copy data to memory */
             conn->buff.ptr = btw;

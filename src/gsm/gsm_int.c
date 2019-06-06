@@ -537,7 +537,7 @@ gsmi_tcpip_process_data_sent(uint8_t sent) {
         gsm.msg->msg.conn_send.sent_all += gsm.msg->msg.conn_send.sent;
         gsm.msg->msg.conn_send.btw -= gsm.msg->msg.conn_send.sent;
         gsm.msg->msg.conn_send.ptr += gsm.msg->msg.conn_send.sent;
-        if (gsm.msg->msg.conn_send.bw) {
+        if (gsm.msg->msg.conn_send.bw != NULL) {
             *gsm.msg->msg.conn_send.bw += gsm.msg->msg.conn_send.sent;
         }
         gsm.msg->msg.conn_send.tries = 0;
@@ -547,7 +547,7 @@ gsmi_tcpip_process_data_sent(uint8_t sent) {
             return 1;                           /* Return 1 and indicate error */
         }
     }
-    if (gsm.msg->msg.conn_send.btw) {           /* Do we still have data to send? */
+    if (gsm.msg->msg.conn_send.btw > 0) {       /* Do we still have data to send? */
         if (gsmi_tcpip_process_send_data() != gsmOK) {  /* Check if we can continue */
             return 1;                           /* Finish at this point */
         }
@@ -964,7 +964,7 @@ gsmi_process_buffer(void) {
          * we can process directly as memory
          */
         len = gsm_buff_get_linear_block_read_length(&gsm.buff);
-        if (len) {
+        if (len > 0) {
             /*
              * Get memory address of first element
              * in linear block of data to process
@@ -1023,7 +1023,7 @@ gsmi_process(const void* data, size_t data_len) {
             len = GSM_MIN(d_len, GSM_MIN(gsm.m.ipd.rem_len, gsm.m.ipd.buff != NULL ? (gsm.m.ipd.buff->len - gsm.m.ipd.buff_ptr) : gsm.m.ipd.rem_len));
             GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
                 "[IPD] New length to read: %d bytes\r\n", (int)len);
-            if (len) {
+            if (len > 0) {
                 if (gsm.m.ipd.buff != NULL) {   /* Is buffer valid? */
                     GSM_MEMCPY(&gsm.m.ipd.buff->payload[gsm.m.ipd.buff_ptr], d, len);
                     GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
@@ -1039,7 +1039,7 @@ gsmi_process(const void* data, size_t data_len) {
             }
 
             /* Did we reach end of buffer or no more data? */
-            if (!gsm.m.ipd.rem_len || (gsm.m.ipd.buff != NULL && gsm.m.ipd.buff_ptr == gsm.m.ipd.buff->len)) {
+            if (gsm.m.ipd.rem_len == 0 || (gsm.m.ipd.buff != NULL && gsm.m.ipd.buff_ptr == gsm.m.ipd.buff->len)) {
                 gsmr_t res = gsmOK;
 
                 /* Call user callback function with received data */
@@ -1072,7 +1072,7 @@ gsmi_process(const void* data, size_t data_len) {
                      *  - Previous one was successful and more data to read and
                      *  - Connection is not in closing state
                      */
-                    if (gsm.m.ipd.buff != NULL && gsm.m.ipd.rem_len && !gsm.m.ipd.conn->status.f.in_closing) {
+                    if (gsm.m.ipd.buff != NULL && gsm.m.ipd.rem_len > 0 && !gsm.m.ipd.conn->status.f.in_closing) {
                         size_t new_len = GSM_MIN(gsm.m.ipd.rem_len, GSM_CFG_IPD_MAX_BUFF_SIZE); /* Calculate new buffer length */
 
                         GSM_DEBUGF(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE,
@@ -1082,10 +1082,10 @@ gsmi_process(const void* data, size_t data_len) {
                         GSM_DEBUGW(GSM_CFG_DBG_IPD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING,
                             gsm.m.ipd.buff == NULL, "[IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
                     } else {
-                        gsm.m.ipd.buff = NULL;    /* Reset it */
+                        gsm.m.ipd.buff = NULL;  /* Reset it */
                     }
                 }
-                if (!gsm.m.ipd.rem_len) {       /* Check if we read everything */
+                if (gsm.m.ipd.rem_len == 0) {   /* Check if we read everything */
                     gsm.m.ipd.buff = NULL;      /* Reset buffer pointer */
                     gsm.m.ipd.read = 0;         /* Stop reading data */
                 }
@@ -1975,7 +1975,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
         case GSM_CMD_CPBW_SET: {                /* Write/Delete new/old entry */
             AT_PORT_SEND_BEGIN();
             AT_PORT_SEND_CONST_STR("+CPBW=");
-            if (msg->msg.pb_write.pos) {        /* Write number if more than 0 */
+            if (msg->msg.pb_write.pos > 0) {    /* Write number if more than 0 */
                 gsmi_send_number(GSM_U32(msg->msg.pb_write.pos), 0, 0);
             }
             if (!msg->msg.pb_write.del) {

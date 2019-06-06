@@ -152,7 +152,7 @@ mqtt_evt_fn_default(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
 static uint16_t
 create_packet_id(gsm_mqtt_client_p client) {
     client->last_packet_id++;
-    if (!client->last_packet_id) {
+    if (client->last_packet_id == 0) {
         client->last_packet_id = 1;
     }
     return client->last_packet_id;
@@ -400,7 +400,7 @@ send_data(gsm_mqtt_client_p client) {
     }
 
     len = gsm_buff_get_linear_block_read_length(&client->tx_buff);  /* Get length of linear memory */
-    if (len) {                                  /* Anything to send? */
+    if (len > 0) {                                  /* Anything to send? */
         gsmr_t res;
         addr = gsm_buff_get_linear_block_read_address(&client->tx_buff);/* Get address of linear memory */
         if ((res = gsm_conn_send(client->conn, addr, len, NULL, 0)) == gsmOK) {
@@ -532,7 +532,7 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
             data = topic + topic_len;           /* Get data pointer */
 
             /* Packet ID is only available if quality of service is not 0 */
-            if (qos) {
+            if (qos > 0) {
                 pkt_id = (client->rx_buff[2 + topic_len] << 8) | client->rx_buff[2 + topic_len + 1];/* Get packet ID */
                 data += 2;                      /* Increase pointer for 2 bytes */
             } else {
@@ -551,7 +551,7 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
              * Rgsmonse type depends on QoS and is
              * either PUBACK or PUBREC
              */
-            if (qos) {                          /* We have to reply on QoS > 0 */
+            if (qos > 0) {                      /* We have to reply on QoS > 0 */
                 mqtt_msg_type_t rgsm_msg_type = qos == 1 ? MQTT_MSG_TYPE_PUBACK : MQTT_MSG_TYPE_PUBREC;
                 GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending publish rgsm: %s on pkt_id: %d\r\n", \
                             mqtt_msg_type_to_str(rgsm_msg_type), (int)pkt_id);
@@ -679,7 +679,7 @@ mqtt_parse_incoming(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
                         GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
                             "[MQTT] Remaining length received: %d bytes\r\n", (int)client->msg_rem_len);
 
-                        if (client->msg_rem_len) {
+                        if (client->msg_rem_len > 0) {
                             client->parser_state = MQTT_PARSER_STATE_READ_REM;
                         } else {
                             mqtt_process_incoming_message(client);
@@ -1091,7 +1091,7 @@ gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t p
 
     GSM_ASSERT("client != NULL", client != NULL);   /* t input parameters */
     GSM_ASSERT("host != NULL", host != NULL);
-    GSM_ASSERT("port", port);
+    GSM_ASSERT("port > 0", port > 0);
     GSM_ASSERT("info != NULL", info != NULL);
 
     gsm_core_lock();

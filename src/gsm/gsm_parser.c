@@ -134,7 +134,7 @@ gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
         p++;
     }
     i = 0;
-    if (dst_len) {
+    if (dst_len > 0) {
         dst_len--;
     }
     while (*p) {
@@ -475,7 +475,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
         return 1;
     }
 
-    if (!u.f.ch_prev) {                         /* Check if this is first character */
+    if (u.f.ch_prev == 0) {                     /* Check if this is first character */
         if (ch == ' ') {                        /* Skip leading spaces */
             return 1;
         } else if (ch == ',') {                 /* If first character is comma, no operators available */

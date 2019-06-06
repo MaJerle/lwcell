@@ -436,7 +436,7 @@ gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, con
     GSM_ASSERT("client != NULL", client != NULL);
     GSM_ASSERT("topic != NULL", topic != NULL);
     GSM_ASSERT("data != NULL", data != NULL);
-    GSM_ASSERT("btw", btw);
+    GSM_ASSERT("btw > 0", btw > 0);
 
     gsm_sys_mutex_lock(&client->mutex);
     gsm_sys_sem_wait(&client->sync_sem, 0);
@@ -493,7 +493,7 @@ gsm_mqtt_client_api_receive(gsm_mqtt_client_api_p client, gsm_mqtt_client_api_bu
     *p = NULL;
 
     /* Get new entry from mbox */
-    if (!timeout) {
+    if (timeout == 0) {
         if (!gsm_sys_mbox_getnow(&client->rcv_mbox, (void **)p)) {
             return gsmTIMEOUT;
         }

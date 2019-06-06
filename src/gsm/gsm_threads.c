@@ -80,7 +80,7 @@ gsm_thread_produce(void* const arg) {
 
         /* For reset message, we can have delay! */
         if (res == gsmOK && msg->cmd_def == GSM_CMD_RESET) {
-            if (msg->msg.reset.delay) {
+            if (msg->msg.reset.delay > 0) {
                 gsm_delay(msg->msg.reset.delay);
             }
             gsmi_reset_everything(1);           /* Reset stack before trying to reset */

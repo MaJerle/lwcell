@@ -158,7 +158,7 @@ gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout) {
     DWORD ret;
     uint32_t tick = osKernelSysTick();          /* Get start tick time */
 	
-    if (!timeout) {
+    if (timeout == 0) {
         ret = WaitForSingleObject(*p, INFINITE);
         return 1;
     } else {
@@ -261,7 +261,7 @@ gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
          * Timeout = 0 means unlimited time
          * Wait either unlimited time or for specific timeout
          */
-        if (!timeout) {
+        if (timeout == 0) {
             gsm_sys_sem_wait(&mbox->sem_not_empty, 0);
         } else {
             spent_time = gsm_sys_sem_wait(&mbox->sem_not_empty, timeout);

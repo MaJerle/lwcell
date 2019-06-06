@@ -310,7 +310,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
 uint8_t
 gsm_delay(uint32_t ms) {
     gsm_sys_sem_t sem;
-    if (!ms) {
+    if (ms == 0) {
         return 1;
     }
     if (gsm_sys_sem_create(&sem, 0)) {
