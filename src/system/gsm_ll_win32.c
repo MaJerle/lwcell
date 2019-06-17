@@ -193,6 +193,7 @@ uart_thread(void* param) {
  */
 gsmr_t
 gsm_ll_init(gsm_ll_t* ll) {
+#if !GSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
 
@@ -207,6 +208,7 @@ gsm_ll_init(gsm_ll_t* ll) {
     if (!initialized) {
         gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
     }
+#endif /* !GSM_CFG_MEM_CUSTOM */
 
     /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {

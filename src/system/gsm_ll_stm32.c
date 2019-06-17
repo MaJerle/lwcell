@@ -331,18 +331,22 @@ send_data(const void* data, size_t len) {
  */
 gsmr_t
 gsm_ll_init(gsm_ll_t* ll) {
+#if !GSM_CFG_MEM_CUSTOM
     static uint8_t memory[GSM_MEM_SIZE];
     gsm_mem_region_t mem_regions[] = {
         { memory, sizeof(memory) }
     };
 
     if (!initialized) {
+        gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations */
+    }
+#endif /* !GSM_CFG_MEM_CUSTOM */
+
+    if (!initialized) {
         ll->send_fn = send_data;                /* Set callback function to send data */
 #if defined(GSM_RESET_PIN)
         ll->reset_fn = reset_device;            /* Set callback for hardware reset */
 #endif /* defined(GSM_RESET_PIN) */
-
-        gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations */
     }
 
     configure_uart(ll->uart.baudrate);          /* Initialize UART for communication */
