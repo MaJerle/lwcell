@@ -83,7 +83,7 @@ extern "C" {
  */
 
 #if GSM_CFG_DBG && !defined(GSM_CFG_DBG_OUT)
-#warning "ESP_CFG_DBG_OUT is not defined but debugging is enabled!"
+#warning "GSM_CFG_DBG_OUT is not defined but debugging is enabled!"
 #endif
 
 #if (GSM_CFG_DBG && defined(GSM_CFG_DBG_OUT)) || __DOXYGEN__
