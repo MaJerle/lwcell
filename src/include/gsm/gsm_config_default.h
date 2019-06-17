@@ -64,6 +64,24 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` custom memory management functions
+ *
+ * When set to `1`, \ref GSM_MEM block must be provided manually.
+ * This includes implementation of functions \ref gsm_mem_malloc,
+ * \ref gsm_mem_calloc, \ref gsm_mem_realloc and \ref gsm_mem_free
+ *
+ * \note            Function declaration follows standard C functions `malloc, calloc, realloc, free`.
+ *                  Declaration is available in `gsm/gsm_mem.h` file. Include this file to final
+ *                  implementation file
+ *
+ * \note            When implementing custom memory allocation, it is necessary
+ *                  to take care of multiple threads accessing same resource for custom allocator
+ */
+#ifndef GSM_CFG_MEM_CUSTOM
+#define GSM_CFG_MEM_CUSTOM                  0
+#endif
+
+/**
  * \brief           Memory alignment for dynamic memory allocations
  *
  * \note            Some CPUs can work faster if memory is aligned, usually to 4 or 8 bytes.

@@ -33,6 +33,8 @@
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_mem.h"
 
+#if !GSM_CFG_MEM_CUSTOM || __DOXYGEN__
+
 #if !__DOXYGEN__
 typedef struct mem_block {
     struct mem_block* next;                     /*!< Pointer to next free block */
@@ -281,7 +283,7 @@ mem_alloc(size_t size) {
 
 /**
  * \brief           Free memory
- * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_alloc,
+ * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_malloc,
  *                      \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
  */
 static void
@@ -342,7 +344,7 @@ mem_calloc(size_t num, size_t size) {
  * \brief           Reallocate memory to specific size
  * \note            After new memory is allocated, content of old one is copied to new memory
  * \param[in]       ptr: Pointer to current allocated memory to resize, returned using 
- *                      \ref gsm_mem_alloc, \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
+ *                      \ref gsm_mem_malloc, \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
  * \param[in]       size: Number of bytes to allocate on new memory
  * \return          Memory address on success, `NULL` otherwise
  */
@@ -366,39 +368,13 @@ mem_realloc(void* ptr, size_t size) {
 }
 
 /**
- * \brief           Get total free size available in memory to allocate
- * \retval          Number of bytes available to allocate
- */
-static size_t
-mem_getfree(void) {
-    return mem_available_bytes;                 /* Return free bytes available for allocation */
-}
-
-/**
- * \brief           Get total currently allocated memory in regions
- * \retval          Number of bytes in use
- */
-static size_t
-mem_getfull(void) {
-    return mem_total_size - mem_available_bytes;/* Return remaining bytes */
-}
-
-/**
- * \brief           Get minimal available number of bytes ever for allocation
- * \retval          Number of minimal available number of bytes ever
- */
-static size_t
-mem_getminfree(void) {
-    return mem_min_available_bytes;             /* Return minimal bytes ever available */
-}
-
-/**
  * \brief           Allocate memory of specific size
  * \param[in]       size: Number of bytes to allocate
  * \return          Memory address on success, `NULL` otherwise
+ * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void *
-gsm_mem_alloc(size_t size) {
+gsm_mem_malloc(size_t size) {
     void* ptr;
     gsm_core_lock();
     ptr = mem_calloc(1, size);                  /* Allocate memory and return pointer */
@@ -413,10 +389,11 @@ gsm_mem_alloc(size_t size) {
 /**
  * \brief           Reallocate memory to specific size
  * \note            After new memory is allocated, content of old one is copied to new memory
- * \param[in]       ptr: Pointer to current allocated memory to resize, returned using \ref gsm_mem_alloc,
+ * \param[in]       ptr: Pointer to current allocated memory to resize, returned using \ref gsm_mem_malloc,
  *                      \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
  * \param[in]       size: Number of bytes to allocate on new memory
  * \return          Memory address on success, `NULL` otherwise
+ * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void *
 gsm_mem_realloc(void* ptr, size_t size) {
@@ -435,6 +412,7 @@ gsm_mem_realloc(void* ptr, size_t size) {
  * \param[in]       num: Number of elements to allocate
  * \param[in]       size: Size of each element
  * \return          Memory address on success, `NULL` otherwise
+ * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void *
 gsm_mem_calloc(size_t num, size_t size) {
@@ -451,8 +429,9 @@ gsm_mem_calloc(size_t num, size_t size) {
 
 /**
  * \brief           Free memory
- * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_alloc,
+ * \param[in]       ptr: Pointer to memory previously returned using \ref gsm_mem_malloc,
  *                      \ref gsm_mem_calloc or \ref gsm_mem_realloc functions
+ * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void
 gsm_mem_free(void* ptr) {
@@ -468,38 +447,12 @@ gsm_mem_free(void* ptr) {
 }
 
 /**
- * \brief           Get total free size available in memory to allocate
- * \retval          Number of bytes available to allocate
- */
-size_t
-gsm_mem_getfree(void) {
-    return mem_getfree();                       /* Get free bytes available to allocate */
-}
-
-/**
- * \brief           Get total currently allocated memory in regions
- * \retval          Number of bytes in use
- */
-size_t
-gsm_mem_getfull(void) {
-    return mem_getfull();                       /* Get number of bytes allocated already */
-}
-
-/**
- * \brief           Get minimal available number of bytes ever for allocation
- * \retval          Number of minimal available number of bytes ever
- */
-size_t
-gsm_mem_getminfree(void) {
-    return mem_getminfree();                    /* Get minimal number of bytes ever available for allocation */
-}
-
-/**
  * \brief           Assign memory region(s) for allocation functions
  * \note            You can allocate multiple regions by assigning start address and region size in units of bytes
  * \param[in]       regions: Pointer to list of regions to use for allocations
  * \param[in]       len: Number of regions to use
  * \return          `1` on success, `0` otherwise
+ * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1`
  */
 uint8_t
 gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t len) {
@@ -507,3 +460,5 @@ gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t len) {
     ret = mem_assignmem(regions, len);          /* Assign memory */
     return ret;
 }
+
+#endif /* !GSM_CFG_MEM_CUSTOM || __DOXYGEN__ */

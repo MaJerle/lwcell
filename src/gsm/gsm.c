@@ -254,7 +254,7 @@ gsm_evt_register(gsm_evt_fn fn) {
     }
 
     if (res == gsmOK) {
-        newFunc = gsm_mem_alloc(sizeof(*newFunc));  /* Get memory for new function */
+        newFunc = gsm_mem_malloc(sizeof(*newFunc));
         if (newFunc != NULL) {
             GSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));/* Reset memory */
             newFunc->fn = fn;                   /* Set function pointer */

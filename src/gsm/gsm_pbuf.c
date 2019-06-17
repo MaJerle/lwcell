@@ -70,7 +70,7 @@ gsm_pbuf_p
 gsm_pbuf_new(size_t len) {
     gsm_pbuf_p p;
 
-    p = gsm_mem_alloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);  /* Allocate memory for packet buffer */
+    p = gsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
     GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p == NULL,
         "[PBUF] Failed to allocate %d bytes\r\n", (int)len);
     GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p != NULL,
