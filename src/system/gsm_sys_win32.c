@@ -32,7 +32,7 @@
  */
 #include "system/gsm_sys.h"
 #include <string.h>
-#include "stdlib.h"
+#include <stdlib.h>
 
 #if !__DOXYGEN__
 
