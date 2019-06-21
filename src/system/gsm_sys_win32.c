@@ -31,7 +31,7 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
 #include "system/gsm_sys.h"
-#include "string.h"
+#include <string.h>
 #include "stdlib.h"
 
 #if !__DOXYGEN__

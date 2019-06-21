@@ -32,7 +32,7 @@
  */
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_utils.h"
-#include "stdint.h"
+#include <stdint.h>
 
 /**
  * \brief           Convert `unsigned 32-bit` number to string
