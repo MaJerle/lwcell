@@ -153,10 +153,12 @@ gsm_thread_produce(void* const arg) {
             msg->res = res;                     /* Save response */
         }
 
+#if GSM_CFG_USE_API_FUNC_EVT
         /* Send event function to user */
         if (msg->evt_fn != NULL) {
             msg->evt_fn(msg->res, msg->evt_arg);/* Send event with user argument */
         }
+#endif /* GSM_CFG_USE_API_FUNC_EVT */
 
         /*
          * In case message is blocking,

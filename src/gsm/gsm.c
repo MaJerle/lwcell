@@ -31,7 +31,6 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
 #include "gsm/gsm_private.h"
-#include "gsm/gsm.h"
 #include "gsm/gsm_mem.h"
 #include "gsm/gsm_threads.h"
 #include "system/gsm_ll.h"

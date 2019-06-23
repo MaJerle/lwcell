@@ -334,8 +334,10 @@ typedef struct gsm_msg {
     gsmr_t          res;                        /*!< Result of message operation */
     gsmr_t          (*fn)(struct gsm_msg *);    /*!< Processing callback function to process packet */
 
+#if GSM_CFG_USE_API_FUNC_EVT
     gsm_api_cmd_evt_fn evt_fn;                  /*!< Command callback API function */
     void*           evt_arg;                    /*!< Command callback API callback parameter */
+#endif /* GSM_CFG_USE_API_FUNC_EVT */
     
     union {
         struct {
@@ -730,12 +732,8 @@ extern const size_t         gsm_dev_model_map_size;
     if ((name) == NULL) {                           \
         return gsmERRMEM;                           \
     }                                               \
-    GSM_MEMSET(name, 0x00, sizeof(*(name)));        \
-    (name)->is_blocking = GSM_U8(blocking);         \
-} while (0)
-#define GSM_MSG_VAR_SET_EVT(name, evt_fn, evt_arg)  do {\
-    (name)->evt_fn = (evt_fn);                      \
-    (name)->evt_arg = (evt_arg);                    \
+    GSM_MEMSET((name), 0x00, sizeof(*(name)));      \
+    (name)->is_blocking = GSM_U8((blocking) > 0);   \
 } while (0)
 #define GSM_MSG_VAR_REF(name)                   (*(name))
 #define GSM_MSG_VAR_FREE(name)                  do {\
@@ -743,6 +741,14 @@ extern const size_t         gsm_dev_model_map_size;
     gsm_mem_free(name);                             \
     (name) = NULL;                                  \
 } while (0)
+#if GSM_CFG_USE_API_FUNC_EVT
+#define GSM_MSG_VAR_SET_EVT(name, evt_fn, evt_arg)  do {\
+    (name)->evt_fn = (evt_fn);                      \
+    (name)->evt_arg = (evt_arg);                    \
+} while (0)
+#else /* GSM_CFG_USE_API_FUNC_EVT */
+#define GSM_MSG_VAR_SET_EVT(name, evt_fn, evt_arg) do { GSM_UNUSED(evt_fn); GSM_UNUSED(evt_arg); } while (0)
+#endif /* !GSM_CFG_USE_API_FUNC_EVT */
 
 #define GSM_CHARISNUM(x)                    ((x) >= '0' && (x) <= '9')
 #define GSM_CHARTONUM(x)                    ((x) - '0')
