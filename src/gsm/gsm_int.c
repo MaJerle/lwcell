@@ -212,7 +212,7 @@ gsmr_t
 gsmi_get_sim_info(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_SIM_PROCESS_BASIC_CMDS;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CNUM;
 

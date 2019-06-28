@@ -51,7 +51,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
 #if GSM_CFG_CONN
@@ -75,7 +75,7 @@ gsmr_t
 gsm_network_detach(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_DETACH;
 #if GSM_CFG_CONN
@@ -96,7 +96,7 @@ gsmr_t
 gsm_network_check_status(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
 
@@ -147,7 +147,7 @@ gsm_network_rssi(int16_t* rssi,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CSQ_GET;
     GSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;

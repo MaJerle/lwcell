@@ -188,7 +188,7 @@ gsm_reset_with_delay(uint32_t delay,
                         const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
     GSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
@@ -335,7 +335,7 @@ gsm_set_func_mode(uint8_t mode,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CFUN_SET;
     GSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;

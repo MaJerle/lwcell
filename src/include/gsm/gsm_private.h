@@ -725,7 +725,7 @@ extern const size_t         gsm_dev_model_map_size;
 #define CRLF_LEN            2
 
 #define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
-#define GSM_MSG_VAR_ALLOC(name)                 do {\
+#define GSM_MSG_VAR_ALLOC(name, blocking)           do {\
     (name) = gsm_mem_malloc(sizeof(*(name)));       \
     GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
     GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", sizeof(*(name))); \

@@ -124,7 +124,7 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSEND;
 
     GSM_MSG_VAR_REF(msg).msg.conn_send.conn = conn;
@@ -197,7 +197,7 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
     GSM_ASSERT("port > 0", port > 0);
     GSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTART;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS;
     GSM_MSG_VAR_REF(msg).msg.conn_start.num = GSM_CFG_MAX_CONNS;/* Set maximal value as invalid number */
@@ -227,7 +227,7 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
 
     /* Proceed with close event at this point! */
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPCLOSE;
     GSM_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
     GSM_MSG_VAR_REF(msg).msg.conn_close.val_id = gsmi_conn_get_val_id(conn);
@@ -375,7 +375,7 @@ gsmr_t
 gsm_get_conns_status(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
 
     return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);

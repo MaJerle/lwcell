@@ -82,7 +82,7 @@ gsmr_t
 gsm_pb_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_PHONEBOOK_ENABLE;
     GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPBS_GET_OPT;
@@ -129,7 +129,7 @@ gsm_pb_add(gsm_mem_t mem, const char* name, const char* num, gsm_number_type_t t
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("check_mem() == gsmOK", check_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
@@ -185,7 +185,7 @@ gsm_pb_edit(gsm_mem_t mem, size_t pos, const char* name, const char* num, gsm_nu
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
@@ -221,7 +221,7 @@ gsm_pb_delete(gsm_mem_t mem, size_t pos,
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("check_mem() == gsmOK", check_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPBW_SET;
     if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
@@ -260,7 +260,7 @@ gsm_pb_list(gsm_mem_t mem, size_t start_index, gsm_pb_entry_t* entries, size_t e
     CHECK_ENABLED();
     GSM_ASSERT("check_mem() == gsmOK", check_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
     if (er != NULL) {
@@ -307,7 +307,7 @@ gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* entries, size_t
     CHECK_ENABLED();                            /* Check if enabled */
     GSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg);
+    GSM_MSG_VAR_ALLOC(msg, blocking);
     GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
     if (er != NULL) {
