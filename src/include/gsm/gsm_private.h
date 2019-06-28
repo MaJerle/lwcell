@@ -738,6 +738,10 @@ extern const size_t         gsm_dev_model_map_size;
 #define GSM_MSG_VAR_REF(name)                   (*(name))
 #define GSM_MSG_VAR_FREE(name)                  do {\
     GSM_DEBUGF(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (name)); \
+    if (gsm_sys_sem_isvalid((name)->sem)) {         \
+        gsm_sys_sem_delete((name)->sem);            \
+        gsm_sys_sem_invalid((name)->sem);           \
+    }                                               \
     gsm_mem_free(name);                             \
     (name) = NULL;                                  \
 } while (0)

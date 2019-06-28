@@ -2087,7 +2087,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
         res = gsmERRBLOCKING;                   /* Blocking mode not allowed */
     }
     /* Check if device present */
-    if (!gsm.status.f.dev_present) {
+    if (res == gsmOK && !gsm.status.f.dev_present) {
         res = gsmERRNODEVICE;                   /* No device connected */
     }
     gsm_core_unlock();
@@ -2108,24 +2108,20 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     msg->block_time = max_block_time;           /* Set blocking status if necessary */
     msg->fn = process_fn;                       /* Save processing function to be called as callback */
     if (msg->is_blocking) {
-        gsm_sys_mbox_put(&gsm.mbox_producer, msg);  /* Write message to producer queue and wait until written */
+        gsm_sys_mbox_put(&gsm.mbox_producer, msg);  /* Write message to producer queue and wait forever */
     } else {
         if (!gsm_sys_mbox_putnow(&gsm.mbox_producer, msg)) {    /* Write message to producer queue immediatelly */
             GSM_MSG_VAR_FREE(msg);              /* Release message */
-            res = gsmERR;
+            return gsmERRMEM;
         }
     }
     if (res == gsmOK && msg->is_blocking) {     /* In case we have blocking request */
         uint32_t time;
         time = gsm_sys_sem_wait(&msg->sem, 0);  /* Wait forever for semaphore */
-        if (GSM_SYS_TIMEOUT == time) {          /* If semaphore was not accessed in given time */
-            res = gsmERR;                       /* Semaphore not released in time */
+        if (time == GSM_SYS_TIMEOUT) {          /* If semaphore was not accessed in given time */
+            res = gsmTIMEOUT;                   /* Semaphore not released in time */
         } else {
             res = msg->res;                     /* Set response status from message response */
-        }
-        if (gsm_sys_sem_isvalid(&msg->sem)) {   /* In case we have valid semaphore */
-            gsm_sys_sem_delete(&msg->sem);      /* Delete semaphore object */
-            gsm_sys_sem_invalid(&msg->sem);     /* Invalidate semaphore object */
         }
         GSM_MSG_VAR_FREE(msg);                  /* Release message */
     }
