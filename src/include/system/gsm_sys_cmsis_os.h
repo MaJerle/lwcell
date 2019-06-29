@@ -46,14 +46,14 @@ extern "C" {
 #if GSM_CFG_OS && !__DOXYGEN__
 #include "cmsis_os.h"
 
-typedef osMutexId           gsm_sys_mutex_t;
-typedef osSemaphoreId       gsm_sys_sem_t;
-typedef osMessageQId        gsm_sys_mbox_t;
-typedef osThreadId          gsm_sys_thread_t;
-typedef osPriority          gsm_sys_thread_prio_t;
-#define GSM_SYS_MBOX_NULL           (osMessageQId)0
-#define GSM_SYS_SEM_NULL            (osSemaphoreId)0
-#define GSM_SYS_MUTEX_NULL          (osMutexId)0
+typedef osMutexId                   gsm_sys_mutex_t;
+typedef osSemaphoreId               gsm_sys_sem_t;
+typedef osMessageQId                gsm_sys_mbox_t;
+typedef osThreadId                  gsm_sys_thread_t;
+typedef osPriority                  gsm_sys_thread_prio_t;
+#define GSM_SYS_MBOX_NULL           (gsm_sys_mbox_t)0
+#define GSM_SYS_SEM_NULL            (gsm_sys_sem_t)0
+#define GSM_SYS_MUTEX_NULL          (gsm_sys_mutex_t)0
 #define GSM_SYS_TIMEOUT             ((uint32_t)osWaitForever)
 #define GSM_SYS_THREAD_PRIO         (osPriorityNormal)
 #define GSM_SYS_THREAD_SS           (512)
