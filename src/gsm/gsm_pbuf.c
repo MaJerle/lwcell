@@ -110,7 +110,7 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
             GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
                 "[PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
             pn = p->next;                       /* Save next entry */
-            gsm_mem_free(p);                    /* Free memory for pbuf */
+            gsm_mem_free_s(&p);                 /* Free memory for pbuf */
             p = pn;                             /* Restore with next entry */
             cnt++;                              /* Increase number of freed pbufs */
         } else {

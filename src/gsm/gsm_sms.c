@@ -141,8 +141,8 @@ gsm_sms_send(const char* num, const char* text,
                 const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("num != NULL", num != NULL);
-    GSM_ASSERT("text != NULL && strlen(text) <= 160", text != NULL && strlen(text) <= 160);
+    GSM_ASSERT("num != NULL && num[0] > 0", num != NULL && num[0] > 0);
+    GSM_ASSERT("text != NULL && text[0] > 0 && strlen(text) <= 160", text != NULL && text[0] > 0 && strlen(text) <= 160);
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
 

@@ -287,8 +287,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
-            gsm_mem_free(func);
-            func = NULL;
+            gsm_mem_free_s(&func);
             break;
         }
     }

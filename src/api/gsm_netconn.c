@@ -239,8 +239,7 @@ free_ret:
         gsm_sys_mbox_invalid(&a->mbox_receive);
     }
     if (a != NULL) {
-        gsm_mem_free(a);
-        a = NULL;
+        gsm_mem_free_s(&a);
     }
     return NULL;
 }
@@ -273,8 +272,7 @@ gsm_netconn_delete(gsm_netconn_p nc) {
     }
     gsm_core_unlock();
 
-    gsm_mem_free(nc);                           /* Free the memory */
-    nc = NULL;
+    gsm_mem_free_s(&nc);
     return gsmOK;
 }
 
@@ -346,8 +344,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
         if (nc->buff.ptr == nc->buff.len) {
             res = gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
 
-            gsm_mem_free(nc->buff.buff);        /* Free memory */
-            nc->buff.buff = NULL;               /* Invalidate buffer */
+            gsm_mem_free_s(&nc->buff.buff);
             if (res != gsmOK) {
                 return res;
             }
@@ -409,8 +406,7 @@ gsm_netconn_flush(gsm_netconn_p nc) {
         if (nc->buff.ptr > 0) {                 /* Do we have data in current buffer? */
             gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1);  /* Send data */
         }
-        gsm_mem_free(nc->buff.buff);            /* Free memory */
-        nc->buff.buff = NULL;                   /* Invalid memory */
+        gsm_mem_free_s(&nc->buff.buff);
     }
     return gsmOK;
 }

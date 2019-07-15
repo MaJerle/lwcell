@@ -116,8 +116,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
         if ((m)->msg.conn_send.data != NULL) {      \
             GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,   \
                 "[CONN] Free write buffer fau: %p\r\n", (void *)(m)->msg.conn_send.data);   \
-            gsm_mem_free((void *)(m)->msg.conn_send.data);  \
-            (m)->msg.conn_send.data = NULL;         \
+            gsm_mem_free_s((void **)&((m)->msg.conn_send.data)); \
         }                                           \
     }                                               \
 } while (0)
@@ -638,8 +637,7 @@ gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced) {
     if (conn->buff.buff != NULL) {
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
             "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
-        gsm_mem_free(conn->buff.buff);  /* Free the memory */
-        conn->buff.buff = NULL;
+        gsm_mem_free_s(&conn->buff.buff);
     }
 
     /* Send event */
