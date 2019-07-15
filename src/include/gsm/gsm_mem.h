@@ -64,6 +64,7 @@ void*   gsm_mem_malloc(size_t size);
 void*   gsm_mem_realloc(void* ptr, size_t size);
 void*   gsm_mem_calloc(size_t num, size_t size);
 void    gsm_mem_free(void* ptr);
+uint8_t gsm_mem_free_s(void** ptr);
 
 
 /**

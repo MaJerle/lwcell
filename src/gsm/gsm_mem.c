@@ -440,3 +440,18 @@ gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t len) {
 }
 
 #endif /* !GSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
+
+/**
+ * \brief           Free memory in safe way by invalidating pointer after freeing
+ * \param[in]       ptr: Pointer to pointer to allocated memory to free
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+gsm_mem_free_s(void** ptr) {
+    if (ptr != NULL && *ptr != NULL) {
+        gsm_mem_free(*ptr);
+        *ptr = NULL;
+        return 1;
+    }
+    return 0;
+}
