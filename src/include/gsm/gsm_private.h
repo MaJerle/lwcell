@@ -742,7 +742,7 @@ extern const size_t         gsm_dev_model_map_size;
         gsm_sys_sem_delete(&((name)->sem));         \
         gsm_sys_sem_invalid(&((name)->sem));        \
     }                                               \
-    gsm_mem_free_s(&(name));                        \
+    gsm_mem_free_s((void **)&(name));               \
 } while (0)
 #if GSM_CFG_USE_API_FUNC_EVT
 #define GSM_MSG_VAR_SET_EVT(name, evt_fn, evt_arg)  do {\

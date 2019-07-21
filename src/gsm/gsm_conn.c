@@ -161,7 +161,7 @@ flush_buff(gsm_conn_p conn) {
         if (res != gsmOK) {
             GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
                 "[CONN] Free write buffer: %p\r\n", (void *)conn->buff.buff);
-            gsm_mem_free_s(&conn->buff.buff);
+            gsm_mem_free_s((void**)&conn->buff.buff);
         }
         conn->buff.buff = NULL;
     }
@@ -510,7 +510,7 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
             if (conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0) != gsmOK) {
                 GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
                     "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
-                gsm_mem_free_s(&conn->buff.buff);
+                gsm_mem_free_s((void**)&conn->buff.buff);
             }
             conn->buff.buff = NULL;
         }
@@ -525,7 +525,7 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
             if (conn_send(conn, NULL, 0, buff, GSM_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != gsmOK) {
                 GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
                     "[CONN] Free write buffer: %p\r\n", (void *)buff);
-                gsm_mem_free_s(&buff);
+                gsm_mem_free_s((void**)&buff);
                 return gsmERRMEM;
             }
         } else {
@@ -590,8 +590,6 @@ gsm_conn_get_total_recved_count(gsm_conn_p conn) {
     return tot;
 }
 
-
-
 /**
  * \brief           Get connection remote IP address
  * \param[in]       conn: Connection handle
@@ -640,6 +638,5 @@ gsm_conn_get_local_port(gsm_conn_p conn) {
     }
     return port;
 }
-
 
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */

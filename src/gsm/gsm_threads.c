@@ -100,7 +100,6 @@ gsm_thread_produce(void* const arg) {
             gsm_core_unlock();
             gsm_sys_sem_wait(&e->sem_sync, 0);  /* First call */
             gsm_core_lock();
-            e->msg = msg;
             res = msg->fn(msg);                 /* Process this message, check if command started at least */
             time = ~GSM_SYS_TIMEOUT;            /* Reset time */
             if (res == gsmOK) {                 /* We have valid data and data were sent */

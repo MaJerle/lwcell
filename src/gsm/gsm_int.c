@@ -637,7 +637,7 @@ gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced) {
     if (conn->buff.buff != NULL) {
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
             "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
-        gsm_mem_free_s(&conn->buff.buff);
+        gsm_mem_free_s((void**)&conn->buff.buff);
     }
 
     /* Send event */

@@ -1041,14 +1041,14 @@ gsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len) {
         client->conn_state = GSM_MQTT_CONN_DISCONNECTED;/* Set to disconnected mode */
 
         if (!gsm_buff_init(&client->tx_buff, tx_buff_len)) {
-            gsm_mem_free_s(&client);
+            gsm_mem_free_s((void**)&client);
         }
         if (client != NULL) {
             client->rx_buff_len = rx_buff_len;
             client->rx_buff = gsm_mem_malloc(rx_buff_len);
             if (client->rx_buff == NULL) {
                 gsm_buff_free(&client->tx_buff);
-                gsm_mem_free_s(&client);
+                gsm_mem_free_s((void**)&client);
             }
         }
     }
@@ -1063,9 +1063,9 @@ gsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len) {
 void
 gsm_mqtt_client_delete(gsm_mqtt_client_p client) {
     if (client != NULL) {
-        gsm_mem_free_s(&client->rx_buff);
+        gsm_mem_free_s((void**)&client->rx_buff);
         gsm_buff_free(&client->tx_buff);
-        gsm_mem_free_s(&client);
+        gsm_mem_free_s((void**)&client);
     }
 }
 
