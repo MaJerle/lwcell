@@ -80,26 +80,26 @@ osKernelSysTick(void) {
 uint8_t
 gsm_sys_init(void) {
     QueryPerformanceFrequency(&freq);
-    QueryPerformanceCounter(&sys_start_time);   /* Get start time */
+    QueryPerformanceCounter(&sys_start_time);
 
-    gsm_sys_mutex_create(&sys_mutex);           /* Create system mutex */
+    gsm_sys_mutex_create(&sys_mutex);
     return 1;
 }
 
 uint32_t
 gsm_sys_now(void) {
-    return osKernelSysTick();                   /* Get current tick in units of milliseconds */
+    return osKernelSysTick();
 }
 
 uint8_t
 gsm_sys_protect(void) {
-    gsm_sys_mutex_lock(&sys_mutex);             /* Lock system and protect it */
+    gsm_sys_mutex_lock(&sys_mutex);
     return 1;
 }
 
 uint8_t
 gsm_sys_unprotect(void) {
-    gsm_sys_mutex_unlock(&sys_mutex);           /* Release lock */
+    gsm_sys_mutex_unlock(&sys_mutex);
     return 1;
 }
 
@@ -131,12 +131,12 @@ gsm_sys_mutex_unlock(gsm_sys_mutex_t* p) {
 
 uint8_t
 gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p) {
-    return *p != NULL;                          /* Check if mutex is valid */
+    return p != NULL && *p != NULL;
 }
 
 uint8_t
 gsm_sys_mutex_invalid(gsm_sys_mutex_t* p) {
-    *p = GSM_SYS_MUTEX_NULL;                    /* Set mutex as invalid */
+    *p = GSM_SYS_MUTEX_NULL;
     return 1;
 }
 
@@ -156,7 +156,7 @@ gsm_sys_sem_delete(gsm_sys_sem_t* p) {
 uint32_t
 gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout) {
     DWORD ret;
-    uint32_t tick = osKernelSysTick();          /* Get start tick time */
+    uint32_t tick = osKernelSysTick();
 	
     if (timeout == 0) {
         ret = WaitForSingleObject(*p, INFINITE);
@@ -178,12 +178,12 @@ gsm_sys_sem_release(gsm_sys_sem_t* p) {
 
 uint8_t
 gsm_sys_sem_isvalid(gsm_sys_sem_t* p) {
-    return *p != NULL;                          /* Check if valid */
+    return p != NULL && *p != NULL;
 }
 
 uint8_t
 gsm_sys_sem_invalid(gsm_sys_sem_t* p) {
-    *p = GSM_SYS_SEM_NULL;                      /* Invaldiate semaphore */
+    *p = GSM_SYS_SEM_NULL;
     return 1;
 }
 
@@ -331,7 +331,7 @@ gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
 
 uint8_t
 gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b) {
-    return *b != NULL;                          /* Return status if message box is valid */
+    return b != NULL && *b != NULL;             /* Return status if message box is valid */
 }
 
 uint8_t

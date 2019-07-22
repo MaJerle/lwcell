@@ -138,7 +138,7 @@ gsm_sys_mutex_unlock(gsm_sys_mutex_t* p) {
  */
 uint8_t
 gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p) {
-    return !!*p;                                /* Check if mutex is valid */
+    return p != NULL && *p != NULL;             /* Check if mutex is valid */
 }
 
 /**
@@ -217,7 +217,7 @@ gsm_sys_sem_release(gsm_sys_sem_t* p) {
  */
 uint8_t
 gsm_sys_sem_isvalid(gsm_sys_sem_t* p) {
-    return !!*p;                                /* Check if valid */
+    return p != NULL && *p != NULL;             /* Check if valid */
 }
 
 /**
@@ -333,7 +333,7 @@ gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
  */
 uint8_t
 gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b) {
-    return !!*b;                                /* Return status if message box is valid */
+    return b != NULL && *b != NULL;             /* Return status if message box is valid */
 }
 
 /**
