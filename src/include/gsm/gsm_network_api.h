@@ -42,8 +42,15 @@ extern "C" {
 /**
  * \ingroup         GSM_API
  * \defgroup        GSM_NETWORK_API Network API
- * \brief           Network API
+ * \brief           Network API functions for multi-thread operations
  * \{
+ * 
+ * Its purpose is to control network attach status when multiple threads needs
+ * to enable/disable network connection.
+ *
+ * Each thread asks to attach network connection and manager
+ * controls when it is necessary to connect or disconnect.
+ *
  */
 
 gsmr_t  gsm_network_set_credentials(const char* apn, const char* user, const char* pass);

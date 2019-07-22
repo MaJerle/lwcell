@@ -42,6 +42,13 @@ static const char* network_user;
 static const char* network_pass;
 static uint32_t network_counter;
 
+/**
+ * \brief           Set system network credentials before asking for attach
+ * \param[in]       apn: APN domain. Set to `NULL` if not used
+ * \param[in]       user: APN username. Set to `NULL` if not used
+ * \param[in]       pass: APN password. Set to `NULL` if not used
+ * \retval          \ref espOK on success, member of \ref espr_t otherwise
+ */
 gsmr_t
 gsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
 	network_apn = apn;
@@ -51,6 +58,11 @@ gsm_network_set_credentials(const char* apn, const char* user, const char* pass)
     return gsmOK;
 }
 
+/**
+ * \brief           Request manager to attach to network
+ * \note            This function is blocking and cannot be called from event functions
+ * \retval          \gsmOK on success (when attached), member of \ref gsmr_t otherwise
+ */
 gsmr_t
 gsm_network_request_attach(void) {
     gsmr_t res = gsmOK;
@@ -73,6 +85,15 @@ gsm_network_request_attach(void) {
     return res;
 }
 
+/**
+ * \brief           Request manager to detach from network
+ *
+ * If other threads use network, manager will not disconnect from network
+ * otherwise it will disable network access
+ *
+ * \note            This function is blocking and cannot be called from event functions
+ * \retval          \gsmOK on success (when attached), member of \ref gsmr_t otherwise
+ */
 gsmr_t
 gsm_network_request_detach(void) {
     gsmr_t res = gsmOK;
