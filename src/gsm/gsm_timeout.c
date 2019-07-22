@@ -80,7 +80,7 @@ process_next_timeout(void) {
          */
         first_timeout = first_timeout->next;    /* Set next timeout on a list as first timeout */
         to->fn(to->arg);                        /* Call user callback function */
-        gsm_mem_free_s((void**)&to);
+        gsm_mem_free_s((void **)&to);
     }
 }
 
@@ -220,7 +220,7 @@ gsm_timeout_remove(gsm_timeout_fn fn) {
             } else {
                 first_timeout = t->next;
             }
-            gsm_mem_free_s((void**)&t);
+            gsm_mem_free_s((void **)&t);
             success = 1;
             break;
         }

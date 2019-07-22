@@ -144,7 +144,7 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
                     if (!gsm_sys_mbox_putnow(&api_client->rcv_mbox, buf)) {
                         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
                             "[MQTT API] Cannot put new received MQTT publish to queue\r\n");
-                        gsm_mem_free_s((void**)&buf);
+                        gsm_mem_free_s((void **)&buf);
                     }
                 } else {
                     GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
@@ -292,7 +292,7 @@ gsm_mqtt_client_api_delete(gsm_mqtt_client_api_p client) {
         gsm_mqtt_client_delete(client->mc);
         client->mc = NULL;
     }
-    gsm_mem_free_s((void**)&client);
+    gsm_mem_free_s((void **)&client);
 }
 
 /**
@@ -518,5 +518,5 @@ gsm_mqtt_client_api_receive(gsm_mqtt_client_api_p client, gsm_mqtt_client_api_bu
  */
 void
 gsm_mqtt_client_api_buf_free(gsm_mqtt_client_api_buf_p p) {
-    gsm_mem_free_s((void**)&p);
+    gsm_mem_free_s((void **)&p);
 }

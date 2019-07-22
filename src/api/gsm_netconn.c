@@ -272,7 +272,7 @@ gsm_netconn_delete(gsm_netconn_p nc) {
     }
     gsm_core_unlock();
 
-    gsm_mem_free_s((void**)&nc);
+    gsm_mem_free_s((void **)&nc);
     return gsmOK;
 }
 
@@ -344,7 +344,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
         if (nc->buff.ptr == nc->buff.len) {
             res = gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
 
-            gsm_mem_free_s((void**)&nc->buff.buff);
+            gsm_mem_free_s((void **)&nc->buff.buff);
             if (res != gsmOK) {
                 return res;
             }
@@ -406,7 +406,7 @@ gsm_netconn_flush(gsm_netconn_p nc) {
         if (nc->buff.ptr > 0) {                 /* Do we have data in current buffer? */
             gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1);  /* Send data */
         }
-        gsm_mem_free_s((void**)&nc->buff.buff);
+        gsm_mem_free_s((void **)&nc->buff.buff);
     }
     return gsmOK;
 }
