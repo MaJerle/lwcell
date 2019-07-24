@@ -453,7 +453,7 @@ gsm_conn_p
 gsm_conn_get_from_evt(gsm_evt_t* evt) {
     switch (evt->type) {
         case GSM_EVT_CONN_ACTIVE: return gsm_evt_conn_active_get_conn(evt);
-        case GSM_EVT_CONN_CLOSED: return gsm_evt_conn_closed_get_conn(evt);
+        case GSM_EVT_CONN_CLOSE: return gsm_evt_conn_close_get_conn(evt);
         case GSM_EVT_CONN_RECV: return gsm_evt_conn_recv_get_conn(evt);
         case GSM_EVT_CONN_SEND: return gsm_evt_conn_send_get_conn(evt);
         case GSM_EVT_CONN_POLL: return gsm_evt_conn_poll_get_conn(evt);

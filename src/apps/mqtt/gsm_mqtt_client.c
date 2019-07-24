@@ -908,11 +908,12 @@ mqtt_poll_cb(gsm_mqtt_client_p client) {
 /**
  * \brief           Connection closed callback
  * \param[in]       client: MQTT client
+ * \param[in]       res: Result of close event
  * \param[in]       forced: Set to `1` when closed by user
  * \return          `1` on success, `0` otherwise
  */
 static uint8_t
-mqtt_closed_cb(gsm_mqtt_client_p client, uint8_t forced) {
+mqtt_closed_cb(gsm_mqtt_client_p client, gsmr_t res, uint8_t forced) {
     gsm_mqtt_request_t* request;
     gsm_mqtt_state_t state = client->conn_state;
 
@@ -1013,8 +1014,10 @@ mqtt_conn_cb(gsm_evt_t* evt) {
         }
 
         /* Connection closed */
-        case GSM_EVT_CONN_CLOSED: {
-            mqtt_closed_cb(client, gsm_evt_conn_closed_is_forced(evt)); /* Closed connection callback */
+        case GSM_EVT_CONN_CLOSE: {
+            mqtt_closed_cb(client,
+                gsm_evt_conn_close_get_result(evt) == gsmOK,
+                gsm_evt_conn_close_is_forced(evt));
             break;
         }
         default:

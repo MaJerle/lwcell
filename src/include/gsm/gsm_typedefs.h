@@ -396,7 +396,7 @@ typedef enum gsm_cb_type_t {
     GSM_EVT_CONN_SEND,                          /*!< Connection data send */
     GSM_EVT_CONN_ACTIVE,                        /*!< Connection just became active */
     GSM_EVT_CONN_ERROR,                         /*!< Client connection start was not successful */
-    GSM_EVT_CONN_CLOSED,                        /*!< Connection was just closed */
+    GSM_EVT_CONN_CLOSE,                         /*!< Connection close event. Check status if successful */
     GSM_EVT_CONN_POLL,                          /*!< Poll for connection if there are any changes */
 #endif /* GSM_CFG_CONN || __DOXYGEN__ */
 
@@ -475,7 +475,8 @@ typedef struct gsm_evt {
             gsm_conn_p conn;                    /*!< Pointer to connection */
             uint8_t client;                     /*!< Set to `1` if connection is/was client mode */
             uint8_t forced;                     /*!< Set to `1` if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
-        } conn_active_closed;                   /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref GSM_EVT_CONN_CLOSED events */
+            gsmr_t res;                         /*!< Result of close event. Set to \ref gsmOK on success. */
+        } conn_active_close;                    /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref GSM_EVT_CONN_CLOSE events */
         struct {
             gsm_conn_p conn;                    /*!< Set connection pointer */
         } conn_poll;                            /*!< Polling active connection to check for timeouts. Use with \ref GSM_EVT_CONN_POLL event */

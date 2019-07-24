@@ -125,14 +125,15 @@ uint8_t     gsm_evt_conn_active_is_client(gsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_CONN_CLOSED
+ * \anchor          GSM_EVT_CONN_CLOSE
  * \name            Connection closed
- * \brief           Event helper functions for \ref GSM_EVT_CONN_CLOSED event
+ * \brief           Event helper functions for \ref GSM_EVT_CONN_CLOSE event
  */
 
-gsm_conn_p  gsm_evt_conn_closed_get_conn(gsm_evt_t* cc);
-uint8_t     gsm_evt_conn_closed_is_client(gsm_evt_t* cc);
-uint8_t     gsm_evt_conn_closed_is_forced(gsm_evt_t* cc);
+gsm_conn_p  gsm_evt_conn_close_get_conn(gsm_evt_t* cc);
+uint8_t     gsm_evt_conn_close_is_client(gsm_evt_t* cc);
+uint8_t     gsm_evt_conn_close_is_forced(gsm_evt_t* cc);
+gsmr_t      gsm_evt_conn_close_get_result(gsm_evt_t* cc);
 
 /**
  * \}

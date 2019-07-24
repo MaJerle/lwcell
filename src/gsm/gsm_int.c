@@ -393,15 +393,16 @@ gsmi_send_sms_stat(gsm_sms_status_t status, uint8_t q, uint8_t c) {
  */
 static void
 reset_connections(uint8_t forced) {
-    gsm.evt.type = GSM_EVT_CONN_CLOSED;
-    gsm.evt.evt.conn_active_closed.forced = forced;
+    gsm.evt.type = GSM_EVT_CONN_CLOSE;
+    gsm.evt.evt.conn_active_close.forced = forced;
+    gsm.evt.evt.conn_active_close.res = gsmOK;
     
     for (size_t i = 0; i < GSM_CFG_MAX_CONNS; i++) {/* Check all connections */
         if (gsm.m.conns[i].status.f.active) {
             gsm.m.conns[i].status.f.active = 0;
     
-            gsm.evt.evt.conn_active_closed.conn = &gsm.m.conns[i];
-            gsm.evt.evt.conn_active_closed.client = gsm.m.conns[i].status.f.client;
+            gsm.evt.evt.conn_active_close.conn = &gsm.m.conns[i];
+            gsm.evt.evt.conn_active_close.client = gsm.m.conns[i].status.f.client;
             gsmi_send_conn_cb(&gsm.m.conns[i], NULL);   /* Send callback function */
         }
     }
@@ -476,7 +477,7 @@ gsmi_send_cb(gsm_evt_type_t type) {
  */
 gsmr_t
 gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn evt) {
-    if (conn->status.f.in_closing && gsm.evt.type != GSM_EVT_CONN_CLOSED) { /* Do not continue if in closing mode */
+    if (conn->status.f.in_closing && gsm.evt.type != GSM_EVT_CONN_CLOSE) {  /* Do not continue if in closing mode */
         /* return gsmOK; */
     }
 
@@ -653,10 +654,11 @@ gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced) {
     }
 
     /* Send event */
-    gsm.evt.type = GSM_EVT_CONN_CLOSED;
-    gsm.evt.evt.conn_active_closed.conn = conn;
-    gsm.evt.evt.conn_active_closed.forced = forced;
-    gsm.evt.evt.conn_active_closed.client = conn->status.f.client;
+    gsm.evt.type = GSM_EVT_CONN_CLOSE;
+    gsm.evt.evt.conn_active_close.conn = conn;
+    gsm.evt.evt.conn_active_close.forced = forced;
+    gsm.evt.evt.conn_active_close.res = gsmOK;
+    gsm.evt.evt.conn_active_close.client = conn->status.f.client;
     gsmi_send_conn_cb(conn, NULL);
 
     return 1;
@@ -1326,6 +1328,40 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         if (CMD_IS_CUR(GSM_CMD_COPS_GET_OPT)) {
             OPERATOR_SCAN_SEND_EVT(gsm.msg, *is_ok ? gsmOK : gsmERR);
         }
+    } else if (CMD_IS_DEF(GSM_CMD_SIM_PROCESS_BASIC_CMDS)) {
+        switch (CMD_GET_CUR()) {
+            case GSM_CMD_CNUM: {                /* Get own phone number */
+                if (!*is_ok) {
+                    /* Sometimes SIM is not ready just after PIN entered */
+                    if (msg->msg.sim_info.cnum_tries < 5) {
+                        msg->msg.sim_info.cnum_tries++;
+                        SET_NEW_CMD(GSM_CMD_CNUM);
+                        gsm_delay(1000);
+                    }
+                }
+            }
+            default: break;
+        }
+    } else if (CMD_IS_DEF(GSM_CMD_CPIN_SET)) {  /* Set PIN code */
+        switch (CMD_GET_CUR()) {
+            case GSM_CMD_CPIN_GET: {            /* Get own phone number */
+                if (*is_ok && gsm.m.sim.state == GSM_SIM_STATE_PIN) {
+                    SET_NEW_CMD(GSM_CMD_CPIN_SET);  /* Set command to write PIN */
+                } else if (gsm.m.sim.state != GSM_SIM_STATE_READY) {
+                    *is_ok = 0;
+                    *is_error = 1;
+                }
+                break;
+            }
+            case GSM_CMD_CPIN_SET: {            /* Set CPIN */
+                if (*is_ok) {
+                    gsm_delay(5000);            /* Make delay to make sure SIM is ready */
+                }
+                break;
+            }
+            default:
+                break;
+        }
 #if GSM_CFG_SMS
     } else if (CMD_IS_DEF(GSM_CMD_SMS_ENABLE)) {
         switch (CMD_GET_CUR()) {
@@ -1396,40 +1432,6 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             SET_NEW_CMD(GSM_CMD_CPMS_SET);      /* Now set the command */
         }
 #endif /* GSM_CFG_SMS */
-    } else if (CMD_IS_DEF(GSM_CMD_SIM_PROCESS_BASIC_CMDS)) {
-        switch (CMD_GET_CUR()) {
-            case GSM_CMD_CNUM: {                /* Get own phone number */
-                if (!*is_ok) {
-                    /* Sometimes SIM is not ready just after PIN entered */
-                    if (msg->msg.sim_info.cnum_tries < 5) {
-                        msg->msg.sim_info.cnum_tries++;
-                        SET_NEW_CMD(GSM_CMD_CNUM);
-                        gsm_delay(1000);
-                    }
-                }
-            }
-            default: break;
-        }
-    } else if (CMD_IS_DEF(GSM_CMD_CPIN_SET)) {  /* Set PIN code */
-        switch (CMD_GET_CUR()) {
-            case GSM_CMD_CPIN_GET: {            /* Get own phone number */
-                if (*is_ok && gsm.m.sim.state == GSM_SIM_STATE_PIN) {
-                    SET_NEW_CMD(GSM_CMD_CPIN_SET);  /* Set command to write PIN */
-                } else if (gsm.m.sim.state != GSM_SIM_STATE_READY) {
-                    *is_ok = 0;
-                    *is_error = 1;
-                }
-                break;
-            }
-            case GSM_CMD_CPIN_SET: {            /* Set CPIN */
-                if (*is_ok) {
-                    gsm_delay(5000);            /* Make delay to make sure SIM is ready */
-                }
-                break;
-            }
-            default:
-                break;
-        }
 #if GSM_CFG_CALL
     } else if (CMD_IS_DEF(GSM_CMD_CALL_ENABLE)) {
         gsm.m.call.enabled = *is_ok;            /* Set enabled status */
@@ -1526,9 +1528,9 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                     gsm_conn_t* conn = &gsm.m.conns[msg->msg.conn_start.num];   /* Get connection number */
 
                     gsm.evt.type = GSM_EVT_CONN_ACTIVE; /* Connection just active */
-                    gsm.evt.evt.conn_active_closed.client = 1;
-                    gsm.evt.evt.conn_active_closed.conn = conn;
-                    gsm.evt.evt.conn_active_closed.forced = 1;
+                    gsm.evt.evt.conn_active_close.client = 1;
+                    gsm.evt.evt.conn_active_close.conn = conn;
+                    gsm.evt.evt.conn_active_close.forced = 1;
                     gsmi_send_conn_cb(conn, NULL);
                     gsmi_conn_start_timeout(conn);  /* Start connection timeout timer */
                     break;
@@ -1544,6 +1546,16 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                     break;
                 }
             }
+        }
+    } else if (CMD_IS_DEF(GSM_CMD_CIPCLOSE)) {
+        if (CMD_IS_CUR(GSM_CMD_CIPCLOSE) && *is_error) {
+            /* Notify upper layer about failed close event */
+            gsm.evt.type = GSM_EVT_CONN_CLOSE;
+            gsm.evt.evt.conn_active_close.conn = msg->msg.conn_close.conn;
+            gsm.evt.evt.conn_active_close.forced = 1;
+            gsm.evt.evt.conn_active_close.res = gsmERR;
+            gsm.evt.evt.conn_active_close.client = msg->msg.conn_close.conn->status.f.active && msg->msg.conn_close.conn->status.f.client;
+            gsmi_send_conn_cb(msg->msg.conn_close.conn, NULL);
         }
 #endif /* GSM_CFG_CONN */
     }

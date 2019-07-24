@@ -165,7 +165,7 @@ netconn_evt(gsm_evt_t* evt) {
         }
 
         /* Connection was just closed */
-        case GSM_EVT_CONN_CLOSED: {
+        case GSM_EVT_CONN_CLOSE: {
             nc = gsm_conn_get_arg(conn);        /* Get API from connection */
 
             /*

@@ -173,7 +173,7 @@ gsm_evt_conn_send_get_result(gsm_evt_t* cc) {
  */
 gsm_conn_p
 gsm_evt_conn_active_get_conn(gsm_evt_t* cc) {
-    return cc->evt.conn_active_closed.conn;
+    return cc->evt.conn_active_close.conn;
 }
 
 /**
@@ -183,7 +183,7 @@ gsm_evt_conn_active_get_conn(gsm_evt_t* cc) {
  */
 uint8_t
 gsm_evt_conn_active_is_client(gsm_evt_t* cc) {
-    return GSM_U8(!!cc->evt.conn_active_closed.client);
+    return GSM_U8(cc->evt.conn_active_close.client == 0);
 }
 
 /**
@@ -192,18 +192,18 @@ gsm_evt_conn_active_is_client(gsm_evt_t* cc) {
  * \return          Connection handle
  */
 gsm_conn_p
-gsm_evt_conn_closed_get_conn(gsm_evt_t* cc) {
-    return cc->evt.conn_active_closed.conn;
+gsm_evt_conn_close_get_conn(gsm_evt_t* cc) {
+    return cc->evt.conn_active_close.conn;
 }
 
 /**
- * \brief           Check if just closed connection was client
+ * \brief           Check if close connection was client
  * \param[in]       cc: Event handle
  * \return          `1` if client, `0` otherwise
  */
 uint8_t
-gsm_evt_conn_closed_is_client(gsm_evt_t* cc) {
-    return cc->evt.conn_active_closed.client;
+gsm_evt_conn_close_is_client(gsm_evt_t* cc) {
+    return cc->evt.conn_active_close.client;
 }
 
 /**
@@ -212,8 +212,18 @@ gsm_evt_conn_closed_is_client(gsm_evt_t* cc) {
  * \return          `1` if forced, `0` otherwise
  */
 uint8_t
-gsm_evt_conn_closed_is_forced(gsm_evt_t* cc) {
-    return cc->evt.conn_active_closed.forced;
+gsm_evt_conn_close_is_forced(gsm_evt_t* cc) {
+    return cc->evt.conn_active_close.forced;
+}
+
+/**
+ * \brief           Get connection close event result
+ * \param[in]       cc: Event handle
+ * \return          Member of \ref gsmr_t enumeration
+ */
+gsmr_t
+gsm_evt_conn_close_get_result(gsm_evt_t* cc) {
+    return cc->evt.conn_active_close.res;
 }
 
 /**
