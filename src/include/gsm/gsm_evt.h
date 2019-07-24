@@ -126,7 +126,7 @@ uint8_t     gsm_evt_conn_active_is_client(gsm_evt_t* cc);
 
 /**
  * \anchor          GSM_EVT_CONN_CLOSE
- * \name            Connection closed
+ * \name            Connection close event
  * \brief           Event helper functions for \ref GSM_EVT_CONN_CLOSE event
  */
 

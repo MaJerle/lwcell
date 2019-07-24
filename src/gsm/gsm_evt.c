@@ -183,7 +183,7 @@ gsm_evt_conn_active_get_conn(gsm_evt_t* cc) {
  */
 uint8_t
 gsm_evt_conn_active_is_client(gsm_evt_t* cc) {
-    return GSM_U8(cc->evt.conn_active_close.client == 0);
+    return GSM_U8(cc->evt.conn_active_close.client > 0);
 }
 
 /**
