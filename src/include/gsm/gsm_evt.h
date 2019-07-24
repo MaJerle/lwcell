@@ -244,6 +244,20 @@ const gsm_call_t*  gsm_evt_call_changed_get_call(gsm_evt_t* cc);
  */
 
 /**
+ * \anchor          GSM_EVT_OPERATOR_SCAN
+ * \name            Operator scan
+ * \brief           Event helper functions for \ref GSM_EVT_OPERATOR_SCAN event
+ */
+
+gsmr_t          gsm_evt_operator_scan_get_result(gsm_evt_t* cc);
+gsm_operator_t* gsm_evt_operator_scan_get_entries(gsm_evt_t* cc);
+size_t          gsm_evt_operator_scan_get_length(gsm_evt_t* cc);
+
+/**
+ * \}
+ */
+
+/**
  * \}
  */
 

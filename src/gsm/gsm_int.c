@@ -155,6 +155,18 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
     gsmi_send_cb(GSM_EVT_RESTORE);                  \
 } while (0)
 
+/**
+ * \brief           Send operator scan sequence event
+ * \param[in]       m: Command message
+ * \param[in]       err: Error of type \ref gsmr_t
+ */
+#define OPERATOR_SCAN_SEND_EVT(m, err)  do {        \
+    gsm.evt.evt.operator_scan.res = err;            \
+    gsm.evt.evt.operator_scan.ops = (m)->msg.cops_scan.ops; \
+    gsm.evt.evt.operator_scan.opf = *(m)->msg.cops_scan.opf;\
+    gsmi_send_cb(GSM_EVT_OPERATOR_SCAN);            \
+} while (0)
+
  /**
  * \brief           Send SMS delete operation event
  * \param[in]       m: SMS delete message
@@ -1310,6 +1322,10 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             gsm.evt.evt.operator_current.operator_current = &gsm.m.network.curr_operator;
             gsmi_send_cb(GSM_EVT_NETWORK_OPERATOR_CURRENT);
         }
+    } else if (CMD_IS_DEF(GSM_CMD_COPS_GET_OPT)) {
+        if (CMD_IS_CUR(GSM_CMD_COPS_GET_OPT)) {
+            OPERATOR_SCAN_SEND_EVT(gsm.msg, *is_ok ? gsmOK : gsmERR);
+        }
 #if GSM_CFG_SMS
     } else if (CMD_IS_DEF(GSM_CMD_SMS_ENABLE)) {
         switch (CMD_GET_CUR()) {
@@ -2149,6 +2165,12 @@ gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, gsmr_t err) {
         case GSM_CMD_RESTORE: {
             /* Restore command error */
             RESTORE_SEND_EVT(msg, err);
+            break;
+        }
+
+        case GSM_CMD_COPS_GET_OPT: {
+            /* Operator scan command error */
+            OPERATOR_SCAN_SEND_EVT(msg, err);
             break;
         }
 

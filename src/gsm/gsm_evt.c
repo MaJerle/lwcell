@@ -75,6 +75,36 @@ gsm_evt_network_operator_get_current(gsm_evt_t* cc) {
 }
 
 /**
+ * \brief           Get operator scan operation status
+ * \param[in]       cc: Event data
+ * \return          Member of \ref gsmr_t enumeration
+ */
+gsmr_t
+gsm_evt_operator_scan_get_result(gsm_evt_t* cc) {
+    return cc->evt.operator_scan.res;
+}
+
+/**
+ * \brief           Get operator entries from scan
+ * \param[in]       cc: Event data
+ * \return          Pointer to array of operator entries
+ */
+gsm_operator_t *
+gsm_evt_operator_scan_get_entries(gsm_evt_t* cc) {
+    return cc->evt.operator_scan.ops;
+}
+
+/**
+ * \brief           Get length of operators scanned
+ * \param[in]       cc: Event data
+ * \return          Number of operators scanned
+ */
+size_t
+gsm_evt_operator_scan_get_length(gsm_evt_t* cc) {
+    return cc->evt.operator_scan.opf;
+}
+
+/**
  * \brief           Get RSSi from CSQ command
  * \param[in]       cc: Event data
  * \return          RSSI value in units of dBm

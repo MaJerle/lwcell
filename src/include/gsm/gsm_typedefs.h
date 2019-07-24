@@ -382,6 +382,8 @@ typedef enum gsm_cb_type_t {
 
     GSM_EVT_SIM_STATE_CHANGED,                  /*!< SIM card state changed */
 
+    GSM_EVT_OPERATOR_SCAN,                      /*!< Operator scan finished event */
+
     GSM_EVT_NETWORK_OPERATOR_CURRENT,           /*!< Current operator event */
     GSM_EVT_NETWORK_REG_CHANGED,                /*!< Network registration changed. Available even when \ref GSM_CFG_NETWORK is disabled */
 #if GSM_CFG_NETWORK || __DOXYGEN__
@@ -442,6 +444,11 @@ typedef struct gsm_evt {
         struct {
             const gsm_operator_curr_t* operator_current;    /*!< Current operator info */
         } operator_current;                     /*!< Current operator event. Use with \ref GSM_EVT_NETWORK_OPERATOR_CURRENT event */
+        struct {
+            gsm_operator_t* ops;                /*!< Pointer to operators */
+            size_t opf;                         /*!< Number of operators found */
+            gsmr_t res;                         /*!< Scan operation result */
+        } operator_scan;                        /*!< Operator scan event. Use with \ref GSM_EVT_OPERATOR_SCAN event */
 
         struct {
             int16_t rssi;                       /*!< Strength in units of dBm */
