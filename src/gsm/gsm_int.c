@@ -1548,6 +1548,14 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             }
         }
     } else if (CMD_IS_DEF(GSM_CMD_CIPCLOSE)) {
+        /*
+         * It is unclear in which state connection is when ERROR is received on close command.
+         * Stack checks if connection is closed before it allows and sends close command,
+         * however it was detected that no automatic close event has been received from device
+         * and AT+CIPCLOSE returned ERROR.
+         *
+         * Is it device firmware bug?
+         */
         if (CMD_IS_CUR(GSM_CMD_CIPCLOSE) && *is_error) {
             /* Notify upper layer about failed close event */
             gsm.evt.type = GSM_EVT_CONN_CLOSE;
