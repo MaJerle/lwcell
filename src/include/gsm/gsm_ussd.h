@@ -1,6 +1,6 @@
-/**
- * \file            gsm_includes.h
- * \brief           All main includes
+/**	
+ * \file            gsm_ussd.h
+ * \brief           Unstructured Supplementary Service Data
  */
 
 /*
@@ -30,48 +30,30 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef GSM_HDR_INCLUDES_H
-#define GSM_HDR_INCLUDES_H
+#ifndef GSM_HDR_USSD_H
+#define GSM_HDR_USSD_H
 
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif
 
-#include "gsm_config.h"
-#include "gsm/gsm_typedefs.h"
-#include "gsm/gsm_buff.h"
-#include "gsm/gsm_input.h"
-#include "gsm/gsm_debug.h"
-#include "gsm/gsm_utils.h"
-#include "gsm/gsm_pbuf.h"
-#include "gsm/gsm_sim.h"
-#include "gsm/gsm_operator.h"
-#include "gsm/gsm_evt.h"
-#include "gsm/gsm_network.h"
-#include "gsm/gsm_device_info.h"
-#include "system/gsm_sys.h"
+#include "gsm/gsm.h"
 
-#if GSM_CFG_SMS || __DOXYGEN__
-#include "gsm/gsm_sms.h"
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
-#if GSM_CFG_CALL || __DOXYGEN__
-#include "gsm/gsm_call.h"
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
-#if GSM_CFG_PHONEBOOK || __DOXYGEN__
-#include "gsm/gsm_phonebook.h"
-#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
-#if GSM_CFG_CONN || __DOXYGEN__
-#include "gsm/gsm_conn.h"
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
-#if GSM_CFG_NETCONN || __DOXYGEN__
-#include "gsm/gsm_netconn.h"
-#endif /* GSM_CFG_NETCONN || __DOXYGEN__ */
-#if GSM_CFG_USSD || __DOXYGEN__
-#include "gsm/gsm_ussd.h"
-#endif /* GSM_CFG_USSD || __DOXYGEN__ */
+/**
+ * \ingroup         GSM
+ * \defgroup        GSM_USSD Unstructured Supplementary Service Data
+ * \brief           Unstructured Supplementary Service Data
+ * \{
+ */
+
+gsmr_t  gsm_ussd_run(const char* code, char* resp, size_t resp_len, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif
 
-#endif /* GSM_HDR_INCLUDES_H */
+#endif /* GSM_HDR_HTTP_H */

@@ -588,6 +588,14 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` USSD API.
+ *
+ */
+#ifndef GSM_CFG_USSD
+#define GSM_CFG_USSD                        0
+#endif
+
+/**
  * \}
  */
 

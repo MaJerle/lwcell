@@ -192,8 +192,10 @@ typedef enum {
     GSM_CMD_CMUT,                               /*!< Mute Control */
     GSM_CMD_CPUC,                               /*!< Price Per Unit and Currency Table */
     GSM_CMD_CCWE,                               /*!< Call Meter Maximum Event */
-    GSM_CMD_CUSD,                               /*!< Unstructured Supplementary Service Data108 */
-    GSM_CMD_CSSN,                               /*!< Supplementary Services Notification 109 */
+    GSM_CMD_CUSD_SET,                           /*!< Unstructured Supplementary Service Data, Set command */
+    GSM_CMD_CUSD_GET,                           /*!< Unstructured Supplementary Service Data, Get command */
+    GSM_CMD_CUSD,                               /*!< Unstructured Supplementary Service Data, Execute command */
+    GSM_CMD_CSSN,                               /*!< Supplementary Services Notification */
 
     GSM_CMD_CIPMUX,                             /*!< Start Up Multi-IP Connection */
     GSM_CMD_CIPSTART,                           /*!< Start Up TCP or UDP Connection */
@@ -497,6 +499,14 @@ typedef struct gsm_msg {
             const char* search;                 /*!< Search string */
         } pb_search;                            /*!< Search phonebook entries */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+        struct {
+            const char* code;                   /*!< Code to send */
+            char* resp;                         /*!< Response array */
+            size_t resp_len;                    /*!< Length of response array */
+            uint8_t read;                       /*!< Flag indicating we can read the COPS actual data */
+            size_t resp_write_ptr;              /*!< Write pointer for response */
+            uint8_t quote_det;                  /*!< Information if quote has been detected */
+        } ussd;                                 /*!< Execute USSD command */
 #if GSM_CFG_NETWORK || __DOXYGEN__
         struct {
             const char* apn;                    /*!< APN address */

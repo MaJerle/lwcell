@@ -927,6 +927,19 @@ gsmi_parse_received(gsm_recv_t* rcv) {
             }
             gsmi_process_cipsend_response(rcv, &is_ok, &is_error);
 #endif /* GSM_CFG_CONN */
+#if GSM_CFG_USSD
+        } else if (CMD_IS_CUR(GSM_CMD_CUSD)) {
+            /* OK is returned before +CUSD */
+            /* Command is not finished yet, unless it was an ERROR */
+            if (is_ok) {
+                is_ok = 0;
+            }
+
+            /* Check for manual CUSTOM OK message */
+            if (!strcmp(rcv->data, "CUSTOM_OK\r\n")) {
+                is_ok = 1;
+            }
+#endif /* GSM_CFG_USSD */
         }
     }
 
@@ -1149,6 +1162,24 @@ gsmi_process(const void* data, size_t data_len) {
                 gsm.msg->msg.sms_list.read = 0;
             }
 #endif /* GSM_CFG_SMS */
+#if GSM_CFG_USSD
+        } else if (CMD_IS_CUR(GSM_CMD_CUSD) && gsm.msg->msg.ussd.read) {
+            if (ch == '"') {
+                gsm.msg->msg.ussd.resp[gsm.msg->msg.ussd.resp_write_ptr] = 0;
+                gsm.msg->msg.ussd.quote_det = !gsm.msg->msg.ussd.quote_det;
+            } else if (gsm.msg->msg.ussd.quote_det) {
+                if (gsm.msg->msg.ussd.resp_write_ptr < gsm.msg->msg.ussd.resp_len) {
+                    gsm.msg->msg.ussd.resp[gsm.msg->msg.ussd.resp_write_ptr++] = ch;
+                    gsm.msg->msg.ussd.resp[gsm.msg->msg.ussd.resp_write_ptr] = 0;
+                }
+            } else if (ch == '\n' && ch_prev1 == '\r') {
+                /* End of reading, command finished! */
+                /* Return OK at this point! */
+                strcpy(recv_buff.data, "CUSTOM_OK\r\n");
+                recv_buff.len = strlen(recv_buff.data);
+                gsmi_parse_received(&recv_buff);
+            }
+#endif /* GSM_CFG_USSD */
         /*
          * We are in command mode where we have to process byte by byte
          * Simply check for ASCII and unicode format and process data accordingly
@@ -1233,11 +1264,18 @@ gsmi_process(const void* data, size_t data_len) {
 #endif /* GSM_CFG_SMS */
                         }
                     } else if (CMD_IS_CUR(GSM_CMD_COPS_GET_OPT)) {
-                        if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+COPS:", 5)) {
+                        if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+COPS:", 6)) {
                             RECV_RESET();       /* Reset incoming buffer */
                             gsmi_parse_cops_scan(0, 1); /* Reset parser state */
                             gsm.msg->msg.cops_scan.read = 1;    /* Start reading incoming bytes */
                         }
+#if GSM_CFG_USSD
+                    } else if (CMD_IS_CUR(GSM_CMD_CUSD)) {
+                        if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+CUSD:", 6)) {
+                            RECV_RESET();       /* Reset incoming buffer */
+                            gsm.msg->msg.ussd.read = 1; /* Start reading incoming bytes */
+                        }
+#endif /* GSM_CFG_USSD */
                     }
                 } else {                        /* We have sequence of unicode characters */
                     /*
@@ -1566,6 +1604,15 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             gsmi_send_conn_cb(msg->msg.conn_close.conn, NULL);
         }
 #endif /* GSM_CFG_CONN */
+#if GSM_CFG_USSD
+    } else if (CMD_IS_DEF(GSM_CMD_CUSD)) {
+        if (CMD_IS_CUR(GSM_CMD_CUSD_GET)) {
+            if (*is_ok) {
+                SET_NEW_CMD(GSM_CMD_CUSD);      /* Run next command */
+            }
+        }
+        /* The rest is handled in one layer above */
+#endif /* GSM_CFG_USSD */
     }
 
     /* Check if new command was set for execution */
@@ -2097,6 +2144,21 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             break;
         }
 #endif /* GSM_CFG_NETWORK */
+#if GSM_CFG_USSD
+        case GSM_CMD_CUSD_GET: {
+            AT_PORT_SEND_BEGIN();
+            AT_PORT_SEND_CONST_STR("+CUSD?");
+            AT_PORT_SEND_END();
+            break;
+        }
+        case GSM_CMD_CUSD: {
+            AT_PORT_SEND_BEGIN();
+            AT_PORT_SEND_CONST_STR("+CUSD=1,");
+            gsmi_send_string(msg->msg.ussd.code, 1, 1, 0);
+            AT_PORT_SEND_END();
+            break;
+        }
+#endif /* GSM_CFG_USSD */
         default:
             return gsmERR;                      /* Invalid command */
     }
