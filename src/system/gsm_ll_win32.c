@@ -93,7 +93,7 @@ configure_uart(uint32_t baudrate) {
             L"\\\\.\\COM23",
             L"\\\\.\\COM9",
             L"\\\\.\\COM8",
-            L"\\\\.\\COM5"
+            L"\\\\.\\COM4"
         };
         for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); i++) {
             com_port = CreateFile(com_ports[i],
