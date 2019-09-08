@@ -576,9 +576,9 @@ typedef struct {
 /**
  * \ingroup         GSM_TIMEOUT
  * \brief           Timeout callback function prototype
- * \param[in]       arg: Timeout argument
+ * \param[in]       arg: Custom user argument
  */
-typedef void (*gsm_timeout_fn)(void * arg);
+typedef void (*gsm_timeout_fn)(void* arg);
 
 /**
  * \ingroup         GSM_TIMEOUT
@@ -598,7 +598,7 @@ typedef struct gsm_timeout {
 typedef struct {
     uint8_t* buff;                              /*!< Pointer to buffer data.
                                                     Buffer is considered initialized when `buff != NULL` */
-    size_t size;                                /*!< Size of buffer data. Size of actual buffer is `1` byte less than written here */
+    size_t size;                                /*!< Size of buffer data. Size of actual buffer is `1` byte less than this value */
     size_t r;                                   /*!< Next read pointer. Buffer is considered empty when `r == w` and full when `w == r - 1` */
     size_t w;                                   /*!< Next write pointer. Buffer is considered empty when `r == w` and full when `w == r - 1` */
 } gsm_buff_t;

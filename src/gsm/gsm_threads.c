@@ -59,12 +59,11 @@ gsm_thread_produce(void* const arg) {
     gsm_core_lock();
     while (1) {
         gsm_core_unlock();
-        time = gsm_sys_mbox_get(&e->mbox_producer, (void **)&msg, 0);   /* Get message from queue */
+        do {
+            time = gsm_sys_mbox_get(&e->mbox_producer, (void **)&msg, 0);   /* Get message from queue */
+        } while (time == GSM_SYS_TIMEOUT || msg == NULL);
         GSM_THREAD_PRODUCER_HOOK();             /* Execute producer thread hook */
         gsm_core_lock();
-        if (time == GSM_SYS_TIMEOUT || msg == NULL) {   /* Check valid message */
-            continue;
-        }
 
         res = gsmOK;                            /* Start with OK */
         e->msg = msg;                           /* Set message handle */
