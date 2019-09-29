@@ -6,10 +6,6 @@ GSM-AT Library commands parser is a generic, platform independent, library for c
 
 - Supports `SIM800/SIM900 (2G)` and `SIM7000/SIM7020 (NB-Iot LTE)` modules
 
-## Examples and resources
-
-For examples, please check second repository, available at https://github.com/MaJerle/GSM_AT_Lib_res
-
 ## Documentation
 
 Full API documentation with description and examples is available and is regulary updated with the source changes
