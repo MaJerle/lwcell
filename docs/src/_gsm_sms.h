@@ -1,0 +1,6 @@
+/**
+ * \addtogroup      GSM_SMS
+ * \{
+ *
+ * \}
+ */
