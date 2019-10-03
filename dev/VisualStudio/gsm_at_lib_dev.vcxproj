@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>.;..\..\snippets\include;..\..\GSM_AT_Lib\src\include;..\..\..\lwmem_res\lwmem\src\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\..\snippets\include;..\..\GSM_AT_Lib\src\include;..\..\..\lwmem\lwmem\src\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -140,8 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\lwmem_res\lwmem\src\lwmem\lwmem.c" />
-    <ClCompile Include="..\..\..\lwmem_res\lwmem\src\system\lwmem_sys_win32.c" />
+    <ClCompile Include="..\..\..\lwmem\lwmem\src\lwmem\lwmem.c" />
+    <ClCompile Include="..\..\..\lwmem\lwmem\src\system\lwmem_sys_win32.c" />
     <ClCompile Include="..\..\GSM_AT_Lib\src\api\gsm_netconn.c" />
     <ClCompile Include="..\..\GSM_AT_Lib\src\api\gsm_network_api.c" />
     <ClCompile Include="..\..\GSM_AT_Lib\src\apps\mqtt\gsm_mqtt_client.c" />

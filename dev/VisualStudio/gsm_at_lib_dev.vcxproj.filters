@@ -127,12 +127,6 @@
     <ClCompile Include="..\..\GSM_AT_Lib\src\system\gsm_mem_lwmem.c">
       <Filter>Source Files\GSM LL</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\lwmem_res\lwmem\src\lwmem\lwmem.c">
-      <Filter>Source Files\LWMEM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\lwmem_res\lwmem\src\system\lwmem_sys_win32.c">
-      <Filter>Source Files\LWMEM</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\snippets\sms_send_receive.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
@@ -141,6 +135,12 @@
     </ClCompile>
     <ClCompile Include="..\..\GSM_AT_Lib\src\gsm\gsm_ussd.c">
       <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lwmem\lwmem\src\lwmem\lwmem.c">
+      <Filter>Source Files\LWMEM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lwmem\lwmem\src\system\lwmem_sys_win32.c">
+      <Filter>Source Files\LWMEM</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
