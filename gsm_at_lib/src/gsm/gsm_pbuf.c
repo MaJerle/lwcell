@@ -418,14 +418,14 @@ gsm_pbuf_strcmp(const gsm_pbuf_p pbuf, const char* str, size_t offset) {
 
 /**
  * \brief           Get linear offset address for pbuf from specific offset
- * \note            Since pbuf memory can be fragmentized in chain,
- *                  you may need to call function multiple times to get memory for entire pbuf at different
+ * \note            Since pbuf memory can be fragmented in chain,
+ *                  you may need to call function multiple times to get memory for entire pbuf chain
  * \param[in]       pbuf: Pbuf to get linear address
  * \param[in]       offset: Start offset from where to start
  * \param[out]      new_len: Length of memory returned by function
  * \return          Pointer to memory on success, `NULL` otherwise
  */
-const void *
+void *
 gsm_pbuf_get_linear_addr(const gsm_pbuf_p pbuf, size_t offset, size_t* new_len) {
     gsm_pbuf_p p = pbuf;
 
@@ -450,7 +450,7 @@ gsm_pbuf_get_linear_addr(const gsm_pbuf_p pbuf, size_t offset, size_t* new_len) 
  * \param[in]       pbuf: Packet buffer
  * \return          Pointer to data buffer on success, `NULL` otherwise
  */
-const void *
+void *
 gsm_pbuf_data(const gsm_pbuf_p pbuf) {
     return pbuf != NULL ? pbuf->payload : NULL;
 }

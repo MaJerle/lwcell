@@ -48,7 +48,7 @@ extern "C" {
 
 gsm_pbuf_p      gsm_pbuf_new(size_t len);
 size_t          gsm_pbuf_free(gsm_pbuf_p pbuf);
-const void *    gsm_pbuf_data(const gsm_pbuf_p pbuf);
+void *          gsm_pbuf_data(const gsm_pbuf_p pbuf);
 size_t          gsm_pbuf_length(const gsm_pbuf_p pbuf, uint8_t tot);
 gsmr_t          gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
 size_t          gsm_pbuf_copy(gsm_pbuf_p pbuf, void* data, size_t len, size_t offset);
@@ -66,7 +66,7 @@ size_t          gsm_pbuf_strfind(const gsm_pbuf_p pbuf, const char* str, size_t 
 uint8_t         gsm_pbuf_advance(gsm_pbuf_p pbuf, int len);
 gsm_pbuf_p      gsm_pbuf_skip(gsm_pbuf_p pbuf, size_t offset, size_t* new_offset);
 
-const void *    gsm_pbuf_get_linear_addr(const gsm_pbuf_p pbuf, size_t offset, size_t* new_len);
+void *          gsm_pbuf_get_linear_addr(const gsm_pbuf_p pbuf, size_t offset, size_t* new_len);
 
 void            gsm_pbuf_set_ip(gsm_pbuf_p pbuf, const gsm_ip_t* ip, gsm_port_t port);
 
