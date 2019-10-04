@@ -93,7 +93,7 @@ typedef enum {
     MQTT_MSG_TYPE_UNSUBSCRIBE = 0x0A,           /*!< Unsubscribe from topics */
     MQTT_MSG_TYPE_UNSUBACK =    0x0B,           /*!< Unsubscribe acknowledgement */
     MQTT_MSG_TYPE_PINGREQ =     0x0C,           /*!< Ping request */
-    MQTT_MSG_TYPE_PINGRGSM =    0x0D,           /*!< Ping response */
+    MQTT_MSG_TYPE_PINGRESP =    0x0D,           /*!< Ping response */
     MQTT_MSG_TYPE_DISCONNECT =  0x0E,           /*!< Disconnect notification */
 } mqtt_msg_type_t;
 
@@ -128,7 +128,7 @@ mqtt_msg_type_to_str(mqtt_msg_type_t msg_type) {
         "UNKNOWN",
         "CONNECT", "CONNACK", "PUBLISH", "PUBACK", "PUBREC", "PUBREL",
         "PUBCOMP", "SUBSCRIBE", "SUBACK", "UNSUBSCRIBE", "UNSUBACK",
-        "PINGREQ", "PINGRGSM", "DISCONNECT"
+        "PINGREQ", "PINGRESP", "DISCONNECT"
     };
     return strings[(uint8_t)msg_type];
 }
@@ -352,7 +352,7 @@ output_check_enough_memory(gsm_mqtt_client_p client, uint16_t rem_len) {
 /**
  * \brief           Write and send acknowledge/record
  * \param[in]       client: MQTT client
- * \param[in]       msg_type: Message type to rgsmond
+ * \param[in]       msg_type: Message type to respond
  * \param[in]       pkt_id: Packet ID to send response for
  * \param[in]       qos: Quality of service for packet
  * \return          `1` on success, `0` otherwise
@@ -390,8 +390,8 @@ write_string(gsm_mqtt_client_p client, const char* str, uint16_t len) {
  */
 static void
 send_data(gsm_mqtt_client_p client) {
-    const void* addr;
     size_t len;
+    const void* addr;
 
     if (client->is_sending) {                   /* We are currently sending data */
         return;
@@ -448,11 +448,11 @@ mqtt_close(gsm_mqtt_client_p client) {
  */
 static uint8_t
 sub_unsub(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void* arg, uint8_t sub) {
-    uint8_t ret = 0;
-    uint16_t len_topic, pkt_id;
-    uint32_t rem_len;
     gsm_mqtt_request_t* request;
-
+    uint32_t rem_len;
+    uint16_t len_topic, pkt_id;
+    uint8_t ret = 0;
+    
     if ((len_topic = GSM_U16(strlen(topic))) == 0) {
         return 0;
     }
@@ -498,8 +498,8 @@ sub_unsub(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void*
 static uint8_t
 mqtt_process_incoming_message(gsm_mqtt_client_p client) {
     mqtt_msg_type_t msg_type;
-    uint16_t pkt_id;
     gsm_mqtt_qos_t qos;
+    uint16_t pkt_id;
 
     msg_type = MQTT_RCV_GET_PACKET_TYPE(client->msg_hdr_byte);  /* Get packet type from message header byte */
 
@@ -555,18 +555,18 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
                 (int)topic_len, (const char *)topic, (int)qos, (int)pkt_id, (int)data_len);
 
             /*
-             * We have to send rgsmond to command if
+             * We have to send respond to command if
              * Quality of Service is more than 0
              *
-             * Rgsmonse type depends on QoS and is
+             * Response type depends on QoS and is
              * either PUBACK or PUBREC
              */
             if (qos > 0) {                      /* We have to reply on QoS > 0 */
-                mqtt_msg_type_t rgsm_msg_type = qos == 1 ? MQTT_MSG_TYPE_PUBACK : MQTT_MSG_TYPE_PUBREC;
-                GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending publish rgsm: %s on pkt_id: %d\r\n", \
-                            mqtt_msg_type_to_str(rgsm_msg_type), (int)pkt_id);
+                mqtt_msg_type_t resp_msg_type = qos == 1 ? MQTT_MSG_TYPE_PUBACK : MQTT_MSG_TYPE_PUBREC;
+                GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending publish resp: %s on pkt_id: %d\r\n", \
+                            mqtt_msg_type_to_str(resp_msg_type), (int)pkt_id);
 
-                write_ack_rec_rel_resp(client, rgsm_msg_type, pkt_id, qos);
+                write_ack_rec_rel_resp(client, resp_msg_type, pkt_id, qos);
             }
 
             /* Notify application layer about received packet */
@@ -580,7 +580,7 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
             client->evt_fn(client, &client->evt);
             break;
         }
-        case MQTT_MSG_TYPE_PINGRGSM: {          /* Rgsmond to PINGREQ received */
+        case MQTT_MSG_TYPE_PINGRESP: {          /* Respond to PINGREQ received */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Ping response received\r\n");
 
             client->evt.type = GSM_MQTT_EVT_KEEP_ALIVE;
@@ -656,16 +656,17 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
 static uint8_t
 mqtt_parse_incoming(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
     size_t idx, buff_len = 0, buff_offset = 0;
-    const uint8_t* d;
     uint8_t ch;
+    const uint8_t* d;
 
     do {
         buff_offset += buff_len;                /* Calculate new offset of buffer */
         d = gsm_pbuf_get_linear_addr(pbuf, buff_offset, &buff_len); /* Get address pointer */
-
-        idx = 0;
-        while (d != NULL && idx < buff_len) {   /* Process entire linear buffer */
-            ch = d[idx++];                      /* Get element */
+        if (d == NULL) {
+            break;
+        }
+        for (idx = 0; idx < buff_len; idx++) {  /* Process entire linear buffer */
+            ch = d[idx];
             switch (client->parser_state) {     /* Check parser state */
                 case MQTT_PARSER_STATE_INIT: {  /* We are waiting for start byte and packet type */
                     GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
@@ -684,13 +685,32 @@ mqtt_parse_incoming(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
                     /* Length of packet is LSB first, each consist of up to 7 bits */
                     client->msg_rem_len |= (ch & 0x7F) << ((size_t)7 * (size_t)client->msg_rem_len_mult++);
 
-                    /* TODO: Ignore too-big messages */
                     if (!(ch & 0x80)) {         /* Is this last entry? */
                         GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
                             "[MQTT] Remaining length received: %d bytes\r\n", (int)client->msg_rem_len);
 
                         if (client->msg_rem_len > 0) {
-                            client->parser_state = MQTT_PARSER_STATE_READ_REM;
+                            /* Are all remaining bytes part of single buffer? */
+                            /* Compare with more as idx is one byte behind vs data position by 1 byte */
+                            if ((buff_len - idx) > client->msg_rem_len) {
+                                void* tmp_ptr = client->rx_buff;
+                                size_t tmp_len = client->rx_buff_len;
+
+                                /* Set new client pointer */
+                                client->rx_buff = &d[idx + 1];  /* Data are one byte after */
+                                client->rx_buff_len = client->msg_rem_len;
+
+                                mqtt_process_incoming_message(client);  /* Process new message */
+
+                                /* Reset to previous values */
+                                client->rx_buff = tmp_ptr;
+                                client->rx_buff_len = tmp_len;
+                                client->parser_state = MQTT_PARSER_STATE_INIT;
+
+                                idx += client->msg_rem_len; /* Skip data part only, idx is increased again in for loop */
+                            } else {
+                                client->parser_state = MQTT_PARSER_STATE_READ_REM;
+                            }
                         } else {
                             mqtt_process_incoming_message(client);
                             client->parser_state = MQTT_PARSER_STATE_INIT;
@@ -724,7 +744,7 @@ mqtt_parse_incoming(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
                     client->parser_state = MQTT_PARSER_STATE_INIT;
             }
         }
-    } while (buff_len);
+    } while (buff_len > 0);
     return 0;
 }
 
@@ -740,8 +760,8 @@ mqtt_parse_incoming(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
  */
 static void
 mqtt_connected_cb(gsm_mqtt_client_p client) {
-    uint8_t flags = 0;
     uint16_t rem_len, len_id, len_pass = 0, len_user = 0, len_will_topic = 0, len_will_message = 0;
+    uint8_t flags = 0;
 
     flags |= MQTT_FLAG_CONNECT_CLEAN_SESSION;   /* Start as clean session */
 
@@ -937,8 +957,8 @@ mqtt_poll_cb(gsm_mqtt_client_p client) {
  */
 static uint8_t
 mqtt_closed_cb(gsm_mqtt_client_p client, gsmr_t res, uint8_t forced) {
-    gsm_mqtt_request_t* request;
     gsm_mqtt_state_t state = client->conn_state;
+    gsm_mqtt_request_t* request;
 
     /*
      * Call user function only if connection was closed
@@ -1186,11 +1206,11 @@ gsm_mqtt_client_unsubscribe(gsm_mqtt_client_p client, const char* topic, void* a
 gsmr_t
 gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void* payload,
                         uint16_t payload_len, gsm_mqtt_qos_t qos, uint8_t retain, void* arg) {
-    uint8_t qos_u8 = GSM_U8(qos);
-    uint16_t len_topic, pkt_id;
-    uint32_t rem_len, raw_len;
-    gsm_mqtt_request_t* request = NULL;
     gsmr_t res = gsmOK;
+    gsm_mqtt_request_t* request = NULL;
+    uint32_t rem_len, raw_len;
+    uint16_t len_topic, pkt_id;
+    uint8_t qos_u8 = GSM_U8(qos);
 
     if (!(len_topic = GSM_U16(strlen(topic)))) {    /* Get length of topic */
         return gsmERR;
@@ -1202,7 +1222,7 @@ gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void*
      * rem_len = 2 (topic_len) + topic_len + 2 (pkt_idm only if qos > 0) + payload_len
      */
     rem_len = 2 + len_topic + (payload != NULL ? payload_len : 0);
-    if (qos_u8) {
+    if (qos_u8 > 0) {
         rem_len += 2;
     }
 
@@ -1210,7 +1230,7 @@ gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void*
     if (client->conn_state != GSM_MQTT_CONNECTED) {
         res = gsmCLOSED;
     } else if ((raw_len = output_check_enough_memory(client, rem_len)) != 0) {
-        pkt_id = qos_u8 ? create_packet_id(client) : 0; /* Create new packet ID */
+        pkt_id = qos_u8 > 0 ? create_packet_id(client) : 0; /* Create new packet ID */
         request = request_create(client, pkt_id, arg);  /* Create request for packet */
         if (request != NULL) {
             /*
