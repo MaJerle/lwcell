@@ -656,8 +656,7 @@ mqtt_process_incoming_message(gsm_mqtt_client_p client) {
 static uint8_t
 mqtt_parse_incoming(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
     size_t idx, buff_len = 0, buff_offset = 0;
-    uint8_t ch;
-    const uint8_t* d;
+    uint8_t ch, *d;
 
     do {
         buff_offset += buff_len;                /* Calculate new offset of buffer */
