@@ -41,11 +41,13 @@ extern "C" {
 
 /**
  * \ingroup         GSM
- * \defgroup        GSM_EVT Event helpers
+ * \defgroup        GSM_EVT Events management
  * \brief           Event helper functions
  * \{
  */
 
+gsmr_t          gsm_evt_register(gsm_evt_fn fn);
+gsmr_t          gsm_evt_unregister(gsm_evt_fn fn);
 gsm_evt_type_t  gsm_evt_get_type(gsm_evt_t* cc);
 
 /**

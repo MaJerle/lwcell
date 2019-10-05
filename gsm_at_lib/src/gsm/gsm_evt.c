@@ -35,6 +35,72 @@
 #include "gsm/gsm_mem.h"
 
 /**
+ * \brief           Register callback function for global (non-connection based) events
+ * \param[in]       fn: Callback function to call on specific event
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_evt_register(gsm_evt_fn fn) {
+    gsmr_t res = gsmOK;
+    gsm_evt_func_t* func, *newFunc;
+
+    GSM_ASSERT("fn != NULL", fn != NULL);
+
+    gsm_core_lock();
+
+    /* Check if function already exists on list */
+    for (func = gsm.evt_func; func != NULL; func = func->next) {
+        if (func->fn == fn) {
+            res = gsmERR;
+            break;
+        }
+    }
+
+    if (res == gsmOK) {
+        newFunc = gsm_mem_malloc(sizeof(*newFunc));
+        if (newFunc != NULL) {
+            GSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));
+            newFunc->fn = fn;                   /* Set function pointer */
+            for (func = gsm.evt_func; func != NULL && func->next != NULL; func = func->next) {}
+            if (func != NULL) {
+                func->next = newFunc;           /* Set new function as next */
+                res = gsmOK;
+            } else {
+                gsm_mem_free_s((void**)& newFunc);
+                res = gsmERRMEM;
+            }
+        } else {
+            res = gsmERRMEM;
+        }
+    }
+    gsm_core_unlock();
+    return res;
+}
+
+/**
+ * \brief           Unregister callback function for global (non-connection based) events
+ * \note            Function must be first registered using \ref gsm_evt_register
+ * \param[in]       fn: Callback function to remove from event list
+ * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ */
+gsmr_t
+gsm_evt_unregister(gsm_evt_fn fn) {
+    gsm_evt_func_t* func, *prev;
+    GSM_ASSERT("fn != NULL", fn != NULL);
+
+    gsm_core_lock();
+    for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
+        if (func->fn == fn) {
+            prev->next = func->next;
+            gsm_mem_free_s((void **)&func);
+            break;
+        }
+    }
+    gsm_core_unlock();
+    return gsmOK;
+}
+
+/**
  * \brief           Get event type
  * \param[in]       cc: Event handle
  * \return          Event type. Member of \ref gsm_evt_type_t enumeration
