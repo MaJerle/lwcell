@@ -29,6 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
+ * Version:         v0.6.0
  */
 #ifndef GSM_HDR_NETWORK_H
 #define GSM_HDR_NETWORK_H

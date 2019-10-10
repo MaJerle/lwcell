@@ -29,6 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
+ * Version:         v0.6.0
  */
 
 /* Order: Device name; Device model identification, Is_2G, Is_LTE */

@@ -29,6 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
+ * Version:         v0.6.0
  */
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_threads.h"
