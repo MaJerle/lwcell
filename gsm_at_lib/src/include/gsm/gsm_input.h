@@ -29,6 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
+ * Version:         $_version_$
  */
 #ifndef GSM_HDR_INPUT_H
 #define GSM_HDR_INPUT_H

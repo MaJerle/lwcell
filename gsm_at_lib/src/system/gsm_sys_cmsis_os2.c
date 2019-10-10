@@ -29,6 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
+ * Version:         $_version_$
  */
 #include "system/gsm_sys.h"
 #include "cmsis_os2.h"

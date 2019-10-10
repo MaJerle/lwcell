@@ -29,6 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
+ * Version:         $_version_$
  */
 #ifndef GSM_HDR_APP_MQTT_CLIENT_EVT_H
 #define GSM_HDR_APP_MQTT_CLIENT_EVT_H
