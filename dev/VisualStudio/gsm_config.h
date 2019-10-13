@@ -29,7 +29,7 @@
  * This file is part of GSM-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.6.0
+ * Version:         $_version_$
  */
 #ifndef GSM_HDR_CONFIG_H
 #define GSM_HDR_CONFIG_H

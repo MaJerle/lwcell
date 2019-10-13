@@ -29,7 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.6.0
+ * Version:         $_version_$
  */
 
 GSM_DEV_MEMORY_ENTRY(SM_P, "SM_P")

@@ -29,7 +29,7 @@
  * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.6.0
+ * Version:         $_version_$
  */
 #ifndef GSM_HDR_SYSTEM_CMSIS_OS2_H
 #define GSM_HDR_SYSTEM_CMSIS_OS2_H
