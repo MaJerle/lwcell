@@ -756,12 +756,12 @@ extern const size_t         gsm_dev_model_map_size;
     gsm_mem_free_s((void **)&(name));               \
 } while (0)
 #if GSM_CFG_USE_API_FUNC_EVT
-#define GSM_MSG_VAR_SET_EVT(name, evt_fn, evt_arg)  do {\
-    (name)->evt_fn = (evt_fn);                      \
-    (name)->evt_arg = (evt_arg);                    \
+#define GSM_MSG_VAR_SET_EVT(name, e_fn, e_arg)  do {\
+    (name)->evt_fn = (e_fn);                        \
+    (name)->evt_arg = (e_arg);                      \
 } while (0)
 #else /* GSM_CFG_USE_API_FUNC_EVT */
-#define GSM_MSG_VAR_SET_EVT(name, evt_fn, evt_arg) do { GSM_UNUSED(evt_fn); GSM_UNUSED(evt_arg); } while (0)
+#define GSM_MSG_VAR_SET_EVT(name, e_fn, e_arg) do { GSM_UNUSED(e_fn); GSM_UNUSED(e_arg); } while (0)
 #endif /* !GSM_CFG_USE_API_FUNC_EVT */
 
 #define GSM_CHARISNUM(x)                    ((x) >= '0' && (x) <= '9')
