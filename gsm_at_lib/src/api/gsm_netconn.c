@@ -158,7 +158,7 @@ netconn_evt(gsm_evt_t* evt) {
                 gsm_pbuf_free(pbuf);            /* Free pbuf */
                 return gsmOKIGNOREMORE;         /* Return OK to free the memory and ignore further data */
             }
-            nc->rcv_packets++;                  /* Increase number of received packets */
+            ++nc->rcv_packets;                  /* Increase number of received packets */
             GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE,
                 "[NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
                 (int)gsm_pbuf_length(pbuf, 0));

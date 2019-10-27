@@ -48,33 +48,33 @@ gsmi_parse_number(const char** str) {
     const char* p = *str;                       /*  */
 
     if (*p == '"') {                            /* Skip leading quotes */
-        p++;
+        ++p;
     }
     if (*p == ',') {                            /* Skip leading comma */
-        p++;
+        ++p;
     }
     if (*p == '"') {                            /* Skip leading quotes */
-        p++;
+        ++p;
     }
     if (*p == '/') {                            /* Skip '/' character, used in datetime */
-        p++;
+        ++p;
     }
     if (*p == ':') {                            /* Skip ':' character, used in datetime */
-        p++;
+        ++p;
     }
     if (*p == '+') {                            /* Skip '+' character, used in datetime */
-        p++;
+        ++p;
     }
     if (*p == '-') {                            /* Check negative number */
         minus = 1;
-        p++;
+        ++p;
     }
     while (GSM_CHARISNUM(*p)) {                 /* Parse until character is valid number */
         val = val * 10 + GSM_CHARTONUM(*p);
-        p++;
+        ++p;
     }
     if (*p == '"') {                            /* Skip trailling quotes */
-        p++;
+        ++p;
     }
     *str = p;                                   /* Save new pointer with new offset */
 
@@ -93,20 +93,20 @@ gsmi_parse_hexnumber(const char** str) {
     const char* p = *str;                       /*  */
 
     if (*p == '"') {                            /* Skip leading quotes */
-        p++;
+        ++p;
     }
     if (*p == ',') {                            /* Skip leading comma */
-        p++;
+        ++p;
     }
     if (*p == '"') {                            /* Skip leading quotes */
-        p++;
+        ++p;
     }
     while (GSM_CHARISHEXNUM(*p)) {              /* Parse until character is valid number */
         val = val * 16 + GSM_CHARHEXTONUM(*p);
-        p++;
+        ++p;
     }
     if (*p == ',') {                            /* Go to next entry if possible */
-        p++;
+        ++p;
     }
     *str = p;                                   /* Save new pointer with new offset */
     return val;
@@ -129,10 +129,10 @@ gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
     size_t i;
 
     if (*p == ',') {
-        p++;
+        ++p;
     }
     if (*p == '"') {
-        p++;
+        ++p;
     }
     i = 0;
     if (dst_len > 0) {
@@ -140,18 +140,18 @@ gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
     }
     while (*p) {
         if (*p == '"' && (p[1] == ',' || p[1] == '\r' || p[1] == '\n')) {
-            p++;
+            ++p;
             break;
         }
         if (dst != NULL) {
             if (i < dst_len) {
                 *dst++ = *p;
-                i++;
+                ++i;
             } else if (!trim) {
                 break;
             }
         }
-        p++;
+        ++p;
     }
     if (dst != NULL) {
         *dst = 0;
@@ -183,19 +183,19 @@ gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
     const char* p = *src;
 
     if (*p == ',') {
-        p++;
+        ++p;
     }
     if (*p == '"') {
-        p++;
+        ++p;
     }
     if (GSM_CHARISNUM(*p)) {
-        ip->ip[0] = gsmi_parse_number(&p); p++;
-        ip->ip[1] = gsmi_parse_number(&p); p++;
-        ip->ip[2] = gsmi_parse_number(&p); p++;
+        ip->ip[0] = gsmi_parse_number(&p); ++p;
+        ip->ip[1] = gsmi_parse_number(&p); ++p;
+        ip->ip[2] = gsmi_parse_number(&p); ++p;
         ip->ip[3] = gsmi_parse_number(&p);
     }
     if (*p == '"') {
-        p++;
+        ++p;
     }
 
     *src = p;                                   /* Set new pointer */
@@ -213,19 +213,19 @@ gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
     const char* p = *src;
 
     if (*p == '"') {
-        p++;
+        ++p;
     }
-    mac->mac[0] = gsmi_parse_hexnumber(&p); p++;
-    mac->mac[1] = gsmi_parse_hexnumber(&p); p++;
-    mac->mac[2] = gsmi_parse_hexnumber(&p); p++;
-    mac->mac[3] = gsmi_parse_hexnumber(&p); p++;
-    mac->mac[4] = gsmi_parse_hexnumber(&p); p++;
+    mac->mac[0] = gsmi_parse_hexnumber(&p); ++p;
+    mac->mac[1] = gsmi_parse_hexnumber(&p); ++p;
+    mac->mac[2] = gsmi_parse_hexnumber(&p); ++p;
+    mac->mac[3] = gsmi_parse_hexnumber(&p); ++p;
+    mac->mac[4] = gsmi_parse_hexnumber(&p); ++p;
     mac->mac[5] = gsmi_parse_hexnumber(&p);
     if (*p == '"') {
-        p++;
+        ++p;
     }
     if (*p == ',') {
-        p++;
+        ++p;
     }
     *src = p;
     return 1;
@@ -243,14 +243,14 @@ gsmi_parse_memory(const char** src) {
     const char* s = *src;
 
     if (*s == ',') {
-        s++;
+        ++s;
     }
     if (*s == '"') {
-        s++;
+        ++s;
     }
 
     /* Scan all memories available for modem */
-    for (i = 0; i < gsm_dev_mem_map_size; i++) {
+    for (i = 0; i < gsm_dev_mem_map_size; ++i) {
         sl = strlen(gsm_dev_mem_map[i].mem_str);
         if (!strncmp(s, gsm_dev_mem_map[i].mem_str, sl)) {
             mem = gsm_dev_mem_map[i].mem;
@@ -263,7 +263,7 @@ gsmi_parse_memory(const char** src) {
         gsmi_parse_string(&s, NULL, 0, 1);      /* Skip string */
     }
     if (*s == '"') {
-        s++;
+        ++s;
     }
     *src = s;
     return mem;
@@ -283,17 +283,17 @@ gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
 
     *mem_dst = 0;
     if (*str == ',') {
-        str++;
+        ++str;
     }
     if (*str == '(') {
-        str++;
+        ++str;
     }
     do {
         mem = gsmi_parse_memory(&str);          /* Parse memory string */
         *mem_dst |= GSM_U32(1 << GSM_U32(mem)); /* Set as bit field */
     } while (*str && *str != ')');
     if (*str == ')') {
-        str++;
+        ++str;
     }
     *src = str;
     return 1;
@@ -494,12 +494,12 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             u.f.bo = 0;                         /* Clear bracket open flag */
             u.f.tn = 0;                         /* Go to next term */
             u.f.tp = 0;                         /* Go to beginning of next term */
-            gsm.msg->msg.cops_scan.opsi++;      /* Increase index */
+            ++gsm.msg->msg.cops_scan.opsi;      /* Increase index */
             if (gsm.msg->msg.cops_scan.opf != NULL) {
                 *gsm.msg->msg.cops_scan.opf = gsm.msg->msg.cops_scan.opsi;
             }
         } else if (ch == ',') {
-            u.f.tn++;                           /* Go to next term */
+            ++u.f.tn;                           /* Go to next term */
             u.f.tp = 0;                         /* Go to beginning of next term */
         } else if (ch != '"') {                 /* We have valid data */
             size_t i = gsm.msg->msg.cops_scan.opsi;
@@ -510,15 +510,15 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
                 }
                 case 1: {                       /*!< Parse long name */
                     if (u.f.tp < sizeof(gsm.msg->msg.cops_scan.ops[i].long_name) - 1) {
-                        gsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp++] = ch;
-                        gsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = 0;
+                        gsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = ch;
+                        gsm.msg->msg.cops_scan.ops[i].long_name[++u.f.tp] = 0;
                     }
                     break;
                 }
                 case 2: {                       /*!< Parse short name */
                     if (u.f.tp < sizeof(gsm.msg->msg.cops_scan.ops[i].short_name) - 1) {
-                        gsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp++] = ch;
-                        gsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = 0;
+                        gsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = ch;
+                        gsm.msg->msg.cops_scan.ops[i].short_name[++u.f.tp] = 0;
                     }
                     break;
                 }
@@ -730,7 +730,7 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
     }
     switch (opt) {                              /* Check expected input string */
         case 0: {                               /* Get list of CPMS options: +CPMS: (("","","",..),("....")("...")) */
-            for (i = 0; i < 3; i++) {           /* 3 different memories for "operation","receive","sent" */
+            for (i = 0; i < 3; ++i) {           /* 3 different memories for "operation","receive","sent" */
                 if (!gsmi_parse_memories_string(&str, &gsm.m.sms.mem[i].mem_available)) {
                     return 0;
                 }
@@ -738,7 +738,7 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
             break;
         }
         case 1: {                               /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
-            for (i = 0; i < 3; i++) {           /* 3 memories expected */
+            for (i = 0; i < 3; ++i) {           /* 3 memories expected */
                 gsm.m.sms.mem[i].current = gsmi_parse_memory(&str); /* Parse memory string and save it as current */
                 gsm.m.sms.mem[i].used = gsmi_parse_number(&str);/* Get used memory size */
                 gsm.m.sms.mem[i].total = gsmi_parse_number(&str);   /* Get total memory size */
@@ -746,7 +746,7 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
             break;
         }
         case 2: {                               /* Received statement of set info: +CPMS: 10,20,2,20 */
-            for (i = 0; i < 3; i++) {           /* 3 memories expected */
+            for (i = 0; i < 3; ++i) {           /* 3 memories expected */
                 gsm.m.sms.mem[i].used = gsmi_parse_number(&str);/* Get used memory size */
                 gsm.m.sms.mem[i].total = gsmi_parse_number(&str);   /* Get total memory size */
             }
@@ -815,7 +815,7 @@ gsmi_parse_cpbr(const char* str) {
     e->type = (gsm_number_type_t)gsmi_parse_number(&str);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
 
-    gsm.msg->msg.pb_list.ei++;
+    ++gsm.msg->msg.pb_list.ei;
     if (gsm.msg->msg.pb_list.er != NULL) {
         *gsm.msg->msg.pb_list.er = gsm.msg->msg.pb_list.ei;
     }
@@ -846,7 +846,7 @@ gsmi_parse_cpbf(const char* str) {
     e->type = (gsm_number_type_t)gsmi_parse_number(&str);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
 
-    gsm.msg->msg.pb_search.ei++;
+    ++gsm.msg->msg.pb_search.ei;
     if (gsm.msg->msg.pb_search.er != NULL) {
         *gsm.msg->msg.pb_search.er = gsm.msg->msg.pb_search.ei;
     }
@@ -950,7 +950,7 @@ gsmi_parse_ipd(const char* str) {
     gsm_conn_p c;
 
     if (*str == '+') {
-        str++;
+        ++str;
         if (*str == 'R') {
             str += 8;                           /* Advance for RECEIVE */
         } else {

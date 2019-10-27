@@ -62,7 +62,7 @@ send_data(const void* data, size_t len) {
 
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
-        for (DWORD i = 0; i < len; i++) {
+        for (DWORD i = 0; i < len; ++i) {
             printf("%c", d[i]);
         }
         SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -96,7 +96,7 @@ configure_uart(uint32_t baudrate) {
             L"\\\\.\\COM8",
             L"\\\\.\\COM4"
         };
-        for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); i++) {
+        for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); ++i) {
             com_port = CreateFile(com_ports[i],
                 GENERIC_READ | GENERIC_WRITE,
                 0,
@@ -173,7 +173,7 @@ uart_thread(void* param) {
                 HANDLE hConsole;
                 hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
                 SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
-                for (DWORD i = 0; i < bytes_read; i++) {
+                for (DWORD i = 0; i < bytes_read; ++i) {
                     printf("%c", data_buffer[i]);
                 }
                 SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);

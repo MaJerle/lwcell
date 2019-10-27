@@ -56,7 +56,7 @@ gsm_input(const void* data, size_t len) {
     gsm_buff_write(&gsm.buff, data, len);       /* Write data to buffer */
     gsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Write empty box, don't care if write fails */
     gsm_recv_total_len += len;                  /* Update total number of received bytes */
-    gsm_recv_calls++;                           /* Update number of calls */
+    ++gsm_recv_calls;                           /* Update number of calls */
     return gsmOK;
 }
 
@@ -84,7 +84,7 @@ gsm_input_process(const void* data, size_t len) {
     }
 
     gsm_recv_total_len += len;                  /* Update total number of received bytes */
-    gsm_recv_calls++;                           /* Update number of calls */
+    ++gsm_recv_calls;                           /* Update number of calls */
 
     gsm_core_lock();
     res = gsmi_process(data, len);              /* Process input data */

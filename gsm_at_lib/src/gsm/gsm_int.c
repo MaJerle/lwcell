@@ -253,7 +253,7 @@ gsmi_send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     }
     AT_PORT_SEND_QUOTE_COND(q);             /* Send quote */
     ch = is_ip ? '.' : ':';                     /* Get delimiter character */
-    for (uint8_t i = 0; i < (is_ip ? 4 : 6); i++) { /* Process byte by byte */
+    for (uint8_t i = 0; i < (is_ip ? 4 : 6); ++i) { /* Process byte by byte */
         if (is_ip) {                            /* In case of IP ... */
             gsm_u8_to_str(ip->ip[i], str);      /* ... go to decimal format ... */
         } else {                                /* ... in case of MAC ... */
@@ -287,7 +287,7 @@ gsmi_send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
                     AT_PORT_SEND_CHR(&special); /* Send special character */
                 }
                 AT_PORT_SEND_CHR(str);      /* Send character */
-                str++;
+                ++str;
             }
         } else {
             AT_PORT_SEND_STR(str);          /* Send plain string */
@@ -400,7 +400,7 @@ reset_connections(uint8_t forced) {
     gsm.evt.evt.conn_active_close.forced = forced;
     gsm.evt.evt.conn_active_close.res = gsmOK;
     
-    for (size_t i = 0; i < GSM_CFG_MAX_CONNS; i++) {/* Check all connections */
+    for (size_t i = 0; i < GSM_CFG_MAX_CONNS; ++i) {/* Check all connections */
         if (gsm.m.conns[i].status.f.active) {
             gsm.m.conns[i].status.f.active = 0;
     
@@ -557,7 +557,7 @@ gsmi_tcpip_process_data_sent(uint8_t sent) {
         }
         gsm.msg->msg.conn_send.tries = 0;
     } else {                                    /* We were not successful */
-        gsm.msg->msg.conn_send.tries++;         /* Increase number of tries */
+        ++gsm.msg->msg.conn_send.tries;         /* Increase number of tries */
         if (gsm.msg->msg.conn_send.tries == GSM_CFG_MAX_SEND_RETRIES) { /* In case we reached max number of retransmissions */
             return 1;                           /* Return 1 and indicate error */
         }
@@ -629,7 +629,7 @@ gsmi_send_conn_error_cb(gsm_msg_t* msg, gsmr_t error) {
 uint8_t
 gsmi_is_valid_conn_ptr(gsm_conn_p conn) {
     uint8_t i = 0;
-    for (i = 0; i < GSM_ARRAYSIZE(gsm.m.conns); i++) {
+    for (i = 0; i < GSM_ARRAYSIZE(gsm.m.conns); ++i) {
         if (conn == &gsm.m.conns[i]) {
             return 1;
         }
@@ -821,7 +821,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                     GSM_MEMCPY(gsm.msg->msg.device_info.str, gsm.m.model_number, tocopy);
                     gsm.msg->msg.device_info.str[tocopy - 1] = 0;
                 }
-                for (size_t i = 0; i < gsm_dev_model_map_size; i++) {
+                for (size_t i = 0; i < gsm_dev_model_map_size; ++i) {
                     if (strstr(gsm.m.model_number, gsm_dev_model_map[i].id_str) != NULL) {
                         gsm.m.model = gsm_dev_model_map[i].model;
                         break;
@@ -961,7 +961,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
                     res = gsm.msg->res = res;   /* Set the error status */
                 }
             } else {
-                gsm.msg->i++;                   /* Number of continue calls */
+                ++gsm.msg->i;                   /* Number of continue calls */
             }
 
             /*
@@ -1032,9 +1032,10 @@ gsmi_process(const void* data, size_t data_len) {
         return gsmERRNODEVICE;
     }
 
-    while (d_len) {                             /* Read entire set of characters from buffer */
-        ch = *d++;                              /* Get next character */
-        d_len--;                                /* Decrease remaining length */
+    while (d_len > 0) {                         /* Read entire set of characters from buffer */
+        ch = *d;                                /* Get next character */
+        ++d;                                    /* Go to next character, must be here as it is used later on */
+        --d_len;                                /* Decrease remaining length, must be here as it is decreased later too */
 
         if (0) {
 #if GSM_CFG_CONN
@@ -1044,8 +1045,8 @@ gsmi_process(const void* data, size_t data_len) {
             if (gsm.m.ipd.buff != NULL) {       /* Do we have active buffer? */
                 gsm.m.ipd.buff->payload[gsm.m.ipd.buff_ptr] = ch;   /* Save data character */
             }
-            gsm.m.ipd.buff_ptr++;
-            gsm.m.ipd.rem_len--;
+            ++gsm.m.ipd.buff_ptr;
+            --gsm.m.ipd.rem_len;
 
             /* Try to read more data directly from buffer */
             len = GSM_MIN(d_len, GSM_MIN(gsm.m.ipd.rem_len, gsm.m.ipd.buff != NULL ? (gsm.m.ipd.buff->len - gsm.m.ipd.buff_ptr) : gsm.m.ipd.rem_len));
@@ -1157,7 +1158,7 @@ gsmi_process(const void* data, size_t data_len) {
             }
             if (ch == '\n' && ch_prev1 == '\r') {
                 if (gsm.msg->msg.sms_list.read == 2) {
-                    gsm.msg->msg.sms_list.ei++; /* Go to next entry */
+                    ++gsm.msg->msg.sms_list.ei; /* Go to next entry */
                     if (gsm.msg->msg.sms_list.er != NULL) { /* Check and update user variable */
                         *gsm.msg->msg.sms_list.er = gsm.msg->msg.sms_list.ei;
                     }
@@ -1287,7 +1288,7 @@ gsmi_process(const void* data, size_t data_len) {
                      * so it is safe to just add them to receive array without checking
                      * what are the actual values
                      */
-                    for (uint8_t i = 0; i < unicode.t; i++) {
+                    for (uint8_t i = 0; i < unicode.t; ++i) {
                         RECV_ADD(unicode.ch[i]);/* Add character to receive array */
                     }
                 }
@@ -1376,7 +1377,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                 if (!*is_ok) {
                     /* Sometimes SIM is not ready just after PIN entered */
                     if (msg->msg.sim_info.cnum_tries < 5) {
-                        msg->msg.sim_info.cnum_tries++;
+                        ++msg->msg.sim_info.cnum_tries;
                         SET_NEW_CMD(GSM_CMD_CNUM);
                         gsm_delay(1000);
                     }
@@ -2000,7 +2001,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             } else if(CMD_IS_DEF(GSM_CMD_CMGL)) {   /* List SMS original command? */
                 gsmi_send_dev_memory(msg->msg.sms_list.mem == GSM_MEM_CURRENT ? gsm.m.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
             } else if (CMD_IS_DEF(GSM_CMD_CPMS_SET)) {  /* Do we want to set memory for read/delete,sent/write,receive? */
-                for (size_t i = 0; i < 3; i++) {/* Write 3 memories */
+                for (size_t i = 0; i < 3; ++i) {/* Write 3 memories */
                     gsmi_send_dev_memory(msg->msg.sms_memory.mem[i] == GSM_MEM_CURRENT ? gsm.m.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
                 }
             }

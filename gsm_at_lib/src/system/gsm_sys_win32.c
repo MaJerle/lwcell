@@ -283,8 +283,7 @@ gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
     if (mbox->in == mbox->out) {
         gsm_sys_sem_release(&mbox->sem_not_empty);
     }
-    mbox->in++;
-    if (mbox->in >= mbox->size) {
+    if (++mbox->in >= mbox->size) {
         mbox->in = 0;
     }
     gsm_sys_sem_release(&mbox->sem);
@@ -302,8 +301,7 @@ gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
     }
 
     *m = mbox->entries[mbox->out];
-    mbox->out++;
-    if (mbox->out >= mbox->size) {
+    if (++mbox->out >= mbox->size) {
         mbox->out = 0;
     }
     gsm_sys_sem_release(&mbox->sem_not_full);   /* Queue not full anymore */

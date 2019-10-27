@@ -54,7 +54,7 @@ gsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
     i = 0;
     tmp[0] = '0';
     if (num == 0) {
-        i++;
+        ++i;
     } else {
         if (is_hex) {
             uint8_t mod;
@@ -66,20 +66,20 @@ gsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
                     tmp[i] = mod - 10 + 'A';
                 }
                 num >>= 4;
-                i++;
+                ++i;
             }
         } else {
             while (num > 0) {
                 tmp[i] = (num % 10) + '0';
                 num /= 10;
-                i++;
+                ++i;
             }
         }
     }
     if (is_hex) {
         while (i < width) {
             tmp[i] = '0';
-            i++;
+            ++i;
         }
     }
     tmp[i] = 0;
@@ -90,7 +90,7 @@ gsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
         char t = out[i - y - 1];
         out[i - y - 1] = tmp[y];
         tmp[y] = t;
-        y++;
+        ++y;
     }
     out[i] = 0;
     return out;

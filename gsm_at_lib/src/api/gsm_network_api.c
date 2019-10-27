@@ -76,7 +76,7 @@ gsm_network_request_attach(void) {
             do_conn = 1;
         }
     }
-    network_counter++;
+    ++network_counter;
 	gsm_core_unlock();
 
     /* Connect to network */
