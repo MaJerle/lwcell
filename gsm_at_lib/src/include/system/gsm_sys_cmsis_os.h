@@ -1,6 +1,6 @@
 /**	
  * \file            gsm_sys_cmsis_os.h
- * \brief           CMSIS-OS based system file
+ * \brief           System dependent functions for CMSIS-OS based operating system
  */
 
 /*
@@ -47,14 +47,14 @@ extern "C" {
 #if GSM_CFG_OS && !__DOXYGEN__
 #include "cmsis_os.h"
 
-typedef osMutexId                   gsm_sys_mutex_t;
-typedef osSemaphoreId               gsm_sys_sem_t;
-typedef osMessageQId                gsm_sys_mbox_t;
-typedef osThreadId                  gsm_sys_thread_t;
-typedef osPriority                  gsm_sys_thread_prio_t;
-#define GSM_SYS_MBOX_NULL           (gsm_sys_mbox_t)0
-#define GSM_SYS_SEM_NULL            (gsm_sys_sem_t)0
-#define GSM_SYS_MUTEX_NULL          (gsm_sys_mutex_t)0
+typedef osMutexId_t                 gsm_sys_mutex_t;
+typedef osSemaphoreId_t             gsm_sys_sem_t;
+typedef osMessageQueueId_t          gsm_sys_mbox_t;
+typedef osThreadId_t                gsm_sys_thread_t;
+typedef osPriority_t                gsm_sys_thread_prio_t;
+#define GSM_SYS_MBOX_NULL           ((gsm_sys_mbox_t)NULL)
+#define GSM_SYS_SEM_NULL            ((gsm_sys_sem_t)NULL)
+#define GSM_SYS_MUTEX_NULL          ((gsm_sys_mutex_t)NULL)
 #define GSM_SYS_TIMEOUT             ((uint32_t)osWaitForever)
 #define GSM_SYS_THREAD_PRIO         (osPriorityNormal)
 #define GSM_SYS_THREAD_SS           (512)
