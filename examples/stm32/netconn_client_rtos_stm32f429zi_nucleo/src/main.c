@@ -42,8 +42,7 @@ static void LL_Init(void);
 void SystemClock_Config(void);
 static void USART_Printf_Init(void);
 
-static void init_thread(void const* arg);
-osThreadDef(init_thread, init_thread, osPriorityNormal, 0, 512);
+static void init_thread(void* arg);
 
 static gsmr_t gsm_callback_func(gsm_evt_t* evt);
 
@@ -58,8 +57,13 @@ main(void) {
     
     printf("Application running on STM32F429ZI-Nucleo!\r\n");
     
-    osThreadCreate(osThread(init_thread), NULL);/* Create init thread */
-    osKernelStart();                            /* Start kernel */
+    /* Initialize, create first thread and start kernel */
+    osKernelInitialize();
+    const osThreadAttr_t attr = {
+            .stack_size = 512
+    };
+    osThreadNew(init_thread, NULL, &attr);
+    osKernelStart();
     
     while (1) {}
 }
@@ -69,7 +73,7 @@ main(void) {
  * \param[in]       arg: Thread argument
  */
 static void
-init_thread(void const* arg) {
+init_thread(void* arg) {
     gsm_sys_sem_t sem;
     printf("Starting GSM application!\r\n");
 

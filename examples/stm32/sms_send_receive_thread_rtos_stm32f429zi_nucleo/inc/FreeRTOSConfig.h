@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.2.1 - Copyright (C) 2015 Real Time Engineers Ltd.
+    FreeRTOS V9.0.0 - Copyright (C) 2016 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -8,14 +8,14 @@
 
     FreeRTOS is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation >>!AND MODIFIED BY!<< the FreeRTOS exception.
+    Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
 
-	***************************************************************************
+    ***************************************************************************
     >>!   NOTE: The modification to the GPL is included to allow you to     !<<
     >>!   distribute a combined work that includes FreeRTOS without being   !<<
     >>!   obliged to provide the source code for proprietary components     !<<
     >>!   outside of the FreeRTOS kernel.                                   !<<
-	***************************************************************************
+    ***************************************************************************
 
     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -37,17 +37,17 @@
     ***************************************************************************
 
     http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
-	the FAQ page "My application does not run, what could be wrong?".  Have you
-	defined configASSERT()?
+    the FAQ page "My application does not run, what could be wrong?".  Have you
+    defined configASSERT()?
 
-	http://www.FreeRTOS.org/support - In return for receiving this top quality
-	embedded software for free we request you assist our global community by
-	participating in the support forum.
+    http://www.FreeRTOS.org/support - In return for receiving this top quality
+    embedded software for free we request you assist our global community by
+    participating in the support forum.
 
-	http://www.FreeRTOS.org/training - Investing in training allows your team to
-	be as productive as possible as early as possible.  Now you can receive
-	FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
-	Ltd, and the world's leading authority on the world's leading RTOS.
+    http://www.FreeRTOS.org/training - Investing in training allows your team to
+    be as productive as possible as early as possible.  Now you can receive
+    FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+    Ltd, and the world's leading authority on the world's leading RTOS.
 
     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
     including FreeRTOS+Trace - an indispensable productivity tool, a DOS
@@ -89,31 +89,27 @@
  extern uint32_t SystemCoreClock;
 #endif
 
-#define configUSE_PREEMPTION              1
-#define configUSE_IDLE_HOOK               1
-#define configUSE_TICK_HOOK               1
-#define configCPU_CLOCK_HZ                (SystemCoreClock)
-#define configTICK_RATE_HZ                ((TickType_t) 1000)
-#define configMAX_PRIORITIES              (7)
-#define configMINIMAL_STACK_SIZE          ((uint16_t) 512)
-#define configTOTAL_HEAP_SIZE             ((size_t)(24 * 1024))
-#define configMAX_TASK_NAME_LEN           (16)
-#define configUSE_TRACE_FACILITY          1
-#define configUSE_16_BIT_TICKS            0
-#define configIDLE_SHOULD_YIELD           1
-#define configUSE_MUTEXES                 1
-#define configQUEUE_REGISTRY_SIZE         8
-#define configUSE_RECURSIVE_MUTEXES       1
-#define configUSE_MALLOC_FAILED_HOOK      0
-#define configUSE_APPLICATION_TASK_TAG    0
-#define configUSE_COUNTING_SEMAPHORES     1
-#define configGENERATE_RUN_TIME_STATS     0
-#define configUSE_STATS_FORMATTING_FUNCTIONS    1
-
-#define traceTASK_SWITCHED_IN()  extern void StartIdleMonitor(void); \
-                                         StartIdleMonitor()
-#define traceTASK_SWITCHED_OUT() extern void EndIdleMonitor(void); \
-                                         EndIdleMonitor()
+#define configUSE_PREEMPTION                1
+#define configUSE_IDLE_HOOK                 0
+#define configUSE_TICK_HOOK                 0
+#define configCPU_CLOCK_HZ                  (SystemCoreClock)
+#define configTICK_RATE_HZ                  ((TickType_t)1000)
+#define configMAX_PRIORITIES                (7)
+#define configMINIMAL_STACK_SIZE            ((uint16_t)128)
+#define configTOTAL_HEAP_SIZE               ((size_t)(15 * 1024))
+#define configMAX_TASK_NAME_LEN             (16)
+#define configUSE_TRACE_FACILITY            1
+#define configUSE_16_BIT_TICKS              0
+#define configIDLE_SHOULD_YIELD             1
+#define configUSE_MUTEXES                   1
+#define configQUEUE_REGISTRY_SIZE           8
+#define configCHECK_FOR_STACK_OVERFLOW      0
+#define configUSE_RECURSIVE_MUTEXES         1
+#define configUSE_MALLOC_FAILED_HOOK        0
+#define configUSE_APPLICATION_TASK_TAG      0
+#define configUSE_COUNTING_SEMAPHORES       1
+#define configGENERATE_RUN_TIME_STATS       0
+#define configSUPPORT_STATIC_ALLOCATION     1
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES           0
@@ -146,7 +142,7 @@ to exclude the API function. */
 
 /* The lowest interrupt priority that can be used in a call to a "set priority"
 function. */
-#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   0x0F
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   0xf
 
 /* The highest interrupt priority that can be used by any interrupt service
 routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
