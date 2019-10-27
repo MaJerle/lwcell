@@ -103,7 +103,7 @@ gsm_network_request_detach(void) {
     /* Check if we need to disconnect */
     gsm_core_lock();
     if (network_counter > 0) {
-        network_counter--;
+        --network_counter;
         if (network_counter == 0) {
             do_disconn = 1;
         }

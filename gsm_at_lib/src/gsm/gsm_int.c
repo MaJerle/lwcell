@@ -1863,7 +1863,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             /* Check if we are connected to network */
 
             msg->msg.conn_start.num = 0;        /* Start with max value = invalidated */
-            for (int16_t i = GSM_CFG_MAX_CONNS - 1; i >= 0; i--) {  /* Find available connection */
+            for (int16_t i = GSM_CFG_MAX_CONNS - 1; i >= 0; --i) {  /* Find available connection */
                 if (!gsm.m.conns[i].status.f.active) {
                     c = &gsm.m.conns[i];
                     c->num = GSM_U8(i);
