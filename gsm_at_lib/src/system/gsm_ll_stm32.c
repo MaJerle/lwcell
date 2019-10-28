@@ -361,12 +361,12 @@ gsm_ll_init(gsm_ll_t* ll) {
 gsmr_t
 gsm_ll_deinit(gsm_ll_t* ll) {
     if (usart_ll_mbox_id != NULL) {
-        osMessageQId tmp = usart_ll_mbox_id;
+        osMessageQueueId_t tmp = usart_ll_mbox_id;
         usart_ll_mbox_id = NULL;
         osMessageQueueDelete(tmp);
     }
     if (usart_ll_thread_id != NULL) {
-        osThreadId tmp = usart_ll_thread_id;
+        osThreadId_t tmp = usart_ll_thread_id;
         usart_ll_thread_id = NULL;
         osThreadTerminate(tmp);
     }

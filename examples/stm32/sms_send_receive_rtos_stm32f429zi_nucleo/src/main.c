@@ -112,7 +112,7 @@ init_thread(void* arg) {
         gsm_delay(1000);
     }
     
-    osThreadTerminate(NULL);                    /* Terminate current thread */
+    osThreadExit();
 }
 
 /**

@@ -155,7 +155,7 @@ gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
 
 uint8_t
 gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
-    return osMessageQueuePut(*b, m, 0, 0) == osOK;  /* Put new message without timeout */
+    return osMessageQueuePut(*b, m, 0, 0) == osOK;
 }
 
 uint8_t
@@ -165,12 +165,12 @@ gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
 
 uint8_t
 gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b) {
-    return b != NULL && *b != NULL;             /* Return status if message box is valid */
+    return b != NULL && *b != NULL;
 }
 
 uint8_t
 gsm_sys_mbox_invalid(gsm_sys_mbox_t* b) {
-    *b = GSM_SYS_MBOX_NULL;                     /* Invalidate message box */
+    *b = GSM_SYS_MBOX_NULL;
     return 1;
 }
 
@@ -195,14 +195,14 @@ gsm_sys_thread_terminate(gsm_sys_thread_t* t) {
     if (t != NULL) {
         osThreadTerminate(*t);
     } else {
-        osThreadExit();                         /* Exit itself */
+        osThreadExit();
     }
     return 1;
 }
 
 uint8_t
 gsm_sys_thread_yield(void) {
-    osThreadYield();                            /* Yield current thread */
+    osThreadYield();
     return 1;
 }
 
