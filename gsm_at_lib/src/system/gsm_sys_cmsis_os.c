@@ -144,7 +144,7 @@ gsm_sys_mbox_delete(gsm_sys_mbox_t* b) {
 uint32_t
 gsm_sys_mbox_put(gsm_sys_mbox_t* b, void* m) {
     uint32_t tick = osKernelSysTick();
-    return osMessageQueuePut(*b, m, 0, osWaitForever) == osOK ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
+    return osMessageQueuePut(*b, &m, 0, osWaitForever) == osOK ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
 }
 
 uint32_t
@@ -155,7 +155,7 @@ gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
 
 uint8_t
 gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
-    return osMessageQueuePut(*b, m, 0, 0) == osOK;
+    return osMessageQueuePut(*b, &m, 0, 0) == osOK;
 }
 
 uint8_t
@@ -180,7 +180,7 @@ gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn t
     const osThreadAttr_t thread_attr = {
             .name = (char *)name,
             .priority = (osPriority)prio,
-            .stack_size = stack_size ? stack_size : GSM_SYS_THREAD_SS
+            .stack_size = stack_size > 0 ? stack_size : GSM_SYS_THREAD_SS
     };
 
     id = osThreadNew(thread_func, arg, &thread_attr);
