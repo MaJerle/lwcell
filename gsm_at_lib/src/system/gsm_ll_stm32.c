@@ -73,10 +73,10 @@ static size_t       old_pos;
 
 /* USART thread */
 static void usart_ll_thread(void* arg);
-static osThreadId usart_ll_thread_id;
+static osThreadId_t usart_ll_thread_id;
 
 /* Message queue */
-static osMessageQId usart_ll_mbox_id;
+static osMessageQueueId_t usart_ll_mbox_id;
 
 /**
  * \brief           USART data processing
@@ -136,18 +136,6 @@ configure_uart(uint32_t baudrate) {
         GSM_RESET_PORT_CLK;
 #endif /* defined(GSM_RESET_PIN) */
 
-#if defined(GSM_GPIO0_PIN)
-        GSM_GPIO0_PORT_CLK;
-#endif /* defined(GSM_GPIO0_PIN) */
-
-#if defined(GSM_GPIO2_PIN)
-        GSM_GPIO2_PORT_CLK;
-#endif /* defined(GSM_GPIO2_PIN) */
-
-#if defined(GSM_CH_PD_PIN)
-        GSM_CH_PD_PORT_CLK;
-#endif /* defined(GSM_CH_PD_PIN) */
-
         /* Global pin configuration */
         LL_GPIO_StructInit(&gpio_init);
         gpio_init.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
@@ -160,27 +148,6 @@ configure_uart(uint32_t baudrate) {
         gpio_init.Pin = GSM_RESET_PIN;
         LL_GPIO_Init(GSM_RESET_PORT, &gpio_init);
 #endif /* defined(GSM_RESET_PIN) */
-
-#if defined(GSM_GPIO0_PIN)
-        /* Configure GPIO0 pin */
-        gpio_init.Pin = GSM_GPIO0_PIN;
-        LL_GPIO_Init(GSM_GPIO0_PORT, &gpio_init);
-        LL_GPIO_SetOutputPin(GSM_GPIO0_PORT, GSM_GPIO0_PIN);
-#endif /* defined(GSM_GPIO0_PIN) */
-
-#if defined(GSM_GPIO2_PIN)
-        /* Configure GPIO2 pin */
-        gpio_init.Pin = GSM_GPIO2_PIN;
-        LL_GPIO_Init(GSM_GPIO2_PORT, &gpio_init);
-        LL_GPIO_SetOutputPin(GSM_GPIO2_PORT, GSM_GPIO2_PIN);
-#endif /* defined(GSM_GPIO2_PIN) */
-
-#if defined(GSM_CH_PD_PIN)
-        /* Configure CH_PD pin */
-        gpio_init.Pin = GSM_CH_PD_PIN;
-        LL_GPIO_Init(GSM_CH_PD_PORT, &gpio_init);
-        LL_GPIO_SetOutputPin(GSM_CH_PD_PORT, GSM_CH_PD_PIN);
-#endif /* defined(GSM_CH_PD_PIN) */
 
         /* Configure USART pins */
         gpio_init.Mode = LL_GPIO_MODE_ALTERNATE;
@@ -387,7 +354,8 @@ GSM_USART_IRQHANDLER(void) {
     LL_USART_ClearFlag_NE(GSM_USART);
 
     if (usart_ll_mbox_id != NULL) {
-        osMessageQueuePut(usart_ll_mbox_id, (void *)1, 0, 0);
+        void* d = (void *)1;
+        osMessageQueuePut(usart_ll_mbox_id, &d, 0, 0);
     }
 }
 
@@ -400,7 +368,8 @@ GSM_USART_DMA_RX_IRQHANDLER(void) {
     GSM_USART_DMA_RX_CLEAR_HT;
 
     if (usart_ll_mbox_id != NULL) {
-        osMessageQueuePut(usart_ll_mbox_id, (void *)1, 0, 0);
+        void* d = (void *)1;
+        osMessageQueuePut(usart_ll_mbox_id, &d, 0, 0);
     }
 }
 
