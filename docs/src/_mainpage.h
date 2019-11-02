@@ -27,8 +27,8 @@
  *
  * \section         sect_resources Download & Resources
  *
- *  - <a class="download_url" href="https://github.com/MaJerle/GSM_AT_Lib/releases">Download library from Github releases</a>
- *  - <a href="https://github.com/MaJerle/GSM_AT_Lib_res">Resources and examples repository</a>
+ *  - <a class="download_url" href="https://github.com/MaJerle/GSM_AT_Lib/releases">Download library at Github releases</a>
+ *  - <a href="https://github.com/MaJerle/GSM_AT_Lib">Resources and examples repository</a>
  *  - Read \ref page_appnote before you start development
  *  - <a href="https://github.com/MaJerle/GSM_AT_Lib">Official development repository on Github</a>
  *
