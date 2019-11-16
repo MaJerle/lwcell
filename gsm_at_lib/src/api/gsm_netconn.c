@@ -43,6 +43,10 @@
 #error "GSM_CFG_CONN must be enabled for NETCONN API!"
 #endif /* !GSM_CFG_CONN */
 
+#if GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN < 2
+#error "GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN must be greater or equal to 2"
+#endif /* GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN < 2 */
+
 /**
  * \brief           Sequential API structure
  */
