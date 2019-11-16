@@ -39,12 +39,11 @@
 #if !__DOXYGEN__
 
 static uint8_t initialized = 0;
+static HANDLE thread_handle;
+static volatile HANDLE com_port;                /*!< COM port handle */
+static uint8_t data_buffer[0x1000];             /*!< Received data array */
 
-DWORD thread_id;
-HANDLE thread_handle;
 static void uart_thread(void* param);
-volatile HANDLE com_port;                       /*!< COM port handle */
-uint8_t data_buffer[0x1000];                    /*!< Received data array */
 
 /**
  * \brief           Send data to GSM device, function called from GSM stack when we have data to send
@@ -92,6 +91,7 @@ configure_uart(uint32_t baudrate) {
     if (!initialized) {
         static const LPCWSTR com_ports[] = {
             L"\\\\.\\COM23",
+            L"\\\\.\\COM12",
             L"\\\\.\\COM9",
             L"\\\\.\\COM8",
             L"\\\\.\\COM4"

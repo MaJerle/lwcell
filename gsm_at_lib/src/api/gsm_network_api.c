@@ -76,12 +76,19 @@ gsm_network_request_attach(void) {
             do_conn = 1;
         }
     }
-    ++network_counter;
+    if (!do_conn) {
+        ++network_counter;
+    }
 	gsm_core_unlock();
 
     /* Connect to network */
     if (do_conn) {
         res = gsm_network_attach(network_apn, network_user, network_pass, NULL, NULL, 1);
+        if (res == gsmOK) {
+            gsm_core_lock();
+            ++network_counter;
+            gsm_core_unlock();
+        }
     }
     return res;
 }
@@ -103,9 +110,10 @@ gsm_network_request_detach(void) {
     /* Check if we need to disconnect */
     gsm_core_lock();
     if (network_counter > 0) {
-        --network_counter;
-        if (network_counter == 0) {
+        if (network_counter == 1) {
             do_disconn = 1;
+        } else {
+            --network_counter;
         }
     }
     gsm_core_unlock();
@@ -113,6 +121,11 @@ gsm_network_request_detach(void) {
     /* Connect to network */
     if (do_disconn) {
         res = gsm_network_detach(NULL, NULL, 1);
+        if (res == gsmOK) {
+            gsm_core_lock();
+            --network_counter;
+            gsm_core_unlock();
+        }
     }
     return res;
 }
