@@ -76,7 +76,7 @@ typedef void (*gsm_sys_thread_fn)(void *);
 /* Decide which port to include */
 #if GSM_CFG_SYS_PORT == GSM_SYS_PORT_CMSIS_OS
 #include "system/gsm_sys_cmsis_os.h"
-#elif ESP_CFG_SYS_PORT == GSM_SYS_PORT_CMSIS_OS2
+#elif GSM_CFG_SYS_PORT == GSM_SYS_PORT_CMSIS_OS2
 #include "system/esp_sys_cmsis_os2.h"
 #elif GSM_CFG_SYS_PORT == GSM_SYS_PORT_WIN32
 #include "system/gsm_sys_win32.h"
