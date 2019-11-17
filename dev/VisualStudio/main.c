@@ -40,8 +40,8 @@ typedef struct {
     const char* puk;
 } my_sim_t;
 my_sim_t sim = {
-    .pin = "7600",
-    .puk = "08475703",
+    .pin = "7958",
+    .puk = "10663647",
 };
 
 uint8_t lwmem_region_1[0x4000];
