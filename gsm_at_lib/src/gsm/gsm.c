@@ -110,7 +110,7 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
     if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_process", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
         GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
-            "[CORE] Cannot allocate processing thread!\r\n");
+            "[CORE] Cannot create processing thread!\r\n");
         gsm_sys_thread_terminate(&gsm.thread_produce);  /* Delete produce thread */
         gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
