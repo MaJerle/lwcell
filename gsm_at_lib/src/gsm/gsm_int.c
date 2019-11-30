@@ -195,13 +195,13 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 
 /**
  * \brief           Send SMS read operation event
- * \param[in]       _m_: SMS list message
+ * \param[in]       mm: SMS list message
  * \param[in]       err: Error of type \ref gsmr_t
  */
-#define SMS_SEND_LIST_EVT(_m_, err)     do {        \
+#define SMS_SEND_LIST_EVT(mm, err)     do {        \
     gsm.evt.evt.sms_list.mem = gsm.m.sms.mem[0].current;\
-    gsm.evt.evt.sms_list.entries = (_m_)->msg.sms_list.entries; \
-    gsm.evt.evt.sms_list.size = (_m_)->msg.sms_list.ei; \
+    gsm.evt.evt.sms_list.entries = (mm)->msg.sms_list.entries;  \
+    gsm.evt.evt.sms_list.size = (mm)->msg.sms_list.ei;  \
     gsm.evt.evt.sms_list.res = err;                 \
     gsmi_send_cb(GSM_EVT_SMS_LIST);                 \
 } while (0)
@@ -575,7 +575,7 @@ gsmi_tcpip_process_data_sent(uint8_t sent) {
  * \brief           Process CIPSEND response
  * \param[in]       rcv: Received data
  * \param[in,out]   is_ok: Pointer to current ok status
- * \param[in,out]   is_ok: Pointer to current error status
+ * \param[in,out]   is_error: Pointer to current error status
  */
 void
 gsmi_process_cipsend_response(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_error) {
@@ -606,6 +606,7 @@ gsmi_process_cipsend_response(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_erro
 /**
  * \brief           Send error event to application layer
  * \param[in]       msg: Message from user with connection start
+ * \param[in]       error: Error type
  */
 static void
 gsmi_send_conn_error_cb(gsm_msg_t* msg, gsmr_t error) {
@@ -671,7 +672,7 @@ gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced) {
 
 /**
  * \brief           Process received string from GSM
- * \param[in]       recv: Pointer to \ref gsm_rect_t structure with input string
+ * \param[in]       rcv: Pointer to \ref gsm_recv_t structure with input string
  */
 static void
 gsmi_parse_received(gsm_recv_t* rcv) {

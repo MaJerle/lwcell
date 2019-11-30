@@ -78,6 +78,7 @@ static gsm_netconn_t* netconn_list;             /*!< Linked list of netconn entr
 /**
  * \brief           Flush all mboxes and clear possible used memories
  * \param[in]       nc: Pointer to netconn to flush
+ * \param[in]       protect: Set to 1 to protect against multi-thread access
  */
 static void
 flush_mboxes(gsm_netconn_t* nc, uint8_t protect) {

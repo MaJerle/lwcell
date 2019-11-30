@@ -38,7 +38,7 @@
 /**
  * \brief           Parse number from string
  * \note            Input string pointer is changed and number is skipped
- * \param[in]       Pointer to pointer to string to parse
+ * \param[in,out]   str: Pointer to pointer to string to parse
  * \return          Parsed number
  */
 int32_t
@@ -84,7 +84,7 @@ gsmi_parse_number(const char** str) {
 /**
  * \brief           Parse number from string as hex
  * \note            Input string pointer is changed and number is skipped
- * \param[in]       Pointer to pointer to string to parse
+ * \param[in,out]   str: Pointer to pointer to string to parse
  * \return          Parsed number
  */
 uint32_t
@@ -175,7 +175,7 @@ gsmi_check_and_trim(const char** src) {
 /**
  * \brief           Parse string as IP address
  * \param[in,out]   src: Pointer to pointer to string to parse from
- * \param[in]       dst: Destination pointer
+ * \param[out]      ip: Pointer to IP memory
  * \return          `1 on success, 0 otherwise
  */
 uint8_t
@@ -205,7 +205,7 @@ gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
 /**
  * \brief           Parse string as MAC address
  * \param[in,out]   src: Pointer to pointer to string to parse from
- * \param[in]       dst: Destination pointer
+ * \param[out]      mac: Pointer to MAC memory
  * \return          1 on success, 0 otherwise
  */
 uint8_t
@@ -301,7 +301,8 @@ gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
 
 /**
  * \brief           Parse received +CREG message
- * \param[in]       str: Input string
+ * \param[in]       str: Input string to parse from
+ * \param[in]       skip_first: Set to `1` to skip first number
  * \return          1 on success, 0 otherwise
  */
 uint8_t

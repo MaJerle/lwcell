@@ -61,7 +61,7 @@ extern "C" {
 typedef enum {
     gsmOK = 0,                                  /*!< Function returned OK */
     gsmOKIGNOREMORE,                            /*!< Function succedded, should continue as gsmOK but ignore sending more data. This result is possible on connection data receive callback */
-    gsmERR,
+    gsmERR,                                     /*!< Generic error */
     gsmPARERR,                                  /*!< Wrong parameters on function call */
     gsmERRMEM,                                  /*!< Memory error occurred */
     gsmTIMEOUT,                                 /*!< Timeout occurred on command */

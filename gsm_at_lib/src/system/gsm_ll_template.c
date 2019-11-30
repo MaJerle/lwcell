@@ -45,7 +45,7 @@ static uint8_t initialized = 0;
  * \return          Number of bytes sent
  */
 static size_t
-send_data(const void* data, uint16_t size_t) {
+send_data(const void* data, size_t len) {
     /* Implement send function here */
 
 

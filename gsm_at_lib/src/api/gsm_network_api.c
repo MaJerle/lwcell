@@ -48,7 +48,7 @@ static uint32_t network_counter;
  * \param[in]       apn: APN domain. Set to `NULL` if not used
  * \param[in]       user: APN username. Set to `NULL` if not used
  * \param[in]       pass: APN password. Set to `NULL` if not used
- * \return          \ref espOK on success, member of \ref espr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 gsmr_t
 gsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
@@ -62,7 +62,7 @@ gsm_network_set_credentials(const char* apn, const char* user, const char* pass)
 /**
  * \brief           Request manager to attach to network
  * \note            This function is blocking and cannot be called from event functions
- * \return          \gsmOK on success (when attached), member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success (when attached), member of \ref gsmr_t otherwise
  */
 gsmr_t
 gsm_network_request_attach(void) {
@@ -100,7 +100,7 @@ gsm_network_request_attach(void) {
  * otherwise it will disable network access
  *
  * \note            This function is blocking and cannot be called from event functions
- * \return          \gsmOK on success (when attached), member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success (when attached), member of \ref gsmr_t otherwise
  */
 gsmr_t
 gsm_network_request_detach(void) {
