@@ -121,142 +121,142 @@
 		<link>
 			<name>GSM API/gsm_netconn.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/api/gsm_netconn.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/api/gsm_netconn.c</locationURI>
 		</link>
 		<link>
 			<name>GSM API/gsm_network_api.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/api/gsm_network_api.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/api/gsm_network_api.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_buff.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_buff.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_buff.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_call.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_call.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_call.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_conn.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_conn.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_conn.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_debug.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_debug.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_debug.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_device_info.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_device_info.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_device_info.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_evt.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_evt.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_evt.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_ftp.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_ftp.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_ftp.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_http.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_http.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_http.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_input.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_input.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_input.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_int.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_int.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_int.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_mem.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_mem.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_mem.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_network.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_network.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_network.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_operator.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_operator.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_operator.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_parser.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_parser.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_parser.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_pbuf.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_pbuf.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_pbuf.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_phonebook.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_phonebook.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_phonebook.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_ping.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_ping.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_ping.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_sim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_sim.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_sim.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_sms.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_sms.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_sms.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_threads.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_threads.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_threads.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_timeout.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_timeout.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_timeout.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_unicode.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_unicode.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_unicode.c</locationURI>
 		</link>
 		<link>
 			<name>GSM CORE/gsm_utils.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_utils.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/gsm/gsm_utils.c</locationURI>
 		</link>
 		<link>
 			<name>GSM LL/gsm_ll_stm32f429zi_nucleo.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/system/gsm_ll_stm32f429zi_nucleo.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/system/gsm_ll_stm32f429zi_nucleo.c</locationURI>
 		</link>
 		<link>
 			<name>GSM LL/gsm_sys_cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/system/gsm_sys_cmsis_os.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/gsm_at_lib/src/system/gsm_sys_cmsis_os.c</locationURI>
 		</link>
 		<link>
 			<name>GSM SNIPPETS/netconn_client.c</name>
