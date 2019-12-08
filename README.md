@@ -27,7 +27,7 @@ GSM-AT Library commands parser is a generic, platform independent, library for c
 Fresh contributions are always welcome. Simple instructions to proceed::
 
 1. Fork Github repository
-2. Respect C style & coding rules used by the library
+2. Respect [C style & coding rules](https://github.com/MaJerle/c-code-style) used by the library
 3. Make a pull request to develop branch with new features or bug fixes
 
 Alternatively you may:
