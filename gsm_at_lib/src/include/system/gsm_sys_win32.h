@@ -61,7 +61,7 @@ typedef int                         gsm_sys_thread_prio_t;
 #endif /* GSM_CFG_OS && !__DOXYGEN__ */
 
 #ifdef __cplusplus
-};
+}
 #endif /* __cplusplus */
 
 #endif /* GSM_HDR_SYSTEM_WIN32_H */

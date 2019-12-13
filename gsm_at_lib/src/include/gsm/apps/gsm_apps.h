@@ -51,7 +51,7 @@ extern "C" {
  */
 
 #ifdef __cplusplus
-};
+}
 #endif /* __cplusplus */
 
 #endif /* GSM_HDR_APPS_H */

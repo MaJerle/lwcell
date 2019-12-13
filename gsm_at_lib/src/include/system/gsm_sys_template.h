@@ -125,7 +125,7 @@ typedef osPriority          gsm_sys_thread_prio_t;
  */
 
 #ifdef __cplusplus
-};
+}
 #endif /* __cplusplus */
 
 #endif /* GSM_HDR_SYSTEM_H */
