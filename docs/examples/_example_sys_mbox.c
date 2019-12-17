@@ -73,7 +73,7 @@ gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
 }
 
 /*
- * \brief           Get an entry from message queue immediatelly
+ * \brief           Get an entry from message queue immediately
  * \note            This function is required with OS
  * \param[in]       b: Pointer to message queue structure
  * \param[in]       m: Pointer to pointer to result to save value from message queue to

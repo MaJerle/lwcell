@@ -167,7 +167,7 @@
  *  - Allocate memory for command message from memory manager
  *  - Assign command type to message
  *  - Set other parameters, related or required to command
- *  - If user wants to wait for response (blocking mode), then create system semaphore `sem` and lock it immediatelly
+ *  - If user wants to wait for response (blocking mode), then create system semaphore `sem` and lock it immediately
  *  - Send everything to producing message queue which is later read in producing thread
  *  - If user don't want blocking mode, return from function with status OK
  *      otherwise wait for semaphore `sem` to be released from producing thread
@@ -197,7 +197,7 @@
  *
  * If command is active and received data belongs to command, they are processed according to command.
  * If received data are not related to command (such as received network data `+RECEIVE`),
- * they are also processed and callback function is immediatelly called to notify user about received data.
+ * they are also processed and callback function is immediately called to notify user about received data.
  *
  * Here is a list of some URC (Unsolicited Result Code) messages:
  *  

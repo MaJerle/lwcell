@@ -1004,7 +1004,7 @@ mqtt_conn_cb(gsm_evt_t* evt) {
     if (conn != NULL) {
         client = gsm_conn_get_arg(conn);        /* Get client structure from connection */
         if (client == NULL) {
-            gsm_conn_close(conn, 0);            /* Force connection close immediatelly */
+            gsm_conn_close(conn, 0);            /* Force connection close immediately */
             return gsmERR;
         }
     } else if (evt->type != GSM_EVT_CONN_ERROR) {

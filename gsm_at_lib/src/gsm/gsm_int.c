@@ -2199,7 +2199,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     }
 
     if (msg->is_blocking) {                     /* In case message is blocking */
-        if (!gsm_sys_sem_create(&msg->sem, 0)) {/* Create semaphore and lock it immediatelly */
+        if (!gsm_sys_sem_create(&msg->sem, 0)) {/* Create semaphore and lock it immediately */
             GSM_MSG_VAR_FREE(msg);              /* Release memory and return */
             return gsmERRMEM;
         }
@@ -2212,7 +2212,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     if (msg->is_blocking) {
         gsm_sys_mbox_put(&gsm.mbox_producer, msg);  /* Write message to producer queue and wait forever */
     } else {
-        if (!gsm_sys_mbox_putnow(&gsm.mbox_producer, msg)) {    /* Write message to producer queue immediatelly */
+        if (!gsm_sys_mbox_putnow(&gsm.mbox_producer, msg)) {    /* Write message to producer queue immediately */
             GSM_MSG_VAR_FREE(msg);              /* Release message */
             return gsmERRMEM;
         }
