@@ -111,7 +111,7 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
             GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
                 "[PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
             pn = p->next;                       /* Save next entry */
-            gsm_mem_free_s((void **)&p);         /* Free memory for pbuf */
+            gsm_mem_free_s((void **)&p);        /* Free memory for pbuf */
             p = pn;                             /* Restore with next entry */
             ++cnt;                              /* Increase number of freed pbufs */
         } else {
@@ -377,8 +377,8 @@ gsm_pbuf_memcmp(const gsm_pbuf_p pbuf, const void* data, size_t len, size_t offs
     uint8_t el;
     const uint8_t* d = data;
 
-    if (pbuf == NULL || data == NULL || len == 0 || /* Input parameters check */
-        pbuf->tot_len < (offset + len)) {       /* Check of valid ranges */
+    if (pbuf == NULL || data == NULL || len == 0/* Input parameters check */
+        || pbuf->tot_len < (offset + len)) {    /* Check of valid ranges */
         return GSM_SIZET_MAX;                   /* Invalid check here */
     }
 
