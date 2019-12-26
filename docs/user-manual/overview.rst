@@ -1,0 +1,26 @@
+.. _um_overview:
+
+Overview
+========
+
+TODO
+
+*GSM-AT Lib* has been developed to allow customers to:
+
+* Develop on single (host MCU) architecture at the same time and do not care about *Espressif* arch
+* Shorten time to market
+
+Customers using *GSM-AT Lib* do not need to take care about proper command for specific task,
+they can call API functions to execute the task.
+Library will take the necessary steps in order to send right command to device via low-level driver (usually UART) and 
+process incoming response from device before it will notify application layer if it was successfuly or not.
+
+To summarize:
+
+* *GSM* device runs official *AT* firmware, provided by device vendor
+* Host MCU runs custom application, together with *GSM-AT Lib* library
+* Host MCU communicates with *GSM* device with UART or similar interface.
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
