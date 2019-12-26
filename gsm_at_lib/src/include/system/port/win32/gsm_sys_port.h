@@ -1,5 +1,5 @@
-/**	
- * \file            gsm_sys_win32.h
+/**
+ * \file            gsm_sys_port.h
  * \brief           WIN32 based system file implementation
  */
 
@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_SYSTEM_WIN32_H
-#define GSM_HDR_SYSTEM_WIN32_H
+#ifndef GSM_HDR_SYSTEM_PORT_H
+#define GSM_HDR_SYSTEM_PORT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,9 +51,10 @@ typedef HANDLE                      gsm_sys_sem_t;
 typedef HANDLE                      gsm_sys_mbox_t;
 typedef HANDLE                      gsm_sys_thread_t;
 typedef int                         gsm_sys_thread_prio_t;
-#define GSM_SYS_MBOX_NULL           (HANDLE)0
-#define GSM_SYS_SEM_NULL            (HANDLE)0
-#define GSM_SYS_MUTEX_NULL          (HANDLE)0
+
+#define GSM_SYS_MBOX_NULL           ((HANDLE)0)
+#define GSM_SYS_SEM_NULL            ((HANDLE)0)
+#define GSM_SYS_MUTEX_NULL          ((HANDLE)0)
 #define GSM_SYS_TIMEOUT             (INFINITE)
 #define GSM_SYS_THREAD_PRIO         (0)
 #define GSM_SYS_THREAD_SS           (4096)
@@ -64,4 +65,4 @@ typedef int                         gsm_sys_thread_prio_t;
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_SYSTEM_WIN32_H */
+#endif /* GSM_HDR_SYSTEM_PORT_H */

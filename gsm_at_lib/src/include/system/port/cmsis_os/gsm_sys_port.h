@@ -1,5 +1,5 @@
-/**	
- * \file            gsm_sys_cmsis_os.h
+/**
+ * \file            gsm_sys_port.h
  * \brief           System dependent functions for CMSIS-OS based operating system
  */
 
@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_SYSTEM_CMSIS_OS_H
-#define GSM_HDR_SYSTEM_CMSIS_OS_H
+#ifndef GSM_HDR_SYSTEM_PORT_H
+#define GSM_HDR_SYSTEM_PORT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,19 +42,19 @@ extern "C" {
 #include <stdlib.h>
 
 #include "gsm_config.h"
-#include "gsm_sys.h"
+#include "cmsis_os.h"
 
 #if GSM_CFG_OS && !__DOXYGEN__
-#include "cmsis_os.h"
 
 typedef osMutexId_t                 gsm_sys_mutex_t;
 typedef osSemaphoreId_t             gsm_sys_sem_t;
 typedef osMessageQueueId_t          gsm_sys_mbox_t;
 typedef osThreadId_t                gsm_sys_thread_t;
 typedef osPriority_t                gsm_sys_thread_prio_t;
-#define GSM_SYS_MBOX_NULL           ((gsm_sys_mbox_t)NULL)
-#define GSM_SYS_SEM_NULL            ((gsm_sys_sem_t)NULL)
-#define GSM_SYS_MUTEX_NULL          ((gsm_sys_mutex_t)NULL)
+
+#define GSM_SYS_MBOX_NULL           ((gsm_sys_mbox_t)0)
+#define GSM_SYS_SEM_NULL            ((gsm_sys_sem_t)0)
+#define GSM_SYS_MUTEX_NULL          ((gsm_sys_mutex_t)0)
 #define GSM_SYS_TIMEOUT             ((uint32_t)osWaitForever)
 #define GSM_SYS_THREAD_PRIO         (osPriorityNormal)
 #define GSM_SYS_THREAD_SS           (512)
@@ -65,4 +65,4 @@ typedef osPriority_t                gsm_sys_thread_prio_t;
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_SYSTEM_CMSIS_OS_H */
+#endif /* GSM_HDR_SYSTEM_PORT_H */
