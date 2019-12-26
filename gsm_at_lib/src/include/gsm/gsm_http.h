@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_http.h
  * \brief           HTTP API
  */

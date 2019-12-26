@@ -1207,7 +1207,7 @@ gsmi_process(const void* data, size_t data_len) {
                     switch (ch) {
                         case '\n':
                             RECV_ADD(ch);       /* Add character to input buffer */
-                            gsmi_parse_received(&recv_buff);	/* Parse received string */
+                            gsmi_parse_received(&recv_buff);/* Parse received string */
                             RECV_RESET();       /* Reset received string */
                             break;
                         default:

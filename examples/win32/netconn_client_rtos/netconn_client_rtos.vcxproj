@@ -73,18 +73,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\..\GSM_AT_Lib\src\include;.;..\..\..\snippets\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\..\..\gsm_at_lib\src\include;..\..\..\gsm_at_lib\src\include\system\port\win32;..\..\..\snippets\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\..\ESP_AT_Lib\src\include;.;..\..\..\snippets\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\..\..\gsm_at_lib\src\include;..\..\..\gsm_at_lib\src\include\system\port\win32;..\..\..\snippets\include;$(IncludePath)</IncludePath>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\..\ESP_AT_Lib\src\include;.;..\..\..\snippets\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\..\..\gsm_at_lib\src\include;..\..\..\gsm_at_lib\src\include\system\port\win32;..\..\..\snippets\include;$(IncludePath)</IncludePath>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\..\ESP_AT_Lib\src\include;.;..\..\..\snippets\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\..\..\gsm_at_lib\src\include;..\..\..\gsm_at_lib\src\include\system\port\win32;..\..\..\snippets\include;$(IncludePath)</IncludePath>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -140,34 +140,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\api\gsm_netconn.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\api\gsm_network_api.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_buff.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_call.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_conn.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_debug.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_device_info.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_evt.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_ftp.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_http.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_input.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_int.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_mem.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_network.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_operator.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_parser.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_pbuf.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_phonebook.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_ping.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_sim.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_sms.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_threads.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_timeout.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_unicode.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\gsm\gsm_utils.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\system\gsm_ll_win32.c" />
-    <ClCompile Include="..\..\..\GSM_AT_Lib\src\system\gsm_sys_win32.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\api\gsm_netconn.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\api\gsm_network_api.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_buff.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_call.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_conn.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_debug.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_device_info.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_evt.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_ftp.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_http.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_input.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_int.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_mem.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_network.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_operator.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_parser.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_pbuf.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_phonebook.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_ping.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_sim.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_sms.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_threads.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_timeout.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_unicode.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_utils.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\system\gsm_ll_win32.c" />
+    <ClCompile Include="..\..\..\gsm_at_lib\src\system\gsm_sys_win32.c" />
     <ClCompile Include="..\..\..\snippets\netconn_client.c" />
     <ClCompile Include="..\..\..\snippets\network_utils.c" />
     <ClCompile Include="..\..\..\snippets\sim_manager.c" />

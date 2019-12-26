@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_phonebook.h
  * \brief           Phonebook API
  */

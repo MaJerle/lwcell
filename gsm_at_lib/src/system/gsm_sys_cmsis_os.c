@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_sys_cmsis_os.c
  * \brief           System dependent functions for CMSIS-OS based operating system
  */

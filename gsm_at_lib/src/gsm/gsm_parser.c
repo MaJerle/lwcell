@@ -472,7 +472,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     } u;
 
     if (reset) {                                /* Check for reset status */
-        GSM_MEMSET(&u, 0x00, sizeof(u));       	/* Reset everything */
+        GSM_MEMSET(&u, 0x00, sizeof(u));        /* Reset everything */
         u.f.ch_prev = 0;
         return 1;
     }

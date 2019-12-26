@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_buff.h
  * \brief           Ring buffer manager
  */

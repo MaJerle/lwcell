@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_timeout.c
  * \brief           Timeout manager
  */

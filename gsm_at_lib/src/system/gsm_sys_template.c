@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_sys_template.c
  * \brief           System dependant functions
  */

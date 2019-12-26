@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_unicode.c
  * \brief           Unicode support
  */

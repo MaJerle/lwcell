@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_call.h
  * \brief           Call API
  */

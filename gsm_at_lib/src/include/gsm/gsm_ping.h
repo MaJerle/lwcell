@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_ping.h
  * \brief           PING API
  */

@@ -52,9 +52,9 @@ static uint32_t network_counter;
  */
 gsmr_t
 gsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
-	network_apn = apn;
-	network_user = user;
-	network_pass = pass;
+    network_apn = apn;
+    network_user = user;
+    network_pass = pass;
 
     return gsmOK;
 }
@@ -70,7 +70,7 @@ gsm_network_request_attach(void) {
     uint8_t do_conn = 0;
 
     /* Check if we need to connect */
-	gsm_core_lock();
+    gsm_core_lock();
     if (network_counter == 0) {
         if (!gsm_network_is_attached()) {
             do_conn = 1;
@@ -79,7 +79,7 @@ gsm_network_request_attach(void) {
     if (!do_conn) {
         ++network_counter;
     }
-	gsm_core_unlock();
+    gsm_core_unlock();
 
     /* Connect to network */
     if (do_conn) {

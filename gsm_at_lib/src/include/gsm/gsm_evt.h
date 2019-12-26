@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_evt.h
  * \brief           Event helper functions
  */

@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_mem.h
  * \brief           Memory manager
  */

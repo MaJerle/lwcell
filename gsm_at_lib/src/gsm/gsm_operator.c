@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_operator.c
  * \brief           Operator API functions
  */

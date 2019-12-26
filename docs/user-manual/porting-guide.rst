@@ -101,7 +101,7 @@ Notes:
 Example: System functions for WIN32
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../gsm_at_lib/src/include/system/gsm_sys_win32.h
+.. literalinclude:: ../../gsm_at_lib/src/include/system/port/win32/gsm_sys_port.h
     :language: c
     :caption: Actual header implementation of system functions for WIN32
   
@@ -112,7 +112,7 @@ Example: System functions for WIN32
 Example: System functions for CMSIS-OS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../gsm_at_lib/src/include/system/gsm_sys_cmsis_os.h
+.. literalinclude:: ../../gsm_at_lib/src/include/system/port/cmsis_os/gsm_sys_port.h
     :language: c
     :caption: Actual header implementation of system functions for CMSIS-OS based operating systems
 
