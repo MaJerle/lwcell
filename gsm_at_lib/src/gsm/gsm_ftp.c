@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_ftp.c
  * \brief           FTP API
  */

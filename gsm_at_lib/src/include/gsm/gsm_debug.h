@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_debug.h
  * \brief           Debugging inside GSM stack
  */

@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_sms.c
  * \brief           SMS API
  */

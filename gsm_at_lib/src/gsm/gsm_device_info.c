@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_device_info.c
  * \brief           Basic device information
  */

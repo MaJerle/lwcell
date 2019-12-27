@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_sys_win32.c
  * \brief           System dependant functions for WIN32
  */
@@ -49,7 +49,7 @@ typedef struct {
 } win32_mbox_t;
 
 static LARGE_INTEGER freq, sys_start_time;
-static gsm_sys_mutex_t sys_mutex;				/* Mutex ID for main protection */
+static gsm_sys_mutex_t sys_mutex;               /* Mutex ID for main protection */
 
 static uint8_t
 mbox_is_full(win32_mbox_t* m) {
@@ -127,7 +127,7 @@ gsm_sys_mutex_lock(gsm_sys_mutex_t* p) {
 
 uint8_t
 gsm_sys_mutex_unlock(gsm_sys_mutex_t* p) {
-	return (uint8_t)ReleaseMutex(*p);
+    return (uint8_t)ReleaseMutex(*p);
 }
 
 uint8_t
@@ -158,7 +158,7 @@ uint32_t
 gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout) {
     DWORD ret;
     uint32_t tick = osKernelSysTick();
-	
+
     if (timeout == 0) {
         ret = WaitForSingleObject(*p, INFINITE);
         return 1;
@@ -341,13 +341,13 @@ gsm_sys_thread_terminate(gsm_sys_thread_t* t) {
         h = *t;
     }
     TerminateThread(h, 0);
-	return 1;
+    return 1;
 }
 
 uint8_t
 gsm_sys_thread_yield(void) {
     /* Not implemented */
-	return 1;
+    return 1;
 }
 
 #endif /* !__DOXYGEN__ */

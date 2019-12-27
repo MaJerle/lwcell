@@ -45,7 +45,6 @@
  * Check default configuration settings for more information
  */
 #define GSM_CFG_AT_ECHO                         1
-#define GSM_CFG_SYS_PORT                        GSM_SYS_PORT_WIN32
 #define GSM_CFG_INPUT_USE_PROCESS               1
 
 #define GSM_CFG_SMS                             1

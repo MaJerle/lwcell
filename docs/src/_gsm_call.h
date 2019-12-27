@@ -1,6 +1,0 @@
-/**
- * \addtogroup      GSM_CALL
- * \{
- *
- * \}
- */

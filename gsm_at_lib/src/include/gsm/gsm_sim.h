@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_sim.h
  * \brief           SIM API
  */

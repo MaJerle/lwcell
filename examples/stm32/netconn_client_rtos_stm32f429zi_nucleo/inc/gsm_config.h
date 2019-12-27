@@ -41,7 +41,6 @@
  * copy & replace here settings you want to change values
  */
 #define GSM_CFG_AT_ECHO                     1
-#define GSM_CFG_SYS_PORT                    GSM_SYS_PORT_CMSIS_OS
 #define GSM_CFG_INPUT_USE_PROCESS           1
 
 /* Enable network, conn and netconn APIs */

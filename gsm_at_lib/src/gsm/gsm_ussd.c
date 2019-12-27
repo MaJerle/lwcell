@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_ussd.c
  * \brief           Unstructured Supplementary Service Data
  */

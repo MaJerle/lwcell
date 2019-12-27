@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_pbuf.h
  * \brief           Packet buffer manager
  */

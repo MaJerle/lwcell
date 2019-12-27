@@ -54,17 +54,6 @@
 #endif
 
 /**
- * \brief           Default system port implementation
- *
- * According to selected port, stack will automatically include appropriate file
- *
- * Parameter can be a value of \ref GSM_SYS_PORTS choices
- */
-#ifndef GSM_CFG_SYS_PORT
-#define GSM_CFG_SYS_PORT                    GSM_SYS_PORT_CMSIS_OS
-#endif
-
-/**
  * \brief           Enables `1` or disables `0` custom memory management functions
  *
  * When set to `1`, \ref GSM_MEM block must be provided manually.

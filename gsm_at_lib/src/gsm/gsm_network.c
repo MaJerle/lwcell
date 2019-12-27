@@ -1,4 +1,4 @@
-/**	
+/**
  * \file            gsm_network.c
  * \brief           Network API
  */

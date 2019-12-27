@@ -39,6 +39,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "gsm_config.h"
+#include <stdlib.h>
 
 /**
  * \ingroup         GSM_PORT
@@ -52,34 +53,8 @@ extern "C" {
  */
 typedef void (*gsm_sys_thread_fn)(void *);
 
-/**
- * \anchor          GSM_SYS_PORTS
- * \name            System ports
- * \{
- *
- * List of already available system ports.
- * Configure \ref GSM_CFG_SYS_PORT with one of these values to use preconfigured ports
- */
-
-#define GSM_SYS_PORT_WIN32                  1   /*!< WIN32 based port to use GSM library with Windows applications */
-#define GSM_SYS_PORT_CMSIS_OS               2   /*!< CMSIS-OS based port for OS systems capable of ARM CMSIS standard */
-#define GSM_SYS_PORT_USER                   99  /*!< User custom implementation.
-                                                    When port is selected to user mode, user must provide "gsm_sys_user.h" file,
-                                                    which is not provided with library. Refer to `system/gsm_sys_template.h` file for more information
-                                                    */
-
-/**
- * \}
- */
-
-/* Decide which port to include */
-#if GSM_CFG_SYS_PORT == GSM_SYS_PORT_WIN32
-#include "system/gsm_sys_win32.h"
-#elif GSM_CFG_SYS_PORT == GSM_SYS_PORT_CMSIS_OS
-#include "system/gsm_sys_cmsis_os.h"
-#elif GSM_CFG_SYS_PORT == GSM_SYS_PORT_USER
-#include "gsm_sys_user.h"
-#endif /* GSM_CFG_SYS_PORT check */
+/* Include system port file from portable folder */
+#include "gsm_sys_port.h"
 
 uint8_t     gsm_sys_init(void);
 uint32_t    gsm_sys_now(void);

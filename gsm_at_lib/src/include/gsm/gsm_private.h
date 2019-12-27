@@ -214,7 +214,7 @@ typedef enum {
     GSM_CMD_CDNSGIP,                            /*!< Query the IP Address of Given Domain Name */
     GSM_CMD_CIPHEAD,                            /*!< Add an IP Head at the Beginning of a Package Received */
     GSM_CMD_CIPATS,                             /*!< Set Auto Sending Timer */
-    GSM_CMD_CIPSPRT,                            /*!< Set Prompt of ‘>’ When Module Sends Data */
+    GSM_CMD_CIPSPRT,                            /*!< Set Prompt of greater than sign When Module Sends Data */
     GSM_CMD_CIPSERVER,                          /*!< Configure Module as Server */
     GSM_CMD_CIPCSGP,                            /*!< Set CSD or GPRS for Connection Mode */
     GSM_CMD_CIPSRIP,                            /*!< Show Remote IP Address and Port When Received Data */
