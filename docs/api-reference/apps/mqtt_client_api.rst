@@ -7,6 +7,7 @@ MQTT Client API
 
 .. literalinclude:: ../../../snippets/mqtt_client_api.c
     :language: c
+    :linenos:
     :caption: MQTT API application example code
 
 .. doxygengroup:: GSM_APP_MQTT_CLIENT_API

@@ -33,6 +33,7 @@ Each time new packet is received (red block, *data received event*), reference t
 
 .. literalinclude:: ../../../snippets/netconn_client.c
     :language: c
+    :linenos:
     :caption: Netconn client example
 
 Non-blocking receive

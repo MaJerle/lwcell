@@ -69,4 +69,5 @@ This file shall be named ``gsm_config.h`` and its default template looks like th
 
 .. literalinclude:: ../../gsm_at_lib/src/include/gsm/gsm_config_template.h
     :language: c
+    :linenos:
     :caption: Config file template

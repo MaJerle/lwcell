@@ -49,6 +49,7 @@ custom, event function.
 
 .. literalinclude:: ../../gsm_at_lib/src/api/gsm_netconn.c
     :language: c
+    :linenos:
     :caption: Netconn API module actual implementation
 
 Connection specific event
@@ -65,6 +66,7 @@ Connection events callback function is set when client (application starts conne
 
 .. literalinclude:: ../../snippets/client.c
     :language: c
+    :linenos:
     :caption: An example of client with its dedicated event callback function
 
 API call event
@@ -85,6 +87,7 @@ It uses custom API callback function to notify application when command has been
 
 .. literalinclude:: ../examples_src/command_blocking.c
     :language: c
+    :linenos:
     :caption: Simple example for API call event, using DNS module
 
 .. toctree::
