@@ -16,7 +16,7 @@ GSM-AT Library commands parser is a generic, platform independent, library for c
     * Currently only OS mode is supported
     * 2 different threads handling user data and received data
         * First (producer) thread (collects user commands from user threads and starts the command processing)
-        * Second (process) thread reads the data from ESP device and does the job accordingly
+        * Second (process) thread reads the data from GSM device and does the job accordingly
 * Allows sequential API for connections in client and server mode
 * Includes several applications built on top of library:
     * MQTT client for MQTT connection
