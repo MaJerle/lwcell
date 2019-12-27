@@ -24,10 +24,10 @@ Examples for *WIN32* are prepared as `Visual Studio Community <https://visualstu
 You can directly open project in the IDE, compile & debug.
 
 Application opens *COM* port, set in the low-level driver. 
-External USB to UART converter (FTDI-like device) is necessary in order to connect to *ESP* device.
+External USB to UART converter (FTDI-like device) is necessary in order to connect to *GSM* device.
 
 .. note::
-	*ESP* device is connected with *USB to UART converter* only by *RX* and *TX* pins.
+	*GSM* device is connected with *USB to UART converter* only by *RX* and *TX* pins.
 
 Device driver is located in ``/gsm_at_lib/src/system/gsm_ll_win32.c``
 

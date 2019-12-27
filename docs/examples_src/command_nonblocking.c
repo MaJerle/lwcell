@@ -1,25 +1,22 @@
-char hostname[20];
-
-/* Hostname event function, called when gsm_hostname_get() function finishes */
+/* Hostname event function, called when gsm_sms_send() function finishes */
 void
-hostname_fn(gsmr_t res, void* arg) {
+sms_send_fn(gsmr_t res, void* arg) {
     /* Check actual result from device */
-    if (res == espOK) {
-        printf("GSM hostname is %s\r\n", hostname);
+    if (res == gsmOK) {
+        printf("SMS sent successfully\r\n");
     } else {
-        printf("Error reading GSM hostname...\r\n");
+        printf("Error trying to send SMS\r\n");
     }
 }
 
 /* Somewhere in thread and/or other GSM event function */
 
-/* Get device hostname in non-blocking mode */
+/* Send SMS in non-blocking mode */
 /* Function now returns if command has been sent to internal message queue */
-if (gsm_hostname_get(hostname, sizeof(hostname), hostname_fn, NULL, 0 /* 0 means non-blocking call */) == espOK) {
-    /* At this point application knows that command has been sent to queue */
-    /* But it does not have yet valid data in "hostname" variable */
-    printf("GSM hostname get command sent to queue.\r\n");
+if (gsm_sms_send("number", "text message", sms_send_fn, NULL, 0 /* 0 means non-blocking call */) == gsmOK) {
+    /* At this point we only know that command has been sent to queue */
+    printf("SMS send message command sent to queue.\r\n");
 } else {
     /* Error writing message to queue */
-    printf("Cannot send hostname get command to queue.\r\n");
+    printf("Cannot send SMS send message command to queue. Maybe out of memory? Check result from function\r\n");
 }

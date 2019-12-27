@@ -31,7 +31,7 @@ System & low-level layer
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Application needs to fully implement this part and resolve it with care.
-Functions are related to actual implementation with *ESP* device and are highly
+Functions are related to actual implementation with *GSM* device and are highly
 architecture oriented. Some examples for `WIN32` and `ARM Cortex-M` are included with library.
 
 .. tip::
@@ -55,9 +55,9 @@ Functions need to provide:
 Low-level implementation
 ************************
 
-Low-Level, or *GSM_LL*, is part, dedicated for communication between *GSM-AT* middleware and *ESP* physical device.
+Low-Level, or *GSM_LL*, is part, dedicated for communication between *GSM-AT* middleware and *GSM* physical device.
 Application needs to implement output function to send necessary *AT command* instruction aswell as implement
-*input module* to send received data from *ESP* device to *GSM-AT* middleware.
+*input module* to send received data from *GSM* device to *GSM-AT* middleware.
 
 Application must also assure memory assignment for :ref:`api_gsm_mem` when default allocation is used.
 

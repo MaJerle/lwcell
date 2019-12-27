@@ -3,11 +3,12 @@
 Overview
 ========
 
-TODO
+IoT activity is embedded in today's application. Almost every device uses some type of communication,
+from WiFi, BLE, Sub-GHz or NB-IoT/LTE/2G/3G.
 
 *GSM-AT Lib* has been developed to allow customers to:
 
-* Develop on single (host MCU) architecture at the same time and do not care about *Espressif* arch
+* Develop on single (host MCU) architecture at the same time and do not care about device arch
 * Shorten time to market
 
 Customers using *GSM-AT Lib* do not need to take care about proper command for specific task,

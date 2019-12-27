@@ -3,7 +3,7 @@
 Input module
 ============
 
-Input module is used to input received data from *ESP* device to *GSM-AT-Lib* middleware part.
+Input module is used to input received data from *GSM* device to *GSM-AT-Lib* middleware part.
 ``2`` processing options are possible:
 
 * Indirect processing with :cpp:func:`gsm_input` (default mode)
@@ -15,7 +15,7 @@ Input module is used to input received data from *ESP* device to *GSM-AT-Lib* mi
 Indirect processing
 ^^^^^^^^^^^^^^^^^^^
 
-With indirect processing mode, every received character from *ESP* physical device is written to
+With indirect processing mode, every received character from *GSM* physical device is written to
 intermediate buffer between low-level driver and *processing* thread.
 
 Function :cpp:func:`gsm_input` is used to write data to buffer, which is later processed

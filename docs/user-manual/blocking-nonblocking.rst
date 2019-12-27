@@ -8,7 +8,7 @@ API functions often allow application to set ``blocking`` parameter indicating i
 Blocking mode
 ^^^^^^^^^^^^^
 
-When the function is called in blocking mode ``blocking = 1``, application thread gets suspended until response from *ESP* device is received.
+When the function is called in blocking mode ``blocking = 1``, application thread gets suspended until response from *GSM* device is received.
 If there is a queue of multiple commands, thread may wait a while before receiving data.
 
 When API function returns, application has valid response data and can react immediately.

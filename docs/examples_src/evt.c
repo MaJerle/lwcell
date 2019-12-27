@@ -13,5 +13,5 @@ gsm_callback_function(gsm_evt_t* evt) {
         }
         default: break;
     }
-    return espOK;
+    return gsmOK;
 }

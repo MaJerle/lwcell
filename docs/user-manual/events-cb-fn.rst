@@ -61,10 +61,7 @@ They work exactly the same way as global, but only receive events related to con
     Connection related events start with ``GSM_EVT_CONN_*``, such as :c:member:`GSM_EVT_CONN_RECV`. 
     Check :ref:`api_gsm_evt` for list of all connection events.
 
-Connection events callback function is set for ``2`` cases:
-
-* Each client (when application starts connection) sets event callback function when trying to connect with :cpp:func:`gsm_conn_start` function
-* Application sets global event callback function when enabling server mode with :cpp:func:`gsm_set_server` function
+Connection events callback function is set when client (application starts connection) starts a new connection with :cpp:func:`gsm_conn_start` function
 
 .. literalinclude:: ../../snippets/client.c
     :language: c
@@ -83,11 +80,10 @@ has optional ``2`` parameters for API call event:
 * Callback function, called when command finished
 * Custom user parameter for callback function
 
-Below is an example code for DNS resolver.
-It uses custom API callback function with custom argument, 
-used to distinguis domain name (when multiple domains are to be resolved).
+Below is an example code for SMS send.
+It uses custom API callback function to notify application when command has been executed successfully
 
-.. literalinclude:: ../../snippets/dns.c
+.. literalinclude:: ../examples_src/command_blocking.c
     :language: c
     :caption: Simple example for API call event, using DNS module
 

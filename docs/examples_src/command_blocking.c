@@ -1,12 +1,10 @@
-char hostname[20];
-
 /* Somewhere in thread function */
 
 /* Get device hostname in blocking mode */
 /* Function returns actual result */
-if (gsm_hostname_get(hostname, sizeof(hostname), NULL, NULL, 1 /* 1 means blocking call */) == espOK) {
-    /* At this point we have valid result and parameters from API function */
-    printf("GSM hostname is %s\r\n", hostname);
+if (gsm_sms_send("+0123456789", "text", NULL, NULL, 1 /* 1 means blocking call */) == gsmOK) {
+    /* At this point we have valid result from device */
+    printf("SMS sent successfully\r\n");
 } else {
-    printf("Error reading GSM hostname..\r\n");
+    printf("Error trying to send SMS..\r\n");
 }
