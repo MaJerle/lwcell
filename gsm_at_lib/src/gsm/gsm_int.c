@@ -2220,7 +2220,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *)
     if (res == gsmOK && msg->is_blocking) {     /* In case we have blocking request */
         uint32_t time;
         time = gsm_sys_sem_wait(&msg->sem, 0);  /* Wait forever for semaphore */
-        if (time == GSM_SYS_TIMEOUT) {          /* If semaphore was not accessed in given time */
+        if (time == GSM_SYS_TIMEOUT) {          /* If semaphore was not accessed within given time */
             res = gsmTIMEOUT;                   /* Semaphore not released in time */
         } else {
             res = msg->res;                     /* Set response status from message response */
