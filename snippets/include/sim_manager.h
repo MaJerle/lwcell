@@ -1,5 +1,5 @@
-#ifndef __SIM_MANAGER_H
-#define __SIM_MANAGER_H
+#ifndef SNIPPET_HDR_SIM_MANAGER_H
+#define SNIPPET_HDR_SIM_MANAGER_H
 
 #ifdef __cplusplus
 extern "C" {

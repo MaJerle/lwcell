@@ -1,5 +1,5 @@
-#ifndef __NETWORK_UTILS_H
-#define __NETWORK_UTILS_H
+#ifndef SNIPPET_HDR_NETWORK_UTILS_H
+#define SNIPPET_HDR_NETWORK_UTILS_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -60,15 +60,11 @@ main(void) {
         while (1) { gsm_delay(1000); }
     }
 
-    /* Connect to network for TCP/IP */
-    if (gsm_network_attach(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS, NULL, NULL, 1) == gsmOK) {
-        printf("Attached to network!\r\n");
+    /* Set APN credentials */
+    gsm_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
-        /* Start netconn thread */
-        gsm_sys_thread_create(NULL, "netconn_thread", (gsm_sys_thread_t)netconn_client_thread, NULL, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
-    } else {
-        printf("Cannot attach to network!\r\n");
-    }
+    /* Start netconn thread */
+    gsm_sys_thread_create(NULL, "netconn_thread", (gsm_sys_thread_t)netconn_client_thread, NULL, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
 
     /*
      * Do not stop program here.

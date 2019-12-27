@@ -35,7 +35,7 @@
 #include "gsm/gsm.h"
 #include "sim_manager.h"
 #include "network_utils.h"
-#include "sms_send_receive.h"
+#include "sms_send_receive_thread.h"
 
 static void LL_Init(void);
 void SystemClock_Config(void);
@@ -44,12 +44,6 @@ static void USART_Printf_Init(void);
 static void init_thread(void* arg);
 
 static gsmr_t gsm_callback_func(gsm_evt_t* evt);
-
-/**
- * \brief           SMS entry
- */
-gsm_sms_entry_t
-sms_entry;
 
 /**
  * \brief           Program entry point
@@ -96,18 +90,8 @@ init_thread(void* arg) {
         while (1) { gsm_delay(1000); }
     }
 
-#if GSM_CFG_SMS
-    /* First enable SMS functionality */
-    if (gsm_sms_enable(NULL, NULL, 1) == gsmOK) {
-        printf("SMS enabled. Send new SMS from your phone to device.\r\n");
-    } else {
-        printf("Cannot enable SMS functionality!\r\n");
-        while (1) { gsm_delay(1000); }
-    }
-
     /* Create SMS thread */
     gsm_sys_thread_create(NULL, "gsm_sms", (gsm_sys_thread_fn)sms_send_receive_thread, NULL, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
-#endif /* GSM_CFG_SMS */
 
     while (1) {
         gsm_delay(1000);

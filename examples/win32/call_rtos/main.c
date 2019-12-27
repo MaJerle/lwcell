@@ -34,6 +34,7 @@
 #include "gsm/gsm.h"
 #include "sim_manager.h"
 #include "network_utils.h"
+#include "call.h"
 
 static gsmr_t gsm_callback_func(gsm_evt_t* evt);
 
@@ -58,12 +59,8 @@ main(void) {
         while (1) { gsm_delay(1000); }
     }
 
-    /* Enable calls */
-    if (gsm_call_enable(NULL, NULL, 1) == gsmOK) {
-        printf("Calls enabled. You may take your phone and call modem.\r\n");
-    } else {
-        printf("Could not enabled call functionality!\r\n");
-    }
+    /* Start call example */
+    call_start();
 
     /*
      * Do not stop program here.
@@ -93,27 +90,6 @@ gsm_callback_func(gsm_evt_t* evt) {
         case GSM_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
 
         /* Other user events here... */
-#if GSM_CFG_CALL
-        case GSM_EVT_CALL_CHANGED: {
-            const gsm_call_t* call = gsm_evt_call_changed_get_call(evt);
-            if (call->state == GSM_CALL_STATE_ACTIVE) {
-                printf("Call is active!\r\n");
-
-                /* In case of mobile originated direction */
-                if (call->dir == GSM_CALL_DIR_MO) {
-                    gsm_call_hangup(NULL, NULL, 0); /* Manually hangup call */
-                }
-            } else if (call->state == GSM_CALL_STATE_INCOMING) {
-                printf("We received incoming call! Phone number: %s\r\n", call->number);
-                gsm_call_answer(NULL, NULL, 0); /* Answer to a call */
-            } else if (call->state == GSM_CALL_STATE_DIALING) {
-                printf("Call is dialing!\r\n");
-            } else if (call->state == GSM_CALL_STATE_DISCONNECT) {
-                printf("Call ended!\r\n");
-            }
-            break;
-        }
-#endif /* GSM_CFG_CALL */
 
         default: break;
     }

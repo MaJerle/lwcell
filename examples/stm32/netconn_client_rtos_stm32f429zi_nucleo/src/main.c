@@ -74,7 +74,6 @@ main(void) {
  */
 static void
 init_thread(void* arg) {
-    gsm_sys_sem_t sem;
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
@@ -91,31 +90,11 @@ init_thread(void* arg) {
         while (1) { gsm_delay(1000); }
     }
 
-    /* Connect to network for TCP/IP */
-    printf("Attaching to network..\r\n");
-    if (gsm_network_attach(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS, NULL, NULL, 1) == gsmOK) {
-        printf("Attached to network!\r\n");
+    /* Set APN credentials */
+    gsm_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
-        /* Start netconn thread */
-        gsm_sys_sem_create(&sem, 0);
-        gsm_sys_thread_create(NULL, "netconn_thread", (gsm_sys_thread_fn)netconn_client_thread, &sem, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
-
-        /* Wait thread to finish */
-        gsm_sys_sem_wait(&sem, 0);
-        gsm_sys_sem_release(&sem);
-        gsm_sys_sem_delete(&sem);
-        gsm_sys_sem_invalid(&sem);
-
-        /* Detach from network */
-        printf("Detaching from network..\r\n");
-        if (gsm_network_detach(NULL, NULL, 1) == gsmOK) {
-            printf("Detached from network\r\n");
-        } else {
-            printf("Cannot detach from network\r\n");
-        }
-    } else {
-        printf("Cannot attach to network!\r\n");
-    }
+    /* Start netconn thread */
+    gsm_sys_thread_create(NULL, "netconn_thread", (gsm_sys_thread_fn)netconn_client_thread, NULL, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
 
     while (1) {
         gsm_delay(1000);

@@ -34,11 +34,9 @@
 #include "gsm/gsm.h"
 #include "sim_manager.h"
 #include "network_utils.h"
+#include "device_info.h"
 
 static gsmr_t gsm_callback_func(gsm_evt_t* evt);
-
-/* Device info string array */
-char dev_str[20];
 
 /**
  * \brief           Program entry point
@@ -52,23 +50,8 @@ main(void) {
         printf("Cannot initialize GSM-AT Library\r\n");
     }
 
-    /* Read information */
-
-    /* Read device manufacturer */
-    gsm_device_get_manufacturer(dev_str, sizeof(dev_str), NULL, NULL, 1);
-    printf("Manuf: %s\r\n", dev_str);
-
-    /* Read device model */
-    gsm_device_get_model(dev_str, sizeof(dev_str), NULL, NULL, 1);
-    printf("Model: %s\r\n", dev_str);
-    
-    /* Read device serial number */
-    gsm_device_get_serial_number(dev_str, sizeof(dev_str), NULL, NULL, 1);
-    printf("Serial: %s\r\n", dev_str);
-    
-    /* Read device revision */
-    gsm_device_get_revision(dev_str, sizeof(dev_str), NULL, NULL, 1);
-    printf("Revision: %s\r\n", dev_str);
+    /* Read device info */
+    read_device_info();
 
     /*
      * Do not stop program here.

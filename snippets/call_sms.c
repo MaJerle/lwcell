@@ -3,14 +3,14 @@
  *
  * Waits for received SMS and then replies with
  */
-#include "sms_send_receive.h"
+#include "call_sms.h"
 #include "gsm/gsm.h"
 
-#if !GSM_CFG_SMS
-#error "SMS must be enabled to run this example"
-#endif /* !GSM_CFG_SMS */
+#if !GSM_CFG_SMS || !GSM_CFG_CALL
+#error "SMS & CALL must be enabled to run this example"
+#endif /* !GSM_CFG_SMS || !GSM_CFG_CALL */
 
-static gsmr_t sms_evt_func(gsm_evt_t* evt);
+static gsmr_t call_sms_evt_func(gsm_evt_t* evt);
 
 /**
  * \brief           SMS entry
@@ -19,12 +19,12 @@ static gsm_sms_entry_t
 sms_entry;
 
 /**
- * \brief           Start SMS send receive procedure
+ * \brief           Start CALL & SMS combined example
  */
 void
-sms_send_receive_start(void) {
+call_sms_start(void) {
     /* Add custom callback */
-    gsm_evt_register(sms_evt_func);
+    gsm_evt_register(call_sms_evt_func);
 
     /* First enable SMS functionality */
     if (gsm_sms_enable(NULL, NULL, 1) == gsmOK) {
@@ -33,17 +33,24 @@ sms_send_receive_start(void) {
         printf("Cannot enable SMS functionality!\r\n");
     }
 
+    /* Then enable call functionality */
+    if (gsm_call_enable(NULL, NULL, 1) == gsmOK) {
+        printf("Call enabled. You may now take your phone and call modem\r\n");
+    } else {
+        printf("Cannot enable call functionality!\r\n");
+    }
+
     /* Now send SMS from phone to device */
-    printf("Start by sending SMS message to device...\r\n");
+    printf("Start by sending SMS message or call device...\r\n");
 }
 
 /**
- * \brief           Event function for received SMS
+ * \brief           Event function for received SMS or calls
  * \param[in]       evt: GSM event
  * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
  */
 static gsmr_t
-sms_evt_func(gsm_evt_t* evt) {
+call_sms_evt_func(gsm_evt_t* evt) {
     switch (gsm_evt_get_type(evt)) {
         case GSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
             printf("SIM device SMS service is ready!\r\n");
@@ -91,11 +98,16 @@ sms_evt_func(gsm_evt_t* evt) {
             }
             break;
         }
-        case GSM_EVT_SMS_DELETE: {              /* SMS delete event */
-            if (gsm_evt_sms_delete_get_result(evt) == gsmOK) {
-                printf("SMS deleted, memory position: %d\r\n", (int)gsm_evt_sms_delete_get_pos(evt));
-            } else {
-                printf("SMS delete operation failed!\r\n");
+
+        case GSM_EVT_CALL_READY: {              /* Call is ready notification from device */
+            printf("SIM device Call service is ready!\r\n");
+            break;
+        }
+        case GSM_EVT_CALL_CHANGED: {
+            const gsm_call_t* call = gsm_evt_call_changed_get_call(evt);
+            if (call->state == GSM_CALL_STATE_INCOMING) {   /* On incoming call */
+                gsm_call_hangup(NULL, NULL, 0); /* Hangup call */
+                gsm_sms_send(call->number, "Cannot answer call. Please send SMS\r\n", NULL, NULL, 0);
             }
             break;
         }

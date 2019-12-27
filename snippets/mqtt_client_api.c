@@ -117,7 +117,7 @@ mqtt_client_api_thread(void const* arg) {
         goto terminate;
     }
 
-terminate: 
+terminate:
     gsm_mqtt_client_api_delete(client);
     gsm_network_request_detach();
     printf("MQTT client thread terminate\r\n");

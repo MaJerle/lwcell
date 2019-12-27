@@ -48,7 +48,7 @@ You can run examples on one of official development boards, available in reposit
 	|                      +--------+------+------+------+--------+------+------+
 	|                      | UART   | MTX  | MRX  | RST  | UART   | MDTX | MDRX |
 	+======================+========+======+======+======+========+======+======+
-	| STM32F429ZI-Nucleo   | USART2 | PD5  | PD6  | PD1  | USART3 | PD8  | PD9  |
+	| STM32F429ZI-Nucleo   | USART6 | PC6  | PC7  | PC5  | USART3 | PD8  | PD9  |
 	+----------------------+--------+------+------+------+--------+------+------+
 
 Pins to connect with GSM device:
@@ -72,17 +72,19 @@ Here is a list of all examples coming with this library.
 	Examples are located in ``/examples/`` folder in downloaded package.
 	Check :ref:`download_library` section to get your package.
 
-Call
-****
-
-
-Call & SMS
-**********
-
+.. tip::
+	Do not forget to set PIN & PUK codes of your SIM card before running any of examples.
+	Open ``/snippets/sim_manager.c`` and update ``pin_code`` and ``puk_code`` variables.
 
 Device info
 ***********
 
+Simple example which prints basic device information:
+
+* Device Manufacturer
+* Device Model
+* Device serial number
+* Device revision number
 
 MQTT Client API
 ***************
@@ -99,8 +101,24 @@ It starts connection to server, sends initial request and then waits to receive 
 
 Processing is in separate thread and fully sequential, no callbacks or events.
 
+Call
+****
+
+Call example answers received call. If GSM device supports calls and has microphone/speaker connected
+to module itself, it can simply communicate over voice.
+
+Call & SMS
+**********
+
+This example shows how to receive a call and send reply with SMS.
+When application receives call, it hangs-up immediately and sends back SMS asking caller to send SMS instead.
+
+When application receives SMS, it will send same SMS content back to the sender's number.
+
 SMS Send receive
 ****************
+
+It demonstrates sending and receiving SMS either in events or using thread processing.
 
 .. toctree::
 	:maxdepth: 2

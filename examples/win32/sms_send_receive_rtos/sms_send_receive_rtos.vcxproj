@@ -169,6 +169,7 @@
     <ClCompile Include="..\..\..\gsm_at_lib\src\system\gsm_sys_win32.c" />
     <ClCompile Include="..\..\..\snippets\network_utils.c" />
     <ClCompile Include="..\..\..\snippets\sim_manager.c" />
+    <ClCompile Include="..\..\..\snippets\sms_send_receive.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

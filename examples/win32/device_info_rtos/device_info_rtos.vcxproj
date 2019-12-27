@@ -167,6 +167,7 @@
     <ClCompile Include="..\..\..\gsm_at_lib\src\gsm\gsm_utils.c" />
     <ClCompile Include="..\..\..\gsm_at_lib\src\system\gsm_ll_win32.c" />
     <ClCompile Include="..\..\..\gsm_at_lib\src\system\gsm_sys_win32.c" />
+    <ClCompile Include="..\..\..\snippets\device_info.c" />
     <ClCompile Include="..\..\..\snippets\network_utils.c" />
     <ClCompile Include="..\..\..\snippets\sim_manager.c" />
     <ClCompile Include="main.c" />

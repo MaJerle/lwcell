@@ -11,6 +11,7 @@
 #include "mqtt_client_api.h"
 #include "netconn_client.h"
 #include "sms_send_receive.h"
+#include "sms_send_receive_thread.h"
 #include "lwmem/lwmem.h"
 
 static void main_thread(void* arg);

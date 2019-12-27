@@ -264,9 +264,9 @@
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/sim_manager.c</locationURI>
 		</link>
 		<link>
-			<name>GSM SNIPPETS/sms_send_receive.c</name>
+			<name>GSM SNIPPETS/sms_send_receive_thread.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/snippets/sms_send_receive.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/snippets/sms_send_receive_thread.c</locationURI>
 		</link>
 		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_dma.c</name>
