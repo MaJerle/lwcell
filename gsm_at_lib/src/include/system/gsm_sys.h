@@ -42,7 +42,6 @@ extern "C" {
 #include <stdlib.h>
 
 /**
- * \ingroup         GSM_PORT
  * \defgroup        GSM_SYS System functions
  * \brief           System based function for OS management, timings, etc
  * \{
@@ -56,11 +55,25 @@ typedef void (*gsm_sys_thread_fn)(void *);
 /* Include system port file from portable folder */
 #include "gsm_sys_port.h"
 
+/**
+ * \anchor          GSM_SYS_CORE
+ * \name            Main
+ */
+
 uint8_t     gsm_sys_init(void);
 uint32_t    gsm_sys_now(void);
 
 uint8_t     gsm_sys_protect(void);
 uint8_t     gsm_sys_unprotect(void);
+
+/**
+ * \}
+ */
+
+/**
+ * \anchor          GSM_SYS_MUTEX
+ * \name            Mutex
+ */
 
 uint8_t     gsm_sys_mutex_create(gsm_sys_mutex_t* p);
 uint8_t     gsm_sys_mutex_delete(gsm_sys_mutex_t* p);
@@ -69,12 +82,30 @@ uint8_t     gsm_sys_mutex_unlock(gsm_sys_mutex_t* p);
 uint8_t     gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p);
 uint8_t     gsm_sys_mutex_invalid(gsm_sys_mutex_t* p);
 
+/**
+ * \}
+ */
+
+/**
+ * \anchor          GSM_SYS_SEM
+ * \name            Semaphores
+ */
+
 uint8_t     gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt);
 uint8_t     gsm_sys_sem_delete(gsm_sys_sem_t* p);
 uint32_t    gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout);
 uint8_t     gsm_sys_sem_release(gsm_sys_sem_t* p);
 uint8_t     gsm_sys_sem_isvalid(gsm_sys_sem_t* p);
 uint8_t     gsm_sys_sem_invalid(gsm_sys_sem_t* p);
+
+/**
+ * \}
+ */
+
+/**
+ * \anchor          GSM_SYS_MBOX
+ * \name            Message queues
+ */
 
 uint8_t     gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size);
 uint8_t     gsm_sys_mbox_delete(gsm_sys_mbox_t* b);
@@ -85,9 +116,22 @@ uint8_t     gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m);
 uint8_t     gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b);
 uint8_t     gsm_sys_mbox_invalid(gsm_sys_mbox_t* b);
 
+/**
+ * \}
+ */
+
+/**
+ * \anchor          GSM_SYS_THREAD
+ * \name            Threads
+ */
+
 uint8_t     gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, gsm_sys_thread_prio_t prio);
 uint8_t     gsm_sys_thread_terminate(gsm_sys_thread_t* t);
 uint8_t     gsm_sys_thread_yield(void);
+
+/**
+ * \}
+ */
 
 /**
  * \}

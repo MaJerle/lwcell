@@ -52,9 +52,9 @@ typedef HANDLE                      gsm_sys_mbox_t;
 typedef HANDLE                      gsm_sys_thread_t;
 typedef int                         gsm_sys_thread_prio_t;
 
-#define GSM_SYS_MBOX_NULL           ((HANDLE)0)
-#define GSM_SYS_SEM_NULL            ((HANDLE)0)
 #define GSM_SYS_MUTEX_NULL          ((HANDLE)0)
+#define GSM_SYS_SEM_NULL            ((HANDLE)0)
+#define GSM_SYS_MBOX_NULL           ((HANDLE)0)
 #define GSM_SYS_TIMEOUT             (INFINITE)
 #define GSM_SYS_THREAD_PRIO         (0)
 #define GSM_SYS_THREAD_SS           (4096)

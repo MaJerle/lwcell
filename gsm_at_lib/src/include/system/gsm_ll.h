@@ -41,7 +41,6 @@ extern "C" {
 #include "gsm/gsm.h"
 
 /**
- * \ingroup         GSM_PORT
  * \defgroup        GSM_LL Low-level functions
  * \brief           Low-level communication functions
  * \{
