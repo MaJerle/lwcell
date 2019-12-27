@@ -2,7 +2,7 @@
 
 GSM-AT Library commands parser is a generic, platform independent, library for communicating with SIMCOM based modules SIM800/SIM900 or SIM70xx. Module is written in C99 and is independent from used platform. Its main targets are embedded system devices like ARM Cortex-M, AVR, PIC and others, but can easily work under `Windows`, `Linux` or `MAC` environments.
 
-<h3><a href="https://majerle.eu/documentation/gsm_at/html/index.html">Documentation</a></h3>
+<h3><a href="https://docs.majerle.eu/projects/gsm-at-lib">Documentation</a></h3>
 
 ## Features
 
