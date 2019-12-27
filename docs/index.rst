@@ -1,8 +1,8 @@
 GSM-AT Lib documentation!
 =========================
 
-GSM-AT Lib is generic, platform independent, library for control of *ESP8266* or *ESP32* WiFi-based microcontrollers from *Espressif systems*. 
-Its objective is to run on master system, while Espressif device runs official AT commands firmware developed and maintained by *Espressif systems*. 
+GSM-AT Lib is generic, platform independent, library to control *SIM800/SIM900* or *SIM7000/SIM7020 (NB-Iot LTE)* devices from *SIMCom*. 
+Its objective is to run on master system, while SIMCom device runs official AT commands firmware developed and maintained by *SIMCom*. 
 
 .. rst-class:: center
 .. rst-class:: index_links

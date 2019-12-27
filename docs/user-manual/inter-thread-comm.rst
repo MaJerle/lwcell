@@ -17,11 +17,11 @@ For successful resources management, it uses ``2`` threads within library and al
 Processing thread
 ^^^^^^^^^^^^^^^^^
 
-*Processing thread* is in charge of processing each and every received character from *ESP* device.
-It can process *URC* messages which are received from *ESP* device without any command request. Some of them are:
+*Processing thread* is in charge of processing each and every received character from *GSM* device.
+It can process *URC* messages which are received from *GSM* device without any command request. Some of them are:
 
-* *+IPD* indicating new data packet received from remote side on active connection
-* *WIFI CONNECTED* indicating *ESP* has been just connected to access point
+* *+RECEIVE* indicating new data packet received from remote side on active connection
+* *RING* indicating new call to be processed by *GSM*
 * and more others
 
 .. note::
@@ -30,7 +30,7 @@ It can process *URC* messages which are received from *ESP* device without any c
 
 This thread also checks and processes specific received messages based on active command.
 As an example, when application tries to make a new connection to remote server, it starts command with ``AT+CIPSTART`` message.
-Thread understands that active command is to connect to remote side and will wait for potential ``+LINK_CONN:<...>`` message,
+Thread understands that active command is to connect to remote side and will wait for potential ``0, CONNECT OK`` message,
 indicating connection status. it will also wait for ``OK`` or ``ERROR``,
 indicating *command finished* status before it unlocks **sync_sem** to unblock *producing thread*.
 
@@ -46,7 +46,7 @@ When new message has been received, it sends initial *AT message* over AT port.
 * It checks if command is valid and if it has corresponding initial AT sequence, such as ``AT+CIPSTART``
 * It locks **sync_sem** semaphore and waits for processing thread to unlock it
 
-  * *Processing thread* is in charge to read respone from *ESP* and react accordingly. See previous section for details.
+  * *Processing thread* is in charge to read respone from *GSM* and react accordingly. See previous section for details.
 
 * If application uses *blocking mode*, it unlocks command **sem** semaphore and returns response
 * If application uses *non-blocking mode*, it frees memory for message and sends event with response message
