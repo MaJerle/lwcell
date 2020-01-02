@@ -154,5 +154,8 @@
     <ClCompile Include="..\..\snippets\sms_send_receive_thread.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\snippets\client.c">
+      <Filter>Source Files\GSM SNIPPETS</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

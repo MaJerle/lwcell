@@ -11,7 +11,9 @@
 #include "mqtt_client_api.h"
 #include "netconn_client.h"
 #include "sms_send_receive.h"
+#include "network_apn_settings.h"
 #include "sms_send_receive_thread.h"
+#include "client.h"
 #include "lwmem/lwmem.h"
 
 static void main_thread(void* arg);
@@ -188,6 +190,8 @@ input_thread(void* arg) {
 #endif /* GSM_CFG_PHONEBOOK */
         } else if (IS_LINE("mqttthread")) {
             gsm_sys_thread_create(NULL, "mqtt_client_api", (gsm_sys_thread_fn)mqtt_client_api_thread, NULL, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
+        } else if (IS_LINE("client")) {
+            client_connect();
 #if GSM_CFG_USSD
         } else if (IS_LINE("ussd")) {
             char response[128];
@@ -211,7 +215,7 @@ main_thread(void* arg) {
     gsm_init(gsm_evt, 1);
 
     /* Set global network credentials */
-    gsm_network_set_credentials("internet", "", "");
+    gsm_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
     /* Start input thread */
     gsm_sys_thread_create(NULL, "input", (gsm_sys_thread_fn)input_thread, NULL, 0, GSM_SYS_THREAD_PRIO);
