@@ -7,7 +7,7 @@ Its objective is to run on master system, while SIMCom device runs official AT c
 .. rst-class:: center
 .. rst-class:: index_links
 
-	:ref:`download_library` · `Open Github <https://github.com/MaJerle/gsm-at-lib>`_
+	:ref:`download_library` · :ref:`getting_started` · `Open Github <https://github.com/MaJerle/gsm-at-lib>`_
 
 Features
 ^^^^^^^^
@@ -48,7 +48,7 @@ Fresh contributions are always welcome. Simple instructions to proceed:
 
 #. Fork Github repository
 #. Respect `C style & coding rules <https://github.com/MaJerle/c-code-style>`_ used by the library
-#. Make a pull request to ``develop`` branch with new features or bug fixes
+#. Create a pull request to ``develop`` branch with new features or bug fixes
 
 Alternatively you may:
 
