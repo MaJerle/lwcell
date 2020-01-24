@@ -52,7 +52,7 @@ At this point it is assumed that you have successfully download library, either 
 
 * Copy ``gsm_at_lib`` folder to your project
 * Add ``gsm_at_lib/src/include`` folder to *include path* of your toolchain
-* Add folder to port ``gsm_at_lib/src/include/system/port/_arch_`` folder to *include path* of your toolchain
+* Add port architecture ``gsm_at_lib/src/include/system/port/_arch_`` folder to *include path* of your toolchain
 * Add source files from ``gsm_at_lib/src/`` folder to toolchain build
 * Add source files from ``gsm_at_lib/src/system/`` folder to toolchain build for arch port
 * Copy ``gsm_at_lib/src/include/gsm/gsm_config_template.h`` to project folder and rename it to ``gsm_config.h``
