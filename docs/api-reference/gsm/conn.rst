@@ -29,7 +29,7 @@ Example below shows *bare minimum* implementation to:
 .. literalinclude:: ../../../snippets/client.c
     :language: c
     :linenos:
-	:caption: Client connection minimum example
+    :caption: Client connection minimum example
 
 Sending data
 ^^^^^^^^^^^^
