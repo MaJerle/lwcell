@@ -75,7 +75,7 @@ gsm_pbuf_new(size_t len) {
     GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p == NULL,
         "[PBUF] Failed to allocate %d bytes\r\n", (int)len);
     GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p != NULL,
-        "[PBUF] Allocated %d bytes on %p\r\n", (int)len, p);                                                
+        "[PBUF] Allocated %d bytes on %p\r\n", (int)len, p);
     if (p != NULL) {
         p->next = NULL;                         /* No next element in chain */
         p->tot_len = len;                       /* Set total length of pbuf chain */

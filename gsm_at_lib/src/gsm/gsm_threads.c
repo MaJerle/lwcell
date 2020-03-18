@@ -91,10 +91,10 @@ gsm_thread_produce(void* const arg) {
          * Usually it should be function to transmit data to AT port
          */
         if (res == gsmOK && msg->fn != NULL) {  /* Check for callback processing function */
-            /* 
-             * Obtain semaphore 
+            /*
+             * Obtain semaphore
              * This code should not block at any point.
-             * If it blocks, severe problems occurred and program should 
+             * If it blocks, severe problems occurred and program should
              * immediate terminate
              */
             gsm_core_unlock();

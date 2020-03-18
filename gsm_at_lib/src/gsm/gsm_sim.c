@@ -108,7 +108,7 @@ gsm_sim_pin_add(const char* pin,
  * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
  */
 gsmr_t
-gsm_sim_pin_change(const char* pin, const char* new_pin, 
+gsm_sim_pin_change(const char* pin, const char* new_pin,
                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 

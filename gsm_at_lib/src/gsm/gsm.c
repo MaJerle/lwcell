@@ -234,7 +234,7 @@ gsm_core_unlock(void) {
 /**
  * \brief           Delay for amount of milliseconds
  *
- * Delay is based on operating system semaphores. 
+ * Delay is based on operating system semaphores.
  * It locks semaphore and waits for timeout in `ms` time.
  * Based on operating system, thread may be put to \e blocked list during delay and may improve execution speed
  *

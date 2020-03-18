@@ -341,7 +341,7 @@ typedef struct gsm_msg {
     gsm_api_cmd_evt_fn evt_fn;                  /*!< Command callback API function */
     void*           evt_arg;                    /*!< Command callback API callback parameter */
 #endif /* GSM_CFG_USE_API_FUNC_EVT */
-    
+
     union {
         struct {
             uint32_t delay;                     /*!< Delay to use before sending first reset AT command */

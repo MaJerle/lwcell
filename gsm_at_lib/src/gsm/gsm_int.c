@@ -399,11 +399,11 @@ reset_connections(uint8_t forced) {
     gsm.evt.type = GSM_EVT_CONN_CLOSE;
     gsm.evt.evt.conn_active_close.forced = forced;
     gsm.evt.evt.conn_active_close.res = gsmOK;
-    
+
     for (size_t i = 0; i < GSM_CFG_MAX_CONNS; ++i) {/* Check all connections */
         if (gsm.m.conns[i].status.f.active) {
             gsm.m.conns[i].status.f.active = 0;
-    
+
             gsm.evt.evt.conn_active_close.conn = &gsm.m.conns[i];
             gsm.evt.evt.conn_active_close.client = gsm.m.conns[i].status.f.client;
             gsmi_send_conn_cb(&gsm.m.conns[i], NULL);   /* Send callback function */
@@ -1971,7 +1971,7 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-                           
+
         case GSM_CMD_CMGL: {                    /* Delete SMS message */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGL=");

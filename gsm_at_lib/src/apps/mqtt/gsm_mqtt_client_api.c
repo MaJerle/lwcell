@@ -126,7 +126,7 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
                 buf_size = GSM_MEM_ALIGN(sizeof(*buf));
                 topic_size = GSM_MEM_ALIGN(sizeof(*topic) * (topic_len + 1));
                 payload_size = GSM_MEM_ALIGN(sizeof(*payload) * (payload_len + 1));
-                
+
                 size = buf_size + topic_size + payload_size;
                 buf = gsm_mem_malloc(size);
                 if (buf != NULL) {

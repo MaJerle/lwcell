@@ -357,7 +357,7 @@ gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn t
         stack_size > 0 ? stack_size : GSM_SYS_THREAD_SS
     };
     gsm_sys_thread_t id;
-    
+
     id = osThreadCreate(&thread_def, arg);
     if (t != NULL) {
         *t = id;
