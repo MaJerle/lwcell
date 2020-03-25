@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#include "system/gsm_sys.h"
 #include <string.h>
 #include <stdlib.h>
+#include "system/gsm_sys.h"
 
 #if !__DOXYGEN__
 

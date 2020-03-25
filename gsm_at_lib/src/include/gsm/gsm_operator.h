@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_OPERATOR_H
 #define GSM_HDR_OPERATOR_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -58,6 +58,6 @@ gsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, con
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_OPERATOR_H */

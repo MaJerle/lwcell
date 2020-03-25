@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_SMS_H
 #define GSM_HDR_SMS_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -63,6 +63,6 @@ gsmr_t      gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_me
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_SMS_H */

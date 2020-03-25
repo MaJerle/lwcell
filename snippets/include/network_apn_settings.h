@@ -1,11 +1,11 @@
 #ifndef SNIPPET_HDR_NETWORK_APN_SETTINGS_H
 #define SNIPPET_HDR_NETWORK_APN_SETTINGS_H
 
+#include "gsm/gsm_network_api.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm_network_api.h"
+#endif /* __cplusplus */
 
 /* APN settings to attach to network */
 #define NETWORK_APN                 "internet"
@@ -14,6 +14,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif

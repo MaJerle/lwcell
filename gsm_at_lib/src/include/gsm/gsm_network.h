@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_NETWORK_H
 #define GSM_HDR_NETWORK_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -64,6 +64,6 @@ gsmr_t      gsm_network_check_status(const gsm_api_cmd_evt_fn evt_fn, void* cons
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_NETWORK_H */

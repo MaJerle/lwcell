@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_EVT_H
 #define GSM_HDR_EVT_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -267,6 +267,6 @@ size_t          gsm_evt_operator_scan_get_length(gsm_evt_t* cc);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_EVT_H */

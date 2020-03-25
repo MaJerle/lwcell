@@ -34,12 +34,12 @@
 #ifndef GSM_HDR_DEBUG_H
 #define GSM_HDR_DEBUG_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>
 #include <string.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -125,6 +125,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_DEBUG_H */

@@ -34,12 +34,12 @@
 #ifndef GSM_HDR_APP_MQTT_CLIENT_H
 #define GSM_HDR_APP_MQTT_CLIENT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "gsm/gsm.h"
 #include "gsm/apps/gsm_mqtt_client_evt.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM_APPS
@@ -194,6 +194,6 @@ void                gsm_mqtt_client_set_arg(gsm_mqtt_client_p client, void* arg)
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_APP_MQTT_CLIENT_H */

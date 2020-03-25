@@ -34,12 +34,12 @@
 #ifndef GSM_HDR_INPUT_H
 #define GSM_HDR_INPUT_H
 
+#include <string.h>
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <string.h>
-#include "gsm/gsm.h"
 
 /**
  * \ingroup         GSM

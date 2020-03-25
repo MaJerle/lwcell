@@ -34,12 +34,12 @@
 #ifndef GSM_HDR_MAIN_SYS_H
 #define GSM_HDR_MAIN_SYS_H
 
+#include <stdlib.h>
+#include "gsm_config.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gsm_config.h"
-#include <stdlib.h>
 
 /**
  * \defgroup        GSM_SYS System functions

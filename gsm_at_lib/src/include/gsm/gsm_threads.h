@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_THREADS_H
 #define GSM_HDR_THREADS_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gsm/gsm.h"
 
 void    gsm_thread_produce(void* const arg);
 void    gsm_thread_process(void* const arg);

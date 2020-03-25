@@ -34,12 +34,12 @@
 #ifndef GSM_HDR_H
 #define GSM_HDR_H
 
+/* Get most important include files */
+#include "gsm/gsm_includes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-/* Get most important include files */
-#include "gsm/gsm_includes.h"
 
 /**
  * \defgroup        GSM GSM-AT Lib

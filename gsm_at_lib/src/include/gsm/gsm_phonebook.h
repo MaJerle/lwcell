@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_PHONEBOOK_H
 #define GSM_HDR_PHONEBOOK_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -63,6 +63,6 @@ gsmr_t      gsm_pb_search(gsm_mem_t mem, const char* search, gsm_pb_entry_t* ent
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_PHONEBOOK_H */

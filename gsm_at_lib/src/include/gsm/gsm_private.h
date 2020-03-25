@@ -31,16 +31,16 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef __GSM_PRIV_H
-#define __GSM_PRIV_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#ifndef GSM_HDR_PRIV_H
+#define GSM_HDR_PRIV_H
 
 #include "gsm/gsm.h"
 #include "gsm/gsm_typedefs.h"
 #include "gsm/gsm_debug.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /**
  * \addtogroup      GSM_TYPEDEFS
@@ -800,4 +800,4 @@ void        gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, gsmr_t err)
 }
 #endif /* __cplusplus */
 
-#endif /* __GSM_PRIV_H */
+#endif /* GSM_HDR_PRIV_H */

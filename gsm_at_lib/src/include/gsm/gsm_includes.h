@@ -34,10 +34,6 @@
 #ifndef GSM_HDR_INCLUDES_H
 #define GSM_HDR_INCLUDES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include "gsm_config.h"
 #include "gsm/gsm_typedefs.h"
 #include "gsm/gsm_buff.h"
@@ -70,6 +66,12 @@ extern "C" {
 #if GSM_CFG_USSD || __DOXYGEN__
 #include "gsm/gsm_ussd.h"
 #endif /* GSM_CFG_USSD || __DOXYGEN__ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 
 #ifdef __cplusplus
 }

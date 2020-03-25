@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_TIMEOUT_H
 #define GSM_HDR_TIMEOUT_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -56,6 +56,6 @@ gsmr_t          gsm_timeout_remove(gsm_timeout_fn fn);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_TIMEOUT_H */

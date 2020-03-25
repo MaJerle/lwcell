@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_CALL_H
 #define GSM_HDR_CALL_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -60,6 +60,6 @@ gsmr_t      gsm_call_hangup(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_CALL_H */

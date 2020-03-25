@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_APPS_H
 #define GSM_HDR_APPS_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gsm/gsm.h"
 
 /**
  * \defgroup        GSM_APPS Applications

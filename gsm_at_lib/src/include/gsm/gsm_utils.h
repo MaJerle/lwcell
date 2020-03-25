@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_UTILS_H
 #define GSM_HDR_UTILS_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -248,6 +248,6 @@ char *      gsm_i32_to_gen_str(int32_t num, char* out);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_UTILITIES_H */

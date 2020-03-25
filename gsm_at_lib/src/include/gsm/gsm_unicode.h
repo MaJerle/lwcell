@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_UNICODE_H
 #define GSM_HDR_UNICODE_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -55,6 +55,6 @@ gsmr_t          gsmi_unicode_decode(gsm_unicode_t* uni, uint8_t ch);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_UNICODE_H */

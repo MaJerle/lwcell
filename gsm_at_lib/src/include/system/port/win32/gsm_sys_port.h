@@ -34,15 +34,14 @@
 #ifndef GSM_HDR_SYSTEM_PORT_H
 #define GSM_HDR_SYSTEM_PORT_H
 
+#include <stdint.h>
+#include <stdlib.h>
+#include "gsm_config.h"
+#include "windows.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <stdint.h>
-#include <stdlib.h>
-
-#include "gsm_config.h"
-#include "windows.h"
 
 #if GSM_CFG_OS && !__DOXYGEN__
 

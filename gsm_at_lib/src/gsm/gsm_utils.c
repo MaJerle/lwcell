@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
+#include <stdint.h>
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_utils.h"
-#include <stdint.h>
 
 /**
  * \brief           Convert `unsigned 32-bit` number to string

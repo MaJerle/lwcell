@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_SIM_H
 #define GSM_HDR_SIM_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -60,6 +60,6 @@ gsmr_t      gsm_sim_puk_enter(const char* puk, const char* new_pin, const gsm_ap
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_SIM_H */

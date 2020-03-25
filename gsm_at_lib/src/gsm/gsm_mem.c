@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
+#include <limits.h>
 #include "gsm/gsm_private.h"
 #include "gsm/gsm_mem.h"
-#include <limits.h>
 
 #if !GSM_CFG_MEM_CUSTOM || __DOXYGEN__
 

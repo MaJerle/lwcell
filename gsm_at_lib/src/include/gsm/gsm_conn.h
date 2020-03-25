@@ -34,11 +34,11 @@
 #ifndef GSM_HDR_CONN_H
 #define GSM_HDR_CONN_H
 
+#include "gsm/gsm.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#include "gsm/gsm.h"
+#endif /* __cplusplus */
 
 /**
  * \ingroup         GSM
@@ -73,6 +73,6 @@ gsm_port_t  gsm_conn_get_local_port(gsm_conn_p conn);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* GSM_HDR_CONN_H */
