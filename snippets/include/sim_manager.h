@@ -13,4 +13,4 @@ uint8_t     configure_sim_card(void);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_SIM_MANAGER_H */

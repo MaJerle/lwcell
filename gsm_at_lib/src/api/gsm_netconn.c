@@ -331,7 +331,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
      *
      * 1. Check if buffer is set and check if there is something to write to it.
      *    1. In case buffer will be full after copy, send it and free memory.
-     * 2. Check how many bytes we can write directly without needed to copy
+     * 2. Check how many bytes we can write directly without need to copy
      * 3. Try to allocate a new buffer and copy remaining input data to it
      * 4. In case buffer allocation fails, send data directly (may affect on speed and effectivenes)
      */

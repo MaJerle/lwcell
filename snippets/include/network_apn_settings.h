@@ -16,4 +16,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_NETWORK_APN_SETTINGS_H */

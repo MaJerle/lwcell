@@ -11,4 +11,4 @@ void read_device_info(void);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_DEVICE_INFO_H */

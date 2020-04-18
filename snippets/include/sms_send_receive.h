@@ -11,4 +11,4 @@ void sms_send_receive_start(void);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_SMS_SEND_RECEIVE_H */

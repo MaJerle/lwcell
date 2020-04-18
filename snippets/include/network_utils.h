@@ -16,4 +16,4 @@ void    network_utils_process_rssi(gsm_evt_t* evt);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_NETWORK_UTILS_H */

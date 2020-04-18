@@ -11,4 +11,4 @@ void client_connect(void);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_CLIENT_H */

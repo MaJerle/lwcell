@@ -11,4 +11,4 @@ void call_start(void);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_CALL_H */

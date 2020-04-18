@@ -11,4 +11,4 @@ void call_sms_start(void);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_CALL_SMS_H */
