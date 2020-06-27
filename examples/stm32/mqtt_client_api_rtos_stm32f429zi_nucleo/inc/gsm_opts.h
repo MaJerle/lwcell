@@ -1,6 +1,6 @@
 /**
- * \file            lwmem_config.h
- * \brief           LwMEM configuration file
+ * \file            gsm_opts.h
+ * \brief           GSM application options
  */
 
 /*
@@ -26,26 +26,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwMEM - Lightweight dynamic memory manager library.
+ * This file is part of GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef LWMEM_HDR_CONFIG_H
-#define LWMEM_HDR_CONFIG_H
+#ifndef GSM_HDR_OPTS_H
+#define GSM_HDR_OPTS_H
 
-/* Rename this file to "lwmem_config.h" for your application */
-
-#include "windows.h"
+/* Rename this file to "gsm_opts.h" for your application */
 
 /*
- * Open "include/lwmem/lwmem_config_default.h" and
+ * Open "include/gsm/gsm_opt.h" and
  * copy & replace here settings you want to change values
  */
-#define LWMEM_CFG_OS                            1
-#define LWMEM_CFG_OS_MUTEX_HANDLE               HANDLE
+#define GSM_CFG_AT_ECHO                     1
+#define GSM_CFG_INPUT_USE_PROCESS           1
 
-/* After user configuration, call default config to merge config together */
-#include "lwmem/lwmem_config_default.h"
+/* Enable network, conn and netconn APIs */
+#define GSM_CFG_NETWORK                     1
+#define GSM_CFG_CONN                        1
+#define GSM_CFG_NETCONN                     1
 
-#endif /* LWMEM_HDR_CONFIG_H */
+
+#endif /* GSM_HDR_OPTS_H */

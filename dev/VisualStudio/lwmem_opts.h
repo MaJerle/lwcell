@@ -1,6 +1,6 @@
 /**
- * \file            gsm_config.h
- * \brief           Config file
+ * \file            lwmem_opts.h
+ * \brief           LwMEM application options
  */
 
 /*
@@ -26,27 +26,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT library.
+ * This file is part of LwMEM - Lightweight dynamic memory manager library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_CONFIG_H
-#define GSM_HDR_CONFIG_H
+#ifndef LWMEM_HDR_OPTS_H
+#define LWMEM_HDR_OPTS_H
 
-/* Rename this file to "gsm_config.h" for your application */
+/* Rename this file to "lwmem_opts.h" for your application */
+
+#include "windows.h"
 
 /*
- * Open "include/gsm/gsm_config_default.h" and
+ * Open "include/lwmem/lwmem_opt.h" and
  * copy & replace here settings you want to change values
  */
-#define GSM_CFG_AT_ECHO                     1
-#define GSM_CFG_INPUT_USE_PROCESS           1
+#define LWMEM_CFG_OS                            1
+#define LWMEM_CFG_OS_MUTEX_HANDLE               HANDLE
 
-/* Enable SMS API */
-#define GSM_CFG_SMS                         1
-
-/* After user configuration, call default config to merge config together */
-#include "gsm/gsm_config_default.h"
-
-#endif /* GSM_HDR_CONFIG_H */
+#endif /* LWMEM_HDR_OPTS_H */

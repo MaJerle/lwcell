@@ -36,7 +36,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "gsm_config.h"
+#include "gsm/gsm_opt.h"
 #include "cmsis_os.h"
 
 #ifdef __cplusplus

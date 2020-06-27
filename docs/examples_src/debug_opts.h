@@ -1,10 +1,10 @@
-/* Modifications of gsm_config.h file for configuration */
+/* Modifications of gsm_opts.h file for configuration */
 
 /* Enable global debug */
 #define GSM_CFG_DBG                 GSM_DBG_ON
 
 /*
- * Enable debug types. 
+ * Enable debug types.
  * Application may use bitwise OR | to use multiple types:
  *    GSM_DBG_TYPE_TRACE | GSM_DBG_TYPE_STATE
  */

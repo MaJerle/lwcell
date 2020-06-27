@@ -34,7 +34,7 @@
 #ifndef GSM_HDR_INCLUDES_H
 #define GSM_HDR_INCLUDES_H
 
-#include "gsm_config.h"
+#include "gsm/gsm_opt.h"
 #include "gsm/gsm_typedefs.h"
 #include "gsm/gsm_buff.h"
 #include "gsm/gsm_input.h"

@@ -1,6 +1,6 @@
 /**
- * \file            gsm_config.h
- * \brief           Config file
+ * \file            gsm_opts.h
+ * \brief           GSM application options
  */
 
 /*
@@ -31,22 +31,18 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_CONFIG_H
-#define GSM_HDR_CONFIG_H
+#ifndef GSM_HDR_OPTS_H
+#define GSM_HDR_OPTS_H
 
-/* Rename this file to "gsm_config.h" for your application */
+/* Rename this file to "gsm_opts.h" for your application */
 
 /*
- * Open "include/gsm/gsm_config_default.h" and
+ * Open "include/gsm/gsm_opt.h" and
  * copy & replace here settings you want to change values
  */
-#define GSM_CFG_AT_ECHO                     1
-#define GSM_CFG_INPUT_USE_PROCESS           1
+#define GSM_CFG_AT_ECHO                         1
+#define GSM_CFG_INPUT_USE_PROCESS               1
 
-/* Enable SMS API */
-#define GSM_CFG_SMS                         1
+#define GSM_CFG_CALL                            1
 
-/* After user configuration, call default config to merge config together */
-#include "gsm/gsm_config_default.h"
-
-#endif /* GSM_HDR_CONFIG_H */
+#endif /* GSM_HDR_OPTS_H */

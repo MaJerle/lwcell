@@ -1,6 +1,6 @@
 /**
- * \file            gsm_config_template.h
- * \brief           Template config file
+ * \file            gsm_opts.h
+ * \brief           GSM application options
  */
 
 /*
@@ -26,22 +26,47 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT library.
+ * This file is part of GSM-AT.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_CONFIG_H
-#define GSM_HDR_CONFIG_H
+#ifndef GSM_HDR_OPTS_H
+#define GSM_HDR_OPTS_H
 
-/* Rename this file to "gsm_config.h" for your application */
+/* Rename this file to "gsm_opts.h" for your application */
 
 /*
- * Open "include/gsm/gsm_config_default.h" and
+ * Open "include/gsm/gsm_opt.h" and
  * copy & replace here settings you want to change values
  */
+#if !__DOXYGEN__
+#define GSM_CFG_DBG                         GSM_DBG_ON
+#define GSM_CFG_DBG_TYPES_ON                GSM_DBG_TYPE_TRACE | GSM_DBG_TYPE_STATE
+#define GSM_CFG_DBG_MQTT                    GSM_DBG_OFF
 
-/* After user configuration, call default config to merge config together */
-#include "gsm/gsm_config_default.h"
+#define GSM_CFG_IPD_MAX_BUFF_SIZE           1460
+#define GSM_CFG_INPUT_USE_PROCESS           1
+#define GSM_CFG_AT_ECHO                     0
 
-#endif /* GSM_HDR_CONFIG_H */
+#define GSM_CFG_NETWORK                     1
+
+#define GSM_CFG_CONN                        1
+#define GSM_CFG_SMS                         1
+#define GSM_CFG_CALL                        1
+#define GSM_CFG_PHONEBOOK                   1
+#define GSM_CFG_USSD                        1
+
+#define GSM_CFG_USE_API_FUNC_EVT            1
+
+#define GSM_CFG_NETCONN                     1
+
+#define GSM_CFG_MEM_CUSTOM                  1
+
+#if defined(WIN32)
+#define GSM_CFG_SYS_PORT					GSM_SYS_PORT_WIN32
+#endif
+
+#endif /* !__DOXYGEN__ */
+
+#endif /* GSM_HDR_OPTS_H */

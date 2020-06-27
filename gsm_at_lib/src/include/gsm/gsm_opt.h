@@ -1,6 +1,6 @@
 /**
- * \file            gsm_config_default.h
- * \brief           Default configuration for GSM-AT library
+ * \file            gsm_opt.h
+ * \brief           GSM-AT options
  */
 
 /*
@@ -31,12 +31,16 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_DEFAULT_CONFIG_H
-#define GSM_HDR_DEFAULT_CONFIG_H
+#ifndef GSM_HDR_OPT_H
+#define GSM_HDR_OPT_H
+
+/* Include application options */
+#include "gsm_opts.h"
+#include "gsm/gsm_debug.h"
 
 /**
- * \defgroup        GSM_CONFIG Configuration
- * \brief           Configuration parameters
+ * \defgroup        GSM_OPT Configuration
+ * \brief           GSM-AT options
  * \{
  *
  */
@@ -46,7 +50,7 @@
  *
  * \note            Value must be set to 1 in the current revision
  *
- * \note            Check \ref GSM_CONFIG_OS group for more configuration related to operating system
+ * \note            Check \ref GSM_OPT_OS group for more configuration related to operating system
  *
  */
 #ifndef GSM_CFG_OS
@@ -189,7 +193,7 @@
 #endif
 
 /**
- * \defgroup        GSM_CONFIG_DBG Debugging
+ * \defgroup        GSM_OPT_DBG Debugging
  * \brief           Debugging configurations
  * \{
  */
@@ -340,7 +344,7 @@
  */
 
 /**
- * \defgroup        GSM_CONFIG_OS OS configuration
+ * \defgroup        GSM_OPT_OS OS configuration
  * \brief           Operating system dependant configuration
  * \{
  */
@@ -403,13 +407,13 @@
  */
 
 /**
- * \defgroup        GSM_CONFIG_MODULES Modules
+ * \defgroup        GSM_OPT_MODULES Modules
  * \brief           Configuration of specific modules
  * \{
  */
 
 /**
- * \defgroup        GSM_CONFIG_MODULES_NETCONN Netconn module
+ * \defgroup        GSM_OPT_MODULES_NETCONN Netconn module
  * \brief           Configuration of netconn API module
  * \{
  */
@@ -461,7 +465,7 @@
  */
 
 /**
- * \defgroup        GSM_CONFIG_MODULES_MQTT MQTT client module
+ * \defgroup        GSM_OPT_MODULES_MQTT MQTT client module
  * \brief           Configuration of MQTT and MQTT API client modules
  * \{
  */
@@ -601,7 +605,7 @@
 #endif
 
 /**
- * \defgroup        GSM_CONFIG_STD_LIB Standard library
+ * \defgroup        GSM_OPT_STD_LIB Standard library
  * \brief           Standard C library configuration
  * \{
  *
@@ -666,4 +670,4 @@ void *  my_memset(void* dst, int b, size_t len);
 
 #endif /* !__DOXYGEN__ */
 
-#endif /* GSM_HDR_DEFAULT_CONFIG_H */
+#endif /* GSM_HDR_OPT_H */

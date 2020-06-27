@@ -35,7 +35,7 @@
 #define GSM_HDR_MAIN_SYS_H
 
 #include <stdlib.h>
-#include "gsm_config.h"
+#include "gsm/gsm_opt.h"
 
 #ifdef __cplusplus
 extern "C" {
