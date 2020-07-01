@@ -36,7 +36,6 @@
 
 /* Include application options */
 #include "gsm_opts.h"
-#include "gsm/gsm_debug.h"
 
 /**
  * \defgroup        GSM_OPT Configuration
@@ -669,5 +668,7 @@ void *  my_memset(void* dst, int b, size_t len);
 #endif /* !GSM_CFG_OS */
 
 #endif /* !__DOXYGEN__ */
+
+#include "gsm/gsm_debug.h"
 
 #endif /* GSM_HDR_OPT_H */
