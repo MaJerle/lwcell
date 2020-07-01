@@ -279,7 +279,27 @@ static void
 write_fixed_header(gsm_mqtt_client_p client, mqtt_msg_type_t type, uint8_t dup, gsm_mqtt_qos_t qos, uint8_t retain, uint16_t rem_len) {
     uint8_t b;
 
-    b = GSM_U8(((GSM_U8(type)) << 0x04) | (GSM_U8(!!dup) << 0x03) | ((GSM_U8(qos) & 0x03) << 0x01) | GSM_U8(!!retain));
+    b = GSM_U8((GSM_U8(type)) << 0x04);
+    /*
+    * Fixed header flags according to: 
+    * http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718020
+    */
+    switch (type) {
+        case MQTT_MSG_TYPE_PUBLISH:
+            b |= GSM_U8((GSM_U8(!!dup) << 0x03) | ((GSM_U8(qos) & 0x03) << 0x01) | GSM_U8(!!retain));
+            break;
+        
+        case MQTT_MSG_TYPE_PUBREL:
+        case MQTT_MSG_TYPE_SUBSCRIBE:
+        case MQTT_MSG_TYPE_UNSUBSCRIBE:
+            /* Reserved     0   0   1   0 */
+            b |= GSM_U8((GSM_U8(GSM_MQTT_QOS_AT_LEAST_ONCE)) << 0x01);
+            break;
+
+        default:
+            /* Reserved     0   0   0   0 */
+            break;
+    }
     gsm_buff_write(&client->tx_buff, &b, 1);    /* Write start of packet parameters */
 
     GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
