@@ -845,8 +845,7 @@ mqtt_connected_cb(gsm_mqtt_client_p client) {
  */
 static uint8_t
 mqtt_data_recv_cb(gsm_mqtt_client_p client, gsm_pbuf_p pbuf) {
-    client->poll_time = 0;                      /* Reset kep alive time */
-    mqtt_parse_incoming(client, pbuf);
+    mqtt_parse_incoming(client, pbuf);          /* We need to process incoming data */
     gsm_conn_recved(client->conn, pbuf);        /* Notify stack about received data */
     return 1;
 }
