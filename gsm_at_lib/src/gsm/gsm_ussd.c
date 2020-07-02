@@ -49,7 +49,7 @@
  */
 gsmr_t
 gsm_ussd_run(const char* code, char* resp, size_t resp_len,
-            const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("code != NULL && strlen(code) > 0", code != NULL && strlen(code) > 0);

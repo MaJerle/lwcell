@@ -83,19 +83,19 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
 
     if (!gsm_sys_sem_create(&gsm.sem_sync, 1)) {/* Create sync semaphore between threads */
         GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
-            "[CORE] Cannot allocate sync semaphore!\r\n");
+                   "[CORE] Cannot allocate sync semaphore!\r\n");
         goto cleanup;
     }
 
     /* Create message queues */
     if (!gsm_sys_mbox_create(&gsm.mbox_producer, GSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {  /* Producer */
         GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
-            "[CORE] Cannot allocate producer mbox queue!\r\n");
+                   "[CORE] Cannot allocate producer mbox queue!\r\n");
         goto cleanup;
     }
     if (!gsm_sys_mbox_create(&gsm.mbox_process, GSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {    /* Process */
         GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
-            "[CORE] Cannot allocate process mbox queue!\r\n");
+                   "[CORE] Cannot allocate process mbox queue!\r\n");
         goto cleanup;
     }
 
@@ -103,14 +103,14 @@ gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
     if (!gsm_sys_thread_create(&gsm.thread_produce, "gsm_produce", gsm_thread_produce, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
         GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
-            "[CORE] Cannot create producing thread!\r\n");
+                   "[CORE] Cannot create producing thread!\r\n");
         gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
     }
     gsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
     if (!gsm_sys_thread_create(&gsm.thread_process, "gsm_process", gsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
         GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
-            "[CORE] Cannot create processing thread!\r\n");
+                   "[CORE] Cannot create processing thread!\r\n");
         gsm_sys_thread_terminate(&gsm.thread_produce);  /* Delete produce thread */
         gsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
@@ -186,7 +186,7 @@ gsm_reset(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t b
  */
 gsmr_t
 gsm_reset_with_delay(uint32_t delay,
-                        const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                     const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -267,7 +267,7 @@ gsm_delay(uint32_t ms) {
  */
 gsmr_t
 gsm_set_func_mode(uint8_t mode,
-                    const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                  const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -292,7 +292,7 @@ gsm_set_func_mode(uint8_t mode,
  */
 gsmr_t
 gsm_device_set_present(uint8_t present,
-                        const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                       const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     gsmr_t res = gsmOK;
     gsm_core_lock();
     present = present ? 1 : 0;

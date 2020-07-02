@@ -37,7 +37,7 @@
 
 #if GSM_CFG_DBG || __DOXYGEN__
 
-const char *
+const char*
 gsmi_dbg_msg_to_string(gsm_cmd_t cmd) {
     static char tmp_arr[100];
     if (cmd) {

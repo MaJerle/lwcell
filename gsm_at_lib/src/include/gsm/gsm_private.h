@@ -276,12 +276,12 @@ typedef struct gsm_conn {
 
     union {
         struct {
-            uint8_t active:1;                   /*!< Status whether connection is active */
-            uint8_t client:1;                   /*!< Status whether connection is in client mode */
-            uint8_t data_received:1;            /*!< Status whether first data were received on connection */
-            uint8_t in_closing:1;               /*!< Status if connection is in closing mode.
+            uint8_t active: 1;                  /*!< Status whether connection is active */
+            uint8_t client: 1;                  /*!< Status whether connection is in client mode */
+            uint8_t data_received: 1;           /*!< Status whether first data were received on connection */
+            uint8_t in_closing: 1;               /*!< Status if connection is in closing mode.
                                                     When in closing mode, ignore any possible received data from function */
-            uint8_t bearer:1;                   /*!< Bearer used. Can be `1` or `0` */
+            uint8_t bearer: 1;                  /*!< Bearer used. Can be `1` or `0` */
         } f;                                    /*!< Connection flags */
     } status;                                   /*!< Connection status union with flag bits */
 } gsm_conn_t;
@@ -335,7 +335,7 @@ typedef struct gsm_msg {
     uint8_t         is_blocking;                /*!< Status if command is blocking */
     uint32_t        block_time;                 /*!< Maximal blocking time in units of milliseconds. Use 0 to for non-blocking call */
     gsmr_t          res;                        /*!< Result of message operation */
-    gsmr_t          (*fn)(struct gsm_msg *);    /*!< Processing callback function to process packet */
+    gsmr_t          (*fn)(struct gsm_msg*);     /*!< Processing callback function to process packet */
 
 #if GSM_CFG_USE_API_FUNC_EVT
     gsm_api_cmd_evt_fn evt_fn;                  /*!< Command callback API function */
@@ -671,8 +671,8 @@ typedef struct {
 
     union {
         struct {
-            uint8_t     initialized:1;          /*!< Flag indicating GSM library is initialized */
-            uint8_t     dev_present:1;          /*!< Flag indicating GSM device is present */
+            uint8_t     initialized: 1;         /*!< Flag indicating GSM library is initialized */
+            uint8_t     dev_present: 1;         /*!< Flag indicating GSM device is present */
         } f;                                    /*!< Flags structure */
     } status;                                   /*!< Status structure */
 } gsm_t;
@@ -737,29 +737,29 @@ extern const size_t         gsm_dev_model_map_size;
 
 #define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
 #define GSM_MSG_VAR_ALLOC(name, blocking)           do {\
-    (name) = gsm_mem_malloc(sizeof(*(name)));       \
-    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
-    GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", sizeof(*(name))); \
-    if ((name) == NULL) {                           \
-        return gsmERRMEM;                           \
-    }                                               \
-    GSM_MEMSET((name), 0x00, sizeof(*(name)));      \
-    (name)->is_blocking = GSM_U8((blocking) > 0);   \
-} while (0)
+        (name) = gsm_mem_malloc(sizeof(*(name)));       \
+        GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
+        GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", sizeof(*(name))); \
+        if ((name) == NULL) {                           \
+            return gsmERRMEM;                           \
+        }                                               \
+        GSM_MEMSET((name), 0x00, sizeof(*(name)));      \
+        (name)->is_blocking = GSM_U8((blocking) > 0);   \
+    } while (0)
 #define GSM_MSG_VAR_REF(name)                   (*(name))
 #define GSM_MSG_VAR_FREE(name)                  do {\
-    GSM_DEBUGF(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (name)); \
-    if (gsm_sys_sem_isvalid(&((name)->sem))) {      \
-        gsm_sys_sem_delete(&((name)->sem));         \
-        gsm_sys_sem_invalid(&((name)->sem));        \
-    }                                               \
-    gsm_mem_free_s((void **)&(name));               \
-} while (0)
+        GSM_DEBUGF(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (name)); \
+        if (gsm_sys_sem_isvalid(&((name)->sem))) {      \
+            gsm_sys_sem_delete(&((name)->sem));         \
+            gsm_sys_sem_invalid(&((name)->sem));        \
+        }                                               \
+        gsm_mem_free_s((void **)&(name));               \
+    } while (0)
 #if GSM_CFG_USE_API_FUNC_EVT
 #define GSM_MSG_VAR_SET_EVT(name, e_fn, e_arg)  do {\
-    (name)->evt_fn = (e_fn);                        \
-    (name)->evt_arg = (e_arg);                      \
-} while (0)
+        (name)->evt_fn = (e_fn);                        \
+        (name)->evt_arg = (e_arg);                      \
+    } while (0)
 #else /* GSM_CFG_USE_API_FUNC_EVT */
 #define GSM_MSG_VAR_SET_EVT(name, e_fn, e_arg) do { GSM_UNUSED(e_fn); GSM_UNUSED(e_arg); } while (0)
 #endif /* !GSM_CFG_USE_API_FUNC_EVT */
@@ -772,7 +772,7 @@ extern const size_t         gsm_dev_model_map_size;
 
 #define GSM_PORT2NUM(port)                  ((uint32_t)(port))
 
-const char * gsmi_dbg_msg_to_string(gsm_cmd_t cmd);
+const char* gsmi_dbg_msg_to_string(gsm_cmd_t cmd);
 gsmr_t      gsmi_process(const void* data, size_t len);
 gsmr_t      gsmi_process_buffer(void);
 gsmr_t      gsmi_initiate_cmd(gsm_msg_t* msg);
@@ -780,7 +780,7 @@ uint8_t     gsmi_is_valid_conn_ptr(gsm_conn_p conn);
 gsmr_t      gsmi_send_cb(gsm_evt_type_t type);
 gsmr_t      gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn cb);
 void        gsmi_conn_init(void);
-gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t *), uint32_t max_block_time);
+gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t*), uint32_t max_block_time);
 uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
 uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
 void        gsmi_conn_start_timeout(gsm_conn_p conn);

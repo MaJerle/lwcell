@@ -81,7 +81,7 @@ process_next_timeout(void) {
          */
         first_timeout = first_timeout->next;    /* Set next timeout on a list as first timeout */
         to->fn(to->arg);                        /* Call user callback function */
-        gsm_mem_free_s((void **)&to);
+        gsm_mem_free_s((void**)&to);
     }
 }
 
@@ -197,7 +197,7 @@ gsm_timeout_remove(gsm_timeout_fn fn) {
 
     gsm_core_lock();
     for (gsm_timeout_t* t = first_timeout, *t_prev = NULL; t != NULL;
-            t_prev = t, t = t->next) {          /* Check all entries */
+         t_prev = t, t = t->next) {          /* Check all entries */
         if (t->fn == fn) {                      /* Do we have a match from callback point of view? */
 
             /*
@@ -220,7 +220,7 @@ gsm_timeout_remove(gsm_timeout_fn fn) {
             } else {
                 first_timeout = t->next;
             }
-            gsm_mem_free_s((void **)&t);
+            gsm_mem_free_s((void**)&t);
             success = 1;
             break;
         }

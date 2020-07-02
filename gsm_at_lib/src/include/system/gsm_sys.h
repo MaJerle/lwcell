@@ -50,7 +50,7 @@ extern "C" {
 /**
  * \brief           Thread function prototype
  */
-typedef void (*gsm_sys_thread_fn)(void *);
+typedef void (*gsm_sys_thread_fn)(void*);
 
 /* Include system port file from portable folder */
 #include "gsm_sys_port.h"

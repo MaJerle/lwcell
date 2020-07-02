@@ -87,8 +87,8 @@ flush_mboxes(gsm_netconn_t* nc, uint8_t protect) {
         gsm_core_lock();
     }
     if (gsm_sys_mbox_isvalid(&nc->mbox_receive)) {
-        while (gsm_sys_mbox_getnow(&nc->mbox_receive, (void **)&pbuf)) {
-            if (pbuf != NULL && (uint8_t *)pbuf != (uint8_t *)&recv_closed) {
+        while (gsm_sys_mbox_getnow(&nc->mbox_receive, (void**)&pbuf)) {
+            if (pbuf != NULL && (uint8_t*)pbuf != (uint8_t*)&recv_closed) {
                 gsm_pbuf_free(pbuf);            /* Free received data buffers */
             }
         }
@@ -127,7 +127,7 @@ netconn_evt(gsm_evt_t* evt) {
                 }
             } else {
                 GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING,
-                    "[NETCONN] Closing connection, it is not in client mode!\r\n");
+                           "[NETCONN] Closing connection, it is not in client mode!\r\n");
                 close = 1;                      /* Close the connection at this point */
             }
 
@@ -159,14 +159,14 @@ netconn_evt(gsm_evt_t* evt) {
             if (nc == NULL || !gsm_sys_mbox_isvalid(&nc->mbox_receive)
                 || !gsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
                 GSM_DEBUGF(GSM_CFG_DBG_NETCONN,
-                    "[NETCONN] Ignoring more data for receive!\r\n");
+                           "[NETCONN] Ignoring more data for receive!\r\n");
                 gsm_pbuf_free(pbuf);            /* Free pbuf */
                 return gsmOKIGNOREMORE;         /* Return OK to free the memory and ignore further data */
             }
             ++nc->rcv_packets;                  /* Increase number of received packets */
             GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE,
-                "[NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
-                (int)gsm_pbuf_length(pbuf, 0));
+                       "[NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
+                       (int)gsm_pbuf_length(pbuf, 0));
             break;
         }
 
@@ -179,7 +179,7 @@ netconn_evt(gsm_evt_t* evt) {
              * simply write pointer to received variable to indicate closed state
              */
             if (nc != NULL && gsm_sys_mbox_isvalid(&nc->mbox_receive)) {
-                gsm_sys_mbox_putnow(&nc->mbox_receive, (void *)&recv_closed);
+                gsm_sys_mbox_putnow(&nc->mbox_receive, (void*)&recv_closed);
             }
 
             break;
@@ -198,7 +198,8 @@ netconn_evt(gsm_evt_t* evt) {
 static gsmr_t
 gsm_evt(gsm_evt_t* evt) {
     switch (gsm_evt_get_type(evt)) {
-        default: break;
+        default:
+            break;
     }
     return gsmOK;
 }
@@ -226,7 +227,7 @@ gsm_netconn_new(gsm_netconn_type_t type) {
         a->conn_timeout = 0;                    /* Default connection timeout */
         if (!gsm_sys_mbox_create(&a->mbox_receive, GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN)) {    /* Allocate memory for receiving message box */
             GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_DANGER,
-                "[NETCONN] Cannot create receive MBOX\r\n");
+                       "[NETCONN] Cannot create receive MBOX\r\n");
             goto free_ret;
         }
         gsm_core_lock();
@@ -245,7 +246,7 @@ free_ret:
         gsm_sys_mbox_invalid(&a->mbox_receive);
     }
     if (a != NULL) {
-        gsm_mem_free_s((void **)&a);
+        gsm_mem_free_s((void**)&a);
     }
     return NULL;
 }
@@ -269,7 +270,7 @@ gsm_netconn_delete(gsm_netconn_p nc) {
         gsm_netconn_p tmp, prev;
         /* Find element on the list */
         for (prev = netconn_list, tmp = netconn_list->next;
-            tmp != NULL; prev = tmp, tmp = tmp->next) {
+             tmp != NULL; prev = tmp, tmp = tmp->next) {
             if (nc == tmp) {
                 prev->next = tmp->next;         /* Remove tmp from linked list */
                 break;
@@ -278,7 +279,7 @@ gsm_netconn_delete(gsm_netconn_p nc) {
     }
     gsm_core_unlock();
 
-    gsm_mem_free_s((void **)&nc);
+    gsm_mem_free_s((void**)&nc);
     return gsmOK;
 }
 
@@ -350,7 +351,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
         if (nc->buff.ptr == nc->buff.len) {
             res = gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
 
-            gsm_mem_free_s((void **)&nc->buff.buff);
+            gsm_mem_free_s((void**)&nc->buff.buff);
             if (res != gsmOK) {
                 return res;
             }
@@ -412,7 +413,7 @@ gsm_netconn_flush(gsm_netconn_p nc) {
         if (nc->buff.ptr > 0) {                 /* Do we have data in current buffer? */
             gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1);  /* Send data */
         }
-        gsm_mem_free_s((void **)&nc->buff.buff);
+        gsm_mem_free_s((void**)&nc->buff.buff);
     }
     return gsmOK;
 }
@@ -473,16 +474,16 @@ gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf) {
      * Wait for new received data for up to specific timeout
      * or throw error for timeout notification
      */
-    if (gsm_sys_mbox_get(&nc->mbox_receive, (void **)pbuf, nc->rcv_timeout) == GSM_SYS_TIMEOUT) {
+    if (gsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == GSM_SYS_TIMEOUT) {
         return gsmTIMEOUT;
     }
 #else /* GSM_CFG_NETCONN_RECEIVE_TIMEOUT */
     /* Forever wait for new receive packet */
-    gsm_sys_mbox_get(&nc->mbox_receive, (void **)pbuf, 0);
+    gsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, 0);
 #endif /* !GSM_CFG_NETCONN_RECEIVE_TIMEOUT */
 
     /* Check if connection closed */
-    if ((uint8_t *)(*pbuf) == (uint8_t *)&recv_closed) {
+    if ((uint8_t*)(*pbuf) == (uint8_t*)&recv_closed) {
         *pbuf = NULL;                           /* Reset pbuf */
         return gsmCLOSED;
     }

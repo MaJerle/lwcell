@@ -85,7 +85,7 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
             gsm_mqtt_conn_status_t status = gsm_mqtt_client_evt_connect_get_status(client, evt);
 
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Connect event with status: %d\r\n", (int)status);
+                       "[MQTT API] Connect event with status: %d\r\n", (int)status);
 
             api_client->connect_resp = status;
 
@@ -120,7 +120,7 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
 
                 /* Print debug message */
                 GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                    "[MQTT API] New publish received on topic %.*s\r\n", (int)topic_len, topic);
+                           "[MQTT API] New publish received on topic %.*s\r\n", (int)topic_len, topic);
 
                 /* Calculate memory sizes */
                 buf_size = GSM_MEM_ALIGN(sizeof(*buf));
@@ -131,8 +131,8 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
                 buf = gsm_mem_malloc(size);
                 if (buf != NULL) {
                     GSM_MEMSET(buf, 0x00, size);
-                    buf->topic = (void *)((uint8_t *)buf + buf_size);
-                    buf->payload = (void *)((uint8_t *)buf + buf_size + topic_size);
+                    buf->topic = (void*)((uint8_t*)buf + buf_size);
+                    buf->payload = (void*)((uint8_t*)buf + buf_size + topic_size);
                     buf->topic_len = topic_len;
                     buf->payload_len = payload_len;
                     buf->qos = qos;
@@ -144,13 +144,13 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
                     /* Write to receive queue */
                     if (!gsm_sys_mbox_putnow(&api_client->rcv_mbox, buf)) {
                         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-                            "[MQTT API] Cannot put new received MQTT publish to queue\r\n");
-                        gsm_mem_free_s((void **)&buf);
+                                   "[MQTT API] Cannot put new received MQTT publish to queue\r\n");
+                        gsm_mem_free_s((void**)&buf);
                     }
                 } else {
                     GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-                        "[MQTT API] Cannot allocate memory for packet buffer of size %d bytes\r\n",
-                        (int)size);
+                               "[MQTT API] Cannot allocate memory for packet buffer of size %d bytes\r\n",
+                               (int)size);
                 }
             }
             break;
@@ -160,8 +160,8 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Publish event with response: %d\r\n",
-                (int)api_client->sub_pub_resp);
+                       "[MQTT API] Publish event with response: %d\r\n",
+                       (int)api_client->sub_pub_resp);
 
             release_sem(api_client);            /* Release semaphore */
             break;
@@ -171,8 +171,8 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Subscribe event with response: %d\r\n",
-                (int)api_client->sub_pub_resp);
+                       "[MQTT API] Subscribe event with response: %d\r\n",
+                       (int)api_client->sub_pub_resp);
 
             release_sem(api_client);            /* Release semaphore */
             break;
@@ -182,8 +182,8 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Unsubscribe event with response: %d\r\n",
-                (int)api_client->sub_pub_resp);
+                       "[MQTT API] Unsubscribe event with response: %d\r\n",
+                       (int)api_client->sub_pub_resp);
 
             release_sem(api_client);            /* Release semaphore */
             break;
@@ -195,7 +195,7 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
 
             /* Print debug message */
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-                "[MQTT API] Disconnect event\r\n");
+                       "[MQTT API] Disconnect event\r\n");
 
             /* Write to receive mbox to wakeup receive thread */
             if (is_accepted && gsm_sys_mbox_isvalid(&api_client->rcv_mbox)) {
@@ -205,7 +205,8 @@ mqtt_evt(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt) {
             release_sem(api_client);            /* Release semaphore */
             break;
         }
-        default: break;
+        default:
+            break;
     }
 }
 
@@ -238,23 +239,23 @@ gsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len) {
                         return client;
                     } else {
                         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API,
-                            "[MQTT API] Cannot allocate mutex\r\n");
+                                   "[MQTT API] Cannot allocate mutex\r\n");
                     }
                 } else {
                     GSM_DEBUGF(GSM_CFG_DBG_MQTT_API,
-                        "[MQTT API] Cannot allocate sync semaphore\r\n");
+                               "[MQTT API] Cannot allocate sync semaphore\r\n");
                 }
             } else {
                 GSM_DEBUGF(GSM_CFG_DBG_MQTT_API,
-                    "[MQTT API] Cannot allocate receive queue\r\n");
+                           "[MQTT API] Cannot allocate receive queue\r\n");
             }
         } else {
             GSM_DEBUGF(GSM_CFG_DBG_MQTT_API,
-                "[MQTT API] Cannot allocate MQTT client\r\n");
+                       "[MQTT API] Cannot allocate MQTT client\r\n");
         }
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API,
-            "[MQTT API] Cannot allocate memory for client\r\n");
+                   "[MQTT API] Cannot allocate memory for client\r\n");
     }
 
     gsm_mqtt_client_api_delete(client);
@@ -282,7 +283,7 @@ gsm_mqtt_client_api_delete(gsm_mqtt_client_api_p client) {
     if (gsm_sys_mbox_isvalid(&client->rcv_mbox)) {
         void* d;
         while (gsm_sys_mbox_getnow(&client->rcv_mbox, &d)) {
-            if ((uint8_t *)d != (uint8_t *)&mqtt_closed) {
+            if ((uint8_t*)d != (uint8_t*)&mqtt_closed) {
                 gsm_mqtt_client_api_buf_free(d);
             }
         }
@@ -293,7 +294,7 @@ gsm_mqtt_client_api_delete(gsm_mqtt_client_api_p client) {
         gsm_mqtt_client_delete(client->mc);
         client->mc = NULL;
     }
-    gsm_mem_free_s((void **)&client);
+    gsm_mem_free_s((void**)&client);
 }
 
 /**
@@ -310,7 +311,7 @@ gsm_mqtt_client_api_connect(gsm_mqtt_client_api_p client, const char* host,
     if (client == NULL || host == NULL
         || !port || info == NULL) {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-            "[MQTT API] Invalid parameters in function\r\n");
+                   "[MQTT API] Invalid parameters in function\r\n");
         return GSM_MQTT_CONN_STATUS_TCP_FAILED;
     }
 
@@ -322,7 +323,7 @@ gsm_mqtt_client_api_connect(gsm_mqtt_client_api_p client, const char* host,
         gsm_sys_sem_wait(&client->sync_sem, 0);
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-            "[MQTT API] Cannot connect to %s\r\n", host);
+                   "[MQTT API] Cannot connect to %s\r\n", host);
     }
     client->release_sem = 0;
     gsm_sys_sem_release(&client->sync_sem);
@@ -348,8 +349,8 @@ gsm_mqtt_client_api_close(gsm_mqtt_client_api_p client) {
         res = gsmOK;
         gsm_sys_sem_wait(&client->sync_sem, 0);
     } else {
-         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-             "[MQTT API] Cannot close API connection\r\n");
+        GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
+                   "[MQTT API] Cannot close API connection\r\n");
     }
     client->release_sem = 0;
     gsm_sys_sem_release(&client->sync_sem);
@@ -366,7 +367,7 @@ gsm_mqtt_client_api_close(gsm_mqtt_client_api_p client) {
  */
 gsmr_t
 gsm_mqtt_client_api_subscribe(gsm_mqtt_client_api_p client, const char* topic,
-                                gsm_mqtt_qos_t qos) {
+                              gsm_mqtt_qos_t qos) {
     gsmr_t res = gsmERR;
 
     GSM_ASSERT("client != NULL", client != NULL);
@@ -380,7 +381,7 @@ gsm_mqtt_client_api_subscribe(gsm_mqtt_client_api_p client, const char* topic,
         res = client->sub_pub_resp;
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-            "[MQTT API] Cannot subscribe to topic %s\r\n", topic);
+                   "[MQTT API] Cannot subscribe to topic %s\r\n", topic);
     }
     client->release_sem = 0;
     gsm_sys_sem_release(&client->sync_sem);
@@ -410,7 +411,7 @@ gsm_mqtt_client_api_unsubscribe(gsm_mqtt_client_api_p client, const char* topic)
         res = client->sub_pub_resp;
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-            "[MQTT API] Cannot unsubscribe from topic %s\r\n", topic);
+                   "[MQTT API] Cannot unsubscribe from topic %s\r\n", topic);
     }
     client->release_sem = 0;
     gsm_sys_sem_release(&client->sync_sem);
@@ -447,7 +448,7 @@ gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, con
         res = client->sub_pub_resp;
     } else {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE_WARNING,
-            "[MQTT API] Cannot publish new packet\r\n");
+                   "[MQTT API] Cannot publish new packet\r\n");
     }
     client->release_sem = 0;
     gsm_sys_sem_release(&client->sync_sem);
@@ -495,17 +496,17 @@ gsm_mqtt_client_api_receive(gsm_mqtt_client_api_p client, gsm_mqtt_client_api_bu
 
     /* Get new entry from mbox */
     if (timeout == 0) {
-        if (!gsm_sys_mbox_getnow(&client->rcv_mbox, (void **)p)) {
+        if (!gsm_sys_mbox_getnow(&client->rcv_mbox, (void**)p)) {
             return gsmTIMEOUT;
         }
-    } else if (gsm_sys_mbox_get(&client->rcv_mbox, (void **)p, timeout) == GSM_SYS_TIMEOUT) {
+    } else if (gsm_sys_mbox_get(&client->rcv_mbox, (void**)p, timeout) == GSM_SYS_TIMEOUT) {
         return gsmTIMEOUT;
     }
 
     /* Check for MQTT closed event */
-    if ((uint8_t *)(*p) == (uint8_t *)&mqtt_closed) {
+    if ((uint8_t*)(*p) == (uint8_t*)&mqtt_closed) {
         GSM_DEBUGF(GSM_CFG_DBG_MQTT_API_TRACE,
-            "[MQTT API] Closed event received from queue\r\n");
+                   "[MQTT API] Closed event received from queue\r\n");
 
         *p = NULL;
         return gsmCLOSED;
@@ -519,5 +520,5 @@ gsm_mqtt_client_api_receive(gsm_mqtt_client_api_p client, gsm_mqtt_client_api_bu
  */
 void
 gsm_mqtt_client_api_buf_free(gsm_mqtt_client_api_buf_p p) {
-    gsm_mem_free_s((void **)&p);
+    gsm_mem_free_s((void**)&p);
 }

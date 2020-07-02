@@ -95,10 +95,10 @@ extern "C" {
  * \param[in]       ...: Variable parameters for formatted string
  */
 #define GSM_DEBUGF(c, fmt, ...)         do {\
-    if (((c) & (GSM_DBG_ON)) && ((c) & (GSM_CFG_DBG_TYPES_ON)) && ((c) & GSM_DBG_LVL_MASK) >= (GSM_CFG_DBG_LVL_MIN)) {    \
-        GSM_CFG_DBG_OUT(fmt, ## __VA_ARGS__); \
-    }                                       \
-} while (0)
+        if (((c) & (GSM_DBG_ON)) && ((c) & (GSM_CFG_DBG_TYPES_ON)) && ((c) & GSM_DBG_LVL_MASK) >= (GSM_CFG_DBG_LVL_MIN)) {    \
+            GSM_CFG_DBG_OUT(fmt, ## __VA_ARGS__); \
+        }                                       \
+    } while (0)
 
 /**
  * \brief           Print message to the debug "window" if enabled when specific condition is met
@@ -108,10 +108,10 @@ extern "C" {
  * \param[in]       ...: Variable parameters for formatted string
  */
 #define GSM_DEBUGW(c, cond, fmt, ...)   do {\
-    if (cond) {                             \
-        GSM_DEBUGF(c, fmt, ## __VA_ARGS__); \
-    }                                       \
-} while (0)
+        if (cond) {                             \
+            GSM_DEBUGF(c, fmt, ## __VA_ARGS__); \
+        }                                       \
+    } while (0)
 #else
 #undef GSM_CFG_DBG
 #define GSM_CFG_DBG                 GSM_DBG_OFF

@@ -13,10 +13,10 @@ static gsmr_t   conn_callback_func(gsm_evt_t* evt);
  */
 static const
 uint8_t req_data[] = ""
-"GET / HTTP/1.1\r\n"
-"Host: " CONN_HOST "\r\n"
-"Connection: close\r\n"
-"\r\n";
+                     "GET / HTTP/1.1\r\n"
+                     "Host: " CONN_HOST "\r\n"
+                     "Connection: close\r\n"
+                     "\r\n";
 
 /**
  * \brief           Start a new connection(s) as client
@@ -93,7 +93,8 @@ conn_callback_func(gsm_evt_t* evt) {
             printf("Error connecting to %s:%d\r\n", host, (int)port);
             break;
         }
-        default: break;
+        default:
+            break;
     }
     return gsmOK;
 }

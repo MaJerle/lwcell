@@ -54,11 +54,11 @@ extern "C" {
  * \param[in]       c: Condition to test
  */
 #define GSM_ASSERT(msg, c)   do {   \
-    if (!(c)) {                     \
-        GSM_DEBUGF(GSM_CFG_DBG_ASSERT, "Wrong parameters on file %s and line %d: %s\r\n", __FILE__, (int)__LINE__, msg);\
-        return gsmPARERR;           \
-    }                               \
-} while (0)
+        if (!(c)) {                     \
+            GSM_DEBUGF(GSM_CFG_DBG_ASSERT, "Wrong parameters on file %s and line %d: %s\r\n", __FILE__, (int)__LINE__, msg);\
+            return gsmPARERR;           \
+        }                               \
+    } while (0)
 
 /**
  * \brief           Align `x` value to specific number of bytes, provided by \ref GSM_CFG_MEM_ALIGNMENT configuration
@@ -239,8 +239,8 @@ extern "C" {
  */
 #define gsm_i8_to_str(num, out)             gsm_i32_to_gen_str(GSM_I32(GSM_I8(num)), (out))
 
-char *      gsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t padding);
-char *      gsm_i32_to_gen_str(int32_t num, char* out);
+char*       gsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t padding);
+char*       gsm_i32_to_gen_str(int32_t num, char* out);
 
 /**
  * \}

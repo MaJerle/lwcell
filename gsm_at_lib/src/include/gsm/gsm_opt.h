@@ -662,9 +662,9 @@ void *  my_memset(void* dst, int b, size_t len);
 #if !__DOXYGEN__
 
 #if !GSM_CFG_OS
-    #if GSM_CFG_INPUT_USE_PROCESS
-    #error "GSM_CFG_INPUT_USE_PROCESS may only be enabled when OS is used!"
-    #endif /* GSM_CFG_INPUT_USE_PROCESS */
+#if GSM_CFG_INPUT_USE_PROCESS
+#error "GSM_CFG_INPUT_USE_PROCESS may only be enabled when OS is used!"
+#endif /* GSM_CFG_INPUT_USE_PROCESS */
 #endif /* !GSM_CFG_OS */
 
 #endif /* !__DOXYGEN__ */

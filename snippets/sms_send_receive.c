@@ -68,8 +68,8 @@ sms_evt_func(gsm_evt_t* evt) {
             if (gsm_evt_sms_read_get_result(evt) == gsmOK && entry != NULL) {
                 /* Print SMS data */
                 printf("SMS read. From: %s, content: %s\r\n",
-                    entry->number, entry->data
-                );
+                       entry->number, entry->data
+                      );
 
                 /* Try to send SMS back */
                 if (gsm_sms_send(entry->number, entry->data, NULL, NULL, 0) == gsmOK) {
@@ -99,7 +99,8 @@ sms_evt_func(gsm_evt_t* evt) {
             }
             break;
         }
-        default: break;
+        default:
+            break;
     }
 
     return gsmOK;

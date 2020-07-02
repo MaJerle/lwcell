@@ -190,9 +190,12 @@ gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
         ++p;
     }
     if (GSM_CHARISNUM(*p)) {
-        ip->ip[0] = gsmi_parse_number(&p); ++p;
-        ip->ip[1] = gsmi_parse_number(&p); ++p;
-        ip->ip[2] = gsmi_parse_number(&p); ++p;
+        ip->ip[0] = gsmi_parse_number(&p);
+        ++p;
+        ip->ip[1] = gsmi_parse_number(&p);
+        ++p;
+        ip->ip[2] = gsmi_parse_number(&p);
+        ++p;
         ip->ip[3] = gsmi_parse_number(&p);
     }
     if (*p == '"') {
@@ -216,11 +219,16 @@ gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
     if (*p == '"') {
         ++p;
     }
-    mac->mac[0] = gsmi_parse_hexnumber(&p); ++p;
-    mac->mac[1] = gsmi_parse_hexnumber(&p); ++p;
-    mac->mac[2] = gsmi_parse_hexnumber(&p); ++p;
-    mac->mac[3] = gsmi_parse_hexnumber(&p); ++p;
-    mac->mac[4] = gsmi_parse_hexnumber(&p); ++p;
+    mac->mac[0] = gsmi_parse_hexnumber(&p);
+    ++p;
+    mac->mac[1] = gsmi_parse_hexnumber(&p);
+    ++p;
+    mac->mac[2] = gsmi_parse_hexnumber(&p);
+    ++p;
+    mac->mac[3] = gsmi_parse_hexnumber(&p);
+    ++p;
+    mac->mac[4] = gsmi_parse_hexnumber(&p);
+    ++p;
     mac->mac[5] = gsmi_parse_hexnumber(&p);
     if (*p == '"') {
         ++p;
@@ -439,7 +447,8 @@ gsmi_parse_cops(const char* str) {
                 case GSM_OPERATOR_FORMAT_NUMBER:
                     gsm.m.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str));
                     break;
-                default: break;
+                default:
+                    break;
             }
         }
     } else {
@@ -464,9 +473,9 @@ uint8_t
 gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     static union {
         struct {
-            uint8_t bo:1;                       /*!< Bracket open flag (Bracket Open) */
-            uint8_t ccd:1;                      /*!< 2 consecutive commas detected in a row (Comma Comma Detected) */
-            uint8_t tn:2;                       /*!< Term number in response, 2 bits for 4 diff values */
+            uint8_t bo: 1;                      /*!< Bracket open flag (Bracket Open) */
+            uint8_t ccd: 1;                     /*!< 2 consecutive commas detected in a row (Comma Comma Detected) */
+            uint8_t tn: 2;                      /*!< Term number in response, 2 bits for 4 diff values */
             uint8_t tp;                         /*!< Current term character position */
             uint8_t ch_prev;                    /*!< Previous character */
         } f;
@@ -528,7 +537,8 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
                     gsm.msg->msg.cops_scan.ops[i].num = (10 * gsm.msg->msg.cops_scan.ops[i].num) + (ch - '0');
                     break;
                 }
-                default: break;
+                default:
+                    break;
             }
         }
     } else {
@@ -754,7 +764,8 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
             }
             break;
         }
-        default: break;
+        default:
+            break;
     }
     return 1;
 }

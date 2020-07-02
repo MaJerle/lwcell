@@ -194,7 +194,7 @@ gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
 
     *b = NULL;
 
-    mbox = malloc(sizeof(*mbox) + size * sizeof(void *));
+    mbox = malloc(sizeof(*mbox) + size * sizeof(void*));
     if (mbox != NULL) {
         memset(mbox, 0x00, sizeof(*mbox));
         mbox->size = size + 1;                  /* Set it to 1 more as cyclic buffer has only one less than size */

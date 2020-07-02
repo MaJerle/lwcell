@@ -72,7 +72,7 @@ gsm_device_get_manufacturer(char* manuf, size_t len, const gsm_api_cmd_evt_fn ev
  */
 gsmr_t
 gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn,
-                            void* const evt_arg, const uint32_t blocking) {
+                     void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("model != NULL", model != NULL);
@@ -98,7 +98,7 @@ gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn,
  */
 gsmr_t
 gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn,
-                            void* const evt_arg, const uint32_t blocking) {
+                        void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("rev != NULL", rev != NULL);
@@ -124,7 +124,7 @@ gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn,
  */
 gsmr_t
 gsm_device_get_serial_number(char* serial, size_t len, const gsm_api_cmd_evt_fn evt_fn,
-                            void* const evt_arg, const uint32_t blocking) {
+                             void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("serial != NULL", serial != NULL);

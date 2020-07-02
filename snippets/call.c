@@ -53,7 +53,8 @@ call_evt_func(gsm_evt_t* evt) {
             }
             break;
         }
-        default: break;
+        default:
+            break;
     }
 
     return gsmOK;

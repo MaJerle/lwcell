@@ -61,7 +61,7 @@ gsm_thread_produce(void* const arg) {
     while (1) {
         gsm_core_unlock();
         do {
-            time = gsm_sys_mbox_get(&e->mbox_producer, (void **)&msg, 0);   /* Get message from queue */
+            time = gsm_sys_mbox_get(&e->mbox_producer, (void**)&msg, 0);    /* Get message from queue */
         } while (time == GSM_SYS_TIMEOUT || msg == NULL);
         GSM_THREAD_PRODUCER_HOOK();             /* Execute producer thread hook */
         gsm_core_lock();
@@ -117,11 +117,11 @@ gsm_thread_produce(void* const arg) {
             }
 
             GSM_DEBUGW(GSM_CFG_DBG_THREAD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_SEVERE,
-                res == gsmTIMEOUT,
-                "[THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
+                       res == gsmTIMEOUT,
+                       "[THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
             GSM_DEBUGW(GSM_CFG_DBG_THREAD | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_SEVERE,
-                res != gsmOK && res != gsmTIMEOUT,
-                "[THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
+                       res != gsmOK && res != gsmTIMEOUT,
+                       "[THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
 
             /*
              * Manually release semaphore in all cases:
@@ -198,7 +198,7 @@ gsm_thread_process(void* const arg) {
     gsm_core_lock();
     while (1) {
         gsm_core_unlock();
-        time = gsmi_get_from_mbox_with_timeout_checks(&e->mbox_process, (void **)&msg, 10);
+        time = gsmi_get_from_mbox_with_timeout_checks(&e->mbox_process, (void**)&msg, 10);
         GSM_THREAD_PROCESS_HOOK();              /* Execute process thread hook */
         gsm_core_lock();
 
@@ -214,7 +214,7 @@ gsm_thread_process(void* const arg) {
          * If there are no timeouts to process, we can wait unlimited time.
          * In case new timeout occurs, thread will wake up by writing new element to mbox process queue
          */
-        time = gsmi_get_from_mbox_with_timeout_checks(&e->mbox_process, (void **)&msg, 0);
+        time = gsmi_get_from_mbox_with_timeout_checks(&e->mbox_process, (void**)&msg, 0);
         GSM_THREAD_PROCESS_HOOK();              /* Execute process thread hook */
         GSM_UNUSED(time);
 #endif /* !GSM_CFG_INPUT_USE_PROCESS */

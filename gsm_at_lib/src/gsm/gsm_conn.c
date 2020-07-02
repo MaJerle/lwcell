@@ -43,16 +43,16 @@
  * \param[in]       conn: Connection handle
  */
 #define CONN_CHECK_CLOSED_IN_CLOSING(conn) do { \
-    gsmr_t r = gsmOK;                           \
-    gsm_core_lock();                         \
-    if (conn->status.f.in_closing || !conn->status.f.active) {  \
-        r = gsmCLOSED;                          \
-    }                                           \
-    gsm_core_unlock();                       \
-    if (r != gsmOK) {                           \
-        return r;                               \
-    }                                           \
-} while (0)
+        gsmr_t r = gsmOK;                           \
+        gsm_core_lock();                         \
+        if (conn->status.f.in_closing || !conn->status.f.active) {  \
+            r = gsmCLOSED;                          \
+        }                                           \
+        gsm_core_unlock();                       \
+        if (r != gsmOK) {                           \
+            return r;                               \
+        }                                           \
+    } while (0)
 
 /**
  * \brief           Timeout callback for connection
@@ -69,7 +69,7 @@ conn_timeout_cb(void* arg) {
 
         gsmi_conn_start_timeout(conn);          /* Schedule new timeout */
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
-            "[CONN] Poll event: %p\r\n", conn);
+                   "[CONN] Poll event: %p\r\n", conn);
     }
 }
 
@@ -112,7 +112,7 @@ gsmi_conn_get_val_id(gsm_conn_p conn) {
  */
 static gsmr_t
 conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data,
-            size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
+          size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("conn != NULL", conn != NULL);
@@ -161,8 +161,8 @@ flush_buff(gsm_conn_p conn) {
         }
         if (res != gsmOK) {
             GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
-                "[CONN] Free write buffer: %p\r\n", (void *)conn->buff.buff);
-            gsm_mem_free_s((void **)&conn->buff.buff);
+                       "[CONN] Free write buffer: %p\r\n", (void*)conn->buff.buff);
+            gsm_mem_free_s((void**)&conn->buff.buff);
         }
         conn->buff.buff = NULL;
     }
@@ -191,7 +191,7 @@ gsmi_conn_init(void) {
  */
 gsmr_t
 gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port,
-                void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking) {
+               void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("host != NULL", host != NULL);
@@ -238,7 +238,7 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
     if (res == gsmOK && !blocking) {            /* Function succedded in non-blocking mode */
         gsm_core_lock();
         GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
-            "[CONN] Connection %d set to closing state\r\n", (int)conn->num);
+                   "[CONN] Connection %d set to closing state\r\n", (int)conn->num);
         conn->status.f.in_closing = 1;          /* Connection is in closing mode but not yet closed */
         gsm_core_unlock();
     }
@@ -278,7 +278,7 @@ gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, cons
  */
 gsmr_t
 gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
-                const uint32_t blocking) {
+              const uint32_t blocking) {
     gsmr_t res;
     const uint8_t* d = data;
 
@@ -358,7 +358,7 @@ gsm_conn_set_arg(gsm_conn_p conn, void* const arg) {
  * \return          User argument
  * \sa              gsm_conn_set_arg
  */
-void *
+void*
 gsm_conn_get_arg(gsm_conn_p conn) {
     void* arg;
     gsm_core_lock();
@@ -453,12 +453,18 @@ gsm_conn_getnum(gsm_conn_p conn) {
 gsm_conn_p
 gsm_conn_get_from_evt(gsm_evt_t* evt) {
     switch (evt->type) {
-        case GSM_EVT_CONN_ACTIVE: return gsm_evt_conn_active_get_conn(evt);
-        case GSM_EVT_CONN_CLOSE: return gsm_evt_conn_close_get_conn(evt);
-        case GSM_EVT_CONN_RECV: return gsm_evt_conn_recv_get_conn(evt);
-        case GSM_EVT_CONN_SEND: return gsm_evt_conn_send_get_conn(evt);
-        case GSM_EVT_CONN_POLL: return gsm_evt_conn_poll_get_conn(evt);
-        default: return NULL;
+        case GSM_EVT_CONN_ACTIVE:
+            return gsm_evt_conn_active_get_conn(evt);
+        case GSM_EVT_CONN_CLOSE:
+            return gsm_evt_conn_close_get_conn(evt);
+        case GSM_EVT_CONN_RECV:
+            return gsm_evt_conn_recv_get_conn(evt);
+        case GSM_EVT_CONN_SEND:
+            return gsm_evt_conn_send_get_conn(evt);
+        case GSM_EVT_CONN_POLL:
+            return gsm_evt_conn_poll_get_conn(evt);
+        default:
+            return NULL;
     }
 }
 
@@ -510,8 +516,8 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
             /* Try to send to processing queue in non-blocking way */
             if (conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0) != gsmOK) {
                 GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
-                    "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
-                gsm_mem_free_s((void **)&conn->buff.buff);
+                           "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
+                gsm_mem_free_s((void**)&conn->buff.buff);
             }
             conn->buff.buff = NULL;
         }
@@ -525,8 +531,8 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
             GSM_MEMCPY(buff, d, GSM_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
             if (conn_send(conn, NULL, 0, buff, GSM_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != gsmOK) {
                 GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
-                    "[CONN] Free write buffer: %p\r\n", (void *)buff);
-                gsm_mem_free_s((void **)&buff);
+                           "[CONN] Free write buffer: %p\r\n", (void*)buff);
+                gsm_mem_free_s((void**)&buff);
                 return gsmERRMEM;
             }
         } else {
@@ -544,9 +550,9 @@ gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, siz
         conn->buff.ptr = 0;
 
         GSM_DEBUGW(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE, conn->buff.buff != NULL,
-            "[CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
+                   "[CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
         GSM_DEBUGW(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE, conn->buff.buff == NULL,
-            "[CONN] Cannot allocate new write buffer\r\n");
+                   "[CONN] Cannot allocate new write buffer\r\n");
     }
     if (btw > 0) {
         if (conn->buff.buff != NULL) {

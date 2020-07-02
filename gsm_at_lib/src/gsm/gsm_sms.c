@@ -139,7 +139,7 @@ gsm_sms_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  */
 gsmr_t
 gsm_sms_send(const char* num, const char* text,
-                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("num != NULL && num[0] > 0", num != NULL && num[0] > 0);
@@ -171,7 +171,7 @@ gsm_sms_send(const char* num, const char* text,
  */
 gsmr_t
 gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
-                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("entry != NULL", entry != NULL);
@@ -212,7 +212,7 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
  */
 gsmr_t
 gsm_sms_delete(gsm_mem_t mem, size_t pos,
-                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+               const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
@@ -243,7 +243,7 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos,
  */
 gsmr_t
 gsm_sms_delete_all(gsm_sms_status_t status,
-                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                   const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
@@ -274,7 +274,7 @@ gsm_sms_delete_all(gsm_sms_status_t status,
  */
 gsmr_t
 gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update,
-                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("entires != NULL", entries != NULL);
@@ -319,7 +319,7 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
  */
 gsmr_t
 gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3,
-                                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                              const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */

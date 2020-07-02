@@ -15,10 +15,10 @@
  */
 static const char
 request_header[] = ""
-"GET / HTTP/1.1\r\n"
-"Host: " NETCONN_HOST "\r\n"
-"Connection: close\r\n"
-"\r\n";
+                   "GET / HTTP/1.1\r\n"
+                   "Host: " NETCONN_HOST "\r\n"
+                   "Connection: close\r\n"
+                   "\r\n";
 
 /**
  * \brief           Netconn client thread implementation
@@ -29,7 +29,7 @@ netconn_client_thread(void const* arg) {
     gsmr_t res;
     gsm_pbuf_p pbuf;
     gsm_netconn_p client;
-    gsm_sys_sem_t* sem = (void *)arg;
+    gsm_sys_sem_t* sem = (void*)arg;
 
     /* Request attach to network */
     while (gsm_network_request_attach() != gsmOK) {

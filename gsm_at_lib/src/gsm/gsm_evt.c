@@ -93,7 +93,7 @@ gsm_evt_unregister(gsm_evt_fn fn) {
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
-            gsm_mem_free_s((void **)&func);
+            gsm_mem_free_s((void**)&func);
             break;
         }
     }
@@ -136,7 +136,7 @@ gsm_evt_restore_get_result(gsm_evt_t* cc) {
  * \param[in]       cc: Event data
  * \return          Current operator handle
  */
-const gsm_operator_curr_t *
+const gsm_operator_curr_t*
 gsm_evt_network_operator_get_current(gsm_evt_t* cc) {
     return cc->evt.operator_current.operator_current;
 }
@@ -156,7 +156,7 @@ gsm_evt_operator_scan_get_result(gsm_evt_t* cc) {
  * \param[in]       cc: Event data
  * \return          Pointer to array of operator entries
  */
-gsm_operator_t *
+gsm_operator_t*
 gsm_evt_operator_scan_get_entries(gsm_evt_t* cc) {
     return cc->evt.operator_scan.ops;
 }
@@ -328,7 +328,7 @@ gsm_evt_conn_error_get_type(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Host name for connection
  */
-const char *
+const char*
 gsm_evt_conn_error_get_host(gsm_evt_t* cc) {
     return cc->evt.conn_error.host;
 }
@@ -348,7 +348,7 @@ gsm_evt_conn_error_get_port(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          User argument
  */
-void *
+void*
 gsm_evt_conn_error_get_arg(gsm_evt_t* cc) {
     return cc->evt.conn_error.arg;
 }
@@ -382,7 +382,7 @@ gsm_evt_sms_recv_get_mem(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS entry
  */
-gsm_sms_entry_t *
+gsm_sms_entry_t*
 gsm_evt_sms_read_get_entry(gsm_evt_t* cc) {
     return cc->evt.sms_read.entry;
 }
@@ -457,7 +457,7 @@ gsm_evt_sms_delete_get_mem(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Position in memory
  */
-const gsm_call_t *
+const gsm_call_t*
 gsm_evt_call_changed_get_call(gsm_evt_t* cc) {
     return gsm.evt.evt.call_changed.call;
 }

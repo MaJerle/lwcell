@@ -64,7 +64,7 @@ gsm_sys_unprotect(void) {
 uint8_t
 gsm_sys_mutex_create(gsm_sys_mutex_t* p) {
     const osMutexAttr_t attr = {
-            .attr_bits = osMutexRecursive
+        .attr_bits = osMutexRecursive
     };
     *p = osMutexNew(&attr);
     return *p != NULL;
@@ -130,7 +130,7 @@ gsm_sys_sem_invalid(gsm_sys_sem_t* p) {
 
 uint8_t
 gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
-    return (*b = osMessageQueueNew(size, sizeof(void *), NULL)) != NULL;
+    return (*b = osMessageQueueNew(size, sizeof(void*), NULL)) != NULL;
 }
 
 uint8_t
@@ -178,9 +178,9 @@ uint8_t
 gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, gsm_sys_thread_prio_t prio) {
     gsm_sys_thread_t id;
     const osThreadAttr_t thread_attr = {
-            .name = (char *)name,
-            .priority = (osPriority)prio,
-            .stack_size = stack_size > 0 ? stack_size : GSM_SYS_THREAD_SS
+        .name = (char*)name,
+        .priority = (osPriority)prio,
+        .stack_size = stack_size > 0 ? stack_size : GSM_SYS_THREAD_SS
     };
 
     id = osThreadNew(thread_func, arg, &thread_attr);

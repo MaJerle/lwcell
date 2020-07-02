@@ -4,13 +4,13 @@
 /**
  * \brief           SIM card pin code
  */
-static const char *
+static const char*
 pin_code = "7958";
 
 /**
  * \brief           SIM card puk code
  */
-static const char *
+static const char*
 puk_code = "10663647";
 
 /**

@@ -114,7 +114,7 @@ gsm_call_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uin
  */
 gsmr_t
 gsm_call_start(const char* number,
-                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+               const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("number != NULL", number != NULL);
