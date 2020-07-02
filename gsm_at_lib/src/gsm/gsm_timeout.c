@@ -120,7 +120,7 @@ gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t tim
 gsmr_t
 gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
     gsm_timeout_t* to;
-    uint32_t now, diff = 0;
+    uint32_t now;
 
     GSM_ASSERT("fn != NULL", fn != NULL);
 
@@ -132,14 +132,13 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
     gsm_core_lock();
     now = gsm_sys_now();                        /* Get current time */
     if (first_timeout != NULL) {
-        diff = now - last_timeout_time;         /* Get difference between current and last processed time */
+        /*
+         * Since we want timeout value to start from NOW,
+         * we have to add time when we last processed our timeouts
+         */
+        time += now - last_timeout_time;        /* Add difference between now and last processed time */
     }
-
-    /*
-     * Since we want timeout value to start from NOW,
-     * we have to add time when we last processed our timeouts
-     */
-    to->time = time + diff;
+    to->time = time;
     to->arg = arg;
     to->fn = fn;
 
