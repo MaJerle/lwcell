@@ -53,7 +53,7 @@ main(void) {
 
     /* Initialize GSM with default callback function */
     if (lwgsm_init(lwgsm_callback_func, 1) != lwgsmOK) {
-        printf("Cannot initialize GSM-AT Library\r\n");
+        printf("Cannot initialize LwGSM\r\n");
     }
 
     /* Configure device by unlocking SIM card */

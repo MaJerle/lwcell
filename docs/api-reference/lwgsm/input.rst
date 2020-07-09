@@ -3,7 +3,7 @@
 Input module
 ============
 
-Input module is used to input received data from *GSM* device to *GSM-AT-Lib* middleware part.
+Input module is used to input received data from *GSM* device to *LwGSM-Lib* middleware part.
 ``2`` processing options are possible:
 
 * Indirect processing with :cpp:func:`lwgsm_input` (default mode)

@@ -7,9 +7,9 @@ Architecture of the library consists of ``4`` layers.
 
 .. figure:: ../static/images/system_structure.svg
 	:align: center
-	:alt: GSM-AT layer architecture overview
+	:alt: LwGSM layer architecture overview
 
-	GSM-AT layer architecture overview
+	LwGSM layer architecture overview
 
 Application layer
 ^^^^^^^^^^^^^^^^^
@@ -40,7 +40,7 @@ architecture oriented. Some examples for `WIN32` and `ARM Cortex-M` are included
 System functions
 ****************
 
-System functions are bridge between operating system running on embedded system and GSM-AT Library.
+System functions are bridge between operating system running on embedded system and LwGSM middleware.
 Functions need to provide:
 
 * Thread management
@@ -55,9 +55,9 @@ Functions need to provide:
 Low-level implementation
 ************************
 
-Low-Level, or *LWGSM_LL*, is part, dedicated for communication between *GSM-AT* middleware and *GSM* physical device.
+Low-Level, or *LWGSM_LL*, is part, dedicated for communication between *LwGSM* middleware and *GSM* physical device.
 Application needs to implement output function to send necessary *AT command* instruction aswell as implement
-*input module* to send received data from *GSM* device to *GSM-AT* middleware.
+*input module* to send received data from *GSM* device to *LwGSM* middleware.
 
 Application must also assure memory assignment for :ref:`api_lwgsm_mem` when default allocation is used.
 
