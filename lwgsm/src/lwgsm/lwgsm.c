@@ -77,7 +77,7 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     def_evt_link.fn = evt_func != NULL ? evt_func : def_callback;
     gsm.evt_func = &def_evt_link;               /* Set callback function */
 
-    if (!lwgsm_sys_init()) {                      /* Init low-level system */
+    if (!lwgsm_sys_init()) {                    /* Init low-level system */
         goto cleanup;
     }
 
@@ -88,39 +88,39 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     }
 
     /* Create message queues */
-    if (!lwgsm_sys_mbox_create(&gsm.mbox_producer, LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {  /* Producer */
+    if (!lwgsm_sys_mbox_create(&gsm.mbox_producer, LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot allocate producer mbox queue!\r\n");
         goto cleanup;
     }
-    if (!lwgsm_sys_mbox_create(&gsm.mbox_process, LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {    /* Process */
+    if (!lwgsm_sys_mbox_create(&gsm.mbox_process, LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot allocate process mbox queue!\r\n");
         goto cleanup;
     }
 
     /* Create threads */
-    lwgsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
+    lwgsm_sys_sem_wait(&gsm.sem_sync, 0);
     if (!lwgsm_sys_thread_create(&gsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &gsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot create producing thread!\r\n");
-        lwgsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
+        lwgsm_sys_sem_release(&gsm.sem_sync);   /* Release semaphore and return */
         goto cleanup;
     }
-    lwgsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
+    lwgsm_sys_sem_wait(&gsm.sem_sync, 0);       /* Wait semaphore, should be unlocked in produce thread */
     if (!lwgsm_sys_thread_create(&gsm.thread_process, "lwgsm_process", lwgsm_thread_process, &gsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot create processing thread!\r\n");
         lwgsm_sys_thread_terminate(&gsm.thread_produce);  /* Delete produce thread */
-        lwgsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
+        lwgsm_sys_sem_release(&gsm.sem_sync);   /* Release semaphore and return */
         goto cleanup;
     }
-    lwgsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
-    lwgsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore manually */
+    lwgsm_sys_sem_wait(&gsm.sem_sync, 0);       /* Wait semaphore, should be unlocked in produce thread */
+    lwgsm_sys_sem_release(&gsm.sem_sync);       /* Release semaphore manually */
 
     lwgsm_core_lock();
     gsm.ll.uart.baudrate = LWGSM_CFG_AT_PORT_BAUDRATE;
-    lwgsm_ll_init(&gsm.ll);                       /* Init low-level communication */
+    lwgsm_ll_init(&gsm.ll);                     /* Init low-level communication */
 
 #if !LWGSM_CFG_INPUT_USE_PROCESS
     lwgsm_buff_init(&gsm.buff, LWGSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
@@ -129,7 +129,7 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     gsm.status.f.initialized = 1;               /* We are initialized now */
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
 
-    gsmi_send_cb(LWGSM_EVT_INIT_FINISH);          /* Call user callback function */
+    gsmi_send_cb(LWGSM_EVT_INIT_FINISH);        /* Call user callback function */
 
     /*
      * Call reset command and call default
@@ -142,7 +142,7 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
         lwgsm_core_lock();
     }
 #else /* LWGSM_CFG_RESET_ON_INIT */
-    LWGSM_UNUSED(blocking);                       /* Unused variable */
+    LWGSM_UNUSED(blocking);
 #endif /* !LWGSM_CFG_RESET_ON_INIT */
     lwgsm_core_unlock();
 
