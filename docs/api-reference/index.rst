@@ -8,7 +8,7 @@ List of all the modules:
 .. toctree::
 	:maxdepth: 2
 
-	gsm/index
-	config
+	lwgsm/index
+	opt
 	port/index
 	apps/index

@@ -26,18 +26,18 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of GSM-AT library.
+ * This file is part of LwGSM - Lightweight GSM-AT library.
  *
  * Before you start using WIN32 implementation with USB and VCP,
- * check gsm_ll_win32.c implementation and choose your COM port!
+ * check lwgsm_ll_win32.c implementation and choose your COM port!
  */
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 #include "sim_manager.h"
 #include "network_utils.h"
 #include "network_apn_settings.h"
 #include "mqtt_client_api.h"
 
-static gsmr_t gsm_callback_func(gsm_evt_t* evt);
+static lwgsmr_t lwgsm_callback_func(lwgsm_evt_t* evt);
 
 /**
  * \brief           Program entry point
@@ -47,31 +47,31 @@ main(void) {
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
-    if (gsm_init(gsm_callback_func, 1) != gsmOK) {
-        printf("Cannot initialize GSM-AT Library\r\n");
+    if (lwgsm_init(lwgsm_callback_func, 1) != lwgsmOK) {
+        printf("Cannot initialize LwGSM\r\n");
     }
 
     /* Configure device by unlocking SIM card */
     if (configure_sim_card()) {
         printf("SIM card configured. Adding delay to stabilize SIM card.\r\n");
-        gsm_delay(10000);
+        lwgsm_delay(10000);
     } else {
         printf("Cannot configure SIM card! Is it inserted, pin valid and not under PUK? Closing down...\r\n");
-        while (1) { gsm_delay(1000); }
+        while (1) { lwgsm_delay(1000); }
     }
 
     /* Set APN credentials */
-    gsm_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
+    lwgsm_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
     /* Start MQTT thread */
-    gsm_sys_thread_create(NULL, "mqtt_thread", (gsm_sys_thread_t)mqtt_client_api_thread, NULL, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
+    lwgsm_sys_thread_create(NULL, "mqtt_thread", (lwgsm_sys_thread_t)mqtt_client_api_thread, NULL, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO);
 
     /*
      * Do not stop program here.
      * New threads were created for GSM processing
      */
     while (1) {
-        gsm_delay(1000);
+        lwgsm_delay(1000);
     }
 
     return 0;
@@ -80,22 +80,22 @@ main(void) {
 /**
  * \brief           Event callback function for GSM stack
  * \param[in]       evt: Event information with data
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
-gsm_callback_func(gsm_evt_t* evt) {
-    switch (gsm_evt_get_type(evt)) {
-        case GSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
+static lwgsmr_t
+lwgsm_callback_func(lwgsm_evt_t* evt) {
+    switch (lwgsm_evt_get_type(evt)) {
+        case LWGSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
         /* Process and print registration change */
-        case GSM_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;
+        case LWGSM_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;
         /* Process current network operator */
-        case GSM_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
+        case LWGSM_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
         /* Process signal strength */
-        case GSM_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
+        case LWGSM_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
 
         /* Other user events here... */
 
         default: break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }

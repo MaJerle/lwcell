@@ -1,4 +1,4 @@
-.. _api_gsm_ll:
+.. _api_lwgsm_ll:
 
 Low-Level functions
 ===================
@@ -9,4 +9,4 @@ and must be implemented by final application.
 .. tip::
 	Check :ref:`um_porting_guide` for actual implementation
 
-.. doxygengroup:: GSM_LL
+.. doxygengroup:: LWGSM_LL

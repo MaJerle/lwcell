@@ -1,4 +1,4 @@
-.. _api_gsm_sys:
+.. _api_lwgsm_sys:
 
 System functions
 ================
@@ -17,4 +17,4 @@ It includes support for:
 .. tip::
 	Check :ref:`um_porting_guide` for actual implementation guidelines.
 
-.. doxygengroup:: GSM_SYS
+.. doxygengroup:: LWGSM_SYS

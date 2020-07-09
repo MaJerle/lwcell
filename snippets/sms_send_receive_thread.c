@@ -4,33 +4,33 @@
  * Waits for received SMS and then replies with
  */
 #include "sms_send_receive_thread.h"
-#include "gsm/gsm.h"
-#include "gsm/gsm_mem.h"
+#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_mem.h"
 
-#if !GSM_CFG_SMS
+#if !LWGSM_CFG_SMS
 #error "SMS must be enabled to run this example"
-#endif /* !GSM_CFG_SMS */
+#endif /* !LWGSM_CFG_SMS */
 
-static gsmr_t sms_evt_func(gsm_evt_t* evt);
+static lwgsmr_t sms_evt_func(lwgsm_evt_t* evt);
 
 /**
  * \brief           SMS entry information
  */
 typedef struct {
-    gsm_mem_t mem;
+    lwgsm_mem_t mem;
     size_t pos;
 } sms_receive_t;
 
 /**
  * \brief           SMS message box
  */
-static gsm_sys_mbox_t
+static lwgsm_sys_mbox_t
 sms_mbox;
 
 /**
  * \brief           SMS read entry
  */
-static gsm_sms_entry_t
+static lwgsm_sms_entry_t
 sms_entry;
 
 /**
@@ -41,22 +41,22 @@ sms_send_receive_thread(void const* arg) {
     sms_receive_t* sms;
 
     /* Create message box */
-    if (!gsm_sys_mbox_create(&sms_mbox, 5)) {
+    if (!lwgsm_sys_mbox_create(&sms_mbox, 5)) {
         goto terminate;
     }
 
     /* Register callback function for SMS */
-    if (gsm_evt_register(sms_evt_func) != gsmOK) {
+    if (lwgsm_evt_register(sms_evt_func) != lwgsmOK) {
         goto terminate;
     }
 
     /* First enable SMS functionality */
-    if (gsm_sms_enable(NULL, NULL, 1) == gsmOK) {
+    if (lwgsm_sms_enable(NULL, NULL, 1) == lwgsmOK) {
         printf("SMS enabled. Send new SMS from your phone to device.\r\n");
     } else {
         printf("Cannot enable SMS functionality!\r\n");
         while (1) {
-            gsm_delay(1000);
+            lwgsm_delay(1000);
         }
     }
 
@@ -65,24 +65,24 @@ sms_send_receive_thread(void const* arg) {
 
     while (1) {
         /* Get SMS entry from message queue */
-        while (gsm_sys_mbox_get(&sms_mbox, (void**)&sms, 0) == GSM_SYS_TIMEOUT || sms == NULL) {}
+        while (lwgsm_sys_mbox_get(&sms_mbox, (void**)&sms, 0) == LWGSM_SYS_TIMEOUT || sms == NULL) {}
 
         /* We have new SMS now */
         printf("New SMS received!\r\n");
 
         /* Read SMS from device */
-        if (gsm_sms_read(sms->mem, sms->pos, &sms_entry, 1, NULL, NULL, 1) == gsmOK) {
+        if (lwgsm_sms_read(sms->mem, sms->pos, &sms_entry, 1, NULL, NULL, 1) == lwgsmOK) {
             printf("SMS read ok. Number: %s, content: %s\r\n", sms_entry.number, sms_entry.data);
 
             /* Send reply back */
-            if (gsm_sms_send(sms_entry.number, sms_entry.data, NULL, NULL, 1) == gsmOK) {
+            if (lwgsm_sms_send(sms_entry.number, sms_entry.data, NULL, NULL, 1) == lwgsmOK) {
                 printf("SMS sent back successfully!\r\n");
             } else {
                 printf("Cannot send SMS back!\r\n");
             }
 
             /* Delete SMS from device memory */
-            if (gsm_sms_delete(sms->mem, sms->pos, NULL, NULL, 1) == gsmOK) {
+            if (lwgsm_sms_delete(sms->mem, sms->pos, NULL, NULL, 1) == lwgsmOK) {
                 printf("Received SMS deleted!\r\n");
             } else {
                 printf("Cannot delete received SMS!\r\n");
@@ -92,24 +92,24 @@ sms_send_receive_thread(void const* arg) {
         }
 
         /* Now free the memory */
-        gsm_mem_free_s((void**)&sms);
+        lwgsm_mem_free_s((void**)&sms);
     }
 
 terminate:
-    if (gsm_sys_mbox_isvalid(&sms_mbox)) {
+    if (lwgsm_sys_mbox_isvalid(&sms_mbox)) {
         /* Lock to make sure GSM stack won't process any callbacks while we are cleaning */
-        gsm_core_lock();
+        lwgsm_core_lock();
 
         /* Clean mbox first */
-        while (gsm_sys_mbox_getnow(&sms_mbox, (void**)&sms)) {
-            gsm_mem_free_s((void**)&sms);
+        while (lwgsm_sys_mbox_getnow(&sms_mbox, (void**)&sms)) {
+            lwgsm_mem_free_s((void**)&sms);
         }
 
         /* Delete mbox */
-        gsm_sys_mbox_delete(&sms_mbox);
-        gsm_sys_mbox_invalid(&sms_mbox);
+        lwgsm_sys_mbox_delete(&sms_mbox);
+        lwgsm_sys_mbox_invalid(&sms_mbox);
 
-        gsm_core_unlock();
+        lwgsm_core_unlock();
 
         /* Now mbox is not valid anymore and event won't write any data */
     }
@@ -118,21 +118,21 @@ terminate:
 /**
  * \brief           Event function for received SMS
  * \param[in]       evt: GSM event
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
-sms_evt_func(gsm_evt_t* evt) {
-    switch (gsm_evt_get_type(evt)) {
-        case GSM_EVT_SMS_RECV: {                /* New SMS received indicator */
+static lwgsmr_t
+sms_evt_func(lwgsm_evt_t* evt) {
+    switch (lwgsm_evt_get_type(evt)) {
+        case LWGSM_EVT_SMS_RECV: {                /* New SMS received indicator */
             uint8_t success = 0;
-            sms_receive_t* sms_rx = gsm_mem_malloc(sizeof(*sms_rx));
+            sms_receive_t* sms_rx = lwgsm_mem_malloc(sizeof(*sms_rx));
             if (sms_rx != NULL) {
-                sms_rx->mem = gsm_evt_sms_recv_get_mem(evt);
-                sms_rx->pos = gsm_evt_sms_recv_get_pos(evt);
+                sms_rx->mem = lwgsm_evt_sms_recv_get_mem(evt);
+                sms_rx->pos = lwgsm_evt_sms_recv_get_pos(evt);
 
                 /* Write to receive queue */
-                if (!gsm_sys_mbox_isvalid(&sms_mbox) || !gsm_sys_mbox_putnow(&sms_mbox, sms_rx)) {
-                    gsm_mem_free_s((void**)&sms_rx);
+                if (!lwgsm_sys_mbox_isvalid(&sms_mbox) || !lwgsm_sys_mbox_putnow(&sms_mbox, sms_rx)) {
+                    lwgsm_mem_free_s((void**)&sms_rx);
                 } else {
                     success = 1;
                 }
@@ -140,7 +140,7 @@ sms_evt_func(gsm_evt_t* evt) {
 
             /* Force SMS delete if not written successfully */
             if (!success) {
-                gsm_sms_delete(gsm_evt_sms_recv_get_mem(evt), gsm_evt_sms_recv_get_pos(evt), NULL, NULL, 0);
+                lwgsm_sms_delete(lwgsm_evt_sms_recv_get_mem(evt), lwgsm_evt_sms_recv_get_pos(evt), NULL, NULL, 0);
             }
             break;
         }
@@ -148,5 +148,5 @@ sms_evt_func(gsm_evt_t* evt) {
             break;
     }
 
-    return gsmOK;
+    return lwgsmOK;
 }

@@ -8,15 +8,15 @@ Getting started
 Download library
 ^^^^^^^^^^^^^^^^
 
-Library is primarly hosted on `Github <https://github.com/MaJerle/gsm-at-lib>`_.
+Library is primarly hosted on `Github <https://github.com/MaJerle/lwgsm>`_.
 
-* Download latest release from `releases area <https://github.com/MaJerle/gsm-at-lib/releases>`_ on Github
+* Download latest release from `releases area <https://github.com/MaJerle/lwgsm/releases>`_ on Github
 * Clone `develop` branch for latest development
 
 Download from releases
 **********************
 
-All releases are available on Github `releases area <https://github.com/MaJerle/gsm-at-lib/releases>`_.
+All releases are available on Github `releases area <https://github.com/MaJerle/lwgsm/releases>`_.
 
 Clone from Github
 *****************
@@ -28,9 +28,9 @@ First-time clone
 * Open console and navigate to path in the system to clone repository to. Use command ``cd your_path``
 * Clone repository with one of available ``3`` options
 
-  * Run ``git clone --recurse-submodules https://github.com/MaJerle/gsm-at-lib`` command to clone entire repository, including submodules
-  * Run ``git clone --recurse-submodules --branch develop https://github.com/MaJerle/gsm-at-lib`` to clone `development` branch, including submodules
-  * Run ``git clone --recurse-submodules --branch master https://github.com/MaJerle/gsm-at-lib`` to clone `latest stable` branch, including submodules
+  * Run ``git clone --recurse-submodules https://github.com/MaJerle/lwgsm`` command to clone entire repository, including submodules
+  * Run ``git clone --recurse-submodules --branch develop https://github.com/MaJerle/lwgsm`` to clone `development` branch, including submodules
+  * Run ``git clone --recurse-submodules --branch master https://github.com/MaJerle/lwgsm`` to clone `latest stable` branch, including submodules
 
 * Navigate to ``examples`` directory and run favourite example
 
@@ -50,24 +50,29 @@ Add library to project
 
 At this point it is assumed that you have successfully download library, either cloned it or from releases page.
 
-* Copy ``gsm_at_lib`` folder to your project
-* Add ``gsm_at_lib/src/include`` folder to *include path* of your toolchain
-* Add port architecture ``gsm_at_lib/src/include/system/port/_arch_`` folder to *include path* of your toolchain
-* Add source files from ``gsm_at_lib/src/`` folder to toolchain build
-* Add source files from ``gsm_at_lib/src/system/`` folder to toolchain build for arch port
-* Copy ``gsm_at_lib/src/include/gsm/gsm_opts_template.h`` to project folder and rename it to ``gsm_opts.h``
+* Copy ``lwgsm`` folder to your project
+* Add ``lwgsm/src/include`` folder to *include path* of your toolchain
+* Add port architecture ``lwgsm/src/include/system/port/_arch_`` folder to *include path* of your toolchain
+* Add source files from ``lwgsm/src/`` folder to toolchain build
+* Add source files from ``lwgsm/src/system/`` folder to toolchain build for arch port
+* Copy ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``lwgsm_opts.h``
 * Build the project
 
 Configuration file
 ^^^^^^^^^^^^^^^^^^
 
 Library comes with template config file, which can be modified according to needs.
-This file shall be named ``gsm_opts.h`` and its default template looks like the one below:
+This file shall be named ``lwgsm_opts.h`` and its default template looks like the one below.
+
+.. note::
+    Default configuration template file location: ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h``.
+    File must first be renamed to ``lwgsm_opts.h`` and then copied to the project directory (or simply renamed in-place) where compiler
+    include paths have access to it by using ``#include "lwgsm_opts.h"``.
 
 .. tip::
-    Check :ref:`api_gsm_opt` section for possible configuration settings
+    Check :ref:`api_lwgsm_opt` section for possible configuration settings
 
-.. literalinclude:: ../../gsm_at_lib/src/include/gsm/gsm_opts_template.h
+.. literalinclude:: ../../lwgsm/src/include/lwgsm/lwgsm_opts_template.h
     :language: c
     :linenos:
     :caption: Template options file
