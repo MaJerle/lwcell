@@ -50,19 +50,24 @@ Add library to project
 
 At this point it is assumed that you have successfully download library, either cloned it or from releases page.
 
-* Copy ``lwgsm_at_lib`` folder to your project
-* Add ``lwgsm_at_lib/src/include`` folder to *include path* of your toolchain
-* Add port architecture ``lwgsm_at_lib/src/include/system/port/_arch_`` folder to *include path* of your toolchain
-* Add source files from ``lwgsm_at_lib/src/`` folder to toolchain build
-* Add source files from ``lwgsm_at_lib/src/system/`` folder to toolchain build for arch port
-* Copy ``lwgsm_at_lib/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``lwgsm_opts.h``
+* Copy ``lwgsm`` folder to your project
+* Add ``lwgsm/src/include`` folder to *include path* of your toolchain
+* Add port architecture ``lwgsm/src/include/system/port/_arch_`` folder to *include path* of your toolchain
+* Add source files from ``lwgsm/src/`` folder to toolchain build
+* Add source files from ``lwgsm/src/system/`` folder to toolchain build for arch port
+* Copy ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``lwgsm_opts.h``
 * Build the project
 
 Configuration file
 ^^^^^^^^^^^^^^^^^^
 
 Library comes with template config file, which can be modified according to needs.
-This file shall be named ``lwgsm_opts.h`` and its default template looks like the one below:
+This file shall be named ``lwgsm_opts.h`` and its default template looks like the one below.
+
+.. note::
+    Default configuration template file location: ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h``.
+    File must first be renamed to ``lwgsm_opts.h`` and then copied to the project directory (or simply renamed in-place) where compiler
+    include paths have access to it by using ``#include "lwgsm_opts.h"``.
 
 .. tip::
     Check :ref:`api_lwgsm_opt` section for possible configuration settings

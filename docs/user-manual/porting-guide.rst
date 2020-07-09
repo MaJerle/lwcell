@@ -60,9 +60,9 @@ An example code is provided latter section of this page for WIN32 and STM32.
 Steps to follow
 ***************
 
-* Copy ``lwgsm_at_lib/src/system/lwgsm_sys_template.c`` to the same folder and rename it to application port, eg. ``lwgsm_sys_win32.c``
+* Copy ``lwgsm/src/system/lwgsm_sys_template.c`` to the same folder and rename it to application port, eg. ``lwgsm_sys_win32.c``
 * Open newly created file and implement all system functions
-* Copy folder ``lwgsm_at_lib/src/include/system/port/template/*`` to the same folder and rename *folder name* to application port, eg. ``cmsis_os``
+* Copy folder ``lwgsm/src/include/system/port/template/*`` to the same folder and rename *folder name* to application port, eg. ``cmsis_os``
 * Open ``lwgsm_sys_port.h`` file from newly created folder and implement all *typedefs* and *macros* for specific target
 * Add source file to compiler sources and add path to header file to include paths in compiler options
 
