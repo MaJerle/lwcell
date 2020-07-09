@@ -144,12 +144,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\lwmem\lwmem\src\lwmem\lwmem.c" />
     <ClCompile Include="..\..\..\lwmem\lwmem\src\system\lwmem_sys_win32.c" />
-    <ClCompile Include="..\..\lwgsm\src\api\gsm_netconn.c" />
-    <ClCompile Include="..\..\lwgsm\src\api\gsm_network_api.c" />
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\gsm_mqtt_client.c" />
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\gsm_mqtt_client_api.c" />
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\gsm_mqtt_client_evt.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\gsm.c" />
+    <ClCompile Include="..\..\lwgsm\src\api\lwgsm_netconn.c" />
+    <ClCompile Include="..\..\lwgsm\src\api\lwgsm_network_api.c" />
+    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client.c" />
+    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_api.c" />
+    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_evt.c" />
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm.c" />
     <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_buff.c" />
     <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_call.c" />
     <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_conn.c" />
@@ -172,9 +172,9 @@
     <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_unicode.c" />
     <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_ussd.c" />
     <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_utils.c" />
-    <ClCompile Include="..\..\lwgsm\src\system\gsm_ll_win32.c" />
-    <ClCompile Include="..\..\lwgsm\src\system\gsm_mem_lwmem.c" />
-    <ClCompile Include="..\..\lwgsm\src\system\gsm_sys_win32.c" />
+    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_ll_win32.c" />
+    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_mem_lwmem.c" />
+    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_sys_win32.c" />
     <ClCompile Include="..\..\snippets\call.c" />
     <ClCompile Include="..\..\snippets\call_sms.c" />
     <ClCompile Include="..\..\snippets\client.c" />
