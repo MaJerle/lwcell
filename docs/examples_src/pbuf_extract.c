@@ -1,24 +1,24 @@
 const void* data;
 size_t pos, len;
-gsm_pbuf_p a, b, c;
+lwgsm_pbuf_p a, b, c;
 
 const char str_a[] = "This is one long";
 const char str_a[] = "string. We want to save";
 const char str_a[] = "chain of pbufs to file";
 
 /* Create pbufs to hold these strings */
-a = gsm_pbuf_new(strlen(str_a));
-b = gsm_pbuf_new(strlen(str_b));
-c = gsm_pbuf_new(strlen(str_c));
+a = lwgsm_pbuf_new(strlen(str_a));
+b = lwgsm_pbuf_new(strlen(str_b));
+c = lwgsm_pbuf_new(strlen(str_c));
 
 /* Write data to pbufs */
-gsm_pbuf_take(a, str_a, strlen(str_a), 0);
-gsm_pbuf_take(b, str_b, strlen(str_b), 0);
-gsm_pbuf_take(c, str_c, strlen(str_c), 0);
+lwgsm_pbuf_take(a, str_a, strlen(str_a), 0);
+lwgsm_pbuf_take(b, str_b, strlen(str_b), 0);
+lwgsm_pbuf_take(c, str_c, strlen(str_c), 0);
 
 /* Connect pbufs together */
-gsm_pbuf_chain(a, b);
-gsm_pbuf_chain(a, c);
+lwgsm_pbuf_chain(a, b);
+lwgsm_pbuf_chain(a, c);
 
 /*
  * pbuf a now contains chain of b and c together
@@ -33,7 +33,7 @@ gsm_pbuf_chain(a, c);
  * and `len` will hold length of data block
  */
 pos = 0;
-while ((data = gsm_pbuf_get_linear_addr(a, pos, &len)) != NULL) {
+while ((data = lwgsm_pbuf_get_linear_addr(a, pos, &len)) != NULL) {
     /* Custom process function... */
     /* Process data with data pointer and block length */
     process_data(data, len);
@@ -44,4 +44,4 @@ while ((data = gsm_pbuf_get_linear_addr(a, pos, &len)) != NULL) {
 }
 
 /* Call free only on a pbuf. Since it is chained, b and c will be freed too */
-gsm_pbuf_free(a);
+lwgsm_pbuf_free(a);

@@ -44,8 +44,8 @@
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_operator_get(gsm_operator_curr_t* curr,
-                 const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_operator_get(lwgsm_operator_curr_t* curr,
+                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -58,8 +58,8 @@ gsm_operator_get(gsm_operator_curr_t* curr,
 
 /**
  * \brief           Set current operator
- * \param[in]       mode: Operator mode. This parameter can be a value of \ref gsm_operator_mode_t enumeration
- * \param[in]       format: Operator data format. This parameter can be a value of \ref gsm_operator_format_t enumeration
+ * \param[in]       mode: Operator mode. This parameter can be a value of \ref lwgsm_operator_mode_t enumeration
+ * \param[in]       format: Operator data format. This parameter can be a value of \ref lwgsm_operator_format_t enumeration
  * \param[in]       name: Operator name. This parameter must be valid according to `format` parameter
  * \param[in]       num: Operator number. This parameter must be valid according to `format` parameter
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
@@ -68,8 +68,8 @@ gsm_operator_get(gsm_operator_curr_t* curr,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num,
-                 const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, const char* name, uint32_t num,
+                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     if (mode != GSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
@@ -102,8 +102,8 @@ gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const c
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf,
-                  const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf,
+                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     if (opf != NULL) {

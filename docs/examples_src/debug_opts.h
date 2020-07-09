@@ -1,4 +1,4 @@
-/* Modifications of gsm_opts.h file for configuration */
+/* Modifications of lwgsm_opts.h file for configuration */
 
 /* Enable global debug */
 #define GSM_CFG_DBG                 GSM_DBG_ON

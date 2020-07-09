@@ -50,7 +50,7 @@ extern "C" {
 /**
  * \brief           Thread function prototype
  */
-typedef void (*gsm_sys_thread_fn)(void*);
+typedef void (*lwgsm_sys_thread_fn)(void*);
 
 /* Include system port file from portable folder */
 #include "lwgsm_sys_port.h"
@@ -60,11 +60,11 @@ typedef void (*gsm_sys_thread_fn)(void*);
  * \name            Main
  */
 
-uint8_t     gsm_sys_init(void);
-uint32_t    gsm_sys_now(void);
+uint8_t     lwgsm_sys_init(void);
+uint32_t    lwgsm_sys_now(void);
 
-uint8_t     gsm_sys_protect(void);
-uint8_t     gsm_sys_unprotect(void);
+uint8_t     lwgsm_sys_protect(void);
+uint8_t     lwgsm_sys_unprotect(void);
 
 /**
  * \}
@@ -75,12 +75,12 @@ uint8_t     gsm_sys_unprotect(void);
  * \name            Mutex
  */
 
-uint8_t     gsm_sys_mutex_create(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_delete(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_lock(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_unlock(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p);
-uint8_t     gsm_sys_mutex_invalid(gsm_sys_mutex_t* p);
+uint8_t     lwgsm_sys_mutex_create(lwgsm_sys_mutex_t* p);
+uint8_t     lwgsm_sys_mutex_delete(lwgsm_sys_mutex_t* p);
+uint8_t     lwgsm_sys_mutex_lock(lwgsm_sys_mutex_t* p);
+uint8_t     lwgsm_sys_mutex_unlock(lwgsm_sys_mutex_t* p);
+uint8_t     lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p);
+uint8_t     lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p);
 
 /**
  * \}
@@ -91,12 +91,12 @@ uint8_t     gsm_sys_mutex_invalid(gsm_sys_mutex_t* p);
  * \name            Semaphores
  */
 
-uint8_t     gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt);
-uint8_t     gsm_sys_sem_delete(gsm_sys_sem_t* p);
-uint32_t    gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout);
-uint8_t     gsm_sys_sem_release(gsm_sys_sem_t* p);
-uint8_t     gsm_sys_sem_isvalid(gsm_sys_sem_t* p);
-uint8_t     gsm_sys_sem_invalid(gsm_sys_sem_t* p);
+uint8_t     lwgsm_sys_sem_create(lwgsm_sys_sem_t* p, uint8_t cnt);
+uint8_t     lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p);
+uint32_t    lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout);
+uint8_t     lwgsm_sys_sem_release(lwgsm_sys_sem_t* p);
+uint8_t     lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p);
+uint8_t     lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p);
 
 /**
  * \}
@@ -107,14 +107,14 @@ uint8_t     gsm_sys_sem_invalid(gsm_sys_sem_t* p);
  * \name            Message queues
  */
 
-uint8_t     gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size);
-uint8_t     gsm_sys_mbox_delete(gsm_sys_mbox_t* b);
-uint32_t    gsm_sys_mbox_put(gsm_sys_mbox_t* b, void* m);
-uint32_t    gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
-uint8_t     gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m);
-uint8_t     gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m);
-uint8_t     gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b);
-uint8_t     gsm_sys_mbox_invalid(gsm_sys_mbox_t* b);
+uint8_t     lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size);
+uint8_t     lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b);
+uint32_t    lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m);
+uint32_t    lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout);
+uint8_t     lwgsm_sys_mbox_putnow(lwgsm_sys_mbox_t* b, void* m);
+uint8_t     lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m);
+uint8_t     lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b);
+uint8_t     lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b);
 
 /**
  * \}
@@ -125,9 +125,9 @@ uint8_t     gsm_sys_mbox_invalid(gsm_sys_mbox_t* b);
  * \name            Threads
  */
 
-uint8_t     gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, gsm_sys_thread_prio_t prio);
-uint8_t     gsm_sys_thread_terminate(gsm_sys_thread_t* t);
-uint8_t     gsm_sys_thread_yield(void);
+uint8_t     lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio);
+uint8_t     lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t);
+uint8_t     lwgsm_sys_thread_yield(void);
 
 /**
  * \}

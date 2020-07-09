@@ -37,7 +37,7 @@
 
 /* --- Buffer unique part starts --- */
 /* Prefix for all buffer functions and typedefs */
-#define BUF_PREF(x)                     gsm_ ## x
+#define BUF_PREF(x)                     lwgsm_ ## x
 /* --- Buffer unique part ends --- */
 
 /* Buffer utility macros */
@@ -61,7 +61,7 @@ BUF_PREF(buff_init)(BUF_PREF(buff_t)* buff, size_t size) {
     BUF_MEMSET(buff, 0, sizeof(*buff));
 
     buff->size = size;                          /* Set default values */
-    buff->buff = gsm_mem_malloc(sizeof(*buff->buff) * size);/* Allocate memory for buffer */
+    buff->buff = lwgsm_mem_malloc(sizeof(*buff->buff) * size);/* Allocate memory for buffer */
 
     if (buff->buff == NULL) {                   /* Check allocation */
         return 0;
@@ -76,7 +76,7 @@ BUF_PREF(buff_init)(BUF_PREF(buff_t)* buff, size_t size) {
 void
 BUF_PREF(buff_free)(BUF_PREF(buff_t)* buff) {
     if (BUF_IS_VALID(buff)) {
-        gsm_mem_free_s((void**)&buff->buff);
+        lwgsm_mem_free_s((void**)&buff->buff);
     }
 }
 

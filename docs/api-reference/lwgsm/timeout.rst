@@ -1,4 +1,4 @@
-.. _api_gsm_timeout:
+.. _api_lwgsm_timeout:
 
 Timeout manager
 ===============

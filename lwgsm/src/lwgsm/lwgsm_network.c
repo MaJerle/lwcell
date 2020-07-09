@@ -48,8 +48,8 @@
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_network_attach(const char* apn, const char* user, const char* pass,
-                   const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_network_attach(const char* apn, const char* user, const char* pass,
+                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -73,7 +73,7 @@ gsm_network_attach(const char* apn, const char* user, const char* pass,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_network_detach(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_network_detach(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -94,7 +94,7 @@ gsm_network_detach(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_network_check_status(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -110,11 +110,11 @@ gsm_network_check_status(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, c
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_network_copy_ip(gsm_ip_t* ip) {
-    if (gsm_network_is_attached()) {
-        gsm_core_lock();
+lwgsm_network_copy_ip(lwgsm_ip_t* ip) {
+    if (lwgsm_network_is_attached()) {
+        lwgsm_core_lock();
         GSM_MEMCPY(ip, &gsm.m.network.ip_addr, sizeof(*ip));
-        gsm_core_unlock();
+        lwgsm_core_unlock();
         return gsmOK;
     }
     return gsmERR;
@@ -125,11 +125,11 @@ gsm_network_copy_ip(gsm_ip_t* ip) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_network_is_attached(void) {
+lwgsm_network_is_attached(void) {
     uint8_t res;
-    gsm_core_lock();
+    lwgsm_core_lock();
     res = GSM_U8(gsm.m.network.is_attached);
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 
@@ -144,8 +144,8 @@ gsm_network_is_attached(void) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_network_rssi(int16_t* rssi,
-                 const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_network_rssi(int16_t* rssi,
+                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -158,13 +158,13 @@ gsm_network_rssi(int16_t* rssi,
 
 /**
  * \brief           Get network registration status
- * \return          Member of \ref gsm_network_reg_status_t enumeration
+ * \return          Member of \ref lwgsm_network_reg_status_t enumeration
  */
-gsm_network_reg_status_t
-gsm_network_get_reg_status(void) {
-    gsm_network_reg_status_t ret;
-    gsm_core_lock();
+lwgsm_network_reg_status_t
+lwgsm_network_get_reg_status(void) {
+    lwgsm_network_reg_status_t ret;
+    lwgsm_core_lock();
     ret = gsm.m.network.status;
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return ret;
 }

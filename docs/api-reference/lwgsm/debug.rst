@@ -1,4 +1,4 @@
-.. _api_gsm_debug:
+.. _api_lwgsm_debug:
 
 Debug support
 =============
@@ -22,7 +22,7 @@ For successful debugging, application must:
 * Enable specific modules to debug, by setting its configuration value to :c:macro:`GSM_DBG_ON`
 
 .. tip::
-    Check :ref:`api_gsm_opt` for all modules with debug implementation.
+    Check :ref:`api_lwgsm_opt` for all modules with debug implementation.
 
 An example code with config and latter usage:
 

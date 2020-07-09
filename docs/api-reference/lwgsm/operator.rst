@@ -1,4 +1,4 @@
-.. _api_gsm_operator:
+.. _api_lwgsm_operator:
 
 Network operator
 ================

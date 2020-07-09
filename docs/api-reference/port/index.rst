@@ -1,4 +1,4 @@
-.. _api_gsm_port:
+.. _api_lwgsm_port:
 
 Platform specific
 =================

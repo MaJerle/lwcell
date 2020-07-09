@@ -1,4 +1,4 @@
-/* Hostname event function, called when gsm_sms_send() function finishes */
+/* Hostname event function, called when lwgsm_sms_send() function finishes */
 void
 sms_send_fn(lwgsmr_t res, void* arg) {
     /* Check actual result from device */
@@ -13,7 +13,7 @@ sms_send_fn(lwgsmr_t res, void* arg) {
 
 /* Send SMS in non-blocking mode */
 /* Function now returns if command has been sent to internal message queue */
-if (gsm_sms_send("number", "text message", sms_send_fn, NULL, 0 /* 0 means non-blocking call */) == gsmOK) {
+if (lwgsm_sms_send("number", "text message", sms_send_fn, NULL, 0 /* 0 means non-blocking call */) == gsmOK) {
     /* At this point we only know that command has been sent to queue */
     printf("SMS send message command sent to queue.\r\n");
 } else {

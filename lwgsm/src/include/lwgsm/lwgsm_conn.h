@@ -47,25 +47,25 @@ extern "C" {
  * \{
  */
 
-lwgsmr_t      gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port, void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking);
-lwgsmr_t      gsm_conn_close(gsm_conn_p conn, const uint32_t blocking);
-lwgsmr_t      gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking);
-lwgsmr_t      gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data, size_t btw, size_t* bw, const uint32_t blocking);
-lwgsmr_t      gsm_conn_set_arg(gsm_conn_p conn, void* const arg);
-void*       gsm_conn_get_arg(gsm_conn_p conn);
-uint8_t     gsm_conn_is_client(gsm_conn_p conn);
-uint8_t     gsm_conn_is_active(gsm_conn_p conn);
-uint8_t     gsm_conn_is_closed(gsm_conn_p conn);
-int8_t      gsm_conn_getnum(gsm_conn_p conn);
-lwgsmr_t      gsm_get_conns_status(const uint32_t blocking);
-gsm_conn_p  gsm_conn_get_from_evt(gsm_evt_t* evt);
-lwgsmr_t      gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
-lwgsmr_t      gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf);
-size_t      gsm_conn_get_total_recved_count(gsm_conn_p conn);
+lwgsmr_t      lwgsm_conn_start(lwgsm_conn_p* conn, lwgsm_conn_type_t type, const char* const host, lwgsm_port_t port, void* const arg, lwgsm_evt_fn conn_evt_fn, const uint32_t blocking);
+lwgsmr_t      lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking);
+lwgsmr_t      lwgsm_conn_send(lwgsm_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking);
+lwgsmr_t      lwgsm_conn_sendto(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, const void* data, size_t btw, size_t* bw, const uint32_t blocking);
+lwgsmr_t      lwgsm_conn_set_arg(lwgsm_conn_p conn, void* const arg);
+void*       lwgsm_conn_get_arg(lwgsm_conn_p conn);
+uint8_t     lwgsm_conn_is_client(lwgsm_conn_p conn);
+uint8_t     lwgsm_conn_is_active(lwgsm_conn_p conn);
+uint8_t     lwgsm_conn_is_closed(lwgsm_conn_p conn);
+int8_t      lwgsm_conn_getnum(lwgsm_conn_p conn);
+lwgsmr_t      lwgsm_get_conns_status(const uint32_t blocking);
+lwgsm_conn_p  lwgsm_conn_get_from_evt(lwgsm_evt_t* evt);
+lwgsmr_t      lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
+lwgsmr_t      lwgsm_conn_recved(lwgsm_conn_p conn, lwgsm_pbuf_p pbuf);
+size_t      lwgsm_conn_get_total_recved_count(lwgsm_conn_p conn);
 
-uint8_t     gsm_conn_get_remote_ip(gsm_conn_p conn, gsm_ip_t* ip);
-gsm_port_t  gsm_conn_get_remote_port(gsm_conn_p conn);
-gsm_port_t  gsm_conn_get_local_port(gsm_conn_p conn);
+uint8_t     lwgsm_conn_get_remote_ip(lwgsm_conn_p conn, lwgsm_ip_t* ip);
+lwgsm_port_t  lwgsm_conn_get_remote_port(lwgsm_conn_p conn);
+lwgsm_port_t  lwgsm_conn_get_local_port(lwgsm_conn_p conn);
 
 /**
  * \}

@@ -51,39 +51,39 @@ extern "C" {
 /**
  * \brief           MQTT API client structure
  */
-struct gsm_mqtt_client_api;
+struct lwgsm_mqtt_client_api;
 
 /**
  * \brief           MQTT API RX buffer
  */
-typedef struct gsm_mqtt_client_api_buf {
+typedef struct lwgsm_mqtt_client_api_buf {
     char* topic;                                /*!< Topic data */
     size_t topic_len;                           /*!< Topic length */
     uint8_t* payload;                           /*!< Payload data */
     size_t payload_len;                         /*!< Payload length */
-    gsm_mqtt_qos_t qos;                         /*!< Quality of service */
-} gsm_mqtt_client_api_buf_t;
+    lwgsm_mqtt_qos_t qos;                         /*!< Quality of service */
+} lwgsm_mqtt_client_api_buf_t;
 
 /**
- * \brief           Pointer to \ref gsm_mqtt_client_api structure
+ * \brief           Pointer to \ref lwgsm_mqtt_client_api structure
  */
-typedef struct gsm_mqtt_client_api* gsm_mqtt_client_api_p;
+typedef struct lwgsm_mqtt_client_api* lwgsm_mqtt_client_api_p;
 
 /**
- * \brief           Pointer to \ref gsm_mqtt_client_api_buf_t structure
+ * \brief           Pointer to \ref lwgsm_mqtt_client_api_buf_t structure
  */
-typedef struct gsm_mqtt_client_api_buf* gsm_mqtt_client_api_buf_p;
+typedef struct lwgsm_mqtt_client_api_buf* lwgsm_mqtt_client_api_buf_p;
 
-gsm_mqtt_client_api_p   gsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len);
-void                    gsm_mqtt_client_api_delete(gsm_mqtt_client_api_p client);
-gsm_mqtt_conn_status_t  gsm_mqtt_client_api_connect(gsm_mqtt_client_api_p client, const char* host, gsm_port_t port, const gsm_mqtt_client_info_t* info);
-lwgsmr_t                  gsm_mqtt_client_api_close(gsm_mqtt_client_api_p client);
-lwgsmr_t                  gsm_mqtt_client_api_subscribe(gsm_mqtt_client_api_p client, const char* topic, gsm_mqtt_qos_t qos);
-lwgsmr_t                  gsm_mqtt_client_api_unsubscribe(gsm_mqtt_client_api_p client, const char* topic);
-lwgsmr_t                  gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, const void* data, size_t btw, gsm_mqtt_qos_t qos, uint8_t retain);
-uint8_t                 gsm_mqtt_client_api_is_connected(gsm_mqtt_client_api_p client);
-lwgsmr_t                  gsm_mqtt_client_api_receive(gsm_mqtt_client_api_p client, gsm_mqtt_client_api_buf_p* p, uint32_t timeout);
-void                    gsm_mqtt_client_api_buf_free(gsm_mqtt_client_api_buf_p p);
+lwgsm_mqtt_client_api_p   lwgsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len);
+void                    lwgsm_mqtt_client_api_delete(lwgsm_mqtt_client_api_p client);
+lwgsm_mqtt_conn_status_t  lwgsm_mqtt_client_api_connect(lwgsm_mqtt_client_api_p client, const char* host, lwgsm_port_t port, const lwgsm_mqtt_client_info_t* info);
+lwgsmr_t                  lwgsm_mqtt_client_api_close(lwgsm_mqtt_client_api_p client);
+lwgsmr_t                  lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topic, lwgsm_mqtt_qos_t qos);
+lwgsmr_t                  lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* topic);
+lwgsmr_t                  lwgsm_mqtt_client_api_publish(lwgsm_mqtt_client_api_p client, const char* topic, const void* data, size_t btw, lwgsm_mqtt_qos_t qos, uint8_t retain);
+uint8_t                 lwgsm_mqtt_client_api_is_connected(lwgsm_mqtt_client_api_p client);
+lwgsmr_t                  lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_api_buf_p* p, uint32_t timeout);
+void                    lwgsm_mqtt_client_api_buf_free(lwgsm_mqtt_client_api_buf_p p);
 
 /**
  * \}

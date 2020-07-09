@@ -45,7 +45,7 @@
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_device_get_manufacturer(char* manuf, size_t len, const gsm_api_cmd_evt_fn evt_fn,
+lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                             void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
@@ -71,7 +71,7 @@ gsm_device_get_manufacturer(char* manuf, size_t len, const gsm_api_cmd_evt_fn ev
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn,
+lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                      void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
@@ -97,7 +97,7 @@ gsm_device_get_model(char* model, size_t len, const gsm_api_cmd_evt_fn evt_fn,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn,
+lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                         void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
@@ -123,7 +123,7 @@ gsm_device_get_revision(char* rev, size_t len, const gsm_api_cmd_evt_fn evt_fn,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_device_get_serial_number(char* serial, size_t len, const gsm_api_cmd_evt_fn evt_fn,
+lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                              void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 

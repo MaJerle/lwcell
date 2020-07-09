@@ -41,13 +41,13 @@
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_evt_register(gsm_evt_fn fn) {
+lwgsm_evt_register(lwgsm_evt_fn fn) {
     lwgsmr_t res = gsmOK;
-    gsm_evt_func_t* func, *newFunc;
+    lwgsm_evt_func_t* func, *newFunc;
 
     GSM_ASSERT("fn != NULL", fn != NULL);
 
-    gsm_core_lock();
+    lwgsm_core_lock();
 
     /* Check if function already exists on list */
     for (func = gsm.evt_func; func != NULL; func = func->next) {
@@ -58,7 +58,7 @@ gsm_evt_register(gsm_evt_fn fn) {
     }
 
     if (res == gsmOK) {
-        newFunc = gsm_mem_malloc(sizeof(*newFunc));
+        newFunc = lwgsm_mem_malloc(sizeof(*newFunc));
         if (newFunc != NULL) {
             GSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));
             newFunc->fn = fn;                   /* Set function pointer */
@@ -67,47 +67,47 @@ gsm_evt_register(gsm_evt_fn fn) {
                 func->next = newFunc;           /* Set new function as next */
                 res = gsmOK;
             } else {
-                gsm_mem_free_s((void**)& newFunc);
+                lwgsm_mem_free_s((void**)& newFunc);
                 res = gsmERRMEM;
             }
         } else {
             res = gsmERRMEM;
         }
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 
 /**
  * \brief           Unregister callback function for global (non-connection based) events
- * \note            Function must be first registered using \ref gsm_evt_register
+ * \note            Function must be first registered using \ref lwgsm_evt_register
  * \param[in]       fn: Callback function to remove from event list
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_evt_unregister(gsm_evt_fn fn) {
-    gsm_evt_func_t* func, *prev;
+lwgsm_evt_unregister(lwgsm_evt_fn fn) {
+    lwgsm_evt_func_t* func, *prev;
     GSM_ASSERT("fn != NULL", fn != NULL);
 
-    gsm_core_lock();
+    lwgsm_core_lock();
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
-            gsm_mem_free_s((void**)&func);
+            lwgsm_mem_free_s((void**)&func);
             break;
         }
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return gsmOK;
 }
 
 /**
  * \brief           Get event type
  * \param[in]       cc: Event handle
- * \return          Event type. Member of \ref gsm_evt_type_t enumeration
+ * \return          Event type. Member of \ref lwgsm_evt_type_t enumeration
  */
-gsm_evt_type_t
-gsm_evt_get_type(gsm_evt_t* cc) {
+lwgsm_evt_type_t
+lwgsm_evt_get_type(lwgsm_evt_t* cc) {
     return cc->type;
 }
 
@@ -117,7 +117,7 @@ gsm_evt_get_type(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_reset_get_result(gsm_evt_t* cc) {
+lwgsm_evt_reset_get_result(lwgsm_evt_t* cc) {
     return cc->evt.reset.res;
 }
 
@@ -127,7 +127,7 @@ gsm_evt_reset_get_result(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_restore_get_result(gsm_evt_t* cc) {
+lwgsm_evt_restore_get_result(lwgsm_evt_t* cc) {
     return cc->evt.restore.res;
 }
 
@@ -136,8 +136,8 @@ gsm_evt_restore_get_result(gsm_evt_t* cc) {
  * \param[in]       cc: Event data
  * \return          Current operator handle
  */
-const gsm_operator_curr_t*
-gsm_evt_network_operator_get_current(gsm_evt_t* cc) {
+const lwgsm_operator_curr_t*
+lwgsm_evt_network_operator_get_current(lwgsm_evt_t* cc) {
     return cc->evt.operator_current.operator_current;
 }
 
@@ -147,7 +147,7 @@ gsm_evt_network_operator_get_current(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_operator_scan_get_result(gsm_evt_t* cc) {
+lwgsm_evt_operator_scan_get_result(lwgsm_evt_t* cc) {
     return cc->evt.operator_scan.res;
 }
 
@@ -156,8 +156,8 @@ gsm_evt_operator_scan_get_result(gsm_evt_t* cc) {
  * \param[in]       cc: Event data
  * \return          Pointer to array of operator entries
  */
-gsm_operator_t*
-gsm_evt_operator_scan_get_entries(gsm_evt_t* cc) {
+lwgsm_operator_t*
+lwgsm_evt_operator_scan_get_entries(lwgsm_evt_t* cc) {
     return cc->evt.operator_scan.ops;
 }
 
@@ -167,7 +167,7 @@ gsm_evt_operator_scan_get_entries(gsm_evt_t* cc) {
  * \return          Number of operators scanned
  */
 size_t
-gsm_evt_operator_scan_get_length(gsm_evt_t* cc) {
+lwgsm_evt_operator_scan_get_length(lwgsm_evt_t* cc) {
     return cc->evt.operator_scan.opf;
 }
 
@@ -177,7 +177,7 @@ gsm_evt_operator_scan_get_length(gsm_evt_t* cc) {
  * \return          RSSI value in units of dBm
  */
 int16_t
-gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc) {
+lwgsm_evt_signal_strength_get_rssi(lwgsm_evt_t* cc) {
     return cc->evt.rssi.rssi;
 }
 
@@ -188,8 +188,8 @@ gsm_evt_signal_strength_get_rssi(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Buffer handle
  */
-gsm_pbuf_p
-gsm_evt_conn_recv_get_buff(gsm_evt_t* cc) {
+lwgsm_pbuf_p
+lwgsm_evt_conn_recv_get_buff(lwgsm_evt_t* cc) {
     return cc->evt.conn_data_recv.buff;
 }
 
@@ -198,8 +198,8 @@ gsm_evt_conn_recv_get_buff(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-gsm_conn_p
-gsm_evt_conn_recv_get_conn(gsm_evt_t* cc) {
+lwgsm_conn_p
+lwgsm_evt_conn_recv_get_conn(lwgsm_evt_t* cc) {
     return cc->evt.conn_data_recv.conn;
 }
 
@@ -208,8 +208,8 @@ gsm_evt_conn_recv_get_conn(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-gsm_conn_p
-gsm_evt_conn_send_get_conn(gsm_evt_t* cc) {
+lwgsm_conn_p
+lwgsm_evt_conn_send_get_conn(lwgsm_evt_t* cc) {
     return cc->evt.conn_data_send.conn;
 }
 
@@ -219,7 +219,7 @@ gsm_evt_conn_send_get_conn(gsm_evt_t* cc) {
  * \return          Number of bytes sent
  */
 size_t
-gsm_evt_conn_send_get_length(gsm_evt_t* cc) {
+lwgsm_evt_conn_send_get_length(lwgsm_evt_t* cc) {
     return cc->evt.conn_data_send.sent;
 }
 
@@ -229,7 +229,7 @@ gsm_evt_conn_send_get_length(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_conn_send_get_result(gsm_evt_t* cc) {
+lwgsm_evt_conn_send_get_result(lwgsm_evt_t* cc) {
     return cc->evt.conn_data_send.res;
 }
 
@@ -238,8 +238,8 @@ gsm_evt_conn_send_get_result(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-gsm_conn_p
-gsm_evt_conn_active_get_conn(gsm_evt_t* cc) {
+lwgsm_conn_p
+lwgsm_evt_conn_active_get_conn(lwgsm_evt_t* cc) {
     return cc->evt.conn_active_close.conn;
 }
 
@@ -249,7 +249,7 @@ gsm_evt_conn_active_get_conn(gsm_evt_t* cc) {
  * \return          `1` if client, `0` otherwise
  */
 uint8_t
-gsm_evt_conn_active_is_client(gsm_evt_t* cc) {
+lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc) {
     return GSM_U8(cc->evt.conn_active_close.client > 0);
 }
 
@@ -258,8 +258,8 @@ gsm_evt_conn_active_is_client(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-gsm_conn_p
-gsm_evt_conn_close_get_conn(gsm_evt_t* cc) {
+lwgsm_conn_p
+lwgsm_evt_conn_close_get_conn(lwgsm_evt_t* cc) {
     return cc->evt.conn_active_close.conn;
 }
 
@@ -269,7 +269,7 @@ gsm_evt_conn_close_get_conn(gsm_evt_t* cc) {
  * \return          `1` if client, `0` otherwise
  */
 uint8_t
-gsm_evt_conn_close_is_client(gsm_evt_t* cc) {
+lwgsm_evt_conn_close_is_client(lwgsm_evt_t* cc) {
     return cc->evt.conn_active_close.client;
 }
 
@@ -279,7 +279,7 @@ gsm_evt_conn_close_is_client(gsm_evt_t* cc) {
  * \return          `1` if forced, `0` otherwise
  */
 uint8_t
-gsm_evt_conn_close_is_forced(gsm_evt_t* cc) {
+lwgsm_evt_conn_close_is_forced(lwgsm_evt_t* cc) {
     return cc->evt.conn_active_close.forced;
 }
 
@@ -289,7 +289,7 @@ gsm_evt_conn_close_is_forced(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_conn_close_get_result(gsm_evt_t* cc) {
+lwgsm_evt_conn_close_get_result(lwgsm_evt_t* cc) {
     return cc->evt.conn_active_close.res;
 }
 
@@ -298,8 +298,8 @@ gsm_evt_conn_close_get_result(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-gsm_conn_p
-gsm_evt_conn_poll_get_conn(gsm_evt_t* cc) {
+lwgsm_conn_p
+lwgsm_evt_conn_poll_get_conn(lwgsm_evt_t* cc) {
     return cc->evt.conn_poll.conn;
 }
 
@@ -309,7 +309,7 @@ gsm_evt_conn_poll_get_conn(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_conn_error_get_error(gsm_evt_t* cc) {
+lwgsm_evt_conn_error_get_error(lwgsm_evt_t* cc) {
     return cc->evt.conn_error.err;
 }
 
@@ -318,8 +318,8 @@ gsm_evt_conn_error_get_error(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Member of \ref lwgsmr_t enumeration
  */
-gsm_conn_type_t
-gsm_evt_conn_error_get_type(gsm_evt_t* cc) {
+lwgsm_conn_type_t
+lwgsm_evt_conn_error_get_type(lwgsm_evt_t* cc) {
     return cc->evt.conn_error.type;
 }
 
@@ -329,7 +329,7 @@ gsm_evt_conn_error_get_type(gsm_evt_t* cc) {
  * \return          Host name for connection
  */
 const char*
-gsm_evt_conn_error_get_host(gsm_evt_t* cc) {
+lwgsm_evt_conn_error_get_host(lwgsm_evt_t* cc) {
     return cc->evt.conn_error.host;
 }
 
@@ -338,8 +338,8 @@ gsm_evt_conn_error_get_host(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Host port number
  */
-gsm_port_t
-gsm_evt_conn_error_get_port(gsm_evt_t* cc) {
+lwgsm_port_t
+lwgsm_evt_conn_error_get_port(lwgsm_evt_t* cc) {
     return cc->evt.conn_error.port;
 }
 
@@ -349,7 +349,7 @@ gsm_evt_conn_error_get_port(gsm_evt_t* cc) {
  * \return          User argument
  */
 void*
-gsm_evt_conn_error_get_arg(gsm_evt_t* cc) {
+lwgsm_evt_conn_error_get_arg(lwgsm_evt_t* cc) {
     return cc->evt.conn_error.arg;
 }
 
@@ -363,7 +363,7 @@ gsm_evt_conn_error_get_arg(gsm_evt_t* cc) {
  * \return          SMS position in memory
  */
 size_t
-gsm_evt_sms_recv_get_pos(gsm_evt_t* cc) {
+lwgsm_evt_sms_recv_get_pos(lwgsm_evt_t* cc) {
     return cc->evt.sms_recv.pos;
 }
 
@@ -372,8 +372,8 @@ gsm_evt_sms_recv_get_pos(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS memory location
  */
-gsm_mem_t
-gsm_evt_sms_recv_get_mem(gsm_evt_t* cc) {
+lwgsm_mem_t
+lwgsm_evt_sms_recv_get_mem(lwgsm_evt_t* cc) {
     return cc->evt.sms_recv.mem;
 }
 
@@ -382,8 +382,8 @@ gsm_evt_sms_recv_get_mem(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS entry
  */
-gsm_sms_entry_t*
-gsm_evt_sms_read_get_entry(gsm_evt_t* cc) {
+lwgsm_sms_entry_t*
+lwgsm_evt_sms_read_get_entry(lwgsm_evt_t* cc) {
     return cc->evt.sms_read.entry;
 }
 
@@ -393,7 +393,7 @@ gsm_evt_sms_read_get_entry(gsm_evt_t* cc) {
  * \return          SMS entry
  */
 lwgsmr_t
-gsm_evt_sms_read_get_result(gsm_evt_t* cc) {
+lwgsm_evt_sms_read_get_result(lwgsm_evt_t* cc) {
     return cc->evt.sms_read.res;
 }
 
@@ -403,7 +403,7 @@ gsm_evt_sms_read_get_result(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_sms_send_get_result(gsm_evt_t* cc) {
+lwgsm_evt_sms_send_get_result(lwgsm_evt_t* cc) {
     return cc->evt.sms_send.res;
 }
 
@@ -414,7 +414,7 @@ gsm_evt_sms_send_get_result(gsm_evt_t* cc) {
  * \return          Position in memory
  */
 size_t
-gsm_evt_sms_send_get_pos(gsm_evt_t* cc) {
+lwgsm_evt_sms_send_get_pos(lwgsm_evt_t* cc) {
     return cc->evt.sms_send.pos;
 }
 
@@ -424,7 +424,7 @@ gsm_evt_sms_send_get_pos(gsm_evt_t* cc) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_evt_sms_delete_get_result(gsm_evt_t* cc) {
+lwgsm_evt_sms_delete_get_result(lwgsm_evt_t* cc) {
     return cc->evt.sms_delete.res;
 }
 
@@ -434,7 +434,7 @@ gsm_evt_sms_delete_get_result(gsm_evt_t* cc) {
  * \return          Deleted position in memory
  */
 size_t
-gsm_evt_sms_delete_get_pos(gsm_evt_t* cc) {
+lwgsm_evt_sms_delete_get_pos(lwgsm_evt_t* cc) {
     return cc->evt.sms_delete.pos;
 }
 
@@ -443,8 +443,8 @@ gsm_evt_sms_delete_get_pos(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS memory for delete operation
  */
-gsm_mem_t
-gsm_evt_sms_delete_get_mem(gsm_evt_t* cc) {
+lwgsm_mem_t
+lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc) {
     return cc->evt.sms_delete.mem;
 }
 
@@ -457,8 +457,8 @@ gsm_evt_sms_delete_get_mem(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Position in memory
  */
-const gsm_call_t*
-gsm_evt_call_changed_get_call(gsm_evt_t* cc) {
+const lwgsm_call_t*
+lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc) {
     return gsm.evt.evt.call_changed.call;
 }
 

@@ -50,22 +50,22 @@ Add library to project
 
 At this point it is assumed that you have successfully download library, either cloned it or from releases page.
 
-* Copy ``gsm_at_lib`` folder to your project
-* Add ``gsm_at_lib/src/include`` folder to *include path* of your toolchain
-* Add port architecture ``gsm_at_lib/src/include/system/port/_arch_`` folder to *include path* of your toolchain
-* Add source files from ``gsm_at_lib/src/`` folder to toolchain build
-* Add source files from ``gsm_at_lib/src/system/`` folder to toolchain build for arch port
-* Copy ``gsm_at_lib/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``gsm_opts.h``
+* Copy ``lwgsm_at_lib`` folder to your project
+* Add ``lwgsm_at_lib/src/include`` folder to *include path* of your toolchain
+* Add port architecture ``lwgsm_at_lib/src/include/system/port/_arch_`` folder to *include path* of your toolchain
+* Add source files from ``lwgsm_at_lib/src/`` folder to toolchain build
+* Add source files from ``lwgsm_at_lib/src/system/`` folder to toolchain build for arch port
+* Copy ``lwgsm_at_lib/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``lwgsm_opts.h``
 * Build the project
 
 Configuration file
 ^^^^^^^^^^^^^^^^^^
 
 Library comes with template config file, which can be modified according to needs.
-This file shall be named ``gsm_opts.h`` and its default template looks like the one below:
+This file shall be named ``lwgsm_opts.h`` and its default template looks like the one below:
 
 .. tip::
-    Check :ref:`api_gsm_opt` section for possible configuration settings
+    Check :ref:`api_lwgsm_opt` section for possible configuration settings
 
 .. literalinclude:: ../../lwgsm/src/include/lwgsm/lwgsm_opts_template.h
     :language: c

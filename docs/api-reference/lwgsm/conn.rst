@@ -1,4 +1,4 @@
-.. _api_gsm_conn:
+.. _api_lwgsm_conn:
 
 Connections
 ===========
@@ -43,7 +43,7 @@ When it comes to sending data, application may decide between ``2`` options (*th
 Temporary transmit buffer
 *************************
 
-By calling :cpp:func:`gsm_conn_write` on active connection, temporary buffer is allocated and input data are copied to it.
+By calling :cpp:func:`lwgsm_conn_write` on active connection, temporary buffer is allocated and input data are copied to it.
 There is always up to ``1`` internal buffer active. When it is full (or if input data length is longer than maximal size),
 data are immediately send out and are not written to buffer.
 
@@ -64,6 +64,6 @@ Transmit packet manually
 
 In some cases it is not possible to use temporary buffers, 
 mostly because of memory constraints.
-Application can directly start *send data* instructions on *AT* level by using :cpp:func:`gsm_conn_send` or :cpp:func:`gsm_conn_sendto` functions.
+Application can directly start *send data* instructions on *AT* level by using :cpp:func:`lwgsm_conn_send` or :cpp:func:`lwgsm_conn_sendto` functions.
 
 .. doxygengroup:: GSM_CONN

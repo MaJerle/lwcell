@@ -1,4 +1,4 @@
-.. _api_gsm_pb:
+.. _api_lwgsm_pb:
 
 Phonebook
 =========

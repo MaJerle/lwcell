@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>gsm_stm32f429zi_nucleo_mqtt_client_api_rtos</name>
+	<name>lwgsm_stm32f429zi_nucleo_mqtt_client_api_rtos</name>
 	<comment></comment>
 	<projects>
 	</projects>

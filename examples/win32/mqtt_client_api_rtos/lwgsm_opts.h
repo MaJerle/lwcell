@@ -34,7 +34,7 @@
 #ifndef GSM_HDR_OPTS_H
 #define GSM_HDR_OPTS_H
 
-/* Rename this file to "gsm_opts.h" for your application */
+/* Rename this file to "lwgsm_opts.h" for your application */
 
 /*
  * Open "include/lwgsm/lwgsm_opt.h" and

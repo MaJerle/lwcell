@@ -21,7 +21,7 @@ uint8_t
 configure_sim_card(void) {
     GSM_UNUSED(puk_code);
     if (pin_code != NULL && strlen(pin_code)) {
-        if (gsm_sim_pin_enter(pin_code, NULL, NULL, 1) == gsmOK) {
+        if (lwgsm_sim_pin_enter(pin_code, NULL, NULL, 1) == gsmOK) {
             return 1;
         }
         return 0;

@@ -1,4 +1,4 @@
-.. _api_gsm_utils:
+.. _api_lwgsm_utils:
 
 Utilities
 =========

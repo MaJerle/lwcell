@@ -12,10 +12,10 @@ rssi;
  * \param[in]       evt: GSM event data
  */
 void
-network_utils_process_reg_change(gsm_evt_t* evt) {
-    gsm_network_reg_status_t stat;
+network_utils_process_reg_change(lwgsm_evt_t* evt) {
+    lwgsm_network_reg_status_t stat;
 
-    stat = gsm_network_get_reg_status();        /* Get network status */
+    stat = lwgsm_network_get_reg_status();        /* Get network status */
 
     /* Print to console */
     printf("Network registration status changed. New status is: ");
@@ -44,9 +44,9 @@ network_utils_process_reg_change(gsm_evt_t* evt) {
  * \param[in]       evt: GSM event data
  */
 void
-network_utils_process_curr_operator(gsm_evt_t* evt) {
-    const gsm_operator_curr_t* o;
-    o = gsm_evt_network_operator_get_current(evt);
+network_utils_process_curr_operator(lwgsm_evt_t* evt) {
+    const lwgsm_operator_curr_t* o;
+    o = lwgsm_evt_network_operator_get_current(evt);
     if (o != NULL) {
         switch (o->format) {
             case GSM_OPERATOR_FORMAT_LONG_NAME:
@@ -63,7 +63,7 @@ network_utils_process_curr_operator(gsm_evt_t* evt) {
         }
     }
     /* Start RSSI info */
-    gsm_network_rssi(&rssi, NULL, NULL, 0);
+    lwgsm_network_rssi(&rssi, NULL, NULL, 0);
 }
 
 /**
@@ -71,11 +71,11 @@ network_utils_process_curr_operator(gsm_evt_t* evt) {
  * \param[in]       evt: GSM event data
  */
 void
-network_utils_process_rssi(gsm_evt_t* evt) {
+network_utils_process_rssi(lwgsm_evt_t* evt) {
     int16_t rssi;
 
     /* Get RSSi from event */
-    rssi = gsm_evt_signal_strength_get_rssi(evt);
+    rssi = lwgsm_evt_signal_strength_get_rssi(evt);
 
     /* Print message to screen */
     printf("Network operator RSSI: %d dBm\r\n", (int)rssi);

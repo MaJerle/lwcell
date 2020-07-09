@@ -36,8 +36,8 @@
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_buff.h"
 
-static uint32_t gsm_recv_total_len;
-static uint32_t gsm_recv_calls;
+static uint32_t lwgsm_recv_total_len;
+static uint32_t lwgsm_recv_calls;
 
 #if !GSM_CFG_INPUT_USE_PROCESS || __DOXYGEN__
 
@@ -49,14 +49,14 @@ static uint32_t gsm_recv_calls;
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_input(const void* data, size_t len) {
+lwgsm_input(const void* data, size_t len) {
     if (!gsm.status.f.initialized || gsm.buff.buff == NULL) {
         return gsmERR;
     }
-    gsm_buff_write(&gsm.buff, data, len);       /* Write data to buffer */
-    gsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Write empty box, don't care if write fails */
-    gsm_recv_total_len += len;                  /* Update total number of received bytes */
-    ++gsm_recv_calls;                           /* Update number of calls */
+    lwgsm_buff_write(&gsm.buff, data, len);       /* Write data to buffer */
+    lwgsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Write empty box, don't care if write fails */
+    lwgsm_recv_total_len += len;                  /* Update total number of received bytes */
+    ++lwgsm_recv_calls;                           /* Update number of calls */
     return gsmOK;
 }
 
@@ -76,19 +76,19 @@ gsm_input(const void* data, size_t len) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_input_process(const void* data, size_t len) {
+lwgsm_input_process(const void* data, size_t len) {
     lwgsmr_t res;
 
     if (!gsm.status.f.initialized) {
         return gsmERR;
     }
 
-    gsm_recv_total_len += len;                  /* Update total number of received bytes */
-    ++gsm_recv_calls;                           /* Update number of calls */
+    lwgsm_recv_total_len += len;                  /* Update total number of received bytes */
+    ++lwgsm_recv_calls;                           /* Update number of calls */
 
-    gsm_core_lock();
+    lwgsm_core_lock();
     res = gsmi_process(data, len);              /* Process input data */
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 

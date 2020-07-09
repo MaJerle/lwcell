@@ -43,8 +43,8 @@ static osMutexId sys_mutex;
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_init(void) {
-    gsm_sys_mutex_create(&sys_mutex);
+lwgsm_sys_init(void) {
+    lwgsm_sys_mutex_create(&sys_mutex);
     return 1;
 }
 
@@ -53,7 +53,7 @@ gsm_sys_init(void) {
  * \return          Current time in units of milliseconds
  */
 uint32_t
-gsm_sys_now(void) {
+lwgsm_sys_now(void) {
     return osKernelSysTick();
 }
 
@@ -68,23 +68,23 @@ gsm_sys_now(void) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_protect(void) {
-    gsm_sys_mutex_lock(&sys_mutex);
+lwgsm_sys_protect(void) {
+    lwgsm_sys_mutex_lock(&sys_mutex);
     return 1;
 }
 
 /**
  * \brief           Unprotect middleware core
  *
- * This function must follow number of calls of \ref gsm_sys_protect
+ * This function must follow number of calls of \ref lwgsm_sys_protect
  * and unlock access only when counter reached back zero.
  *
  * \note            Most operating systems support recursive mutexes.
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_unprotect(void) {
-    gsm_sys_mutex_unlock(&sys_mutex);
+lwgsm_sys_unprotect(void) {
+    lwgsm_sys_mutex_unlock(&sys_mutex);
     return 1;
 }
 
@@ -95,7 +95,7 @@ gsm_sys_unprotect(void) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mutex_create(gsm_sys_mutex_t* p) {
+lwgsm_sys_mutex_create(lwgsm_sys_mutex_t* p) {
     osMutexDef(MUT);
     *p = osRecursiveMutexCreate(osMutex(MUT));
     return *p != NULL;
@@ -107,7 +107,7 @@ gsm_sys_mutex_create(gsm_sys_mutex_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mutex_delete(gsm_sys_mutex_t* p) {
+lwgsm_sys_mutex_delete(lwgsm_sys_mutex_t* p) {
     return osMutexDelete(*p) == osOK;
 }
 
@@ -117,7 +117,7 @@ gsm_sys_mutex_delete(gsm_sys_mutex_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mutex_lock(gsm_sys_mutex_t* p) {
+lwgsm_sys_mutex_lock(lwgsm_sys_mutex_t* p) {
     return osRecursiveMutexWait(*p, osWaitForever) == osOK;
 }
 
@@ -127,7 +127,7 @@ gsm_sys_mutex_lock(gsm_sys_mutex_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mutex_unlock(gsm_sys_mutex_t* p) {
+lwgsm_sys_mutex_unlock(lwgsm_sys_mutex_t* p) {
     return osRecursiveMutexRelease(*p) == osOK;
 }
 
@@ -137,7 +137,7 @@ gsm_sys_mutex_unlock(gsm_sys_mutex_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p) {
+lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p) {
     return p != NULL && *p != NULL;
 }
 
@@ -147,7 +147,7 @@ gsm_sys_mutex_isvalid(gsm_sys_mutex_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mutex_invalid(gsm_sys_mutex_t* p) {
+lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p) {
     *p = GSM_SYS_MUTEX_NULL;
     return 1;
 }
@@ -162,7 +162,7 @@ gsm_sys_mutex_invalid(gsm_sys_mutex_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt) {
+lwgsm_sys_sem_create(lwgsm_sys_sem_t* p, uint8_t cnt) {
     osSemaphoreDef(SEM);
     *p = osSemaphoreCreate(osSemaphore(SEM), 1);
 
@@ -178,7 +178,7 @@ gsm_sys_sem_create(gsm_sys_sem_t* p, uint8_t cnt) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_sem_delete(gsm_sys_sem_t* p) {
+lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
     return osSemaphoreDelete(*p) == osOK;
 }
 
@@ -190,7 +190,7 @@ gsm_sys_sem_delete(gsm_sys_sem_t* p) {
  *                      \ref GSM_SYS_TIMEOUT if not available within given time
  */
 uint32_t
-gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout) {
+lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
     uint32_t tick = osKernelSysTick();
     return (osSemaphoreWait(*p, !timeout ? osWaitForever : timeout) == osOK) ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
 }
@@ -201,7 +201,7 @@ gsm_sys_sem_wait(gsm_sys_sem_t* p, uint32_t timeout) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_sem_release(gsm_sys_sem_t* p) {
+lwgsm_sys_sem_release(lwgsm_sys_sem_t* p) {
     return osSemaphoreRelease(*p) == osOK;
 }
 
@@ -211,7 +211,7 @@ gsm_sys_sem_release(gsm_sys_sem_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_sem_isvalid(gsm_sys_sem_t* p) {
+lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p) {
     return p != NULL && *p != NULL;
 }
 
@@ -221,7 +221,7 @@ gsm_sys_sem_isvalid(gsm_sys_sem_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_sem_invalid(gsm_sys_sem_t* p) {
+lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p) {
     *p = GSM_SYS_SEM_NULL;
     return 1;
 }
@@ -233,7 +233,7 @@ gsm_sys_sem_invalid(gsm_sys_sem_t* p) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
+lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size) {
     osMessageQDef(MBOX, size, void*);
     *b = osMessageCreate(osMessageQ(MBOX), NULL);
     return *b != NULL;
@@ -245,7 +245,7 @@ gsm_sys_mbox_create(gsm_sys_mbox_t* b, size_t size) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mbox_delete(gsm_sys_mbox_t* b) {
+lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
     if (osMessageWaiting(*b)) {
         return 0;
     }
@@ -259,7 +259,7 @@ gsm_sys_mbox_delete(gsm_sys_mbox_t* b) {
  * \return          Time in units of milliseconds needed to put a message to queue
  */
 uint32_t
-gsm_sys_mbox_put(gsm_sys_mbox_t* b, void* m) {
+lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
     uint32_t tick = osKernelSysTick();
     return osMessagePut(*b, (uint32_t)m, osWaitForever) == osOK ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
 }
@@ -273,7 +273,7 @@ gsm_sys_mbox_put(gsm_sys_mbox_t* b, void* m) {
  *                      or \ref GSM_SYS_TIMEOUT if it was not successful
  */
 uint32_t
-gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
+lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     osEvent evt;
     uint32_t time = osKernelSysTick();
 
@@ -292,7 +292,7 @@ gsm_sys_mbox_get(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
+lwgsm_sys_mbox_putnow(lwgsm_sys_mbox_t* b, void* m) {
     return osMessagePut(*b, (uint32_t)m, 0) == osOK;
 }
 
@@ -303,7 +303,7 @@ gsm_sys_mbox_putnow(gsm_sys_mbox_t* b, void* m) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
+lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
     osEvent evt;
 
     evt = osMessageGet(*b, 0);
@@ -320,7 +320,7 @@ gsm_sys_mbox_getnow(gsm_sys_mbox_t* b, void** m) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b) {
+lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
     return b != NULL && *b != NULL;
 }
 
@@ -330,7 +330,7 @@ gsm_sys_mbox_isvalid(gsm_sys_mbox_t* b) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_mbox_invalid(gsm_sys_mbox_t* b) {
+lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
     *b = GSM_SYS_MBOX_NULL;
     return 1;
 }
@@ -347,8 +347,8 @@ gsm_sys_mbox_invalid(gsm_sys_mbox_t* b) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn thread_func,
-                      void* const arg, size_t stack_size, gsm_sys_thread_prio_t prio) {
+lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func,
+                      void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio) {
     const osThreadDef_t thread_def = {
         (char*)name,
         (os_pthread)thread_func,
@@ -356,7 +356,7 @@ gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn t
         0,
         stack_size > 0 ? stack_size : GSM_SYS_THREAD_SS
     };
-    gsm_sys_thread_t id;
+    lwgsm_sys_thread_t id;
 
     id = osThreadCreate(&thread_def, arg);
     if (t != NULL) {
@@ -372,7 +372,7 @@ gsm_sys_thread_create(gsm_sys_thread_t* t, const char* name, gsm_sys_thread_fn t
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_thread_terminate(gsm_sys_thread_t* t) {
+lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
     osThreadTerminate(t != NULL ? *t : NULL);
     return 1;
 }
@@ -382,7 +382,7 @@ gsm_sys_thread_terminate(gsm_sys_thread_t* t) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_sys_thread_yield(void) {
+lwgsm_sys_thread_yield(void) {
     osThreadYield();
     return 1;
 }

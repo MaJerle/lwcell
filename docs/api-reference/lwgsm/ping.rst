@@ -1,4 +1,4 @@
-.. _api_gsm_ping:
+.. _api_lwgsm_ping:
 
 Ping support
 ============

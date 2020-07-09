@@ -1,4 +1,4 @@
-.. _api_gsm_sms:
+.. _api_lwgsm_sms:
 
 SMS
 ===

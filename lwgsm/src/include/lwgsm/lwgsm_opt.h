@@ -60,11 +60,11 @@
  * \brief           Enables `1` or disables `0` custom memory management functions
  *
  * When set to `1`, \ref GSM_MEM block must be provided manually.
- * This includes implementation of functions \ref gsm_mem_malloc,
- * \ref gsm_mem_calloc, \ref gsm_mem_realloc and \ref gsm_mem_free
+ * This includes implementation of functions \ref lwgsm_mem_malloc,
+ * \ref lwgsm_mem_calloc, \ref lwgsm_mem_realloc and \ref lwgsm_mem_free
  *
  * \note            Function declaration follows standard C functions `malloc, calloc, realloc, free`.
- *                  Declaration is available in `gsm/gsm_mem.h` file. Include this file to final
+ *                  Declaration is available in `gsm/lwgsm_mem.h` file. Include this file to final
  *                  implementation file
  *
  * \note            When implementing custom memory allocation, it is necessary
@@ -164,9 +164,9 @@
 #endif
 
 /**
- * \brief           Enables `1` or disables `0` reset sequence after \ref gsm_init call
+ * \brief           Enables `1` or disables `0` reset sequence after \ref lwgsm_init call
  *
- * \note            When this functionality is disabled, user must manually call \ref gsm_reset to send
+ * \note            When this functionality is disabled, user must manually call \ref lwgsm_reset to send
  *                  reset sequence to GSM device.
  */
 #ifndef GSM_CFG_RESET_ON_INIT
@@ -174,9 +174,9 @@
 #endif
 
 /**
- * \brief           Enables `1` or disables `0` reset sequence after \ref gsm_device_set_present call
+ * \brief           Enables `1` or disables `0` reset sequence after \ref lwgsm_device_set_present call
  *
- * \note            When this functionality is disabled, user must manually call \ref gsm_reset to send
+ * \note            When this functionality is disabled, user must manually call \ref lwgsm_reset to send
  *                  reset sequence to GSM device.
  */
 #ifndef GSM_CFG_RESET_ON_DEVICE_PRESENT

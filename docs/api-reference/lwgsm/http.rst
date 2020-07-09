@@ -1,4 +1,4 @@
-.. _api_gsm_http:
+.. _api_lwgsm_http:
 
 HTTP
 ====

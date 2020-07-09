@@ -1,4 +1,4 @@
-.. _api_gsm_ll:
+.. _api_lwgsm_ll:
 
 Low-Level functions
 ===================

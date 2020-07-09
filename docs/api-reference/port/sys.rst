@@ -1,4 +1,4 @@
-.. _api_gsm_sys:
+.. _api_lwgsm_sys:
 
 System functions
 ================

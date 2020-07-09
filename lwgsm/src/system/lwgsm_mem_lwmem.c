@@ -33,7 +33,7 @@
  */
 #include "lwgsm/lwgsm.h"
 
-/* See gsm_mem.c file for function documentation on parameters and return values */
+/* See lwgsm_mem.c file for function documentation on parameters and return values */
 
 #if GSM_CFG_MEM_CUSTOM && !__DOXYGEN__
 
@@ -47,22 +47,22 @@
 #include "lwmem/lwmem.h"
 
 void*
-gsm_mem_malloc(size_t size) {
+lwgsm_mem_malloc(size_t size) {
     return lwmem_malloc(size);
 }
 
 void*
-gsm_mem_realloc(void* ptr, size_t size) {
+lwgsm_mem_realloc(void* ptr, size_t size) {
     return lwmem_realloc(ptr, size);
 }
 
 void*
-gsm_mem_calloc(size_t num, size_t size) {
+lwgsm_mem_calloc(size_t num, size_t size) {
     return lwmem_calloc(num, size);
 }
 
 void
-gsm_mem_free(void* ptr) {
+lwgsm_mem_free(void* ptr) {
     lwmem_free(ptr);
 }
 

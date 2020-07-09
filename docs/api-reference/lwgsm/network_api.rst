@@ -1,4 +1,4 @@
-.. _api_gsm_network_api:
+.. _api_lwgsm_network_api:
 
 Network API
 ===========

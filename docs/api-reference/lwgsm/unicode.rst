@@ -1,4 +1,4 @@
-.. _api_gsm_unicode:
+.. _api_lwgsm_unicode:
 
 Unicode
 =======

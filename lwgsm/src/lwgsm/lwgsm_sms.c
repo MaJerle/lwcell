@@ -53,9 +53,9 @@
 static lwgsmr_t
 check_enabled(void) {
     lwgsmr_t res;
-    gsm_core_lock();
+    lwgsm_core_lock();
     res = gsm.m.sms.enabled ? gsmOK : gsmERR;
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 
@@ -66,9 +66,9 @@ check_enabled(void) {
 static lwgsmr_t
 check_ready(void) {
     lwgsmr_t res;
-    gsm_core_lock();
+    lwgsm_core_lock();
     res = gsm.m.sms.ready ? gsmOK : gsmERR;
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 
@@ -79,14 +79,14 @@ check_ready(void) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
-check_sms_mem(gsm_mem_t mem, uint8_t can_curr) {
+check_sms_mem(lwgsm_mem_t mem, uint8_t can_curr) {
     lwgsmr_t res = gsmERRMEM;
-    gsm_core_lock();
+    lwgsm_core_lock();
     if ((mem < GSM_MEM_END && gsm.m.sms.mem[GSM_SMS_OPERATION_IDX].mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == GSM_MEM_CURRENT)) {
         res = gsmOK;
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 
@@ -98,7 +98,7 @@ check_sms_mem(gsm_mem_t mem, uint8_t can_curr) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sms_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -117,13 +117,13 @@ gsm_sms_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint3
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    gsm_core_lock();
+lwgsm_sms_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    lwgsm_core_lock();
     gsm.m.sms.enabled = 0;
     if (evt_fn != NULL) {
         evt_fn(gsmOK, evt_arg);
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     GSM_UNUSED(blocking);
     return gsmOK;
 }
@@ -138,8 +138,8 @@ gsm_sms_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_send(const char* num, const char* text,
-             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sms_send(const char* num, const char* text,
+             const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("num != NULL && num[0] > 0", num != NULL && num[0] > 0);
@@ -170,8 +170,8 @@ gsm_sms_send(const char* num, const char* text,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
-             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t update,
+             const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("entry != NULL", entry != NULL);
@@ -211,8 +211,8 @@ gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_delete(gsm_mem_t mem, size_t pos,
-               const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
+               const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
@@ -235,15 +235,15 @@ gsm_sms_delete(gsm_mem_t mem, size_t pos,
 
 /**
  * \brief           Delete all SMS entries with specific status
- * \param[in]       status: SMS status. This parameter can be one of all possible types in \ref gsm_sms_status_t enumeration
+ * \param[in]       status: SMS status. This parameter can be one of all possible types in \ref lwgsm_sms_status_t enumeration
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_delete_all(gsm_sms_status_t status,
-                   const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sms_delete_all(lwgsm_sms_status_t status,
+                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
@@ -273,8 +273,8 @@ gsm_sms_delete_all(gsm_sms_status_t status,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update,
-             const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update,
+             const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("entires != NULL", entries != NULL);
@@ -318,8 +318,8 @@ gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, siz
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3,
-                              const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwgsm_mem_t mem3,
+                              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */

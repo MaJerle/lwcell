@@ -40,8 +40,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-void    gsm_thread_produce(void* const arg);
-void    gsm_thread_process(void* const arg);
+void    lwgsm_thread_produce(void* const arg);
+void    lwgsm_thread_process(void* const arg);
 
 #ifdef __cplusplus
 }

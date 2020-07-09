@@ -1,4 +1,4 @@
-.. _api_gsm_mem:
+.. _api_lwgsm_mem:
 
 Memory manager
 ==============

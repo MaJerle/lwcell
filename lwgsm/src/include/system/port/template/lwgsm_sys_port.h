@@ -57,26 +57,26 @@ extern "C" {
  *
  * It is used by middleware as base type of mutex.
  */
-typedef osMutexId_t         gsm_sys_mutex_t;
+typedef osMutexId_t         lwgsm_sys_mutex_t;
 
 /**
  * \brief           System semaphore type
  *
  * It is used by middleware as base type of mutex.
  */
-typedef osSemaphoreId_t     gsm_sys_sem_t;
+typedef osSemaphoreId_t     lwgsm_sys_sem_t;
 
 /**
  * \brief           System message queue type
  *
  * It is used by middleware as base type of mutex.
  */
-typedef osMessageQueueId_t  gsm_sys_mbox_t;
+typedef osMessageQueueId_t  lwgsm_sys_mbox_t;
 
 /**
  * \brief           System thread ID type
  */
-typedef osThreadId_t        gsm_sys_thread_t;
+typedef osThreadId_t        lwgsm_sys_thread_t;
 
 /**
  * \brief           System thread priority type
@@ -84,28 +84,28 @@ typedef osThreadId_t        gsm_sys_thread_t;
  * It is used as priority type for system function,
  * to start new threads by middleware.
  */
-typedef osPriority          gsm_sys_thread_prio_t;
+typedef osPriority          lwgsm_sys_thread_prio_t;
 
 /**
  * \brief           Mutex invalid value
  *
- * Value assigned to \ref gsm_sys_mutex_t type when it is not valid.
+ * Value assigned to \ref lwgsm_sys_mutex_t type when it is not valid.
  */
-#define GSM_SYS_MUTEX_NULL          ((gsm_sys_mutex_t)0)
+#define GSM_SYS_MUTEX_NULL          ((lwgsm_sys_mutex_t)0)
 
 /**
  * \brief           Semaphore invalid value
  *
- * Value assigned to \ref gsm_sys_sem_t type when it is not valid.
+ * Value assigned to \ref lwgsm_sys_sem_t type when it is not valid.
  */
-#define GSM_SYS_SEM_NULL            ((gsm_sys_sem_t)0)
+#define GSM_SYS_SEM_NULL            ((lwgsm_sys_sem_t)0)
 
 /**
  * \brief           Message box invalid value
  *
- * Value assigned to \ref gsm_sys_mbox_t type when it is not valid.
+ * Value assigned to \ref lwgsm_sys_mbox_t type when it is not valid.
  */
-#define GSM_SYS_MBOX_NULL           ((gsm_sys_mbox_t)0)
+#define GSM_SYS_MBOX_NULL           ((lwgsm_sys_mbox_t)0)
 
 /**
  * \brief           OS timeout value

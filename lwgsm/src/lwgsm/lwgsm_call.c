@@ -48,9 +48,9 @@
 static lwgsmr_t
 check_enabled(void) {
     lwgsmr_t res;
-    gsm_core_lock();
+    lwgsm_core_lock();
     res = gsm.m.call.enabled ? gsmOK : gsmERR;
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 
@@ -61,9 +61,9 @@ check_enabled(void) {
 static lwgsmr_t
 check_ready(void) {
     lwgsmr_t res;
-    gsm_core_lock();
+    lwgsm_core_lock();
     res = gsm.m.call.ready ? gsmOK : gsmERR;
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return res;
 }
 
@@ -75,7 +75,7 @@ check_ready(void) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_call_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_MSG_VAR_ALLOC(msg, blocking);
@@ -94,13 +94,13 @@ gsm_call_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_call_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    gsm_core_lock();
+lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    lwgsm_core_lock();
     gsm.m.call.enabled = 0;
     if (evt_fn != NULL) {
         evt_fn(gsmOK, evt_arg);
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return gsmOK;
 }
 
@@ -113,8 +113,8 @@ gsm_call_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uin
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_call_start(const char* number,
-               const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_call_start(const char* number,
+               const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("number != NULL", number != NULL);
@@ -137,7 +137,7 @@ gsm_call_start(const char* number,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_call_answer(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();
@@ -157,7 +157,7 @@ gsm_call_answer(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_call_hangup(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();

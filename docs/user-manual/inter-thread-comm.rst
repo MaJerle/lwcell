@@ -12,7 +12,7 @@ For successful resources management, it uses ``2`` threads within library and al
 
 	Inter-thread architecture block diagram
 
-*Producing* and *Processing* threads are part of library, its implementation is in ``gsm_threads.c`` file.
+*Producing* and *Processing* threads are part of library, its implementation is in ``lwgsm_threads.c`` file.
 
 Processing thread
 ^^^^^^^^^^^^^^^^^

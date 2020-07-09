@@ -252,25 +252,25 @@ typedef enum {
     GSM_CMD_CSMS,                               /*!< Select Message Service */
 
     GSM_CMD_END,                                /*!< Last CMD entry */
-} gsm_cmd_t;
+} lwgsm_cmd_t;
 
 /**
  * \brief           Connection structure
  */
-typedef struct gsm_conn {
-    gsm_conn_type_t type;                       /*!< Connection type */
+typedef struct lwgsm_conn {
+    lwgsm_conn_type_t type;                       /*!< Connection type */
     uint8_t         num;                        /*!< Connection number */
-    gsm_ip_t        remote_ip;                  /*!< Remote IP address */
-    gsm_port_t      remote_port;                /*!< Remote port number */
-    gsm_port_t      local_port;                 /*!< Local IP address */
-    gsm_evt_fn      evt_func;                   /*!< Callback function for connection */
+    lwgsm_ip_t        remote_ip;                  /*!< Remote IP address */
+    lwgsm_port_t      remote_port;                /*!< Remote port number */
+    lwgsm_port_t      local_port;                 /*!< Local IP address */
+    lwgsm_evt_fn      evt_func;                   /*!< Callback function for connection */
     void*           arg;                        /*!< User custom argument */
 
     uint8_t         val_id;                     /*!< Validation ID number. It is increased each time a new connection is established.
                                                      It protects sending data to wrong connection in case we have data in send queue,
                                                      and connection was closed and active again in between. */
 
-    gsm_linbuff_t   buff;                       /*!< Linear buffer structure */
+    lwgsm_linbuff_t   buff;                       /*!< Linear buffer structure */
 
     size_t          total_recved;               /*!< Total number of bytes received */
 
@@ -284,21 +284,21 @@ typedef struct gsm_conn {
             uint8_t bearer: 1;                  /*!< Bearer used. Can be `1` or `0` */
         } f;                                    /*!< Connection flags */
     } status;                                   /*!< Connection status union with flag bits */
-} gsm_conn_t;
+} lwgsm_conn_t;
 
 /**
  * \ingroup         GSM_PBUF
  * \brief           Packet buffer structure
  */
-typedef struct gsm_pbuf {
-    struct gsm_pbuf* next;                      /*!< Next pbuf in chain list */
+typedef struct lwgsm_pbuf {
+    struct lwgsm_pbuf* next;                      /*!< Next pbuf in chain list */
     size_t tot_len;                             /*!< Total length of pbuf chain */
     size_t len;                                 /*!< Length of payload */
     size_t ref;                                 /*!< Number of references to this structure */
     uint8_t* payload;                           /*!< Pointer to payload memory */
-    gsm_ip_t ip;                                /*!< Remote address for received IPD data */
-    gsm_port_t port;                            /*!< Remote port for received IPD data */
-} gsm_pbuf_t;
+    lwgsm_ip_t ip;                                /*!< Remote address for received IPD data */
+    lwgsm_port_t port;                            /*!< Remote port for received IPD data */
+} lwgsm_pbuf_t;
 
 /**
  * \brief           Incoming network data read structure
@@ -307,12 +307,12 @@ typedef struct {
     uint8_t             read;                   /*!< Set to 1 when we should process input data as connection data */
     size_t              tot_len;                /*!< Total length of packet */
     size_t              rem_len;                /*!< Remaining bytes to read in current +IPD statement */
-    gsm_conn_p          conn;                   /*!< Pointer to connection for network data */
+    lwgsm_conn_p          conn;                   /*!< Pointer to connection for network data */
 
     size_t              buff_ptr;               /*!< Buffer pointer to save data to.
                                                      When set to `NULL` while `read = 1`, reading should ignore incoming data */
-    gsm_pbuf_p          buff;                   /*!< Pointer to data buffer used for receiving data */
-} gsm_ipd_t;
+    lwgsm_pbuf_p          buff;                   /*!< Pointer to data buffer used for receiving data */
+} lwgsm_ipd_t;
 
 /**
  * \brief           Connection result on connect command
@@ -322,23 +322,23 @@ typedef enum {
     GSM_CONN_CONNECT_OK,                        /*!< Connected OK */
     GSM_CONN_CONNECT_ERROR,                     /*!< Error on connection */
     GSM_CONN_CONNECT_ALREADY,                   /*!< Already connected */
-} gsm_conn_connect_res_t;
+} lwgsm_conn_connect_res_t;
 
 /**
  * \brief           Message queue structure to share between threads
  */
-typedef struct gsm_msg {
-    gsm_cmd_t       cmd_def;                    /*!< Default message type received from queue */
-    gsm_cmd_t       cmd;                        /*!< Since some commands can have different subcommands, sub command is used here */
+typedef struct lwgsm_msg {
+    lwgsm_cmd_t       cmd_def;                    /*!< Default message type received from queue */
+    lwgsm_cmd_t       cmd;                        /*!< Since some commands can have different subcommands, sub command is used here */
     uint8_t         i;                          /*!< Variable to indicate order number of subcommands */
-    gsm_sys_sem_t   sem;                        /*!< Semaphore for the message */
+    lwgsm_sys_sem_t   sem;                        /*!< Semaphore for the message */
     uint8_t         is_blocking;                /*!< Status if command is blocking */
     uint32_t        block_time;                 /*!< Maximal blocking time in units of milliseconds. Use 0 to for non-blocking call */
     lwgsmr_t          res;                        /*!< Result of message operation */
-    lwgsmr_t          (*fn)(struct gsm_msg*);     /*!< Processing callback function to process packet */
+    lwgsmr_t          (*fn)(struct lwgsm_msg*);     /*!< Processing callback function to process packet */
 
 #if GSM_CFG_USE_API_FUNC_EVT
-    gsm_api_cmd_evt_fn evt_fn;                  /*!< Command callback API function */
+    lwgsm_api_cmd_evt_fn evt_fn;                  /*!< Command callback API function */
     void*           evt_arg;                    /*!< Command callback API callback parameter */
 #endif /* GSM_CFG_USE_API_FUNC_EVT */
 
@@ -385,17 +385,17 @@ typedef struct gsm_msg {
         } csq;                                  /*!< Signal strength */
         struct {
             uint8_t read;                       /*!< Flag indicating we can read the COPS actual data */
-            gsm_operator_t* ops;                /*!< Pointer to operators array */
+            lwgsm_operator_t* ops;                /*!< Pointer to operators array */
             size_t opsl;                        /*!< Length of operators array */
             size_t opsi;                        /*!< Current operator index array */
             size_t* opf;                        /*!< Pointer to number of operators found */
         } cops_scan;                            /*!< Scan operators */
         struct {
-            gsm_operator_curr_t* curr;          /*!< Pointer to output current operator */
+            lwgsm_operator_curr_t* curr;          /*!< Pointer to output current operator */
         } cops_get;                             /*!< Get current operator info */
         struct {
-            gsm_operator_mode_t mode;           /*!< COPS mode */
-            gsm_operator_format_t format;       /*!< Operator format to print */
+            lwgsm_operator_mode_t mode;           /*!< COPS mode */
+            lwgsm_operator_format_t format;       /*!< Operator format to print */
             const char* name;                   /*!< Short or long name, according to format */
             uint32_t num;                       /*!< Number in case format is number */
         } cops_set;                             /*!< Set operator settings */
@@ -403,21 +403,21 @@ typedef struct gsm_msg {
 #if GSM_CFG_CONN || __DOXYGEN__
         /* Connection based commands */
         struct {
-            gsm_conn_t** conn;                  /*!< Pointer to pointer to save connection used */
+            lwgsm_conn_t** conn;                  /*!< Pointer to pointer to save connection used */
             const char* host;                   /*!< Host to use for connection */
-            gsm_port_t port;                    /*!< Remote port used for connection */
-            gsm_conn_type_t type;               /*!< Connection type */
+            lwgsm_port_t port;                    /*!< Remote port used for connection */
+            lwgsm_conn_type_t type;               /*!< Connection type */
             void* arg;                          /*!< Connection custom argument */
-            gsm_evt_fn evt_func;                /*!< Callback function to use on connection */
+            lwgsm_evt_fn evt_func;                /*!< Callback function to use on connection */
             uint8_t num;                        /*!< Connection number used for start */
-            gsm_conn_connect_res_t conn_res;    /*!< Connection result status */
+            lwgsm_conn_connect_res_t conn_res;    /*!< Connection result status */
         } conn_start;                           /*!< Structure for starting new connection */
         struct {
-            gsm_conn_t* conn;                   /*!< Pointer to connection to close */
+            lwgsm_conn_t* conn;                   /*!< Pointer to connection to close */
             uint8_t val_id;                     /*!< Connection current validation ID when command was sent to queue */
         } conn_close;                           /*!< Close connection */
         struct {
-            gsm_conn_t* conn;                   /*!< Pointer to connection to send data */
+            lwgsm_conn_t* conn;                   /*!< Pointer to connection to send data */
             size_t btw;                         /*!< Number of remaining bytes to write */
             size_t ptr;                         /*!< Current write pointer for data */
             const uint8_t* data;                /*!< Data to send */
@@ -425,8 +425,8 @@ typedef struct gsm_msg {
             size_t sent_all;                    /*!< Number of bytes sent all together */
             uint8_t tries;                      /*!< Number of tries used for last packet */
             uint8_t wait_send_ok_err;           /*!< Set to 1 when we wait for SEND OK or SEND ERROR */
-            const gsm_ip_t* remote_ip;          /*!< Remote IP address for UDP connection */
-            gsm_port_t remote_port;             /*!< Remote port address for UDP connection */
+            const lwgsm_ip_t* remote_ip;          /*!< Remote IP address for UDP connection */
+            lwgsm_port_t remote_port;             /*!< Remote port address for UDP connection */
             uint8_t fau;                        /*!< Free after use flag to free memory after data are sent (or not) */
             size_t* bw;                         /*!< Number of bytes written so far */
             uint8_t val_id;                     /*!< Connection current validation ID when command was sent to queue */
@@ -440,24 +440,24 @@ typedef struct gsm_msg {
             size_t pos;                         /*!< Set on +CMGS response if command is OK */
         } sms_send;                             /*!< Send SMS */
         struct {
-            gsm_mem_t mem;                      /*!< Memory to read from */
+            lwgsm_mem_t mem;                      /*!< Memory to read from */
             size_t pos;                         /*!< SMS position in memory */
-            gsm_sms_entry_t* entry;             /*!< Pointer to entry to write info */
+            lwgsm_sms_entry_t* entry;             /*!< Pointer to entry to write info */
             uint8_t update;                     /*!< Update SMS status after read operation */
             uint8_t format;                     /*!< SMS format, `0 = PDU`, `1 = text` */
             uint8_t read;                       /*!< Read the data flag */
         } sms_read;                             /*!< Read single SMS */
         struct {
-            gsm_mem_t mem;                      /*!< Memory to delete from */
+            lwgsm_mem_t mem;                      /*!< Memory to delete from */
             size_t pos;                         /*!< SMS position in memory */
         } sms_delete;                           /*!< Delete SMS message */
         struct {
-            gsm_sms_status_t status;            /*!< SMS status to delete */
+            lwgsm_sms_status_t status;            /*!< SMS status to delete */
         } sms_delete_all;                       /*!< Mass delete SMS messages */
         struct {
-            gsm_mem_t mem;                      /*!< Memory to use for read */
-            gsm_sms_status_t status;            /*!< SMS entries status */
-            gsm_sms_entry_t* entries;           /*!< Pointer to entries */
+            lwgsm_mem_t mem;                      /*!< Memory to use for read */
+            lwgsm_sms_status_t status;            /*!< SMS entries status */
+            lwgsm_sms_entry_t* entries;           /*!< Pointer to entries */
             size_t etr;                         /*!< Entries to read (array length) */
             size_t ei;                          /*!< Current entry index in array */
             size_t* er;                         /*!< Final entries read pointer for user */
@@ -466,7 +466,7 @@ typedef struct gsm_msg {
             uint8_t read;                       /*!< Read the data flag */
         } sms_list;                             /*!< List SMS messages */
         struct {
-            gsm_mem_t mem[3];                   /*!< Array of memories */
+            lwgsm_mem_t mem[3];                   /*!< Array of memories */
         } sms_memory;                           /*!< Set preferred memories */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
@@ -476,24 +476,24 @@ typedef struct gsm_msg {
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
         struct {
-            gsm_mem_t mem;                      /*!< Memory to use */
+            lwgsm_mem_t mem;                      /*!< Memory to use */
             size_t pos;                         /*!< Memory position. Set to 0 to use new one or SIZE_T MAX to delete entry */
             const char* name;                   /*!< Entry name */
             const char* num;                    /*!< Entry number */
-            gsm_number_type_t type;             /*!< Entry phone number type */
+            lwgsm_number_type_t type;             /*!< Entry phone number type */
             uint8_t del;                        /*!< Flag indicates delete */
         } pb_write;                             /*!< Write/Edit/Delete entry */
         struct {
-            gsm_mem_t mem;                      /*!< Memory to use */
+            lwgsm_mem_t mem;                      /*!< Memory to use */
             size_t start_index;                 /*!< Start index in phonebook to read */
-            gsm_pb_entry_t* entries;            /*!< Pointer to entries array */
+            lwgsm_pb_entry_t* entries;            /*!< Pointer to entries array */
             size_t etr;                         /*!< NUmber of entries to read */
             size_t ei;                          /*!< Current entry index */
             size_t* er;                         /*!< Final entries read pointer for user */
         } pb_list;                              /*!< List phonebook entries */
         struct {
-            gsm_mem_t mem;                      /*!< Memory to use */
-            gsm_pb_entry_t* entries;            /*!< Pointer to entries array */
+            lwgsm_mem_t mem;                      /*!< Memory to use */
+            lwgsm_pb_entry_t* entries;            /*!< Pointer to entries array */
             size_t etr;                         /*!< NUmber of entries to read */
             size_t ei;                          /*!< Current entry index */
             size_t* er;                         /*!< Final entries read pointer for user */
@@ -516,17 +516,17 @@ typedef struct gsm_msg {
         } network_attach;                       /*!< Settings for network attach */
 #endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
     } msg;                                      /*!< Group of different possible message contents */
-} gsm_msg_t;
+} lwgsm_msg_t;
 
 /**
  * \brief           IP and MAC structure with netmask and gateway addresses
  */
 typedef struct {
-    gsm_ip_t ip;                                /*!< IP address */
-    gsm_ip_t gw;                                /*!< Gateway address */
-    gsm_ip_t nm;                                /*!< Netmask address */
-    gsm_mac_t mac;                              /*!< MAC address */
-} gsm_ip_mac_t;
+    lwgsm_ip_t ip;                                /*!< IP address */
+    lwgsm_ip_t gw;                                /*!< Gateway address */
+    lwgsm_ip_t nm;                                /*!< Netmask address */
+    lwgsm_mac_t mac;                              /*!< MAC address */
+} lwgsm_ip_mac_t;
 
 /**
  * \brief           Link connection active info
@@ -535,19 +535,19 @@ typedef struct {
     uint8_t failed;                             /*!< Status if connection successful */
     uint8_t num;                                /*!< Connection number */
     uint8_t is_server;                          /*!< Status if connection is client or server */
-    gsm_conn_type_t type;                       /*!< Connection type */
-    gsm_ip_t remote_ip;                         /*!< Remote IP address */
-    gsm_port_t remote_port;                     /*!< Remote port */
-    gsm_port_t local_port;                      /*!< Local port number */
-} gsm_link_conn_t;
+    lwgsm_conn_type_t type;                       /*!< Connection type */
+    lwgsm_ip_t remote_ip;                         /*!< Remote IP address */
+    lwgsm_port_t remote_port;                     /*!< Remote port */
+    lwgsm_port_t local_port;                      /*!< Local port number */
+} lwgsm_link_conn_t;
 
 /**
  * \brief           Callback function linked list prototype
  */
-typedef struct gsm_evt_func {
-    struct gsm_evt_func* next;                  /*!< Next function in the list */
-    gsm_evt_fn fn;                              /*!< Function pointer itself */
-} gsm_evt_func_t;
+typedef struct lwgsm_evt_func {
+    struct lwgsm_evt_func* next;                  /*!< Next function in the list */
+    lwgsm_evt_fn fn;                              /*!< Function pointer itself */
+} lwgsm_evt_func_t;
 
 /**
  * \ingroup         GSM_SMS
@@ -555,10 +555,10 @@ typedef struct gsm_evt_func {
  */
 typedef struct {
     uint32_t mem_available;                     /*!< Bit field of available memories */
-    gsm_mem_t current;                          /*!< Current memory choice */
+    lwgsm_mem_t current;                          /*!< Current memory choice */
     size_t total;                               /*!< Size of memory in units of entries */
     size_t used;                                /*!< Number of used entries */
-} gsm_sms_mem_t;
+} lwgsm_sms_mem_t;
 
 /**
  * \ingroup         GSM_SMS
@@ -568,8 +568,8 @@ typedef struct {
     uint8_t ready;                              /*!< Flag indicating feature ready by device */
     uint8_t enabled;                            /*!< Flag indicating feature enabled */
 
-    gsm_sms_mem_t mem[3];                       /*!< 3 memory info for operation,receive,sent storage */
-} gsm_sms_t;
+    lwgsm_sms_mem_t mem[3];                       /*!< 3 memory info for operation,receive,sent storage */
+} lwgsm_sms_t;
 
 /**
  * \ingroup         GSM_SMS
@@ -577,10 +577,10 @@ typedef struct {
  */
 typedef struct {
     uint32_t mem_available;                     /*!< Bit field of available memories */
-    gsm_mem_t current;                          /*!< Current memory choice */
+    lwgsm_mem_t current;                          /*!< Current memory choice */
     size_t total;                               /*!< Size of memory in units of entries */
     size_t used;                                /*!< Number of used entries */
-} gsm_pb_mem_t;
+} lwgsm_pb_mem_t;
 
 /**
  * \ingroup         GSM_PB
@@ -590,26 +590,26 @@ typedef struct {
     uint8_t ready;                              /*!< Flag indicating feature ready by device */
     uint8_t enabled;                            /*!< Flag indicating feature enabled */
 
-    gsm_pb_mem_t mem;                           /*!< Memory information */
-} gsm_pb_t;
+    lwgsm_pb_mem_t mem;                           /*!< Memory information */
+} lwgsm_pb_t;
 
 /**
  * \brief           SIM structure
  */
 typedef struct {
-    gsm_sim_state_t state;                      /*!< Current SIM status */
-} gsm_sim_t;
+    lwgsm_sim_state_t state;                      /*!< Current SIM status */
+} lwgsm_sim_t;
 
 /**
  * \brief           Network info
  */
 typedef struct {
-    gsm_network_reg_status_t status;            /*!< Network registration status */
-    gsm_operator_curr_t curr_operator;          /*!< Current operator information */
+    lwgsm_network_reg_status_t status;            /*!< Network registration status */
+    lwgsm_operator_curr_t curr_operator;          /*!< Current operator information */
 
     uint8_t is_attached;                        /*!< Flag indicating device is attached and PDP context is active */
-    gsm_ip_t ip_addr;                           /*!< Device IP address when network PDP context is enabled */
-} gsm_network_t;
+    lwgsm_ip_t ip_addr;                           /*!< Device IP address when network PDP context is enabled */
+} lwgsm_network_t;
 
 /**
  * \brief           GSM modules structure
@@ -620,31 +620,31 @@ typedef struct {
     char                model_number[20];       /*!< Device model number */
     char                model_serial_number[20];/*!< Device serial number */
     char                model_revision[20];     /*!< Device revision */
-    gsm_device_model_t  model;                  /*!< Device model */
+    lwgsm_device_model_t  model;                  /*!< Device model */
 
     /* Network&operator specific */
-    gsm_sim_t           sim;                    /*!< SIM data */
-    gsm_network_t       network;                /*!< Network status */
+    lwgsm_sim_t           sim;                    /*!< SIM data */
+    lwgsm_network_t       network;                /*!< Network status */
     int16_t             rssi;                   /*!< RSSI signal strength. `0` = invalid, `-53 % -113` = valid */
 
     /* Device specific */
 #if GSM_CFG_CONN || __DOXYGEN__
     uint8_t             active_conns_cur_parse_num; /*!< Current connection number used for parsing */
 
-    gsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
-    gsm_ipd_t           ipd;                    /*!< Connection incoming data structure */
+    lwgsm_conn_t          conns[GSM_CFG_MAX_CONNS];   /*!< Array of all connection structures */
+    lwgsm_ipd_t           ipd;                    /*!< Connection incoming data structure */
     uint8_t             conn_val_id;            /*!< Validation ID increased each time device connects to network */
 #endif /* GSM_CFG_CONNS || __DOXYGEN__ */
 #if GSM_CFG_SMS || __DOXYGEN__
-    gsm_sms_t           sms;                    /*!< SMS information */
+    lwgsm_sms_t           sms;                    /*!< SMS information */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
-    gsm_pb_t            pb;                     /*!< Phonebook information */
+    lwgsm_pb_t            pb;                     /*!< Phonebook information */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
-    gsm_call_t          call;                   /*!< Call information */
+    lwgsm_call_t          call;                   /*!< Call information */
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
-} gsm_modules_t;
+} lwgsm_modules_t;
 
 /**
  * \brief           GSM global structure
@@ -652,22 +652,22 @@ typedef struct {
 typedef struct {
     size_t              locked_cnt;             /*!< Counter how many times (recursive) stack is currently locked */
 
-    gsm_sys_sem_t       sem_sync;               /*!< Synchronization semaphore between threads */
-    gsm_sys_mbox_t      mbox_producer;          /*!< Producer message queue handle */
-    gsm_sys_mbox_t      mbox_process;           /*!< Consumer message queue handle */
-    gsm_sys_thread_t    thread_produce;         /*!< Producer thread handle */
-    gsm_sys_thread_t    thread_process;         /*!< Processing thread handle */
+    lwgsm_sys_sem_t       sem_sync;               /*!< Synchronization semaphore between threads */
+    lwgsm_sys_mbox_t      mbox_producer;          /*!< Producer message queue handle */
+    lwgsm_sys_mbox_t      mbox_process;           /*!< Consumer message queue handle */
+    lwgsm_sys_thread_t    thread_produce;         /*!< Producer thread handle */
+    lwgsm_sys_thread_t    thread_process;         /*!< Processing thread handle */
 #if !GSM_CFG_INPUT_USE_PROCESS || __DOXYGEN__
-    gsm_buff_t          buff;                   /*!< Input processing buffer */
+    lwgsm_buff_t          buff;                   /*!< Input processing buffer */
 #endif /* !GSM_CFG_INPUT_USE_PROCESS || __DOXYGEN__ */
-    gsm_ll_t            ll;                     /*!< Low level functions */
+    lwgsm_ll_t            ll;                     /*!< Low level functions */
 
-    gsm_msg_t*          msg;                    /*!< Pointer to current user message being executed */
+    lwgsm_msg_t*          msg;                    /*!< Pointer to current user message being executed */
 
-    gsm_evt_t           evt;                    /*!< Callback processing structure */
-    gsm_evt_func_t*     evt_func;               /*!< Callback function linked list */
+    lwgsm_evt_t           evt;                    /*!< Callback processing structure */
+    lwgsm_evt_func_t*     evt_func;               /*!< Callback function linked list */
 
-    gsm_modules_t       m;                      /*!< All modules. When resetting, reset structure */
+    lwgsm_modules_t       m;                      /*!< All modules. When resetting, reset structure */
 
     union {
         struct {
@@ -675,25 +675,25 @@ typedef struct {
             uint8_t     dev_present: 1;         /*!< Flag indicating GSM device is present */
         } f;                                    /*!< Flags structure */
     } status;                                   /*!< Status structure */
-} gsm_t;
+} lwgsm_t;
 
 /**
  * \brief           Memory mapping structure between string and value in app
  */
 typedef struct {
-    gsm_mem_t mem;                              /*!< Mem indication */
+    lwgsm_mem_t mem;                              /*!< Mem indication */
     const char* mem_str;                        /*!< Memory string */
-} gsm_dev_mem_map_t;
+} lwgsm_dev_mem_map_t;
 
 /**
  * \brief           Device models map between model and other information
  */
 typedef struct {
-    gsm_device_model_t model;                   /*!< Device model */
+    lwgsm_device_model_t model;                   /*!< Device model */
     const char* id_str;                         /*!< Model string identification */
     uint8_t is_2g;                              /*!< Status if modem is 2G */
     uint8_t is_lte;                             /*!< Status if modem is LTE */
-} gsm_dev_model_map_t;
+} lwgsm_dev_model_map_t;
 
 /**
  * \ingroup         GSM_UNICODE
@@ -704,7 +704,7 @@ typedef struct {
     uint8_t t;                                  /*!< Total expected length in UTF-8 sequence */
     uint8_t r;                                  /*!< Remaining bytes in UTF-8 sequence */
     lwgsmr_t res;                                 /*!< Current result of processing */
-} gsm_unicode_t;
+} lwgsm_unicode_t;
 
 /**
  * \}
@@ -719,25 +719,25 @@ typedef struct {
  * \{
  */
 
-extern gsm_t                gsm;
+extern lwgsm_t                gsm;
 
-extern const gsm_dev_mem_map_t  gsm_dev_mem_map[];
-extern const size_t         gsm_dev_mem_map_size;
+extern const lwgsm_dev_mem_map_t  lwgsm_dev_mem_map[];
+extern const size_t         lwgsm_dev_mem_map_size;
 
-extern const gsm_dev_model_map_t    gsm_dev_model_map[];
-extern const size_t         gsm_dev_model_map_size;
+extern const lwgsm_dev_model_map_t    lwgsm_dev_model_map[];
+extern const size_t         lwgsm_dev_model_map_size;
 
 #define CMD_IS_CUR(c)       (gsm.msg != NULL && gsm.msg->cmd == (c))
 #define CMD_IS_DEF(c)       (gsm.msg != NULL && gsm.msg->cmd_def == (c))
-#define CMD_GET_CUR()       ((gsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd : GSM_CMD_IDLE)))
-#define CMD_GET_DEF()       ((gsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd_def : GSM_CMD_IDLE)))
+#define CMD_GET_CUR()       ((lwgsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd : GSM_CMD_IDLE)))
+#define CMD_GET_DEF()       ((lwgsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd_def : GSM_CMD_IDLE)))
 
 #define CRLF                "\r\n"
 #define CRLF_LEN            2
 
-#define GSM_MSG_VAR_DEFINE(name)                gsm_msg_t* name
+#define GSM_MSG_VAR_DEFINE(name)                lwgsm_msg_t* name
 #define GSM_MSG_VAR_ALLOC(name, blocking)           do {\
-        (name) = gsm_mem_malloc(sizeof(*(name)));       \
+        (name) = lwgsm_mem_malloc(sizeof(*(name)));       \
         GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
         GSM_DEBUGW(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", sizeof(*(name))); \
         if ((name) == NULL) {                           \
@@ -749,11 +749,11 @@ extern const size_t         gsm_dev_model_map_size;
 #define GSM_MSG_VAR_REF(name)                   (*(name))
 #define GSM_MSG_VAR_FREE(name)                  do {\
         GSM_DEBUGF(GSM_CFG_DBG_VAR | GSM_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (name)); \
-        if (gsm_sys_sem_isvalid(&((name)->sem))) {      \
-            gsm_sys_sem_delete(&((name)->sem));         \
-            gsm_sys_sem_invalid(&((name)->sem));        \
+        if (lwgsm_sys_sem_isvalid(&((name)->sem))) {      \
+            lwgsm_sys_sem_delete(&((name)->sem));         \
+            lwgsm_sys_sem_invalid(&((name)->sem));        \
         }                                               \
-        gsm_mem_free_s((void **)&(name));               \
+        lwgsm_mem_free_s((void **)&(name));               \
     } while (0)
 #if GSM_CFG_USE_API_FUNC_EVT
 #define GSM_MSG_VAR_SET_EVT(name, e_fn, e_arg)  do {\
@@ -772,23 +772,23 @@ extern const size_t         gsm_dev_model_map_size;
 
 #define GSM_PORT2NUM(port)                  ((uint32_t)(port))
 
-const char* gsmi_dbg_msg_to_string(gsm_cmd_t cmd);
+const char* gsmi_dbg_msg_to_string(lwgsm_cmd_t cmd);
 lwgsmr_t      gsmi_process(const void* data, size_t len);
 lwgsmr_t      gsmi_process_buffer(void);
-lwgsmr_t      gsmi_initiate_cmd(gsm_msg_t* msg);
-uint8_t     gsmi_is_valid_conn_ptr(gsm_conn_p conn);
-lwgsmr_t      gsmi_send_cb(gsm_evt_type_t type);
-lwgsmr_t      gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn cb);
+lwgsmr_t      gsmi_initiate_cmd(lwgsm_msg_t* msg);
+uint8_t     gsmi_is_valid_conn_ptr(lwgsm_conn_p conn);
+lwgsmr_t      gsmi_send_cb(lwgsm_evt_type_t type);
+lwgsmr_t      gsmi_send_conn_cb(lwgsm_conn_t* conn, lwgsm_evt_fn cb);
 void        gsmi_conn_init(void);
-lwgsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, lwgsmr_t (*process_fn)(gsm_msg_t*), uint32_t max_block_time);
-uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
+lwgsmr_t      gsmi_send_msg_to_producer_mbox(lwgsm_msg_t* msg, lwgsmr_t (*process_fn)(lwgsm_msg_t*), uint32_t max_block_time);
+uint32_t    gsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout);
 uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
-void        gsmi_conn_start_timeout(gsm_conn_p conn);
+void        gsmi_conn_start_timeout(lwgsm_conn_p conn);
 
 lwgsmr_t      gsmi_get_sim_info(const uint32_t blocking);
 
 void        gsmi_reset_everything(uint8_t forced);
-void        gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, lwgsmr_t err);
+void        gsmi_process_events_for_timeout_or_error(lwgsm_msg_t* msg, lwgsmr_t err);
 
 /**
  * \}

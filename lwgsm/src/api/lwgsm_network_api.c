@@ -51,7 +51,7 @@ static uint32_t network_counter;
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
+lwgsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
     network_apn = apn;
     network_user = user;
     network_pass = pass;
@@ -65,29 +65,29 @@ gsm_network_set_credentials(const char* apn, const char* user, const char* pass)
  * \return          \ref gsmOK on success (when attached), member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_network_request_attach(void) {
+lwgsm_network_request_attach(void) {
     lwgsmr_t res = gsmOK;
     uint8_t do_conn = 0;
 
     /* Check if we need to connect */
-    gsm_core_lock();
+    lwgsm_core_lock();
     if (network_counter == 0) {
-        if (!gsm_network_is_attached()) {
+        if (!lwgsm_network_is_attached()) {
             do_conn = 1;
         }
     }
     if (!do_conn) {
         ++network_counter;
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
 
     /* Connect to network */
     if (do_conn) {
-        res = gsm_network_attach(network_apn, network_user, network_pass, NULL, NULL, 1);
+        res = lwgsm_network_attach(network_apn, network_user, network_pass, NULL, NULL, 1);
         if (res == gsmOK) {
-            gsm_core_lock();
+            lwgsm_core_lock();
             ++network_counter;
-            gsm_core_unlock();
+            lwgsm_core_unlock();
         }
     }
     return res;
@@ -103,12 +103,12 @@ gsm_network_request_attach(void) {
  * \return          \ref gsmOK on success (when attached), member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_network_request_detach(void) {
+lwgsm_network_request_detach(void) {
     lwgsmr_t res = gsmOK;
     uint8_t do_disconn = 0;
 
     /* Check if we need to disconnect */
-    gsm_core_lock();
+    lwgsm_core_lock();
     if (network_counter > 0) {
         if (network_counter == 1) {
             do_disconn = 1;
@@ -116,15 +116,15 @@ gsm_network_request_detach(void) {
             --network_counter;
         }
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
 
     /* Connect to network */
     if (do_disconn) {
-        res = gsm_network_detach(NULL, NULL, 1);
+        res = lwgsm_network_detach(NULL, NULL, 1);
         if (res == gsmOK) {
-            gsm_core_lock();
+            lwgsm_core_lock();
             --network_counter;
-            gsm_core_unlock();
+            lwgsm_core_unlock();
         }
     }
     return res;

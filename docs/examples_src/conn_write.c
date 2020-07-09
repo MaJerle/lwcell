@@ -1,5 +1,5 @@
 size_t rem_len;
-gsm_conn_p conn;
+lwgsm_conn_p conn;
 lwgsmr_t res;
 
 /* ... other tasks to make sure connection is established */
@@ -12,11 +12,11 @@ lwgsmr_t res;
  * rem_len will give us response how much bytes
  * is available in memory after write
  */
-res = gsm_conn_write(conn, "My string", 9, 0, &rem_len);
+res = lwgsm_conn_write(conn, "My string", 9, 0, &rem_len);
 if (rem_len == 0) {
     printf("No more memory available for next write!\r\n");
 }
-res = gsm_conn_write(conn, "example.com", 11, 0, &rem_len);
+res = lwgsm_conn_write(conn, "example.com", 11, 0, &rem_len);
 
 /*
  * Data will stay in buffer until buffer is full,
@@ -25,4 +25,4 @@ res = gsm_conn_write(conn, "example.com", 11, 0, &rem_len);
  *
  * It will send out together 20 bytes
  */
-gsm_conn_write(conn, NULL, 0, 1, NULL);
+lwgsm_conn_write(conn, NULL, 0, 1, NULL);

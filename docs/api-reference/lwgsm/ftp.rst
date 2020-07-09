@@ -1,4 +1,4 @@
-.. _api_gsm_ftp:
+.. _api_lwgsm_ftp:
 
 File Transfer Protocol
 ======================

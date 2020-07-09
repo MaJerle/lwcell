@@ -37,15 +37,15 @@
 
 /**
  * \brief           Get current cached SIM state from stack
- * \note            Information is always valid, starting after successful device reset using \ref gsm_reset function call
- * \return          Member of \ref gsm_sim_state_t enumeration
+ * \note            Information is always valid, starting after successful device reset using \ref lwgsm_reset function call
+ * \return          Member of \ref lwgsm_sim_state_t enumeration
  */
-gsm_sim_state_t
-gsm_sim_get_current_state(void) {
-    gsm_sim_state_t state;
-    gsm_core_lock();
+lwgsm_sim_state_t
+lwgsm_sim_get_current_state(void) {
+    lwgsm_sim_state_t state;
+    lwgsm_core_lock();
     state = gsm.m.sim.state;
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return state;
 }
 
@@ -58,8 +58,8 @@ gsm_sim_get_current_state(void) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_sim_pin_enter(const char* pin,
-                  const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_enter(const char* pin,
+                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);
@@ -76,7 +76,7 @@ gsm_sim_pin_enter(const char* pin,
 /**
  * \brief           Add pin number to open SIM card
  * \note            Use this function only if your SIM card doesn't have PIN code.
- *                  If you wish to change current pin, use \ref gsm_sim_pin_change instead
+ *                  If you wish to change current pin, use \ref lwgsm_sim_pin_change instead
  * \param[in]       pin: Current SIM pin code
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
@@ -84,8 +84,8 @@ gsm_sim_pin_enter(const char* pin,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_sim_pin_add(const char* pin,
-                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_add(const char* pin,
+                const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);
@@ -108,8 +108,8 @@ gsm_sim_pin_add(const char* pin,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_sim_pin_change(const char* pin, const char* new_pin,
-                   const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_change(const char* pin, const char* new_pin,
+                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);
@@ -133,8 +133,8 @@ gsm_sim_pin_change(const char* pin, const char* new_pin,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_sim_pin_remove(const char* pin,
-                   const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_remove(const char* pin,
+                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("pin != NULL", pin != NULL);
@@ -157,8 +157,8 @@ gsm_sim_pin_remove(const char* pin,
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_sim_puk_enter(const char* puk, const char* new_pin,
-                  const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_puk_enter(const char* puk, const char* new_pin,
+                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("puk != NULL", puk != NULL);

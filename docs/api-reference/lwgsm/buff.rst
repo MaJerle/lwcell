@@ -1,4 +1,4 @@
-.. _api_gsm_buff:
+.. _api_lwgsm_buff:
 
 Ring buffer
 ===========

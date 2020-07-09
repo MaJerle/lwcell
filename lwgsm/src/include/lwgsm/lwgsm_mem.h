@@ -55,17 +55,17 @@ extern "C" {
 typedef struct {
     void* start_addr;                           /*!< Start address of region */
     size_t size;                                /*!< Size in units of bytes of region */
-} gsm_mem_region_t;
+} lwgsm_mem_region_t;
 
-uint8_t gsm_mem_assignmemory(const gsm_mem_region_t* regions, size_t size);
+uint8_t lwgsm_mem_assignmemory(const lwgsm_mem_region_t* regions, size_t size);
 
 #endif /* !GSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
 
-void*   gsm_mem_malloc(size_t size);
-void*   gsm_mem_realloc(void* ptr, size_t size);
-void*   gsm_mem_calloc(size_t num, size_t size);
-void    gsm_mem_free(void* ptr);
-uint8_t gsm_mem_free_s(void** ptr);
+void*   lwgsm_mem_malloc(size_t size);
+void*   lwgsm_mem_realloc(void* ptr, size_t size);
+void*   lwgsm_mem_calloc(size_t num, size_t size);
+void    lwgsm_mem_free(void* ptr);
+uint8_t lwgsm_mem_free_s(void** ptr);
 
 
 /**

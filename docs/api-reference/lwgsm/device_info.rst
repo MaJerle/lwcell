@@ -1,4 +1,4 @@
-.. _api_gsm_device_info:
+.. _api_lwgsm_device_info:
 
 Device info
 ===========

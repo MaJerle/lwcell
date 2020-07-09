@@ -1,4 +1,4 @@
-.. _api_gsm_ussd:
+.. _api_lwgsm_ussd:
 
 Unstructured Supplementary Service Data
 =======================================

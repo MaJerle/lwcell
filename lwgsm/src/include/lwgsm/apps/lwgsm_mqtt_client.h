@@ -55,14 +55,14 @@ typedef enum {
     GSM_MQTT_QOS_AT_MOST_ONCE = 0x00,           /*!< Delivery is not guaranteed to arrive, but can arrive `up to 1 time` = non-critical packets where losses are allowed */
     GSM_MQTT_QOS_AT_LEAST_ONCE = 0x01,          /*!< Delivery is quaranteed `at least once`, but it may be delivered multiple times with the same content */
     GSM_MQTT_QOS_EXACTLY_ONCE = 0x02,           /*!< Delivery is quaranteed `exactly once` = very critical packets such as billing informations or similar */
-} gsm_mqtt_qos_t;
+} lwgsm_mqtt_qos_t;
 
-struct gsm_mqtt_client;
+struct lwgsm_mqtt_client;
 
 /**
- * \brief           Pointer to \ref gsm_mqtt_client_t structure
+ * \brief           Pointer to \ref lwgsm_mqtt_client_t structure
  */
-typedef struct gsm_mqtt_client* gsm_mqtt_client_p;
+typedef struct lwgsm_mqtt_client* lwgsm_mqtt_client_p;
 
 /**
  * \brief           State of MQTT client
@@ -73,7 +73,7 @@ typedef enum {
     GSM_MQTT_CONN_DISCONNECTING,                /*!< Client connection is disconnecting from server */
     GSM_MQTT_CONNECTING,                        /*!< MQTT client is connecting... CONNECT command has been sent to server */
     GSM_MQTT_CONNECTED,                         /*!< MQTT is fully connected and ready to send data on topics */
-} gsm_mqtt_state_t;
+} lwgsm_mqtt_state_t;
 
 /**
  * \brief           MQTT client information structure
@@ -89,8 +89,8 @@ typedef struct {
 
     const char* will_topic;                     /*!< Will topic */
     const char* will_message;                   /*!< Will message */
-    gsm_mqtt_qos_t will_qos;                    /*!< Will topic quality of service */
-} gsm_mqtt_client_info_t;
+    lwgsm_mqtt_qos_t will_qos;                    /*!< Will topic quality of service */
+} lwgsm_mqtt_client_info_t;
 
 /**
  * \brief           MQTT request object
@@ -104,7 +104,7 @@ typedef struct {
                                                     on connection before we can say "packet was sent". */
 
     uint32_t timeout_start_time;                /*!< Timeout start time in units of milliseconds */
-} gsm_mqtt_request_t;
+} lwgsm_mqtt_request_t;
 
 /**
  * \brief           MQTT event types
@@ -120,7 +120,7 @@ typedef enum {
     GSM_MQTT_EVT_PUBLISH_RECV,                  /*!< MQTT client received a publish message from server */
     GSM_MQTT_EVT_DISCONNECT,                    /*!< MQTT client disconnected from MQTT server */
     GSM_MQTT_EVT_KEEP_ALIVE,                    /*!< MQTT keep-alive sent to server and reply received */
-} gsm_mqtt_evt_type_t;
+} lwgsm_mqtt_evt_type_t;
 
 /**
  * \brief           List of possible results from MQTT server when executing connect command
@@ -133,16 +133,16 @@ typedef enum {
     GSM_MQTT_CONN_STATUS_REFUSED_USER_PASS =        0x04,   /*!< Connection refused, bad user name or password */
     GSM_MQTT_CONN_STATUS_REFUSED_NOT_AUTHORIZED =   0x05,   /*!< Connection refused, not authorized */
     GSM_MQTT_CONN_STATUS_TCP_FAILED =               0x100,  /*!< TCP connection to server was not successful */
-} gsm_mqtt_conn_status_t;
+} lwgsm_mqtt_conn_status_t;
 
 /**
  * \brief           MQTT event structure for callback function
  */
 typedef struct {
-    gsm_mqtt_evt_type_t type;                   /*!< Event type */
+    lwgsm_mqtt_evt_type_t type;                   /*!< Event type */
     union {
         struct {
-            gsm_mqtt_conn_status_t status;      /*!< Connection status with MQTT */
+            lwgsm_mqtt_conn_status_t status;      /*!< Connection status with MQTT */
         } connect;                              /*!< Event for connecting to server */
         struct {
             uint8_t is_accepted;                /*!< Status if client was accepted to MQTT prior disconnect event */
@@ -161,32 +161,32 @@ typedef struct {
             const void* payload;                /*!< Topic payload */
             size_t payload_len;                 /*!< Length of topic payload */
             uint8_t dup;                        /*!< Duplicate flag if message was sent again */
-            gsm_mqtt_qos_t qos;                 /*!< Received packet quality of service */
+            lwgsm_mqtt_qos_t qos;                 /*!< Received packet quality of service */
         } publish_recv;                         /*!< Publish received event */
     } evt;                                      /*!< Event data parameters */
-} gsm_mqtt_evt_t;
+} lwgsm_mqtt_evt_t;
 
 /**
  * \brief           MQTT event callback function
  * \param[in]       client: MQTT client
  * \param[in]       evt: MQTT event with type and related data
  */
-typedef void        (*gsm_mqtt_evt_fn)(gsm_mqtt_client_p client, gsm_mqtt_evt_t* evt);
+typedef void        (*lwgsm_mqtt_evt_fn)(lwgsm_mqtt_client_p client, lwgsm_mqtt_evt_t* evt);
 
-gsm_mqtt_client_p   gsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len);
-void                gsm_mqtt_client_delete(gsm_mqtt_client_p client);
+lwgsm_mqtt_client_p   lwgsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len);
+void                lwgsm_mqtt_client_delete(lwgsm_mqtt_client_p client);
 
-lwgsmr_t              gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t port, gsm_mqtt_evt_fn evt_fn, const gsm_mqtt_client_info_t* info);
-lwgsmr_t              gsm_mqtt_client_disconnect(gsm_mqtt_client_p client);
-uint8_t             gsm_mqtt_client_is_connected(gsm_mqtt_client_p client);
+lwgsmr_t              lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_port_t port, lwgsm_mqtt_evt_fn evt_fn, const lwgsm_mqtt_client_info_t* info);
+lwgsmr_t              lwgsm_mqtt_client_disconnect(lwgsm_mqtt_client_p client);
+uint8_t             lwgsm_mqtt_client_is_connected(lwgsm_mqtt_client_p client);
 
-lwgsmr_t              gsm_mqtt_client_subscribe(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void* arg);
-lwgsmr_t              gsm_mqtt_client_unsubscribe(gsm_mqtt_client_p client, const char* topic, void* arg);
+lwgsmr_t              lwgsm_mqtt_client_subscribe(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qos, void* arg);
+lwgsmr_t              lwgsm_mqtt_client_unsubscribe(lwgsm_mqtt_client_p client, const char* topic, void* arg);
 
-lwgsmr_t              gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void* payload, uint16_t len, gsm_mqtt_qos_t qos, uint8_t retain, void* arg);
+lwgsmr_t              lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const void* payload, uint16_t len, lwgsm_mqtt_qos_t qos, uint8_t retain, void* arg);
 
-void*               gsm_mqtt_client_get_arg(gsm_mqtt_client_p client);
-void                gsm_mqtt_client_set_arg(gsm_mqtt_client_p client, void* arg);
+void*               lwgsm_mqtt_client_get_arg(lwgsm_mqtt_client_p client);
+void                lwgsm_mqtt_client_set_arg(lwgsm_mqtt_client_p client, void* arg);
 
 /**
  * \}

@@ -27,13 +27,13 @@ request_header[] = ""
 void
 netconn_client_thread(void const* arg) {
     lwgsmr_t res;
-    gsm_pbuf_p pbuf;
-    gsm_netconn_p client;
-    gsm_sys_sem_t* sem = (void*)arg;
+    lwgsm_pbuf_p pbuf;
+    lwgsm_netconn_p client;
+    lwgsm_sys_sem_t* sem = (void*)arg;
 
     /* Request attach to network */
-    while (gsm_network_request_attach() != gsmOK) {
-        gsm_delay(1000);
+    while (lwgsm_network_request_attach() != gsmOK) {
+        lwgsm_delay(1000);
     }
 
     /*
@@ -41,7 +41,7 @@ netconn_client_thread(void const* arg) {
      * connection and initialize system message boxes
      * to accept received packet buffers
      */
-    client = gsm_netconn_new(GSM_NETCONN_TYPE_TCP);
+    client = lwgsm_netconn_new(GSM_NETCONN_TYPE_TCP);
     if (client != NULL) {
         /*
          * Connect to external server as client
@@ -49,12 +49,12 @@ netconn_client_thread(void const* arg) {
          *
          * Function will block thread until we are successfully connected (or not) to server
          */
-        res = gsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT);
+        res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT);
         if (res == gsmOK) {                     /* Are we successfully connected? */
             printf("Connected to " NETCONN_HOST "\r\n");
-            res = gsm_netconn_write(client, request_header, sizeof(request_header) - 1);    /* Send data to server */
+            res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1);    /* Send data to server */
             if (res == gsmOK) {
-                res = gsm_netconn_flush(client);/* Flush data to output */
+                res = lwgsm_netconn_flush(client);/* Flush data to output */
             }
             if (res == gsmOK) {                 /* Were data sent? */
                 printf("Data were successfully sent to server\r\n");
@@ -75,7 +75,7 @@ netconn_client_thread(void const* arg) {
                      * Returned status will give you info in case connection
                      * was closed too early from remote side
                      */
-                    res = gsm_netconn_receive(client, &pbuf);
+                    res = lwgsm_netconn_receive(client, &pbuf);
                     if (res == gsmCLOSED) {     /* Was the connection closed? This can be checked by return status of receive function */
                         printf("Connection closed by remote side...\r\n");
                         break;
@@ -91,8 +91,8 @@ netconn_client_thread(void const* arg) {
                          * After you are done using it, it is important
                          * you free the memory otherwise memory leaks will appear
                          */
-                        printf("Received new data packet of %d bytes\r\n", (int)gsm_pbuf_length(pbuf, 1));
-                        gsm_pbuf_free(pbuf);    /* Free the memory after usage */
+                        printf("Received new data packet of %d bytes\r\n", (int)lwgsm_pbuf_length(pbuf, 1));
+                        lwgsm_pbuf_free(pbuf);    /* Free the memory after usage */
                         pbuf = NULL;
                     }
                 } while (1);
@@ -105,19 +105,19 @@ netconn_client_thread(void const* arg) {
              * and in case it wasn't, close it manually
              */
             if (res != gsmCLOSED) {
-                gsm_netconn_close(client);
+                lwgsm_netconn_close(client);
             }
         } else {
             printf("Cannot connect to remote host %s:%d!\r\n", NETCONN_HOST, NETCONN_PORT);
         }
-        gsm_netconn_delete(client);             /* Delete netconn structure */
+        lwgsm_netconn_delete(client);             /* Delete netconn structure */
     }
-    gsm_network_request_detach();               /* Detach from network */
+    lwgsm_network_request_detach();               /* Detach from network */
 
-    if (gsm_sys_sem_isvalid(sem)) {
-        gsm_sys_sem_release(sem);
+    if (lwgsm_sys_sem_isvalid(sem)) {
+        lwgsm_sys_sem_release(sem);
     }
-    gsm_sys_thread_terminate(NULL);             /* Terminate current thread */
+    lwgsm_sys_thread_terminate(NULL);             /* Terminate current thread */
 }
 
 #endif /* GSM_CFG_NETCONN */

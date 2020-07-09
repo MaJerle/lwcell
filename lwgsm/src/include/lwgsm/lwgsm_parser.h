@@ -42,8 +42,8 @@ extern "C" {
 
 int32_t     gsmi_parse_number(const char** str);
 uint8_t     gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim);
-uint8_t     gsmi_parse_ip(const char** src, gsm_ip_t* ip);
-uint8_t     gsmi_parse_mac(const char** src, gsm_mac_t* mac);
+uint8_t     gsmi_parse_ip(const char** src, lwgsm_ip_t* ip);
+uint8_t     gsmi_parse_mac(const char** src, lwgsm_mac_t* mac);
 
 uint8_t     gsmi_parse_cpin(const char* str, uint8_t send_evt);
 uint8_t     gsmi_parse_creg(const char* str, uint8_t skip_first);

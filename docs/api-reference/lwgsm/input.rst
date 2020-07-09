@@ -1,4 +1,4 @@
-.. _api_gsm_input:
+.. _api_lwgsm_input:
 
 Input module
 ============
@@ -6,8 +6,8 @@ Input module
 Input module is used to input received data from *GSM* device to *GSM-AT-Lib* middleware part.
 ``2`` processing options are possible:
 
-* Indirect processing with :cpp:func:`gsm_input` (default mode)
-* Direct processing with :cpp:func:`gsm_input_process`
+* Indirect processing with :cpp:func:`lwgsm_input` (default mode)
+* Direct processing with :cpp:func:`lwgsm_input_process`
 
 .. tip::
     Direct or indirect processing mode is select by setting :c:macro:`GSM_CFG_INPUT_USE_PROCESS` configuration value.
@@ -18,7 +18,7 @@ Indirect processing
 With indirect processing mode, every received character from *GSM* physical device is written to
 intermediate buffer between low-level driver and *processing* thread.
 
-Function :cpp:func:`gsm_input` is used to write data to buffer, which is later processed
+Function :cpp:func:`lwgsm_input` is used to write data to buffer, which is later processed
 by *processing* thread. 
 
 Indirect processing mode allows embedded systems to write received data to buffer from interrupt context (outside threads).
@@ -33,7 +33,7 @@ It is developed with DMA support in mind, allowing low-level drivers to skip int
 and process input bytes directly.
 
 .. note::
-	When using this mode, function :cpp:func:`gsm_input_process` must be used and it may
+	When using this mode, function :cpp:func:`lwgsm_input_process` must be used and it may
 	only be called from thread context. Processing of input bytes is done in low-level
 	input thread, started by application.
 

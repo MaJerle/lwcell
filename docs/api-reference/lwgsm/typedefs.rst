@@ -1,4 +1,4 @@
-.. _api_gsm_typedefs:
+.. _api_lwgsm_typedefs:
 
 Structures and enumerations
 ===========================

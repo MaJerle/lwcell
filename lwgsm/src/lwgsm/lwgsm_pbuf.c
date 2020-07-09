@@ -36,7 +36,7 @@
 #include "lwgsm/lwgsm_mem.h"
 
 /* Set size of pbuf structure */
-#define SIZEOF_PBUF_STRUCT          GSM_MEM_ALIGN(sizeof(gsm_pbuf_t))
+#define SIZEOF_PBUF_STRUCT          GSM_MEM_ALIGN(sizeof(lwgsm_pbuf_t))
 #define SET_NEW_LEN(v, len)         do { if ((v) != NULL) { *(v) = (len); } } while (0)
 
 /**
@@ -46,8 +46,8 @@
  * \param[out]      new_off: New offset on new returned pbuf
  * \return          New pbuf where offset was found, `NULL` if offset too big for pbuf chain
  */
-static gsm_pbuf_p
-pbuf_skip(gsm_pbuf_p p, size_t off, size_t* new_off) {
+static lwgsm_pbuf_p
+pbuf_skip(lwgsm_pbuf_p p, size_t off, size_t* new_off) {
     if (p == NULL || p->tot_len < off) {        /* Check valid parameters */
         SET_NEW_LEN(new_off, 0);                /* Set output value */
         return NULL;
@@ -67,11 +67,11 @@ pbuf_skip(gsm_pbuf_p p, size_t off, size_t* new_off) {
  * \param[in]       len: Length of payload memory to allocate
  * \return          Pointer to allocated memory, `NULL` otherwise
  */
-gsm_pbuf_p
-gsm_pbuf_new(size_t len) {
-    gsm_pbuf_p p;
+lwgsm_pbuf_p
+lwgsm_pbuf_new(size_t len) {
+    lwgsm_pbuf_p p;
 
-    p = gsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
+    p = lwgsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
     GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p == NULL,
                "[PBUF] Failed to allocate %d bytes\r\n", (int)len);
     GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p != NULL,
@@ -92,8 +92,8 @@ gsm_pbuf_new(size_t len) {
  * \return          Number of freed pbufs from head
  */
 size_t
-gsm_pbuf_free(gsm_pbuf_p pbuf) {
-    gsm_pbuf_p p, pn;
+lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
+    lwgsm_pbuf_p p, pn;
     size_t ref, cnt;
 
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);
@@ -104,14 +104,14 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
      */
     cnt = 0;
     for (p = pbuf; p != NULL;) {
-        gsm_core_lock();
+        lwgsm_core_lock();
         ref = --p->ref;                         /* Decrease current value and save it */
-        gsm_core_unlock();
+        lwgsm_core_unlock();
         if (ref == 0) {                         /* Did we reach 0 and are ready to free it? */
             GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
                        "[PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
             pn = p->next;                       /* Save next entry */
-            gsm_mem_free_s((void**)&p);         /* Free memory for pbuf */
+            lwgsm_mem_free_s((void**)&p);         /* Free memory for pbuf */
             p = pn;                             /* Restore with next entry */
             ++cnt;                              /* Increase number of freed pbufs */
         } else {
@@ -125,15 +125,15 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
  * \brief           Concatenate `2` packet buffers together to one big packet
  * \note            After `tail` pbuf has been added to `head` pbuf chain,
  *                  it must not be referenced by user anymore as it is now completelly controlled by `head` pbuf.
- *                  In simple words, when user calls this function, it should not call \ref gsm_pbuf_free function anymore,
+ *                  In simple words, when user calls this function, it should not call \ref lwgsm_pbuf_free function anymore,
  *                  as it might make memory undefined for `head` pbuf.
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
- * \sa              gsm_pbuf_chain
+ * \sa              lwgsm_pbuf_chain
  */
 lwgsmr_t
-gsm_pbuf_cat(gsm_pbuf_p head, const gsm_pbuf_p tail) {
+lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
     GSM_ASSERT("head != NULL", head != NULL);
     GSM_ASSERT("tail != NULL", tail != NULL);
 
@@ -151,26 +151,26 @@ gsm_pbuf_cat(gsm_pbuf_p head, const gsm_pbuf_p tail) {
 }
 
 /**
- * \brief           Chain 2 pbufs together. Similar to \ref gsm_pbuf_cat
+ * \brief           Chain 2 pbufs together. Similar to \ref lwgsm_pbuf_cat
  *                  but now new reference is done from head pbuf to tail pbuf.
- * \note            After this function call, user must call \ref gsm_pbuf_free to remove
- *                  its reference to tail pbuf and allow control to head pbuf: gsm_pbuf_free(tail)
+ * \note            After this function call, user must call \ref lwgsm_pbuf_free to remove
+ *                  its reference to tail pbuf and allow control to head pbuf: lwgsm_pbuf_free(tail)
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
- * \sa              gsm_pbuf_cat
+ * \sa              lwgsm_pbuf_cat
  */
 lwgsmr_t
-gsm_pbuf_chain(gsm_pbuf_p head, gsm_pbuf_p tail) {
+lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
     lwgsmr_t res;
 
     /*
      * To prevent issues with multi-thread access,
      * first reference pbuf and increase counter
      */
-    gsm_pbuf_ref(tail);                         /* Reference tail pbuf by head pbuf now */
-    if ((res = gsm_pbuf_cat(head, tail)) != gsmOK) {    /* Did we contencate them together successfully? */
-        gsm_pbuf_free(tail);                    /* Call free to decrease reference counter */
+    lwgsm_pbuf_ref(tail);                         /* Reference tail pbuf by head pbuf now */
+    if ((res = lwgsm_pbuf_cat(head, tail)) != gsmOK) {    /* Did we contencate them together successfully? */
+        lwgsm_pbuf_free(tail);                    /* Call free to decrease reference counter */
     }
     return res;
 }
@@ -184,9 +184,9 @@ gsm_pbuf_chain(gsm_pbuf_p head, gsm_pbuf_p tail) {
  * \param[in]       head: First pbuf in chain to remove from chain
  * \return          Next pbuf after `head`
  */
-gsm_pbuf_p
-gsm_pbuf_unchain(gsm_pbuf_p head) {
-    gsm_pbuf_p r = NULL;
+lwgsm_pbuf_p
+lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
+    lwgsm_pbuf_p r = NULL;
     if (head != NULL && head->next != NULL) {   /* Check for valid pbuf */
         r = head->next;                         /* Set return value as next pbuf */
 
@@ -202,7 +202,7 @@ gsm_pbuf_unchain(gsm_pbuf_p head) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_pbuf_ref(gsm_pbuf_p pbuf) {
+lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
     ++pbuf->ref;                                /* Increase reference count for pbuf */
@@ -218,7 +218,7 @@ gsm_pbuf_ref(gsm_pbuf_p pbuf) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
+lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
     const uint8_t* d = data;
     size_t copy_len;
 
@@ -267,7 +267,7 @@ gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
  * \return          Number of bytes copied
  */
 size_t
-gsm_pbuf_copy(gsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
+lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
     size_t tot, tc;
     uint8_t* d = data;
 
@@ -310,8 +310,8 @@ gsm_pbuf_copy(gsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_pbuf_get_at(const gsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
-    gsm_pbuf_p p;
+lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
+    lwgsm_pbuf_p p;
 
     if (pbuf != NULL) {
         p = pbuf_skip(pbuf, pos, &pos);         /* Skip pbufs to desired position and get new offset from new pbuf */
@@ -330,17 +330,17 @@ gsm_pbuf_get_at(const gsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
  * \param[in]       len: Length of needle memory
  * \param[in]       off: Starting offset in pbuf memory
  * \return          `GSM_SIZET_MAX` if no match or position where in pbuf we have a match
- * \sa              gsm_pbuf_strfind
+ * \sa              lwgsm_pbuf_strfind
  */
 size_t
-gsm_pbuf_memfind(const gsm_pbuf_p pbuf, const void* needle, size_t len, size_t off) {
+lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* needle, size_t len, size_t off) {
     if (pbuf != NULL && needle != NULL && pbuf->tot_len >= (len + off)) {   /* Check if valid entries */
         /*
          * Try entire buffer element by element
          * and in case we have a match, report it
          */
         for (size_t i = off; i <= pbuf->tot_len - len; ++i) {
-            if (!gsm_pbuf_memcmp(pbuf, needle, len, i)) {   /* Check if identical */
+            if (!lwgsm_pbuf_memcmp(pbuf, needle, len, i)) {   /* Check if identical */
                 return i;                       /* We have a match! */
             }
         }
@@ -354,11 +354,11 @@ gsm_pbuf_memfind(const gsm_pbuf_p pbuf, const void* needle, size_t len, size_t o
  * \param[in]       str: String to search for in pbuf
  * \param[in]       off: Starting offset in pbuf memory
  * \return          `GSM_SIZET_MAX` if no match or position where in pbuf we have a match
- * \sa              gsm_pbuf_memfind
+ * \sa              lwgsm_pbuf_memfind
  */
 size_t
-gsm_pbuf_strfind(const gsm_pbuf_p pbuf, const char* str, size_t off) {
-    return gsm_pbuf_memfind(pbuf, str, strlen(str), off);
+lwgsm_pbuf_strfind(const lwgsm_pbuf_p pbuf, const char* str, size_t off) {
+    return lwgsm_pbuf_memfind(pbuf, str, strlen(str), off);
 }
 
 /**
@@ -369,11 +369,11 @@ gsm_pbuf_strfind(const gsm_pbuf_p pbuf, const char* str, size_t off) {
  * \param[in]       len: Length of input data in units of bytes
  * \param[in]       offset: Start offset to use when comparing data
  * \return          `0` if equal, `GSM_SIZET_MAX` if memory/offset too big or anything between if not equal
- * \sa              gsm_pbuf_strcmp
+ * \sa              lwgsm_pbuf_strcmp
  */
 size_t
-gsm_pbuf_memcmp(const gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
-    gsm_pbuf_p p;
+lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
+    lwgsm_pbuf_p p;
     uint8_t el;
     const uint8_t* d = data;
 
@@ -397,7 +397,7 @@ gsm_pbuf_memcmp(const gsm_pbuf_p pbuf, const void* data, size_t len, size_t offs
      * Use byte by byte read function to inspect bytes separatelly
      */
     for (size_t i = 0; i < len; ++i) {
-        if (!gsm_pbuf_get_at(p, offset + i, &el) || el != d[i]) {   /* Get value from pbuf at specific offset */
+        if (!lwgsm_pbuf_get_at(p, offset + i, &el) || el != d[i]) {   /* Get value from pbuf at specific offset */
             return offset + 1;                  /* Return value from offset where it failed */
         }
     }
@@ -411,11 +411,11 @@ gsm_pbuf_memcmp(const gsm_pbuf_p pbuf, const void* data, size_t len, size_t offs
  * \param[in]       str: String to be compared with pbuf
  * \param[in]       offset: Start memory offset in pbuf
  * \return          `0` if equal, `GSM_SIZET_MAX` if memory/offset too big or anything between if not equal
- * \sa              gsm_pbuf_memcmp
+ * \sa              lwgsm_pbuf_memcmp
  */
 size_t
-gsm_pbuf_strcmp(const gsm_pbuf_p pbuf, const char* str, size_t offset) {
-    return gsm_pbuf_memcmp(pbuf, str, strlen(str), offset);
+lwgsm_pbuf_strcmp(const lwgsm_pbuf_p pbuf, const char* str, size_t offset) {
+    return lwgsm_pbuf_memcmp(pbuf, str, strlen(str), offset);
 }
 
 /**
@@ -428,8 +428,8 @@ gsm_pbuf_strcmp(const gsm_pbuf_p pbuf, const char* str, size_t offset) {
  * \return          Pointer to memory on success, `NULL` otherwise
  */
 void*
-gsm_pbuf_get_linear_addr(const gsm_pbuf_p pbuf, size_t offset, size_t* new_len) {
-    gsm_pbuf_p p = pbuf;
+lwgsm_pbuf_get_linear_addr(const lwgsm_pbuf_p pbuf, size_t offset, size_t* new_len) {
+    lwgsm_pbuf_p p = pbuf;
 
     if (pbuf == NULL || pbuf->tot_len < offset) {   /* Check input parameters */
         SET_NEW_LEN(new_len, 0);
@@ -453,7 +453,7 @@ gsm_pbuf_get_linear_addr(const gsm_pbuf_p pbuf, size_t offset, size_t* new_len) 
  * \return          Pointer to data buffer on success, `NULL` otherwise
  */
 void*
-gsm_pbuf_data(const gsm_pbuf_p pbuf) {
+lwgsm_pbuf_data(const lwgsm_pbuf_p pbuf) {
     return pbuf != NULL ? pbuf->payload : NULL;
 }
 
@@ -464,7 +464,7 @@ gsm_pbuf_data(const gsm_pbuf_p pbuf) {
  * \return          Length of data in units of bytes
  */
 size_t
-gsm_pbuf_length(const gsm_pbuf_p pbuf, uint8_t tot) {
+lwgsm_pbuf_length(const lwgsm_pbuf_p pbuf, uint8_t tot) {
     return pbuf != NULL ? (tot ? pbuf->tot_len : pbuf->len) : 0;
 }
 
@@ -475,7 +475,7 @@ gsm_pbuf_length(const gsm_pbuf_p pbuf, uint8_t tot) {
  * \param[in]       port: Port number to assign to packet buffer
  */
 void
-gsm_pbuf_set_ip(gsm_pbuf_p pbuf, const gsm_ip_t* ip, gsm_port_t port) {
+lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm_port_t port) {
     if (pbuf != NULL && ip != NULL) {
         GSM_MEMCPY(&pbuf->ip, ip, sizeof(*ip));
         pbuf->port = port;
@@ -495,7 +495,7 @@ gsm_pbuf_set_ip(gsm_pbuf_p pbuf, const gsm_ip_t* ip, gsm_port_t port) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsm_pbuf_advance(gsm_pbuf_p pbuf, int len) {
+lwgsm_pbuf_advance(lwgsm_pbuf_p pbuf, int len) {
     uint8_t process = 0;
     if (pbuf == NULL || len == 0) {
         return 0;
@@ -526,8 +526,8 @@ gsm_pbuf_advance(gsm_pbuf_p pbuf, int len) {
  * \param[out]      new_offset: Pointer to output variable to save new offset in returned pbuf
  * \return          New pbuf on success, `NULL` otherwise
  */
-gsm_pbuf_p
-gsm_pbuf_skip(gsm_pbuf_p pbuf, size_t offset, size_t* new_offset) {
+lwgsm_pbuf_p
+lwgsm_pbuf_skip(lwgsm_pbuf_p pbuf, size_t offset, size_t* new_offset) {
     return pbuf_skip(pbuf, offset, new_offset); /* Skip pbufs with internal function */
 }
 
@@ -537,7 +537,7 @@ gsm_pbuf_skip(gsm_pbuf_p pbuf, size_t offset, size_t* new_offset) {
  * \param[in]       seq: Set to `1` to dump all `pbufs` in linked list or `0` to dump first one only
  */
 void
-gsm_pbuf_dump(gsm_pbuf_p p, uint8_t seq) {
+lwgsm_pbuf_dump(lwgsm_pbuf_p p, uint8_t seq) {
     if (p != NULL) {
         GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
                    "[PBUF] Dump start: %p\r\n", p);

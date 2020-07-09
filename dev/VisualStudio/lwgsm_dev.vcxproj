@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{87E5EEE1-1C99-458B-A893-DDDB00775631}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamgsmace>gsm_dev_os</RootNamgsmace>
+    <RootNamgsmace>lwgsm_dev_os</RootNamgsmace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

@@ -44,8 +44,8 @@ dedicated for network connection processing. Because of that, by default every f
 It will wait until result is ready to be used by application.
 
 It is, however, possible to enable timeout feature for receiving data only.
-When this feature is enabled, :cpp:func:`gsm_netconn_receive` will block for maximal timeout set with
-:cpp:func:`gsm_netconn_set_receive_timeout` function.
+When this feature is enabled, :cpp:func:`lwgsm_netconn_receive` will block for maximal timeout set with
+:cpp:func:`lwgsm_netconn_set_receive_timeout` function.
 
 When enabled, if there is no received data for timeout amount of time, function will return with timeout status and application needs to process it accordingly.
 

@@ -180,7 +180,7 @@ gsmi_check_and_trim(const char** src) {
  * \return          `1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
+gsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
     const char* p = *src;
 
     if (*p == ',') {
@@ -213,7 +213,7 @@ gsmi_parse_ip(const char** src, gsm_ip_t* ip) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
+gsmi_parse_mac(const char** src, lwgsm_mac_t* mac) {
     const char* p = *src;
 
     if (*p == '"') {
@@ -245,10 +245,10 @@ gsmi_parse_mac(const char** src, gsm_mac_t* mac) {
  * \param[in,out]   src: Pointer to pointer to string to parse from
  * \return          Parsed memory
  */
-gsm_mem_t
+lwgsm_mem_t
 gsmi_parse_memory(const char** src) {
     size_t i, sl;
-    gsm_mem_t mem = GSM_MEM_UNKNOWN;
+    lwgsm_mem_t mem = GSM_MEM_UNKNOWN;
     const char* s = *src;
 
     if (*s == ',') {
@@ -259,10 +259,10 @@ gsmi_parse_memory(const char** src) {
     }
 
     /* Scan all memories available for modem */
-    for (i = 0; i < gsm_dev_mem_map_size; ++i) {
-        sl = strlen(gsm_dev_mem_map[i].mem_str);
-        if (!strncmp(s, gsm_dev_mem_map[i].mem_str, sl)) {
-            mem = gsm_dev_mem_map[i].mem;
+    for (i = 0; i < lwgsm_dev_mem_map_size; ++i) {
+        sl = strlen(lwgsm_dev_mem_map[i].mem_str);
+        if (!strncmp(s, lwgsm_dev_mem_map[i].mem_str, sl)) {
+            mem = lwgsm_dev_mem_map[i].mem;
             s += sl;
             break;
         }
@@ -288,7 +288,7 @@ gsmi_parse_memory(const char** src) {
 uint8_t
 gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
     const char* str = *src;
-    gsm_mem_t mem;
+    lwgsm_mem_t mem;
 
     *mem_dst = 0;
     if (*str == ',') {
@@ -323,7 +323,7 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
     if (skip_first) {
         gsmi_parse_number(&str);
     }
-    gsm.m.network.status = (gsm_network_reg_status_t)gsmi_parse_number(&str);
+    gsm.m.network.status = (lwgsm_network_reg_status_t)gsmi_parse_number(&str);
 
     /*
      * In case we are connected to network,
@@ -333,10 +333,10 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
         gsm.m.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
         /* Try to get operator */
         /* Notify user in case we are not able to add new command to queue */
-        gsm_operator_get(&gsm.m.network.curr_operator, NULL, NULL, 0);
+        lwgsm_operator_get(&gsm.m.network.curr_operator, NULL, NULL, 0);
 #if GSM_CFG_NETWORK
-    } else if (gsm_network_is_attached()) {
-        gsm_network_check_status(NULL, NULL, 0);    /* Do the update */
+    } else if (lwgsm_network_is_attached()) {
+        lwgsm_network_check_status(NULL, NULL, 0);    /* Do the update */
 #endif /* GSM_CFG_NETWORK */
     }
 
@@ -385,7 +385,7 @@ gsmi_parse_csq(const char* str) {
  */
 uint8_t
 gsmi_parse_cpin(const char* str, uint8_t send_evt) {
-    gsm_sim_state_t state;
+    lwgsm_sim_state_t state;
     if (*str == '+') {
         str += 7;
     }
@@ -433,9 +433,9 @@ gsmi_parse_cops(const char* str) {
         str += 7;
     }
 
-    gsm.m.network.curr_operator.mode = (gsm_operator_mode_t)gsmi_parse_number(&str);
+    gsm.m.network.curr_operator.mode = (lwgsm_operator_mode_t)gsmi_parse_number(&str);
     if (*str != '\r') {
-        gsm.m.network.curr_operator.format = (gsm_operator_format_t)gsmi_parse_number(&str);
+        gsm.m.network.curr_operator.format = (lwgsm_operator_format_t)gsmi_parse_number(&str);
         if (*str != '\r') {
             switch (gsm.m.network.curr_operator.format) {
                 case GSM_OPERATOR_FORMAT_LONG_NAME:
@@ -516,7 +516,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             size_t i = gsm.msg->msg.cops_scan.opsi;
             switch (u.f.tn) {
                 case 0: {                       /* Parse status info */
-                    gsm.msg->msg.cops_scan.ops[i].stat = (gsm_operator_status_t)(10 * (size_t)gsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
+                    gsm.msg->msg.cops_scan.ops[i].stat = (lwgsm_operator_status_t)(10 * (size_t)gsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
                     break;
                 }
                 case 1: {                       /*!< Parse long name */
@@ -559,7 +559,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_datetime(const char** src, gsm_datetime_t* dt) {
+gsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
     dt->date = gsmi_parse_number(src);
     dt->month = gsmi_parse_number(src);
     dt->year = GSM_U16(2000) + gsmi_parse_number(src);
@@ -586,10 +586,10 @@ gsmi_parse_clcc(const char* str, uint8_t send_evt) {
     }
 
     gsm.m.call.id = gsmi_parse_number(&str);
-    gsm.m.call.dir = (gsm_call_dir_t)gsmi_parse_number(&str);
-    gsm.m.call.state = (gsm_call_state_t)gsmi_parse_number(&str);
-    gsm.m.call.type = (gsm_call_type_t)gsmi_parse_number(&str);
-    gsm.m.call.is_multipart = (gsm_call_type_t)gsmi_parse_number(&str);
+    gsm.m.call.dir = (lwgsm_call_dir_t)gsmi_parse_number(&str);
+    gsm.m.call.state = (lwgsm_call_state_t)gsmi_parse_number(&str);
+    gsm.m.call.type = (lwgsm_call_type_t)gsmi_parse_number(&str);
+    gsm.m.call.is_multipart = (lwgsm_call_type_t)gsmi_parse_number(&str);
     gsmi_parse_string(&str, gsm.m.call.number, sizeof(gsm.m.call.number), 1);
     gsm.m.call.addr_type = gsmi_parse_number(&str);
     gsmi_parse_string(&str, gsm.m.call.name, sizeof(gsm.m.call.name), 1);
@@ -612,8 +612,8 @@ gsmi_parse_clcc(const char* str, uint8_t send_evt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_sms_status(const char** src, gsm_sms_status_t* stat) {
-    gsm_sms_status_t s;
+gsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
+    lwgsm_sms_status_t s;
     char t[11];
 
     gsmi_parse_string(src, t, sizeof(t), 1);    /* Parse string and advance */
@@ -661,7 +661,7 @@ gsmi_parse_cmgs(const char* str, size_t* num) {
  */
 uint8_t
 gsmi_parse_cmgr(const char* str) {
-    gsm_sms_entry_t* e;
+    lwgsm_sms_entry_t* e;
     if (*str == '+') {
         str += 7;
     }
@@ -684,7 +684,7 @@ gsmi_parse_cmgr(const char* str) {
  */
 uint8_t
 gsmi_parse_cmgl(const char* str) {
-    gsm_sms_entry_t* e;
+    lwgsm_sms_entry_t* e;
 
     if (!CMD_IS_DEF(GSM_CMD_CMGL) ||
         gsm.msg->msg.sms_list.ei >= gsm.msg->msg.sms_list.etr) {
@@ -811,7 +811,7 @@ gsmi_parse_cpbs(const char* str, uint8_t opt) {
  */
 uint8_t
 gsmi_parse_cpbr(const char* str) {
-    gsm_pb_entry_t* e;
+    lwgsm_pb_entry_t* e;
 
     if (!CMD_IS_DEF(GSM_CMD_CPBR) ||
         gsm.msg->msg.pb_list.ei >= gsm.msg->msg.pb_list.etr) {
@@ -825,7 +825,7 @@ gsmi_parse_cpbr(const char* str) {
     e = &gsm.msg->msg.pb_list.entries[gsm.msg->msg.pb_list.ei];
     e->pos = GSM_SZ(gsmi_parse_number(&str));
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    e->type = (gsm_number_type_t)gsmi_parse_number(&str);
+    e->type = (lwgsm_number_type_t)gsmi_parse_number(&str);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
 
     ++gsm.msg->msg.pb_list.ei;
@@ -842,7 +842,7 @@ gsmi_parse_cpbr(const char* str) {
  */
 uint8_t
 gsmi_parse_cpbf(const char* str) {
-    gsm_pb_entry_t* e;
+    lwgsm_pb_entry_t* e;
 
     if (!CMD_IS_DEF(GSM_CMD_CPBF) ||
         gsm.msg->msg.pb_search.ei >= gsm.msg->msg.pb_search.etr) {
@@ -856,7 +856,7 @@ gsmi_parse_cpbf(const char* str) {
     e = &gsm.msg->msg.pb_search.entries[gsm.msg->msg.pb_search.ei];
     e->pos = GSM_SZ(gsmi_parse_number(&str));
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    e->type = (gsm_number_type_t)gsmi_parse_number(&str);
+    e->type = (lwgsm_number_type_t)gsmi_parse_number(&str);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
 
     ++gsm.msg->msg.pb_search.ei;
@@ -880,7 +880,7 @@ gsmi_parse_cpbf(const char* str) {
 uint8_t
 gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan) {
     uint8_t num;
-    gsm_conn_t* conn;
+    lwgsm_conn_t* conn;
     char s_tmp[16];
     uint8_t tmp_pdp_state;
 
@@ -960,7 +960,7 @@ uint8_t
 gsmi_parse_ipd(const char* str) {
     uint8_t conn;
     size_t len;
-    gsm_conn_p c;
+    lwgsm_conn_p c;
 
     if (*str == '+') {
         ++str;

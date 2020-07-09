@@ -152,13 +152,13 @@ configure_uart(uint32_t baudrate) {
 static void
 uart_thread(void* param) {
     DWORD bytes_read;
-    gsm_sys_sem_t sem;
+    lwgsm_sys_sem_t sem;
     FILE* file = NULL;
 
-    gsm_sys_sem_create(&sem, 0);                /* Create semaphore for delay functions */
+    lwgsm_sys_sem_create(&sem, 0);                /* Create semaphore for delay functions */
 
     while (com_port == NULL) {
-        gsm_sys_sem_wait(&sem, 1);              /* Add some delay with yield */
+        lwgsm_sys_sem_wait(&sem, 1);              /* Add some delay with yield */
     }
 
     fopen_s(&file, "log_file.txt", "w+");       /* Open debug file in write mode */
@@ -180,9 +180,9 @@ uart_thread(void* param) {
 
                 /* Send received data to input processing module */
 #if GSM_CFG_INPUT_USE_PROCESS
-                gsm_input_process(data_buffer, (size_t)bytes_read);
+                lwgsm_input_process(data_buffer, (size_t)bytes_read);
 #else /* GSM_CFG_INPUT_USE_PROCESS */
-                gsm_input(data_buffer, (size_t)bytes_read);
+                lwgsm_input(data_buffer, (size_t)bytes_read);
 #endif /* !GSM_CFG_INPUT_USE_PROCESS */
 
                 /* Write received data to output debug file */
@@ -194,7 +194,7 @@ uart_thread(void* param) {
         } while (bytes_read == (DWORD)sizeof(data_buffer));
 
         /* Implement delay to allow other tasks processing */
-        gsm_sys_sem_wait(&sem, 1);
+        lwgsm_sys_sem_wait(&sem, 1);
     }
 }
 
@@ -207,11 +207,11 @@ uart_thread(void* param) {
  * \note            This function may be called from different threads in GSM stack when using OS.
  *                  When \ref GSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
- * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
+ * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_ll_init(gsm_ll_t* ll) {
+lwgsm_ll_init(lwgsm_ll_t* ll) {
 #if !GSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
@@ -221,11 +221,11 @@ gsm_ll_init(gsm_ll_t* ll) {
      * If device has internal/external memory available,
      * multiple memories may be used
      */
-    gsm_mem_region_t mem_regions[] = {
+    lwgsm_mem_region_t mem_regions[] = {
         { memory, sizeof(memory) }
     };
     if (!initialized) {
-        gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
+        lwgsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
     }
 #endif /* !GSM_CFG_MEM_CUSTOM */
 

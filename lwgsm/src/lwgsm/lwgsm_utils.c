@@ -46,7 +46,7 @@
  * \return          Pointer to output variable
  */
 char*
-gsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
+lwgsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
     char* tmp = out;
     uint8_t i, y;
 
@@ -103,11 +103,11 @@ gsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
  * \return          Pointer to output variable
  */
 char*
-gsm_i32_to_gen_str(int32_t num, char* out) {
+lwgsm_i32_to_gen_str(int32_t num, char* out) {
     if (num < 0) {
         *out++ = '-';
-        return gsm_u32_to_gen_str(GSM_U32(-num), out, 0, 0) - 1;
+        return lwgsm_u32_to_gen_str(GSM_U32(-num), out, 0, 0) - 1;
     } else {
-        return gsm_u32_to_gen_str(GSM_U32(num), out, 0, 0);
+        return lwgsm_u32_to_gen_str(GSM_U32(num), out, 0, 0);
     }
 }

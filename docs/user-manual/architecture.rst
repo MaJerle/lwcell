@@ -50,7 +50,7 @@ Functions need to provide:
 * Current time status information
 
 .. tip::
-	System function prototypes are available in :ref:`api_gsm_sys` section.
+	System function prototypes are available in :ref:`api_lwgsm_sys` section.
 
 Low-level implementation
 ************************
@@ -59,11 +59,11 @@ Low-Level, or *GSM_LL*, is part, dedicated for communication between *GSM-AT* mi
 Application needs to implement output function to send necessary *AT command* instruction aswell as implement
 *input module* to send received data from *GSM* device to *GSM-AT* middleware.
 
-Application must also assure memory assignment for :ref:`api_gsm_mem` when default allocation is used.
+Application must also assure memory assignment for :ref:`api_lwgsm_mem` when default allocation is used.
 
 .. tip::
 	Low level, input module & memory function prototypes are available in 
-	:ref:`api_gsm_ll`, :ref:`api_gsm_input` and :ref:`api_gsm_mem` respectfully.
+	:ref:`api_lwgsm_ll`, :ref:`api_lwgsm_input` and :ref:`api_lwgsm_mem` respectfully.
 
 GSM physical device
 ^^^^^^^^^^^^^^^^^^^

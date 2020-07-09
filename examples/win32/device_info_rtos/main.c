@@ -29,14 +29,14 @@
  * This file is part of GSM-AT library.
  *
  * Before you start using WIN32 implementation with USB and VCP,
- * check gsm_ll_win32.c implementation and choose your COM port!
+ * check lwgsm_ll_win32.c implementation and choose your COM port!
  */
 #include "lwgsm/lwgsm.h"
 #include "sim_manager.h"
 #include "network_utils.h"
 #include "device_info.h"
 
-static lwgsmr_t gsm_callback_func(gsm_evt_t* evt);
+static lwgsmr_t lwgsm_callback_func(lwgsm_evt_t* evt);
 
 /**
  * \brief           Program entry point
@@ -46,7 +46,7 @@ main(void) {
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
-    if (gsm_init(gsm_callback_func, 1) != gsmOK) {
+    if (lwgsm_init(lwgsm_callback_func, 1) != gsmOK) {
         printf("Cannot initialize GSM-AT Library\r\n");
     }
 
@@ -58,7 +58,7 @@ main(void) {
      * New threads were created for GSM processing
      */
     while (1) {
-        gsm_delay(1000);
+        lwgsm_delay(1000);
     }
 
     return 0;
@@ -70,8 +70,8 @@ main(void) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
-gsm_callback_func(gsm_evt_t* evt) {
-    switch (gsm_evt_get_type(evt)) {
+lwgsm_callback_func(lwgsm_evt_t* evt) {
+    switch (lwgsm_evt_get_type(evt)) {
         case GSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
         /* Process and print registration change */
         case GSM_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;

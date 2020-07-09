@@ -48,8 +48,8 @@ extern "C" {
  * \{
  */
 
-lwgsmr_t      gsm_input(const void* data, size_t len);
-lwgsmr_t      gsm_input_process(const void* data, size_t len);
+lwgsmr_t      lwgsm_input(const void* data, size_t len);
+lwgsmr_t      lwgsm_input_process(const void* data, size_t len);
 
 /**
  * \}

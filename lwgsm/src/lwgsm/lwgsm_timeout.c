@@ -35,7 +35,7 @@
 #include "lwgsm/lwgsm_timeout.h"
 #include "lwgsm/lwgsm_mem.h"
 
-static gsm_timeout_t* first_timeout;
+static lwgsm_timeout_t* first_timeout;
 static uint32_t last_timeout_time;
 
 /**
@@ -48,7 +48,7 @@ get_next_timeout_diff(void) {
     if (first_timeout == NULL) {
         return 0xFFFFFFFF;
     }
-    diff = gsm_sys_now() - last_timeout_time;   /* Get difference between current time and last process time */
+    diff = lwgsm_sys_now() - last_timeout_time;   /* Get difference between current time and last process time */
     if (diff >= first_timeout->time) {          /* Are we over already? */
         return 0;                               /* We have to immediately process this timeout */
     }
@@ -62,7 +62,7 @@ static void
 process_next_timeout(void) {
     uint32_t time;
 
-    time = gsm_sys_now();
+    time = lwgsm_sys_now();
 
     /*
      * Before calling timeout callback, update variable
@@ -72,7 +72,7 @@ process_next_timeout(void) {
     last_timeout_time = time;                   /* Reset variable when we were last processed */
 
     if (first_timeout != NULL) {
-        gsm_timeout_t* to = first_timeout;
+        lwgsm_timeout_t* to = first_timeout;
 
         /*
          * Before calling callback remove current timeout from list
@@ -81,7 +81,7 @@ process_next_timeout(void) {
          */
         first_timeout = first_timeout->next;    /* Set next timeout on a list as first timeout */
         to->fn(to->arg);                        /* Call user callback function */
-        gsm_mem_free_s((void**)&to);
+        lwgsm_mem_free_s((void**)&to);
     }
 }
 
@@ -93,17 +93,17 @@ process_next_timeout(void) {
  * \return          Time in milliseconds required for next message
  */
 uint32_t
-gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout) {
+gsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     uint32_t wait_time;
     do {
         if (first_timeout == NULL) {            /* We have no timeouts ready? */
-            return gsm_sys_mbox_get(b, m, timeout); /* Get entry from message queue */
+            return lwgsm_sys_mbox_get(b, m, timeout); /* Get entry from message queue */
         }
         wait_time = get_next_timeout_diff();    /* Get time to wait for next timeout execution */
-        if (wait_time == 0 || gsm_sys_mbox_get(b, m, wait_time) == GSM_SYS_TIMEOUT) {
-            gsm_core_lock();
+        if (wait_time == 0 || lwgsm_sys_mbox_get(b, m, wait_time) == GSM_SYS_TIMEOUT) {
+            lwgsm_core_lock();
             process_next_timeout();             /* Process with next timeout */
-            gsm_core_unlock();
+            lwgsm_core_unlock();
         }
         break;
     } while (1);
@@ -118,19 +118,19 @@ gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t tim
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
-    gsm_timeout_t* to;
+lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg) {
+    lwgsm_timeout_t* to;
     uint32_t now;
 
     GSM_ASSERT("fn != NULL", fn != NULL);
 
-    to = gsm_mem_calloc(1, sizeof(*to));        /* Allocate memory for timeout structure */
+    to = lwgsm_mem_calloc(1, sizeof(*to));        /* Allocate memory for timeout structure */
     if (to == NULL) {
         return gsmERR;
     }
 
-    gsm_core_lock();
-    now = gsm_sys_now();                        /* Get current time */
+    lwgsm_core_lock();
+    now = lwgsm_sys_now();                        /* Get current time */
     if (first_timeout != NULL) {
         /*
          * Since we want timeout value to start from NOW,
@@ -160,7 +160,7 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
             to->next = first_timeout;           /* Set first timeout as next of new one */
             first_timeout = to;                 /* Set new timeout as first */
         } else {                                /* Go somewhere in between current list */
-            for (gsm_timeout_t* t = first_timeout; t != NULL; t = t->next) {
+            for (lwgsm_timeout_t* t = first_timeout; t != NULL; t = t->next) {
                 to->time -= t->time;            /* Decrease new timeout time by time in a linked list */
                 /*
                  * Enter between 2 entries on a list in case:
@@ -181,8 +181,8 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
             }
         }
     }
-    gsm_core_unlock();
-    gsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Insert dummy value to wakeup process thread */
+    lwgsm_core_unlock();
+    lwgsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Insert dummy value to wakeup process thread */
     return gsmOK;
 }
 
@@ -192,11 +192,11 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_timeout_remove(gsm_timeout_fn fn) {
+lwgsm_timeout_remove(lwgsm_timeout_fn fn) {
     uint8_t success = 0;
 
-    gsm_core_lock();
-    for (gsm_timeout_t* t = first_timeout, *t_prev = NULL; t != NULL;
+    lwgsm_core_lock();
+    for (lwgsm_timeout_t* t = first_timeout, *t_prev = NULL; t != NULL;
          t_prev = t, t = t->next) {          /* Check all entries */
         if (t->fn == fn) {                      /* Do we have a match from callback point of view? */
 
@@ -220,11 +220,11 @@ gsm_timeout_remove(gsm_timeout_fn fn) {
             } else {
                 first_timeout = t->next;
             }
-            gsm_mem_free_s((void**)&t);
+            lwgsm_mem_free_s((void**)&t);
             success = 1;
             break;
         }
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
     return success ? gsmOK : gsmERR;
 }

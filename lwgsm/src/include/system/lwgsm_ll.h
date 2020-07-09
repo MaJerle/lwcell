@@ -46,8 +46,8 @@ extern "C" {
  * \{
  */
 
-lwgsmr_t      gsm_ll_init(gsm_ll_t* ll);
-lwgsmr_t      gsm_ll_deinit(gsm_ll_t* ll);
+lwgsmr_t      lwgsm_ll_init(lwgsm_ll_t* ll);
+lwgsmr_t      lwgsm_ll_deinit(lwgsm_ll_t* ll);
 
 /**
  * \}

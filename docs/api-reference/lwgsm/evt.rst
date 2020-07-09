@@ -1,4 +1,4 @@
-.. _api_gsm_evt:
+.. _api_lwgsm_evt:
 
 Event management
 ================

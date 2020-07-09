@@ -61,11 +61,11 @@ send_data(const void* data, size_t len) {
  * \note            This function may be called from different threads in GSM stack when using OS.
  *                  When \ref GSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
- * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
+ * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \return          gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_ll_init(gsm_ll_t* ll) {
+lwgsm_ll_init(lwgsm_ll_t* ll) {
 #if !GSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
@@ -75,11 +75,11 @@ gsm_ll_init(gsm_ll_t* ll) {
      * If device has internal/external memory available,
      * multiple memories may be used
      */
-    gsm_mem_region_t mem_regions[] = {
+    lwgsm_mem_region_t mem_regions[] = {
         { memory, sizeof(memory) }
     };
     if (!initialized) {
-        gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
+        lwgsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
     }
 #endif /* !GSM_CFG_MEM_CUSTOM */
 
@@ -96,11 +96,11 @@ gsm_ll_init(gsm_ll_t* ll) {
 
 /**
  * \brief           Callback function to de-init low-level communication part
- * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
+ * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_ll_deinit(gsm_ll_t* ll) {
+lwgsm_ll_deinit(lwgsm_ll_t* ll) {
     initialized = 0;                            /* Clear initialized flag */
     return gsmOK;
 }

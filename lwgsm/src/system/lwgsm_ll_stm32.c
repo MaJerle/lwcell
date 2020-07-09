@@ -35,13 +35,13 @@
 /*
  * How it works
  *
- * On first call to \ref gsm_ll_init, new thread is created and processed in usart_ll_thread function.
+ * On first call to \ref lwgsm_ll_init, new thread is created and processed in usart_ll_thread function.
  * USART is configured in RX DMA mode and any incoming bytes are processed inside thread function.
  * DMA and USART implement interrupt handlers to notify main thread about new data ready to send to upper layer.
  *
  * More about UART + RX DMA: https://github.com/MaJerle/stm32-usart-dma-rx-tx
  *
- * \ref GSM_CFG_INPUT_USE_PROCESS must be enabled in `gsm_config.h` to use this driver.
+ * \ref GSM_CFG_INPUT_USE_PROCESS must be enabled in `lwgsm_config.h` to use this driver.
  */
 #include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_mem.h"
@@ -51,7 +51,7 @@
 #if !__DOXYGEN__
 
 #if !GSM_CFG_INPUT_USE_PROCESS
-#error "GSM_CFG_INPUT_USE_PROCESS must be enabled in `gsm_config.h` to use this driver."
+#error "GSM_CFG_INPUT_USE_PROCESS must be enabled in `lwgsm_config.h` to use this driver."
 #endif /* GSM_CFG_INPUT_USE_PROCESS */
 
 #if !defined(GSM_USART_DMA_RX_BUFF_SIZE)
@@ -100,11 +100,11 @@ usart_ll_thread(void* arg) {
 #endif /* defined(GSM_USART_DMA_RX_STREAM) */
         if (pos != old_pos && is_running) {
             if (pos > old_pos) {
-                gsm_input_process(&usart_mem[old_pos], pos - old_pos);
+                lwgsm_input_process(&usart_mem[old_pos], pos - old_pos);
             } else {
-                gsm_input_process(&usart_mem[old_pos], sizeof(usart_mem) - old_pos);
+                lwgsm_input_process(&usart_mem[old_pos], sizeof(usart_mem) - old_pos);
                 if (pos > 0) {
-                    gsm_input_process(&usart_mem[0], pos);
+                    lwgsm_input_process(&usart_mem[0], pos);
                 }
             }
             old_pos = pos;
@@ -290,20 +290,20 @@ send_data(const void* data, size_t len) {
 /**
  * \brief           Callback function called from initialization process
  * \note            This function may be called multiple times if AT baudrate is changed from application
- * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
+ * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \param[in]       baudrate: Baudrate to use on AT port
  * \return          Member of \ref lwgsmr_t enumeration
  */
 lwgsmr_t
-gsm_ll_init(gsm_ll_t* ll) {
+lwgsm_ll_init(lwgsm_ll_t* ll) {
 #if !GSM_CFG_MEM_CUSTOM
     static uint8_t memory[GSM_MEM_SIZE];
-    gsm_mem_region_t mem_regions[] = {
+    lwgsm_mem_region_t mem_regions[] = {
         { memory, sizeof(memory) }
     };
 
     if (!initialized) {
-        gsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations */
+        lwgsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations */
     }
 #endif /* !GSM_CFG_MEM_CUSTOM */
 
@@ -321,11 +321,11 @@ gsm_ll_init(gsm_ll_t* ll) {
 
 /**
  * \brief           Callback function to de-init low-level communication part
- * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
+ * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_ll_deinit(gsm_ll_t* ll) {
+lwgsm_ll_deinit(lwgsm_ll_t* ll) {
     if (usart_ll_mbox_id != NULL) {
         osMessageQueueId_t tmp = usart_ll_mbox_id;
         usart_ll_mbox_id = NULL;

@@ -51,10 +51,10 @@ extern "C" {
  * \brief           Get MQTT event type
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
- * \return          MQTT Event type, value of \ref gsm_mqtt_evt_type_t enumeration
+ * \return          MQTT Event type, value of \ref lwgsm_mqtt_evt_type_t enumeration
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_get_type(client, evt)                   ((gsm_mqtt_evt_type_t)(evt)->type)
+#define lwgsm_mqtt_client_evt_get_type(client, evt)                   ((lwgsm_mqtt_evt_type_t)(evt)->type)
 
 /**
  * \anchor          GSM_APP_MQTT_CLIENT_EVT_CONNECT
@@ -68,10 +68,10 @@ extern "C" {
  * \brief           Get connection status
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
- * \return          Connection status. Member of \ref gsm_mqtt_conn_status_t
+ * \return          Connection status. Member of \ref lwgsm_mqtt_conn_status_t
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_connect_get_status(client, evt)         ((gsm_mqtt_conn_status_t)(evt)->evt.connect.status)
+#define lwgsm_mqtt_client_evt_connect_get_status(client, evt)         ((lwgsm_mqtt_conn_status_t)(evt)->evt.connect.status)
 
 /**
  * \}
@@ -92,7 +92,7 @@ extern "C" {
  * \return          `1` on success, `0` otherwise
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_disconnect_is_accepted(client, evt)     ((gsm_mqtt_conn_status_t)(evt)->evt.disconnect.is_accepted)
+#define lwgsm_mqtt_client_evt_disconnect_is_accepted(client, evt)     ((lwgsm_mqtt_conn_status_t)(evt)->evt.disconnect.is_accepted)
 
 /**
  * \}
@@ -107,13 +107,13 @@ extern "C" {
  */
 
 /**
- * \brief           Get user argument used on \ref gsm_mqtt_client_subscribe
+ * \brief           Get user argument used on \ref lwgsm_mqtt_client_subscribe
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
  * \return          User argument
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_subscribe_get_argument(client, evt)     ((void *)(evt)->evt.sub_unsub_scribed.arg)
+#define lwgsm_mqtt_client_evt_subscribe_get_argument(client, evt)     ((void *)(evt)->evt.sub_unsub_scribed.arg)
 
 /**
  * \brief           Get result of subscribe event
@@ -122,16 +122,16 @@ extern "C" {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_subscribe_get_result(client, evt)       ((lwgsmr_t)(evt)->evt.sub_unsub_scribed.res)
+#define lwgsm_mqtt_client_evt_subscribe_get_result(client, evt)       ((lwgsmr_t)(evt)->evt.sub_unsub_scribed.res)
 
 /**
- * \brief           Get user argument used on \ref gsm_mqtt_client_unsubscribe
+ * \brief           Get user argument used on \ref lwgsm_mqtt_client_unsubscribe
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
  * \return          User argument
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_unsubscribe_get_argument(client, evt)   ((void *)(evt)->evt.sub_unsub_scribed.arg)
+#define lwgsm_mqtt_client_evt_unsubscribe_get_argument(client, evt)   ((void *)(evt)->evt.sub_unsub_scribed.arg)
 
 /**
  * \brief           Get result of unsubscribe event
@@ -140,7 +140,7 @@ extern "C" {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_unsubscribe_get_result(client, evt)     ((lwgsmr_t)(evt)->evt.sub_unsub_scribed.res)
+#define lwgsm_mqtt_client_evt_unsubscribe_get_result(client, evt)     ((lwgsmr_t)(evt)->evt.sub_unsub_scribed.res)
 
 /**
  * \}
@@ -161,7 +161,7 @@ extern "C" {
  * \return          Topic name
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_publish_recv_get_topic(client, evt)     ((const void *)(evt)->evt.publish_recv.topic)
+#define lwgsm_mqtt_client_evt_publish_recv_get_topic(client, evt)     ((const void *)(evt)->evt.publish_recv.topic)
 
 /**
  * \brief           Get topic length from received publish packet
@@ -170,7 +170,7 @@ extern "C" {
  * \return          Topic length
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_publish_recv_get_topic_len(client, evt) (GSM_SZ((evt)->evt.publish_recv.topic_len))
+#define lwgsm_mqtt_client_evt_publish_recv_get_topic_len(client, evt) (GSM_SZ((evt)->evt.publish_recv.topic_len))
 
 /**
  * \brief           Get payload from received publish packet
@@ -179,7 +179,7 @@ extern "C" {
  * \return          Packet payload
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_publish_recv_get_payload(client, evt)   ((const void *)(evt)->evt.publish_recv.payload)
+#define lwgsm_mqtt_client_evt_publish_recv_get_payload(client, evt)   ((const void *)(evt)->evt.publish_recv.payload)
 
 /**
  * \brief           Get payload length from received publish packet
@@ -188,7 +188,7 @@ extern "C" {
  * \return          Payload length
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_publish_recv_get_payload_len(client, evt)   (GSM_SZ((evt)->evt.publish_recv.payload_len))
+#define lwgsm_mqtt_client_evt_publish_recv_get_payload_len(client, evt)   (GSM_SZ((evt)->evt.publish_recv.payload_len))
 
 /**
  * \brief           Check if packet is duplicated
@@ -197,16 +197,16 @@ extern "C" {
  * \return          `1` if duplicated, `0` otherwise
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_publish_recv_is_duplicate(client, evt)  (GSM_U8((evt)->evt.publish_recv.dup))
+#define lwgsm_mqtt_client_evt_publish_recv_is_duplicate(client, evt)  (GSM_U8((evt)->evt.publish_recv.dup))
 
 /**
  * \brief           Get received quality of service
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
- * \return          Member of \ref gsm_mqtt_qos_t enumeration
+ * \return          Member of \ref lwgsm_mqtt_qos_t enumeration
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_publish_recv_get_qos(client, evt)       ((evt)->evt.publish_recv.qos)
+#define lwgsm_mqtt_client_evt_publish_recv_get_qos(client, evt)       ((evt)->evt.publish_recv.qos)
 
 /**
  * \}
@@ -221,13 +221,13 @@ extern "C" {
  */
 
 /**
- * \brief           Get user argument used on \ref gsm_mqtt_client_publish
+ * \brief           Get user argument used on \ref lwgsm_mqtt_client_publish
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
  * \return          User argument
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_publish_get_argument(client, evt)   ((void *)(evt)->evt.publish.arg)
+#define lwgsm_mqtt_client_evt_publish_get_argument(client, evt)   ((void *)(evt)->evt.publish.arg)
 
 /**
 * \brief           Get result of publish event
@@ -236,7 +236,7 @@ extern "C" {
 * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
 * \hideinitializer
 */
-#define gsm_mqtt_client_evt_publish_get_result(client, evt)     ((lwgsmr_t)(evt)->evt.publish.res)
+#define lwgsm_mqtt_client_evt_publish_get_result(client, evt)     ((lwgsmr_t)(evt)->evt.publish.res)
 
 /**
  * \}

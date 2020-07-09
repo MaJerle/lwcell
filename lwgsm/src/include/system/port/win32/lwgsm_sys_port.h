@@ -45,11 +45,11 @@ extern "C" {
 
 #if GSM_CFG_OS && !__DOXYGEN__
 
-typedef HANDLE                      gsm_sys_mutex_t;
-typedef HANDLE                      gsm_sys_sem_t;
-typedef HANDLE                      gsm_sys_mbox_t;
-typedef HANDLE                      gsm_sys_thread_t;
-typedef int                         gsm_sys_thread_prio_t;
+typedef HANDLE                      lwgsm_sys_mutex_t;
+typedef HANDLE                      lwgsm_sys_sem_t;
+typedef HANDLE                      lwgsm_sys_mbox_t;
+typedef HANDLE                      lwgsm_sys_thread_t;
+typedef int                         lwgsm_sys_thread_prio_t;
 
 #define GSM_SYS_MUTEX_NULL          ((HANDLE)0)
 #define GSM_SYS_SEM_NULL            ((HANDLE)0)

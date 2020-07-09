@@ -50,17 +50,17 @@
 /**
  * \brief           Sequential API structure
  */
-typedef struct gsm_netconn {
-    struct gsm_netconn* next;                   /*!< Linked list entry */
+typedef struct lwgsm_netconn {
+    struct lwgsm_netconn* next;                   /*!< Linked list entry */
 
-    gsm_netconn_type_t type;                    /*!< Netconn type */
+    lwgsm_netconn_type_t type;                    /*!< Netconn type */
 
     size_t rcv_packets;                         /*!< Number of received packets so far on this connection */
-    gsm_conn_p conn;                            /*!< Pointer to actual connection */
+    lwgsm_conn_p conn;                            /*!< Pointer to actual connection */
 
-    gsm_sys_mbox_t mbox_receive;                /*!< Message queue for receive mbox */
+    lwgsm_sys_mbox_t mbox_receive;                /*!< Message queue for receive mbox */
 
-    gsm_linbuff_t buff;                         /*!< Linear buffer structure */
+    lwgsm_linbuff_t buff;                         /*!< Linear buffer structure */
 
     uint16_t conn_timeout;                      /*!< Connection timeout in units of seconds when
                                                     netconn is in server (listen) mode.
@@ -70,10 +70,10 @@ typedef struct gsm_netconn {
 #if GSM_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__
     uint32_t rcv_timeout;                       /*!< Receive timeout in unit of milliseconds */
 #endif
-} gsm_netconn_t;
+} lwgsm_netconn_t;
 
 static uint8_t recv_closed = 0xFF;
-static gsm_netconn_t* netconn_list;             /*!< Linked list of netconn entries */
+static lwgsm_netconn_t* netconn_list;             /*!< Linked list of netconn entries */
 
 /**
  * \brief           Flush all mboxes and clear possible used memories
@@ -81,22 +81,22 @@ static gsm_netconn_t* netconn_list;             /*!< Linked list of netconn entr
  * \param[in]       protect: Set to 1 to protect against multi-thread access
  */
 static void
-flush_mboxes(gsm_netconn_t* nc, uint8_t protect) {
-    gsm_pbuf_p pbuf;
+flush_mboxes(lwgsm_netconn_t* nc, uint8_t protect) {
+    lwgsm_pbuf_p pbuf;
     if (protect) {
-        gsm_core_lock();
+        lwgsm_core_lock();
     }
-    if (gsm_sys_mbox_isvalid(&nc->mbox_receive)) {
-        while (gsm_sys_mbox_getnow(&nc->mbox_receive, (void**)&pbuf)) {
+    if (lwgsm_sys_mbox_isvalid(&nc->mbox_receive)) {
+        while (lwgsm_sys_mbox_getnow(&nc->mbox_receive, (void**)&pbuf)) {
             if (pbuf != NULL && (uint8_t*)pbuf != (uint8_t*)&recv_closed) {
-                gsm_pbuf_free(pbuf);            /* Free received data buffers */
+                lwgsm_pbuf_free(pbuf);            /* Free received data buffers */
             }
         }
-        gsm_sys_mbox_delete(&nc->mbox_receive); /* Delete message queue */
-        gsm_sys_mbox_invalid(&nc->mbox_receive);/* Invalid handle */
+        lwgsm_sys_mbox_delete(&nc->mbox_receive); /* Delete message queue */
+        lwgsm_sys_mbox_invalid(&nc->mbox_receive);/* Invalid handle */
     }
     if (protect) {
-        gsm_core_unlock();
+        lwgsm_core_unlock();
     }
 }
 
@@ -106,20 +106,20 @@ flush_mboxes(gsm_netconn_t* nc, uint8_t protect) {
  * \return          Member of \ref lwgsmr_t enumeration
  */
 static lwgsmr_t
-netconn_evt(gsm_evt_t* evt) {
-    gsm_conn_p conn;
-    gsm_netconn_t* nc = NULL;
+netconn_evt(lwgsm_evt_t* evt) {
+    lwgsm_conn_p conn;
+    lwgsm_netconn_t* nc = NULL;
     uint8_t close = 0;
 
-    conn = gsm_conn_get_from_evt(evt);          /* Get connection from event */
-    switch (gsm_evt_get_type(evt)) {
+    conn = lwgsm_conn_get_from_evt(evt);          /* Get connection from event */
+    switch (lwgsm_evt_get_type(evt)) {
         /*
          * A new connection has been active
          * and should be handled by netconn API
          */
         case GSM_EVT_CONN_ACTIVE: {             /* A new connection active is active */
-            if (gsm_conn_is_client(conn)) {     /* Was connection started by us? */
-                nc = gsm_conn_get_arg(conn);    /* Argument should be already set */
+            if (lwgsm_conn_is_client(conn)) {     /* Was connection started by us? */
+                nc = lwgsm_conn_get_arg(conn);    /* Argument should be already set */
                 if (nc != NULL) {
                     nc->conn = conn;            /* Save actual connection */
                 } else {
@@ -134,10 +134,10 @@ netconn_evt(gsm_evt_t* evt) {
             /* Decide if some events want to close the connection */
             if (close) {
                 if (nc != NULL) {
-                    gsm_conn_set_arg(conn, NULL);   /* Reset argument */
-                    gsm_netconn_delete(nc);     /* Free memory for API */
+                    lwgsm_conn_set_arg(conn, NULL);   /* Reset argument */
+                    lwgsm_netconn_delete(nc);     /* Free memory for API */
                 }
-                gsm_conn_close(conn, 0);        /* Close the connection */
+                lwgsm_conn_close(conn, 0);        /* Close the connection */
                 close = 0;
             }
             break;
@@ -148,38 +148,38 @@ netconn_evt(gsm_evt_t* evt) {
          * should have netconn structure as argument
          */
         case GSM_EVT_CONN_RECV: {
-            gsm_pbuf_p pbuf;
+            lwgsm_pbuf_p pbuf;
 
-            nc = gsm_conn_get_arg(conn);        /* Get API from connection */
-            pbuf = gsm_evt_conn_recv_get_buff(evt);/* Get received buff */
+            nc = lwgsm_conn_get_arg(conn);        /* Get API from connection */
+            pbuf = lwgsm_evt_conn_recv_get_buff(evt);/* Get received buff */
 
-            gsm_conn_recved(conn, pbuf);        /* Notify stack about received data */
+            lwgsm_conn_recved(conn, pbuf);        /* Notify stack about received data */
 
-            gsm_pbuf_ref(pbuf);                 /* Increase reference counter */
-            if (nc == NULL || !gsm_sys_mbox_isvalid(&nc->mbox_receive)
-                || !gsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
+            lwgsm_pbuf_ref(pbuf);                 /* Increase reference counter */
+            if (nc == NULL || !lwgsm_sys_mbox_isvalid(&nc->mbox_receive)
+                || !lwgsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
                 GSM_DEBUGF(GSM_CFG_DBG_NETCONN,
                            "[NETCONN] Ignoring more data for receive!\r\n");
-                gsm_pbuf_free(pbuf);            /* Free pbuf */
+                lwgsm_pbuf_free(pbuf);            /* Free pbuf */
                 return gsmOKIGNOREMORE;         /* Return OK to free the memory and ignore further data */
             }
             ++nc->rcv_packets;                  /* Increase number of received packets */
             GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE,
                        "[NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
-                       (int)gsm_pbuf_length(pbuf, 0));
+                       (int)lwgsm_pbuf_length(pbuf, 0));
             break;
         }
 
         /* Connection was just closed */
         case GSM_EVT_CONN_CLOSE: {
-            nc = gsm_conn_get_arg(conn);        /* Get API from connection */
+            nc = lwgsm_conn_get_arg(conn);        /* Get API from connection */
 
             /*
              * In case we have a netconn available,
              * simply write pointer to received variable to indicate closed state
              */
-            if (nc != NULL && gsm_sys_mbox_isvalid(&nc->mbox_receive)) {
-                gsm_sys_mbox_putnow(&nc->mbox_receive, (void*)&recv_closed);
+            if (nc != NULL && lwgsm_sys_mbox_isvalid(&nc->mbox_receive)) {
+                lwgsm_sys_mbox_putnow(&nc->mbox_receive, (void*)&recv_closed);
             }
 
             break;
@@ -196,8 +196,8 @@ netconn_evt(gsm_evt_t* evt) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
-gsm_evt(gsm_evt_t* evt) {
-    switch (gsm_evt_get_type(evt)) {
+lwgsm_evt(lwgsm_evt_t* evt) {
+    switch (lwgsm_evt_get_type(evt)) {
         default:
             break;
     }
@@ -209,44 +209,44 @@ gsm_evt(gsm_evt_t* evt) {
  * \param[in]       type: Netconn connection type
  * \return          New netconn connection on success, `NULL` otherwise
  */
-gsm_netconn_p
-gsm_netconn_new(gsm_netconn_type_t type) {
-    gsm_netconn_t* a;
+lwgsm_netconn_p
+lwgsm_netconn_new(lwgsm_netconn_type_t type) {
+    lwgsm_netconn_t* a;
     static uint8_t first = 1;
 
     /* Register only once! */
-    gsm_core_lock();
+    lwgsm_core_lock();
     if (first) {
         first = 0;
-        gsm_evt_register(gsm_evt);              /* Register global event function */
+        lwgsm_evt_register(lwgsm_evt);              /* Register global event function */
     }
-    gsm_core_unlock();
-    a = gsm_mem_calloc(1, sizeof(*a));          /* Allocate memory for core object */
+    lwgsm_core_unlock();
+    a = lwgsm_mem_calloc(1, sizeof(*a));          /* Allocate memory for core object */
     if (a != NULL) {
         a->type = type;                         /* Save netconn type */
         a->conn_timeout = 0;                    /* Default connection timeout */
-        if (!gsm_sys_mbox_create(&a->mbox_receive, GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN)) {    /* Allocate memory for receiving message box */
+        if (!lwgsm_sys_mbox_create(&a->mbox_receive, GSM_CFG_NETCONN_RECEIVE_QUEUE_LEN)) {    /* Allocate memory for receiving message box */
             GSM_DEBUGF(GSM_CFG_DBG_NETCONN | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_DANGER,
                        "[NETCONN] Cannot create receive MBOX\r\n");
             goto free_ret;
         }
-        gsm_core_lock();
+        lwgsm_core_lock();
         if (netconn_list == NULL) {             /* Add new netconn to the existing list */
             netconn_list = a;
         } else {
             a->next = netconn_list;             /* Add it to beginning of the list */
             netconn_list = a;
         }
-        gsm_core_unlock();
+        lwgsm_core_unlock();
     }
     return a;
 free_ret:
-    if (gsm_sys_mbox_isvalid(&a->mbox_receive)) {
-        gsm_sys_mbox_delete(&a->mbox_receive);
-        gsm_sys_mbox_invalid(&a->mbox_receive);
+    if (lwgsm_sys_mbox_isvalid(&a->mbox_receive)) {
+        lwgsm_sys_mbox_delete(&a->mbox_receive);
+        lwgsm_sys_mbox_invalid(&a->mbox_receive);
     }
     if (a != NULL) {
-        gsm_mem_free_s((void**)&a);
+        lwgsm_mem_free_s((void**)&a);
     }
     return NULL;
 }
@@ -257,17 +257,17 @@ free_ret:
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_netconn_delete(gsm_netconn_p nc) {
+lwgsm_netconn_delete(lwgsm_netconn_p nc) {
     GSM_ASSERT("netconn != NULL", nc != NULL);
 
-    gsm_core_lock();
+    lwgsm_core_lock();
     flush_mboxes(nc, 0);                        /* Clear mboxes */
 
     /* Remove netconn from linkedlist */
     if (netconn_list == nc) {
         netconn_list = netconn_list->next;      /* Remove first from linked list */
     } else if (netconn_list != NULL) {
-        gsm_netconn_p tmp, prev;
+        lwgsm_netconn_p tmp, prev;
         /* Find element on the list */
         for (prev = netconn_list, tmp = netconn_list->next;
              tmp != NULL; prev = tmp, tmp = tmp->next) {
@@ -277,9 +277,9 @@ gsm_netconn_delete(gsm_netconn_p nc) {
             }
         }
     }
-    gsm_core_unlock();
+    lwgsm_core_unlock();
 
-    gsm_mem_free_s((void**)&nc);
+    lwgsm_mem_free_s((void**)&nc);
     return gsmOK;
 }
 
@@ -291,7 +291,7 @@ gsm_netconn_delete(gsm_netconn_p nc) {
  * \return          \ref gsmOK if successfully connected, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
+lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port) {
     lwgsmr_t res;
 
     GSM_ASSERT("nc != NULL", nc != NULL);
@@ -305,7 +305,7 @@ gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
      *  - Set netconn callback function for connection management
      *  - Start connection in blocking mode
      */
-    res = gsm_conn_start(NULL, (gsm_conn_type_t)nc->type, host, port, nc, netconn_evt, 1);
+    res = lwgsm_conn_start(NULL, (lwgsm_conn_type_t)nc->type, host, port, nc, netconn_evt, 1);
     return res;
 }
 
@@ -318,14 +318,14 @@ gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
+lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
     size_t len, sent;
     const uint8_t* d = data;
     lwgsmr_t res;
 
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be TCP or SSL", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);
-    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));
+    GSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
 
     /*
      * Several steps are done in write process
@@ -349,9 +349,9 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
 
         /* Step 1.1 */
         if (nc->buff.ptr == nc->buff.len) {
-            res = gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
+            res = lwgsm_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
 
-            gsm_mem_free_s((void**)&nc->buff.buff);
+            lwgsm_mem_free_s((void**)&nc->buff.buff);
             if (res != gsmOK) {
                 return res;
             }
@@ -364,7 +364,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
     if (btw >= GSM_CFG_CONN_MAX_DATA_LEN) {
         size_t rem;
         rem = btw % GSM_CFG_CONN_MAX_DATA_LEN;  /* Get remaining bytes for max data length */
-        res = gsm_conn_send(nc->conn, d, btw - rem, &sent, 1);  /* Write data directly */
+        res = lwgsm_conn_send(nc->conn, d, btw - rem, &sent, 1);  /* Write data directly */
         if (res != gsmOK) {
             return res;
         }
@@ -378,7 +378,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
 
     /* Step 3 */
     if (nc->buff.buff == NULL) {                /* Check if we should allocate a new buffer */
-        nc->buff.buff = gsm_mem_malloc(sizeof(*nc->buff.buff) * GSM_CFG_CONN_MAX_DATA_LEN);
+        nc->buff.buff = lwgsm_mem_malloc(sizeof(*nc->buff.buff) * GSM_CFG_CONN_MAX_DATA_LEN);
         nc->buff.len = GSM_CFG_CONN_MAX_DATA_LEN;   /* Save buffer length */
         nc->buff.ptr = 0;                       /* Save buffer pointer */
     }
@@ -388,7 +388,7 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
         GSM_MEMCPY(&nc->buff.buff[nc->buff.ptr], d, btw);   /* Copy data to buffer */
         nc->buff.ptr += btw;
     } else {                                    /* Still no memory available? */
-        return gsm_conn_send(nc->conn, data, btw, NULL, 1); /* Simply send directly blocking */
+        return lwgsm_conn_send(nc->conn, data, btw, NULL, 1); /* Simply send directly blocking */
     }
     return gsmOK;
 }
@@ -400,10 +400,10 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_netconn_flush(gsm_netconn_p nc) {
+lwgsm_netconn_flush(lwgsm_netconn_p nc) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be TCP or SSL", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);
-    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));
+    GSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
 
     /*
      * In case we have data in write buffer,
@@ -411,9 +411,9 @@ gsm_netconn_flush(gsm_netconn_p nc) {
      */
     if (nc->buff.buff != NULL) {                /* Check remaining data */
         if (nc->buff.ptr > 0) {                 /* Do we have data in current buffer? */
-            gsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1);  /* Send data */
+            lwgsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1);  /* Send data */
         }
-        gsm_mem_free_s((void**)&nc->buff.buff);
+        lwgsm_mem_free_s((void**)&nc->buff.buff);
     }
     return gsmOK;
 }
@@ -426,12 +426,12 @@ gsm_netconn_flush(gsm_netconn_p nc) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
+lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be UDP", nc->type == GSM_NETCONN_TYPE_UDP);
-    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));
+    GSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
 
-    return gsm_conn_send(nc->conn, data, btw, NULL, 1);
+    return lwgsm_conn_send(nc->conn, data, btw, NULL, 1);
 }
 
 /**
@@ -445,12 +445,12 @@ gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const void* data, size_t btw) {
+lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be UDP", nc->type == GSM_NETCONN_TYPE_UDP);
-    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));
+    GSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
 
-    return gsm_conn_sendto(nc->conn, ip, port, data, btw, NULL, 1);
+    return lwgsm_conn_sendto(nc->conn, ip, port, data, btw, NULL, 1);
 }
 
 /**
@@ -464,7 +464,7 @@ gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const 
  * \return          Any other member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
-gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf) {
+lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
@@ -474,12 +474,12 @@ gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf) {
      * Wait for new received data for up to specific timeout
      * or throw error for timeout notification
      */
-    if (gsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == GSM_SYS_TIMEOUT) {
+    if (lwgsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == GSM_SYS_TIMEOUT) {
         return gsmTIMEOUT;
     }
 #else /* GSM_CFG_NETCONN_RECEIVE_TIMEOUT */
     /* Forever wait for new receive packet */
-    gsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, 0);
+    lwgsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, 0);
 #endif /* !GSM_CFG_NETCONN_RECEIVE_TIMEOUT */
 
     /* Check if connection closed */
@@ -496,19 +496,19 @@ gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf) {
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-gsm_netconn_close(gsm_netconn_p nc) {
-    gsm_conn_p conn;
+lwgsm_netconn_close(lwgsm_netconn_p nc) {
+    lwgsm_conn_p conn;
 
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->conn != NULL", nc->conn != NULL);
-    GSM_ASSERT("nc->conn must be active", gsm_conn_is_active(nc->conn));
+    GSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
 
-    gsm_netconn_flush(nc);                      /* Flush data and ignore result */
+    lwgsm_netconn_flush(nc);                      /* Flush data and ignore result */
     conn = nc->conn;
     nc->conn = NULL;
 
-    gsm_conn_set_arg(conn, NULL);               /* Reset argument */
-    gsm_conn_close(conn, 1);                    /* Close the connection */
+    lwgsm_conn_set_arg(conn, NULL);               /* Reset argument */
+    lwgsm_conn_close(conn, 1);                    /* Close the connection */
     flush_mboxes(nc, 1);                        /* Flush message queues */
     return gsmOK;
 }
@@ -519,9 +519,9 @@ gsm_netconn_close(gsm_netconn_p nc) {
  * \return          `-1` on failure, connection number between `0` and \ref GSM_CFG_MAX_CONNS otherwise
  */
 int8_t
-gsm_netconn_getconnnum(gsm_netconn_p nc) {
+lwgsm_netconn_getconnnum(lwgsm_netconn_p nc) {
     if (nc != NULL && nc->conn != NULL) {
-        return gsm_conn_getnum(nc->conn);
+        return lwgsm_conn_getnum(nc->conn);
     }
     return -1;
 }
@@ -531,15 +531,15 @@ gsm_netconn_getconnnum(gsm_netconn_p nc) {
 /**
  * \brief           Set timeout value for receiving data.
  *
- * When enabled, \ref gsm_netconn_receive will only block for up to
+ * When enabled, \ref lwgsm_netconn_receive will only block for up to
  * \e timeout value and will return if no new data within this time
  *
  * \param[in]       nc: Netconn handle
  * \param[in]       timeout: Timeout in units of milliseconds.
- *                  Set to `0` to disable timeout for \ref gsm_netconn_receive function
+ *                  Set to `0` to disable timeout for \ref lwgsm_netconn_receive function
  */
 void
-gsm_netconn_set_receive_timeout(gsm_netconn_p nc, uint32_t timeout) {
+lwgsm_netconn_set_receive_timeout(lwgsm_netconn_p nc, uint32_t timeout) {
     nc->rcv_timeout = timeout;
 }
 
@@ -550,7 +550,7 @@ gsm_netconn_set_receive_timeout(gsm_netconn_p nc, uint32_t timeout) {
  *                  If value is `0`, timeout is disabled (wait forever)
  */
 uint32_t
-gsm_netconn_get_receive_timeout(gsm_netconn_p nc) {
+lwgsm_netconn_get_receive_timeout(lwgsm_netconn_p nc) {
     return nc->rcv_timeout;                     /* Return receive timeout */
 }
 
