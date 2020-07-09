@@ -36,7 +36,7 @@
 #include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_timeout.h"
 
-#if GSM_CFG_CONN || __DOXYGEN__
+#if LWGSM_CFG_CONN || __DOXYGEN__
 
 /**
  * \brief           Check if connection is closed or in closing state
@@ -63,12 +63,12 @@ conn_timeout_cb(void* arg) {
     lwgsm_conn_p conn = arg;                      /* Argument is actual connection */
 
     if (conn->status.f.active) {                /* Handle only active connections */
-        gsm.evt.type = GSM_EVT_CONN_POLL;       /* Poll connection event */
+        gsm.evt.type = LWGSM_EVT_CONN_POLL;       /* Poll connection event */
         gsm.evt.evt.conn_poll.conn = conn;      /* Set connection pointer */
         gsmi_send_conn_cb(conn, NULL);          /* Send connection callback */
 
         gsmi_conn_start_timeout(conn);          /* Schedule new timeout */
-        GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
                    "[CONN] Poll event: %p\r\n", conn);
     }
 }
@@ -79,7 +79,7 @@ conn_timeout_cb(void* arg) {
  */
 void
 gsmi_conn_start_timeout(lwgsm_conn_p conn) {
-    lwgsm_timeout_add(GSM_CFG_CONN_POLL_INTERVAL, conn_timeout_cb, conn); /* Add connection timeout */
+    lwgsm_timeout_add(LWGSM_CFG_CONN_POLL_INTERVAL, conn_timeout_cb, conn); /* Add connection timeout */
 }
 
 /**
@@ -113,11 +113,11 @@ gsmi_conn_get_val_id(lwgsm_conn_p conn) {
 static lwgsmr_t
 conn_send(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, const void* data,
           size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("conn != NULL", conn != NULL);
-    GSM_ASSERT("data != NULL", data != NULL);
-    GSM_ASSERT("btw > 0", btw > 0);
+    LWGSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT("data != NULL", data != NULL);
+    LWGSM_ASSERT("btw > 0", btw > 0);
 
     if (bw != NULL) {
         *bw = 0;
@@ -125,19 +125,19 @@ conn_send(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, cons
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSEND;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSEND;
 
-    GSM_MSG_VAR_REF(msg).msg.conn_send.conn = conn;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.data = data;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.btw = btw;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.bw = bw;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.remote_ip = ip;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.remote_port = port;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.fau = fau;
-    GSM_MSG_VAR_REF(msg).msg.conn_send.val_id = gsmi_conn_get_val_id(conn);
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.conn = conn;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.data = data;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.btw = btw;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.bw = bw;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.remote_ip = ip;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.remote_port = port;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.fau = fau;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_send.val_id = gsmi_conn_get_val_id(conn);
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -160,7 +160,7 @@ flush_buff(lwgsm_conn_p conn) {
             res = gsmERR;
         }
         if (res != gsmOK) {
-            GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
                        "[CONN] Free write buffer: %p\r\n", (void*)conn->buff.buff);
             lwgsm_mem_free_s((void**)&conn->buff.buff);
         }
@@ -192,24 +192,24 @@ gsmi_conn_init(void) {
 lwgsmr_t
 lwgsm_conn_start(lwgsm_conn_p* conn, lwgsm_conn_type_t type, const char* const host, lwgsm_port_t port,
                void* const arg, lwgsm_evt_fn conn_evt_fn, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("host != NULL", host != NULL);
-    GSM_ASSERT("port > 0", port > 0);
-    GSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL);
+    LWGSM_ASSERT("host != NULL", host != NULL);
+    LWGSM_ASSERT("port > 0", port > 0);
+    LWGSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTART;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.num = GSM_CFG_MAX_CONNS;/* Set maximal value as invalid number */
-    GSM_MSG_VAR_REF(msg).msg.conn_start.conn = conn;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.type = type;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.host = host;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.port = port;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = conn_evt_fn;
-    GSM_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSTART;
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CIPSTATUS;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_start.num = LWGSM_CFG_MAX_CONNS;/* Set maximal value as invalid number */
+    LWGSM_MSG_VAR_REF(msg).msg.conn_start.conn = conn;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_start.type = type;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_start.host = host;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_start.port = port;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = conn_evt_fn;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -221,23 +221,23 @@ lwgsm_conn_start(lwgsm_conn_p* conn, lwgsm_conn_type_t type, const char* const h
 lwgsmr_t
 lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
     lwgsmr_t res = gsmOK;
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT("conn != NULL", conn != NULL);
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn);         /* Check if we can continue */
 
     /* Proceed with close event at this point! */
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPCLOSE;
-    GSM_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
-    GSM_MSG_VAR_REF(msg).msg.conn_close.val_id = gsmi_conn_get_val_id(conn);
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPCLOSE;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
+    LWGSM_MSG_VAR_REF(msg).msg.conn_close.val_id = gsmi_conn_get_val_id(conn);
 
     flush_buff(conn);                           /* First flush buffer */
-    res = gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
+    res = gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
     if (res == gsmOK && !blocking) {            /* Function succedded in non-blocking mode */
         lwgsm_core_lock();
-        GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
                    "[CONN] Connection %d set to closing state\r\n", (int)conn->num);
         conn->status.f.in_closing = 1;          /* Connection is in closing mode but not yet closed */
         lwgsm_core_unlock();
@@ -260,7 +260,7 @@ lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
 lwgsmr_t
 lwgsm_conn_sendto(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, const void* data,
                 size_t btw, size_t* bw, const uint32_t blocking) {
-    GSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT("conn != NULL", conn != NULL);
 
     flush_buff(conn);                           /* Flush currently written memory if exists */
     return conn_send(conn, ip, port, data, btw, bw, 0, blocking);
@@ -282,16 +282,16 @@ lwgsm_conn_send(lwgsm_conn_p conn, const void* data, size_t btw, size_t* const b
     lwgsmr_t res;
     const uint8_t* d = data;
 
-    GSM_ASSERT("conn != NULL", conn != NULL);
-    GSM_ASSERT("data != NULL", data != NULL);
-    GSM_ASSERT("btw > 0", btw > 0);
+    LWGSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT("data != NULL", data != NULL);
+    LWGSM_ASSERT("btw > 0", btw > 0);
 
     lwgsm_core_lock();
     if (conn->buff.buff != NULL) {              /* Check if memory available */
         size_t to_copy;
-        to_copy = GSM_MIN(btw, conn->buff.len - conn->buff.ptr);
+        to_copy = LWGSM_MIN(btw, conn->buff.len - conn->buff.ptr);
         if (to_copy > 0) {
-            GSM_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, to_copy);
+            LWGSM_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, to_copy);
             conn->buff.ptr += to_copy;
             d += to_copy;
             btw -= to_copy;
@@ -321,7 +321,7 @@ lwgsm_conn_send(lwgsm_conn_p conn, const void* data, size_t btw, size_t* const b
  */
 lwgsmr_t
 lwgsm_conn_recved(lwgsm_conn_p conn, lwgsm_pbuf_p pbuf) {
-#if GSM_CFG_CONN_MANUAL_TCP_RECEIVE
+#if LWGSM_CFG_CONN_MANUAL_TCP_RECEIVE
     size_t len;
     len = lwgsm_pbuf_length(pbuf, 1);             /* Get length of pbuf */
     if (conn->tcp_available_data > len) {
@@ -330,10 +330,10 @@ lwgsm_conn_recved(lwgsm_conn_p conn, lwgsm_pbuf_p pbuf) {
             /* Start new manual receive here... */
         }
     }
-#else /* GSM_CFG_CONN_MANUAL_TCP_RECEIVE */
-    GSM_UNUSED(conn);
-    GSM_UNUSED(pbuf);
-#endif /* !GSM_CFG_CONN_MANUAL_TCP_RECEIVE */
+#else /* LWGSM_CFG_CONN_MANUAL_TCP_RECEIVE */
+    LWGSM_UNUSED(conn);
+    LWGSM_UNUSED(pbuf);
+#endif /* !LWGSM_CFG_CONN_MANUAL_TCP_RECEIVE */
     return gsmOK;
 }
 
@@ -374,12 +374,12 @@ lwgsm_conn_get_arg(lwgsm_conn_p conn) {
  */
 lwgsmr_t
 lwgsm_get_conns_status(const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSTATUS;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
 }
 
 /**
@@ -453,15 +453,15 @@ lwgsm_conn_getnum(lwgsm_conn_p conn) {
 lwgsm_conn_p
 lwgsm_conn_get_from_evt(lwgsm_evt_t* evt) {
     switch (evt->type) {
-        case GSM_EVT_CONN_ACTIVE:
+        case LWGSM_EVT_CONN_ACTIVE:
             return lwgsm_evt_conn_active_get_conn(evt);
-        case GSM_EVT_CONN_CLOSE:
+        case LWGSM_EVT_CONN_CLOSE:
             return lwgsm_evt_conn_close_get_conn(evt);
-        case GSM_EVT_CONN_RECV:
+        case LWGSM_EVT_CONN_RECV:
             return lwgsm_evt_conn_recv_get_conn(evt);
-        case GSM_EVT_CONN_SEND:
+        case LWGSM_EVT_CONN_SEND:
             return lwgsm_evt_conn_send_get_conn(evt);
-        case GSM_EVT_CONN_POLL:
+        case LWGSM_EVT_CONN_POLL:
             return lwgsm_evt_conn_poll_get_conn(evt);
         default:
             return NULL;
@@ -487,7 +487,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
 
     const uint8_t* d = data;
 
-    GSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT("conn != NULL", conn != NULL);
 
     /*
      * Steps during write process:
@@ -504,8 +504,8 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
 
     /* Step 1 */
     if (conn->buff.buff != NULL) {
-        len = GSM_MIN(conn->buff.len - conn->buff.ptr, btw);
-        GSM_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, len);
+        len = LWGSM_MIN(conn->buff.len - conn->buff.ptr, btw);
+        LWGSM_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, len);
 
         d += len;
         btw -= len;
@@ -515,7 +515,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
         if (conn->buff.ptr == conn->buff.len || flush) {
             /* Try to send to processing queue in non-blocking way */
             if (conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0) != gsmOK) {
-                GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
+                LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
                            "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
                 lwgsm_mem_free_s((void**)&conn->buff.buff);
             }
@@ -524,13 +524,13 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
     }
 
     /* Step 2 */
-    while (btw >= GSM_CFG_CONN_MAX_DATA_LEN) {
+    while (btw >= LWGSM_CFG_CONN_MAX_DATA_LEN) {
         uint8_t* buff;
-        buff = lwgsm_mem_malloc(sizeof(*buff) * GSM_CFG_CONN_MAX_DATA_LEN);
+        buff = lwgsm_mem_malloc(sizeof(*buff) * LWGSM_CFG_CONN_MAX_DATA_LEN);
         if (buff != NULL) {
-            GSM_MEMCPY(buff, d, GSM_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
-            if (conn_send(conn, NULL, 0, buff, GSM_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != gsmOK) {
-                GSM_DEBUGF(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE,
+            LWGSM_MEMCPY(buff, d, LWGSM_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
+            if (conn_send(conn, NULL, 0, buff, LWGSM_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != gsmOK) {
+                LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
                            "[CONN] Free write buffer: %p\r\n", (void*)buff);
                 lwgsm_mem_free_s((void**)&buff);
                 return gsmERRMEM;
@@ -539,24 +539,24 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
             return gsmERRMEM;
         }
 
-        btw -= GSM_CFG_CONN_MAX_DATA_LEN;       /* Decrease remaining length */
-        d += GSM_CFG_CONN_MAX_DATA_LEN;         /* Advance data pointer */
+        btw -= LWGSM_CFG_CONN_MAX_DATA_LEN;       /* Decrease remaining length */
+        d += LWGSM_CFG_CONN_MAX_DATA_LEN;         /* Advance data pointer */
     }
 
     /* Step 3 */
     if (conn->buff.buff == NULL) {
-        conn->buff.buff = lwgsm_mem_malloc(sizeof(*conn->buff.buff) * GSM_CFG_CONN_MAX_DATA_LEN);
-        conn->buff.len = GSM_CFG_CONN_MAX_DATA_LEN;
+        conn->buff.buff = lwgsm_mem_malloc(sizeof(*conn->buff.buff) * LWGSM_CFG_CONN_MAX_DATA_LEN);
+        conn->buff.len = LWGSM_CFG_CONN_MAX_DATA_LEN;
         conn->buff.ptr = 0;
 
-        GSM_DEBUGW(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE, conn->buff.buff != NULL,
+        LWGSM_DEBUGW(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, conn->buff.buff != NULL,
                    "[CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
-        GSM_DEBUGW(GSM_CFG_DBG_CONN | GSM_DBG_TYPE_TRACE, conn->buff.buff == NULL,
+        LWGSM_DEBUGW(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, conn->buff.buff == NULL,
                    "[CONN] Cannot allocate new write buffer\r\n");
     }
     if (btw > 0) {
         if (conn->buff.buff != NULL) {
-            GSM_MEMCPY(conn->buff.buff, d, btw);    /* Copy data to memory */
+            LWGSM_MEMCPY(conn->buff.buff, d, btw);    /* Copy data to memory */
             conn->buff.ptr = btw;
         } else {
             return gsmERRMEM;
@@ -588,7 +588,7 @@ size_t
 lwgsm_conn_get_total_recved_count(lwgsm_conn_p conn) {
     size_t tot;
 
-    GSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT("conn != NULL", conn != NULL);
 
     lwgsm_core_lock();
     tot = conn->total_recved;                   /* Get total received bytes */
@@ -607,7 +607,7 @@ uint8_t
 lwgsm_conn_get_remote_ip(lwgsm_conn_p conn, lwgsm_ip_t* ip) {
     if (conn != NULL && ip != NULL) {
         lwgsm_core_lock();
-        GSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip));  /* Copy data */
+        LWGSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip));  /* Copy data */
         lwgsm_core_unlock();
         return 1;
     }
@@ -646,4 +646,4 @@ lwgsm_conn_get_local_port(lwgsm_conn_p conn) {
     return port;
 }
 
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
+#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */

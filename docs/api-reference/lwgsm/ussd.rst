@@ -3,4 +3,4 @@
 Unstructured Supplementary Service Data
 =======================================
 
-.. doxygengroup:: GSM_USSD
+.. doxygengroup:: LWGSM_USSD

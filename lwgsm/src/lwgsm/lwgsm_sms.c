@@ -35,11 +35,11 @@
 #include "lwgsm/lwgsm_sms.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if GSM_CFG_SMS || __DOXYGEN__
+#if LWGSM_CFG_SMS || __DOXYGEN__
 
-#define GSM_SMS_OPERATION_IDX           0   /*!< Operation index for memory array (read, delete, list) */
-#define GSM_SMS_SEND_IDX                1   /*!< Send index for memory array */
-#define GSM_SMS_RECEIVE_IDX             2   /*!< Receive index for memory array */
+#define LWGSM_SMS_OPERATION_IDX           0   /*!< Operation index for memory array (read, delete, list) */
+#define LWGSM_SMS_SEND_IDX                1   /*!< Send index for memory array */
+#define LWGSM_SMS_RECEIVE_IDX             2   /*!< Receive index for memory array */
 
 #if !__DOXYGEN__
 #define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
@@ -75,15 +75,15 @@ check_ready(void) {
 /**
  * \brief           Check if input memory is available in modem
  * \param[in]       mem: Memory to test
- * \param[in]       can_curr: Flag indicates if \ref GSM_MEM_CURRENT option can be used
+ * \param[in]       can_curr: Flag indicates if \ref LWGSM_MEM_CURRENT option can be used
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 check_sms_mem(lwgsm_mem_t mem, uint8_t can_curr) {
     lwgsmr_t res = gsmERRMEM;
     lwgsm_core_lock();
-    if ((mem < GSM_MEM_END && gsm.m.sms.mem[GSM_SMS_OPERATION_IDX].mem_available & (1 << (uint32_t)mem)) ||
-        (can_curr && mem == GSM_MEM_CURRENT)) {
+    if ((mem < LWGSM_MEM_END && gsm.m.sms.mem[LWGSM_SMS_OPERATION_IDX].mem_available & (1 << (uint32_t)mem)) ||
+        (can_curr && mem == LWGSM_MEM_CURRENT)) {
         res = gsmOK;
     }
     lwgsm_core_unlock();
@@ -99,14 +99,14 @@ check_sms_mem(lwgsm_mem_t mem, uint8_t can_curr) {
  */
 lwgsmr_t
 lwgsm_sms_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_SMS_ENABLE;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET_OPT;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_SMS_ENABLE;
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET_OPT;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -124,7 +124,7 @@ lwgsm_sms_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
         evt_fn(gsmOK, evt_arg);
     }
     lwgsm_core_unlock();
-    GSM_UNUSED(blocking);
+    LWGSM_UNUSED(blocking);
     return gsmOK;
 }
 
@@ -140,22 +140,22 @@ lwgsm_sms_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
 lwgsmr_t
 lwgsm_sms_send(const char* num, const char* text,
              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("num != NULL && num[0] > 0", num != NULL && num[0] > 0);
-    GSM_ASSERT("text != NULL && text[0] > 0 && strlen(text) <= 160", text != NULL && text[0] > 0 && strlen(text) <= 160);
+    LWGSM_ASSERT("num != NULL && num[0] > 0", num != NULL && num[0] > 0);
+    LWGSM_ASSERT("text != NULL && text[0] > 0 && strlen(text) <= 160", text != NULL && text[0] > 0 && strlen(text) <= 160);
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGS;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;
-    GSM_MSG_VAR_REF(msg).msg.sms_send.num = num;
-    GSM_MSG_VAR_REF(msg).msg.sms_send.text = text;
-    GSM_MSG_VAR_REF(msg).msg.sms_send.format = 1;   /* Send as plain text */
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGS;
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CMGF;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_send.num = num;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_send.text = text;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_send.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -172,33 +172,33 @@ lwgsm_sms_send(const char* num, const char* text,
 lwgsmr_t
 lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t update,
              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("entry != NULL", entry != NULL);
+    LWGSM_ASSERT("entry != NULL", entry != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    GSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
-    GSM_MEMSET(entry, 0x00, sizeof(*entry));    /* Reset data structure */
+    LWGSM_MEMSET(entry, 0x00, sizeof(*entry));    /* Reset data structure */
 
     entry->mem = mem;                           /* Set memory */
     entry->pos = pos;                           /* Set device position */
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGR;
-    if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;    /* First get memory */
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGR;
+    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;    /* First get memory */
     } else {
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;    /* First set memory */
     }
-    GSM_MSG_VAR_REF(msg).msg.sms_read.mem = mem;
-    GSM_MSG_VAR_REF(msg).msg.sms_read.pos = pos;
-    GSM_MSG_VAR_REF(msg).msg.sms_read.entry = entry;
-    GSM_MSG_VAR_REF(msg).msg.sms_read.update = update;
-    GSM_MSG_VAR_REF(msg).msg.sms_read.format = 1;   /* Send as plain text */
+    LWGSM_MSG_VAR_REF(msg).msg.sms_read.mem = mem;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_read.pos = pos;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_read.entry = entry;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_read.update = update;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_read.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -213,24 +213,24 @@ lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t up
 lwgsmr_t
 lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
                const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    GSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGD;
-    if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;    /* First get memory */
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGD;
+    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;    /* First get memory */
     } else {
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;    /* First set memory */
     }
-    GSM_MSG_VAR_REF(msg).msg.sms_delete.mem = mem;
-    GSM_MSG_VAR_REF(msg).msg.sms_delete.pos = pos;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_delete.mem = mem;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_delete.pos = pos;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
 }
 
 /**
@@ -244,24 +244,24 @@ lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
 lwgsmr_t
 lwgsm_sms_delete_all(lwgsm_sms_status_t status,
                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGDA;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CMGF;    /* By default format = 1 */
-    GSM_MSG_VAR_REF(msg).msg.sms_delete_all.status = status;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGDA;
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CMGF;    /* By default format = 1 */
+    LWGSM_MSG_VAR_REF(msg).msg.sms_delete_all.status = status;
 
     /* This command may take a while */
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
  * \brief           List SMS from SMS memory
- * \param[in]       mem: Memory to read entries from. Use \ref GSM_MEM_CURRENT to read from current memory
+ * \param[in]       mem: Memory to read entries from. Use \ref LWGSM_MEM_CURRENT to read from current memory
  * \param[in]       stat: SMS status to read, either `read`, `unread`, `sent`, `unsent` or `all`
  * \param[out]      entries: Pointer to array to save SMS entries
  * \param[in]       etr: Number of entries to read
@@ -275,43 +275,43 @@ lwgsm_sms_delete_all(lwgsm_sms_status_t status,
 lwgsmr_t
 lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update,
              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("entires != NULL", entries != NULL);
-    GSM_ASSERT("etr > 0", etr > 0);
+    LWGSM_ASSERT("entires != NULL", entries != NULL);
+    LWGSM_ASSERT("etr > 0", etr > 0);
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    GSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
     if (er != NULL) {
         *er = 0;
     }
-    GSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CMGL;
-    if (mem == GSM_MEM_CURRENT) {               /* Should be always false */
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;    /* First get memory */
+    LWGSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGL;
+    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;    /* First get memory */
     } else {
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;    /* First set memory */
     }
-    GSM_MSG_VAR_REF(msg).msg.sms_list.mem = mem;
-    GSM_MSG_VAR_REF(msg).msg.sms_list.status = stat;
-    GSM_MSG_VAR_REF(msg).msg.sms_list.entries = entries;
-    GSM_MSG_VAR_REF(msg).msg.sms_list.etr = etr;
-    GSM_MSG_VAR_REF(msg).msg.sms_list.er = er;
-    GSM_MSG_VAR_REF(msg).msg.sms_list.update = update;
-    GSM_MSG_VAR_REF(msg).msg.sms_list.format = 1;   /* Send as plain text */
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.mem = mem;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.status = stat;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.entries = entries;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.etr = etr;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.er = er;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.update = update;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
  * \brief           Set preferred storage for SMS
- * \param[in]       mem1: Preferred memory for read/delete SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
- * \param[in]       mem2: Preferred memory for sent/write SMS operations. Use \ref GSM_MEM_CURRENT to keep it as is
- * \param[in]       mem3: Preferred memory for received SMS entries. Use \ref GSM_MEM_CURRENT to keep it as is
+ * \param[in]       mem1: Preferred memory for read/delete SMS operations. Use \ref LWGSM_MEM_CURRENT to keep it as is
+ * \param[in]       mem2: Preferred memory for sent/write SMS operations. Use \ref LWGSM_MEM_CURRENT to keep it as is
+ * \param[in]       mem3: Preferred memory for received SMS entries. Use \ref LWGSM_MEM_CURRENT to keep it as is
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -320,27 +320,27 @@ lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entr
 lwgsmr_t
 lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwgsm_mem_t mem3,
                               const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    GSM_ASSERT("check_sms_mem(1) == gsmOK", check_sms_mem(mem1, 1) == gsmOK);
-    GSM_ASSERT("check_sms_mem(2) == gsmOK", check_sms_mem(mem2, 1) == gsmOK);
-    GSM_ASSERT("check_sms_mem(3) == gsmOK", check_sms_mem(mem3, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem(1) == gsmOK", check_sms_mem(mem1, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem(2) == gsmOK", check_sms_mem(mem2, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem(3) == gsmOK", check_sms_mem(mem3, 1) == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPMS_SET;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPMS_SET;
 
     /* In case any of memories is set to current, read current status first from device */
-    if (mem1 == GSM_MEM_CURRENT || mem2 == GSM_MEM_CURRENT || mem3 == GSM_MEM_CURRENT) {
-        GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPMS_GET;
+    if (mem1 == LWGSM_MEM_CURRENT || mem2 == LWGSM_MEM_CURRENT || mem3 == LWGSM_MEM_CURRENT) {
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;
     }
-    GSM_MSG_VAR_REF(msg).msg.sms_memory.mem[0] = mem1;
-    GSM_MSG_VAR_REF(msg).msg.sms_memory.mem[1] = mem2;
-    GSM_MSG_VAR_REF(msg).msg.sms_memory.mem[2] = mem3;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_memory.mem[0] = mem1;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_memory.mem[1] = mem2;
+    LWGSM_MSG_VAR_REF(msg).msg.sms_memory.mem[2] = mem3;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
+#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */

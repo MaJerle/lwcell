@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_SYSTEM_PORT_H
-#define GSM_HDR_SYSTEM_PORT_H
+#ifndef LWGSM_HDR_SYSTEM_PORT_H
+#define LWGSM_HDR_SYSTEM_PORT_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -43,11 +43,11 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \addtogroup      GSM_SYS
+ * \addtogroup      LWGSM_SYS
  * \{
  */
 
-#if GSM_CFG_OS || __DOXYGEN__
+#if LWGSM_CFG_OS || __DOXYGEN__
 
 /* Include any OS specific features */
 #include "cmsis_os.h"
@@ -91,21 +91,21 @@ typedef osPriority          lwgsm_sys_thread_prio_t;
  *
  * Value assigned to \ref lwgsm_sys_mutex_t type when it is not valid.
  */
-#define GSM_SYS_MUTEX_NULL          ((lwgsm_sys_mutex_t)0)
+#define LWGSM_SYS_MUTEX_NULL          ((lwgsm_sys_mutex_t)0)
 
 /**
  * \brief           Semaphore invalid value
  *
  * Value assigned to \ref lwgsm_sys_sem_t type when it is not valid.
  */
-#define GSM_SYS_SEM_NULL            ((lwgsm_sys_sem_t)0)
+#define LWGSM_SYS_SEM_NULL            ((lwgsm_sys_sem_t)0)
 
 /**
  * \brief           Message box invalid value
  *
  * Value assigned to \ref lwgsm_sys_mbox_t type when it is not valid.
  */
-#define GSM_SYS_MBOX_NULL           ((lwgsm_sys_mbox_t)0)
+#define LWGSM_SYS_MBOX_NULL           ((lwgsm_sys_mbox_t)0)
 
 /**
  * \brief           OS timeout value
@@ -113,7 +113,7 @@ typedef osPriority          lwgsm_sys_thread_prio_t;
  * Value returned by operating system functions (mutex wait, sem wait, mbox wait)
  * when it returns timeout and does not give valid value to application
  */
-#define GSM_SYS_TIMEOUT             ((uint32_t)osWaitForever)
+#define LWGSM_SYS_TIMEOUT             ((uint32_t)osWaitForever)
 
 /**
  * \brief           Default thread priority value used by middleware to start built-in threads
@@ -121,16 +121,16 @@ typedef osPriority          lwgsm_sys_thread_prio_t;
  * Threads can well operate with normal (default) priority and do not require
  * any special feature in terms of priority for prioer operation.
  */
-#define GSM_SYS_THREAD_PRIO         (osPriorityNormal)
+#define LWGSM_SYS_THREAD_PRIO         (osPriorityNormal)
 
 /**
  * \brief           Stack size in units of bytes for system threads
  *
  * It is used as default stack size for all built-in threads.
  */
-#define GSM_SYS_THREAD_SS           (1024)
+#define LWGSM_SYS_THREAD_SS           (1024)
 
-#endif /* GSM_CFG_OS || __DOXYGEN__ */
+#endif /* LWGSM_CFG_OS || __DOXYGEN__ */
 
 /**
  * \}
@@ -140,4 +140,4 @@ typedef osPriority          lwgsm_sys_thread_prio_t;
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_SYSTEM_PORT_H */
+#endif /* LWGSM_HDR_SYSTEM_PORT_H */

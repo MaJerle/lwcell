@@ -36,8 +36,8 @@
 #include "lwgsm/lwgsm_threads.h"
 #include "system/lwgsm_ll.h"
 
-#if GSM_CFG_OS != 1
-#error GSM_CFG_OS must be set to 1!
+#if LWGSM_CFG_OS != 1
+#error LWGSM_CFG_OS must be set to 1!
 #endif
 
 static lwgsmr_t   def_callback(lwgsm_evt_t* cb);
@@ -52,7 +52,7 @@ lwgsm_t gsm;
  */
 static lwgsmr_t
 def_callback(lwgsm_evt_t* evt) {
-    GSM_UNUSED(evt);
+    LWGSM_UNUSED(evt);
     return gsmOK;
 }
 
@@ -60,12 +60,12 @@ def_callback(lwgsm_evt_t* evt) {
  * \brief           Init and prepare GSM stack for device operation
  * \note            Function must be called from operating system thread context.
  *                  It creates necessary threads and waits them to start, thus running operating system is important.
- *                  - When \ref GSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device
+ *                  - When \ref LWGSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device
  *                      otherwise manual call to \ref lwgsm_reset is required to setup device
  *
  * \param[in]       evt_func: Global event callback function for all major events
  * \param[in]       blocking: Status whether command should be blocking or not.
- *                      Used when \ref GSM_CFG_RESET_ON_INIT is enabled.
+ *                      Used when \ref LWGSM_CFG_RESET_ON_INIT is enabled.
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
@@ -82,34 +82,34 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     }
 
     if (!lwgsm_sys_sem_create(&gsm.sem_sync, 1)) {/* Create sync semaphore between threads */
-        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot allocate sync semaphore!\r\n");
         goto cleanup;
     }
 
     /* Create message queues */
-    if (!lwgsm_sys_mbox_create(&gsm.mbox_producer, GSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {  /* Producer */
-        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+    if (!lwgsm_sys_mbox_create(&gsm.mbox_producer, LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {  /* Producer */
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot allocate producer mbox queue!\r\n");
         goto cleanup;
     }
-    if (!lwgsm_sys_mbox_create(&gsm.mbox_process, GSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {    /* Process */
-        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+    if (!lwgsm_sys_mbox_create(&gsm.mbox_process, LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {    /* Process */
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot allocate process mbox queue!\r\n");
         goto cleanup;
     }
 
     /* Create threads */
     lwgsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Lock semaphore */
-    if (!lwgsm_sys_thread_create(&gsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
-        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+    if (!lwgsm_sys_thread_create(&gsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &gsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot create producing thread!\r\n");
         lwgsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
         goto cleanup;
     }
     lwgsm_sys_sem_wait(&gsm.sem_sync, 0);         /* Wait semaphore, should be unlocked in produce thread */
-    if (!lwgsm_sys_thread_create(&gsm.thread_process, "lwgsm_process", lwgsm_thread_process, &gsm.sem_sync, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO)) {
-        GSM_DEBUGF(GSM_CFG_DBG_INIT | GSM_DBG_LVL_SEVERE | GSM_DBG_TYPE_TRACE,
+    if (!lwgsm_sys_thread_create(&gsm.thread_process, "lwgsm_process", lwgsm_thread_process, &gsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                    "[CORE] Cannot create processing thread!\r\n");
         lwgsm_sys_thread_terminate(&gsm.thread_produce);  /* Delete produce thread */
         lwgsm_sys_sem_release(&gsm.sem_sync);     /* Release semaphore and return */
@@ -119,31 +119,31 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     lwgsm_sys_sem_release(&gsm.sem_sync);         /* Release semaphore manually */
 
     lwgsm_core_lock();
-    gsm.ll.uart.baudrate = GSM_CFG_AT_PORT_BAUDRATE;
+    gsm.ll.uart.baudrate = LWGSM_CFG_AT_PORT_BAUDRATE;
     lwgsm_ll_init(&gsm.ll);                       /* Init low-level communication */
 
-#if !GSM_CFG_INPUT_USE_PROCESS
-    lwgsm_buff_init(&gsm.buff, GSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
-#endif /* !GSM_CFG_INPUT_USE_PROCESS */
+#if !LWGSM_CFG_INPUT_USE_PROCESS
+    lwgsm_buff_init(&gsm.buff, LWGSM_CFG_RCV_BUFF_SIZE);    /* Init buffer for input data */
+#endif /* !LWGSM_CFG_INPUT_USE_PROCESS */
 
     gsm.status.f.initialized = 1;               /* We are initialized now */
     gsm.status.f.dev_present = 1;               /* We assume device is present at this point */
 
-    gsmi_send_cb(GSM_EVT_INIT_FINISH);          /* Call user callback function */
+    gsmi_send_cb(LWGSM_EVT_INIT_FINISH);          /* Call user callback function */
 
     /*
      * Call reset command and call default
      * AT commands to prepare basic setup for device
      */
-#if GSM_CFG_RESET_ON_INIT
+#if LWGSM_CFG_RESET_ON_INIT
     if (gsm.status.f.dev_present) {
         lwgsm_core_unlock();
-        res = lwgsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL, blocking);  /* Send reset sequence with delay */
+        res = lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL, blocking);  /* Send reset sequence with delay */
         lwgsm_core_lock();
     }
-#else /* GSM_CFG_RESET_ON_INIT */
-    GSM_UNUSED(blocking);                       /* Unused variable */
-#endif /* !GSM_CFG_RESET_ON_INIT */
+#else /* LWGSM_CFG_RESET_ON_INIT */
+    LWGSM_UNUSED(blocking);                       /* Unused variable */
+#endif /* !LWGSM_CFG_RESET_ON_INIT */
     lwgsm_core_unlock();
 
     return res;
@@ -187,14 +187,14 @@ lwgsm_reset(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32
 lwgsmr_t
 lwgsm_reset_with_delay(uint32_t delay,
                      const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_RESET;
-    GSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_RESET;
+    LWGSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -268,14 +268,14 @@ lwgsm_delay(uint32_t ms) {
 lwgsmr_t
 lwgsm_set_func_mode(uint8_t mode,
                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CFUN_SET;
-    GSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CFUN_SET;
+    LWGSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -303,19 +303,19 @@ lwgsm_device_set_present(uint8_t present,
             /* Manually reset stack to default device state */
             gsmi_reset_everything(1);
         } else {
-#if GSM_CFG_RESET_ON_DEVICE_PRESENT
+#if LWGSM_CFG_RESET_ON_DEVICE_PRESENT
             lwgsm_core_unlock();
-            res = lwgsm_reset_with_delay(GSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
+            res = lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
             lwgsm_core_lock();
-#endif /* GSM_CFG_RESET_ON_DEVICE_PRESENT */
+#endif /* LWGSM_CFG_RESET_ON_DEVICE_PRESENT */
         }
-        gsmi_send_cb(GSM_EVT_DEVICE_PRESENT);   /* Send present event */
+        gsmi_send_cb(LWGSM_EVT_DEVICE_PRESENT);   /* Send present event */
     }
     lwgsm_core_unlock();
 
-    GSM_UNUSED(evt_fn);
-    GSM_UNUSED(evt_arg);
-    GSM_UNUSED(blocking);
+    LWGSM_UNUSED(evt_fn);
+    LWGSM_UNUSED(evt_arg);
+    LWGSM_UNUSED(blocking);
 
     return res;
 }

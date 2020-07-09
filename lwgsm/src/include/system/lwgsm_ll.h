@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_LL_H
-#define GSM_HDR_LL_H
+#ifndef LWGSM_HDR_LL_H
+#define LWGSM_HDR_LL_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,7 +41,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \defgroup        GSM_LL Low-level functions
+ * \defgroup        LWGSM_LL Low-level functions
  * \brief           Low-level communication functions
  * \{
  */
@@ -57,4 +57,4 @@ lwgsmr_t      lwgsm_ll_deinit(lwgsm_ll_t* ll);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_LL_H */
+#endif /* LWGSM_HDR_LL_H */

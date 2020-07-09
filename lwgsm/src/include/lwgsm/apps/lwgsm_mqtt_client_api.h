@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_APP_MQTT_CLIENT_API_H
-#define GSM_HDR_APP_MQTT_CLIENT_API_H
+#ifndef LWGSM_HDR_APP_MQTT_CLIENT_API_H
+#define LWGSM_HDR_APP_MQTT_CLIENT_API_H
 
 #include "lwgsm/lwgsm.h"
 #include "lwgsm/apps/lwgsm_mqtt_client.h"
@@ -42,8 +42,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM_APPS
- * \defgroup        GSM_APP_MQTT_CLIENT_API MQTT client API
+ * \ingroup         LWGSM_APPS
+ * \defgroup        LWGSM_APP_MQTT_CLIENT_API MQTT client API
  * \brief           Sequential, single thread MQTT client API
  * \{
  */
@@ -93,4 +93,4 @@ void                    lwgsm_mqtt_client_api_buf_free(lwgsm_mqtt_client_api_buf
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_APP_MQTT_CLIENT_H */
+#endif /* LWGSM_HDR_APP_MQTT_CLIENT_H */

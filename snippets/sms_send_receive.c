@@ -6,9 +6,9 @@
 #include "sms_send_receive.h"
 #include "lwgsm/lwgsm.h"
 
-#if !GSM_CFG_SMS
+#if !LWGSM_CFG_SMS
 #error "SMS must be enabled to run this example"
-#endif /* !GSM_CFG_SMS */
+#endif /* !LWGSM_CFG_SMS */
 
 static lwgsmr_t sms_evt_func(lwgsm_evt_t* evt);
 
@@ -45,11 +45,11 @@ sms_send_receive_start(void) {
 static lwgsmr_t
 sms_evt_func(lwgsm_evt_t* evt) {
     switch (lwgsm_evt_get_type(evt)) {
-        case GSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
+        case LWGSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
             printf("SIM device SMS service is ready!\r\n");
             break;
         }
-        case GSM_EVT_SMS_RECV: {                /* New SMS received indicator */
+        case LWGSM_EVT_SMS_RECV: {                /* New SMS received indicator */
             lwgsmr_t res;
 
             printf("New SMS received!\r\n");    /* Notify user */
@@ -63,7 +63,7 @@ sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case GSM_EVT_SMS_READ: {                /* SMS read event */
+        case LWGSM_EVT_SMS_READ: {                /* SMS read event */
             lwgsm_sms_entry_t* entry = lwgsm_evt_sms_read_get_entry(evt);
             if (lwgsm_evt_sms_read_get_result(evt) == gsmOK && entry != NULL) {
                 /* Print SMS data */
@@ -83,7 +83,7 @@ sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case GSM_EVT_SMS_SEND: {                /* SMS send event */
+        case LWGSM_EVT_SMS_SEND: {                /* SMS send event */
             if (lwgsm_evt_sms_send_get_result(evt) == gsmOK) {
                 printf("SMS has been successfully sent!\r\n");
             } else {
@@ -91,7 +91,7 @@ sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case GSM_EVT_SMS_DELETE: {              /* SMS delete event */
+        case LWGSM_EVT_SMS_DELETE: {              /* SMS delete event */
             if (lwgsm_evt_sms_delete_get_result(evt) == gsmOK) {
                 printf("SMS deleted, memory position: %d\r\n", (int)lwgsm_evt_sms_delete_get_pos(evt));
             } else {

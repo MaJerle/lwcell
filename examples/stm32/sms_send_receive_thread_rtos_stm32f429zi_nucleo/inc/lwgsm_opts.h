@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_OPTS_H
-#define GSM_HDR_OPTS_H
+#ifndef LWGSM_HDR_OPTS_H
+#define LWGSM_HDR_OPTS_H
 
 /* Rename this file to "lwgsm_opts.h" for your application */
 
@@ -40,10 +40,10 @@
  * Open "include/lwgsm/lwgsm_opt.h" and
  * copy & replace here settings you want to change values
  */
-#define GSM_CFG_AT_ECHO                     1
-#define GSM_CFG_INPUT_USE_PROCESS           1
+#define LWGSM_CFG_AT_ECHO                     1
+#define LWGSM_CFG_INPUT_USE_PROCESS           1
 
 /* Enable SMS API */
-#define GSM_CFG_SMS                         1
+#define LWGSM_CFG_SMS                         1
 
-#endif /* GSM_HDR_OPTS_H */
+#endif /* LWGSM_HDR_OPTS_H */

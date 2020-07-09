@@ -3,4 +3,4 @@
 Event management
 ================
 
-.. doxygengroup:: GSM_EVT
+.. doxygengroup:: LWGSM_EVT

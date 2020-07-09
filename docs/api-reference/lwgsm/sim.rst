@@ -3,4 +3,4 @@
 SIM card
 ========
 
-.. doxygengroup:: GSM_SIM
+.. doxygengroup:: LWGSM_SIM

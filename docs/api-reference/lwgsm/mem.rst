@@ -3,4 +3,4 @@
 Memory manager
 ==============
 
-.. doxygengroup:: GSM_MEM
+.. doxygengroup:: LWGSM_MEM

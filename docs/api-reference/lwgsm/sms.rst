@@ -3,4 +3,4 @@
 SMS
 ===
 
-.. doxygengroup:: GSM_SMS
+.. doxygengroup:: LWGSM_SMS

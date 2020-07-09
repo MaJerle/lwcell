@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_USSD_H
-#define GSM_HDR_USSD_H
+#ifndef LWGSM_HDR_USSD_H
+#define LWGSM_HDR_USSD_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_USSD Unstructured Supplementary Service Data
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_USSD Unstructured Supplementary Service Data
  * \brief           Unstructured Supplementary Service Data
  * \{
  */
@@ -57,4 +57,4 @@ lwgsmr_t  lwgsm_ussd_run(const char* code, char* resp, size_t resp_len, const lw
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_HTTP_H */
+#endif /* LWGSM_HDR_HTTP_H */

@@ -60,17 +60,17 @@ lwgsm_sim_get_current_state(void) {
 lwgsmr_t
 lwgsm_sim_pin_enter(const char* pin,
                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);
+    LWGSM_ASSERT("pin != NULL", pin != NULL);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_SET;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CPIN_GET;
-    GSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_SET;
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPIN_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 30000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 30000);
 }
 
 /**
@@ -86,16 +86,16 @@ lwgsm_sim_pin_enter(const char* pin,
 lwgsmr_t
 lwgsm_sim_pin_add(const char* pin,
                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);
+    LWGSM_ASSERT("pin != NULL", pin != NULL);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_ADD;
-    GSM_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_ADD;
+    LWGSM_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -110,18 +110,18 @@ lwgsm_sim_pin_add(const char* pin,
 lwgsmr_t
 lwgsm_sim_pin_change(const char* pin, const char* new_pin,
                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);
-    GSM_ASSERT("new_pin != NULL", new_pin != NULL);
+    LWGSM_ASSERT("pin != NULL", pin != NULL);
+    LWGSM_ASSERT("new_pin != NULL", new_pin != NULL);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_CHANGE;
-    GSM_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
-    GSM_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_CHANGE;
+    LWGSM_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
+    LWGSM_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -135,16 +135,16 @@ lwgsm_sim_pin_change(const char* pin, const char* new_pin,
 lwgsmr_t
 lwgsm_sim_pin_remove(const char* pin,
                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("pin != NULL", pin != NULL);
+    LWGSM_ASSERT("pin != NULL", pin != NULL);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CPIN_REMOVE;
-    GSM_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_REMOVE;
+    LWGSM_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -159,16 +159,16 @@ lwgsm_sim_pin_remove(const char* pin,
 lwgsmr_t
 lwgsm_sim_puk_enter(const char* puk, const char* new_pin,
                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("puk != NULL", puk != NULL);
-    GSM_ASSERT("new_pin != NULL", new_pin != NULL);
+    LWGSM_ASSERT("puk != NULL", puk != NULL);
+    LWGSM_ASSERT("new_pin != NULL", new_pin != NULL);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
-    GSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
-    GSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
+    LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
+    LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }

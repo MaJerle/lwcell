@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_OPERATOR_H
-#define GSM_HDR_OPERATOR_H
+#ifndef LWGSM_HDR_OPERATOR_H
+#define LWGSM_HDR_OPERATOR_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_OPERATOR Network operator API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_OPERATOR Network operator API
  * \brief           network operator API
  * \{
  */
@@ -60,4 +60,4 @@ lwgsmr_t      lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* op
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_OPERATOR_H */
+#endif /* LWGSM_HDR_OPERATOR_H */

@@ -7,9 +7,9 @@
 #include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if !GSM_CFG_SMS
+#if !LWGSM_CFG_SMS
 #error "SMS must be enabled to run this example"
-#endif /* !GSM_CFG_SMS */
+#endif /* !LWGSM_CFG_SMS */
 
 static lwgsmr_t sms_evt_func(lwgsm_evt_t* evt);
 
@@ -65,7 +65,7 @@ sms_send_receive_thread(void const* arg) {
 
     while (1) {
         /* Get SMS entry from message queue */
-        while (lwgsm_sys_mbox_get(&sms_mbox, (void**)&sms, 0) == GSM_SYS_TIMEOUT || sms == NULL) {}
+        while (lwgsm_sys_mbox_get(&sms_mbox, (void**)&sms, 0) == LWGSM_SYS_TIMEOUT || sms == NULL) {}
 
         /* We have new SMS now */
         printf("New SMS received!\r\n");
@@ -123,7 +123,7 @@ terminate:
 static lwgsmr_t
 sms_evt_func(lwgsm_evt_t* evt) {
     switch (lwgsm_evt_get_type(evt)) {
-        case GSM_EVT_SMS_RECV: {                /* New SMS received indicator */
+        case LWGSM_EVT_SMS_RECV: {                /* New SMS received indicator */
             uint8_t success = 0;
             sms_receive_t* sms_rx = lwgsm_mem_malloc(sizeof(*sms_rx));
             if (sms_rx != NULL) {

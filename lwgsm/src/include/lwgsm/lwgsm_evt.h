@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_EVT_H
-#define GSM_HDR_EVT_H
+#ifndef LWGSM_HDR_EVT_H
+#define LWGSM_HDR_EVT_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_EVT Events management
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_EVT Events management
  * \brief           Event helper functions
  * \{
  */
@@ -52,9 +52,9 @@ lwgsmr_t          lwgsm_evt_unregister(lwgsm_evt_fn fn);
 lwgsm_evt_type_t  lwgsm_evt_get_type(lwgsm_evt_t* cc);
 
 /**
- * \anchor          GSM_EVT_RESET
+ * \anchor          LWGSM_EVT_RESET
  * \name            Reset event
- * \brief           Event helper functions for \ref GSM_EVT_RESET event
+ * \brief           Event helper functions for \ref LWGSM_EVT_RESET event
  */
 
 lwgsmr_t      lwgsm_evt_reset_get_result(lwgsm_evt_t* cc);
@@ -64,9 +64,9 @@ lwgsmr_t      lwgsm_evt_reset_get_result(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_RESTORE
+ * \anchor          LWGSM_EVT_RESTORE
  * \name            Restore event
- * \brief           Event helper functions for \ref GSM_EVT_RESTORE event
+ * \brief           Event helper functions for \ref LWGSM_EVT_RESTORE event
  */
 
 lwgsmr_t      lwgsm_evt_restore_get_result(lwgsm_evt_t* cc);
@@ -76,9 +76,9 @@ lwgsmr_t      lwgsm_evt_restore_get_result(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_NETWORK_OPERATOR_CURRENT
+ * \anchor          LWGSM_EVT_NETWORK_OPERATOR_CURRENT
  * \name            Current network operator
- * \brief           Event helper functions for \ref GSM_EVT_NETWORK_OPERATOR_CURRENT event
+ * \brief           Event helper functions for \ref LWGSM_EVT_NETWORK_OPERATOR_CURRENT event
  */
 
 const lwgsm_operator_curr_t*  lwgsm_evt_network_operator_get_current(lwgsm_evt_t* cc);
@@ -88,9 +88,9 @@ const lwgsm_operator_curr_t*  lwgsm_evt_network_operator_get_current(lwgsm_evt_t
  */
 
 /**
- * \anchor          GSM_EVT_CONN_RECV
+ * \anchor          LWGSM_EVT_CONN_RECV
  * \name            Connection data received
- * \brief           Event helper functions for \ref GSM_EVT_CONN_RECV event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CONN_RECV event
  */
 
 lwgsm_pbuf_p  lwgsm_evt_conn_recv_get_buff(lwgsm_evt_t* cc);
@@ -101,9 +101,9 @@ lwgsm_conn_p  lwgsm_evt_conn_recv_get_conn(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_CONN_SEND
+ * \anchor          LWGSM_EVT_CONN_SEND
  * \name            Connection data send
- * \brief           Event helper functions for \ref GSM_EVT_CONN_SEND event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CONN_SEND event
  */
 
 lwgsm_conn_p  lwgsm_evt_conn_send_get_conn(lwgsm_evt_t* cc);
@@ -115,9 +115,9 @@ lwgsmr_t      lwgsm_evt_conn_send_get_result(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_CONN_ACTIVE
+ * \anchor          LWGSM_EVT_CONN_ACTIVE
  * \name            Connection active
- * \brief           Event helper functions for \ref GSM_EVT_CONN_ACTIVE event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CONN_ACTIVE event
  */
 
 lwgsm_conn_p  lwgsm_evt_conn_active_get_conn(lwgsm_evt_t* cc);
@@ -128,9 +128,9 @@ uint8_t     lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_CONN_CLOSE
+ * \anchor          LWGSM_EVT_CONN_CLOSE
  * \name            Connection close event
- * \brief           Event helper functions for \ref GSM_EVT_CONN_CLOSE event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CONN_CLOSE event
  */
 
 lwgsm_conn_p  lwgsm_evt_conn_close_get_conn(lwgsm_evt_t* cc);
@@ -143,9 +143,9 @@ lwgsmr_t      lwgsm_evt_conn_close_get_result(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_CONN_POLL
+ * \anchor          LWGSM_EVT_CONN_POLL
  * \name            Connection poll
- * \brief           Event helper functions for \ref GSM_EVT_CONN_POLL event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CONN_POLL event
  */
 
 lwgsm_conn_p  lwgsm_evt_conn_poll_get_conn(lwgsm_evt_t* cc);
@@ -155,9 +155,9 @@ lwgsm_conn_p  lwgsm_evt_conn_poll_get_conn(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_CONN_ERROR
+ * \anchor          LWGSM_EVT_CONN_ERROR
  * \name            Connection error
- * \brief           Event helper functions for \ref GSM_EVT_CONN_ERROR event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CONN_ERROR event
  */
 
 lwgsmr_t              lwgsm_evt_conn_error_get_error(lwgsm_evt_t* cc);
@@ -171,9 +171,9 @@ void*               lwgsm_evt_conn_error_get_arg(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_SIGNAL_STRENGTH
+ * \anchor          LWGSM_EVT_SIGNAL_STRENGTH
  * \name            Signal strength
- * \brief           Event helper functions for \ref GSM_EVT_CONN_RECV event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CONN_RECV event
  */
 
 int16_t lwgsm_evt_signal_strength_get_rssi(lwgsm_evt_t* cc);
@@ -183,9 +183,9 @@ int16_t lwgsm_evt_signal_strength_get_rssi(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_SMS_RECV
+ * \anchor          LWGSM_EVT_SMS_RECV
  * \name            SMS received
- * \brief           Event helper functions for \ref GSM_EVT_SMS_RECV event
+ * \brief           Event helper functions for \ref LWGSM_EVT_SMS_RECV event
  */
 
 size_t      lwgsm_evt_sms_recv_get_pos(lwgsm_evt_t* cc);
@@ -196,9 +196,9 @@ lwgsm_mem_t   lwgsm_evt_sms_recv_get_mem(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_SMS_READ
+ * \anchor          LWGSM_EVT_SMS_READ
  * \name            SMS content read
- * \brief           Event helper functions for \ref GSM_EVT_SMS_READ event
+ * \brief           Event helper functions for \ref LWGSM_EVT_SMS_READ event
  */
 
 lwgsm_sms_entry_t*    lwgsm_evt_sms_read_get_entry(lwgsm_evt_t* cc);
@@ -209,9 +209,9 @@ lwgsmr_t              lwgsm_evt_sms_read_get_result(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_SMS_SEND
+ * \anchor          LWGSM_EVT_SMS_SEND
  * \name            SMS send
- * \brief           Event helper functions for \ref GSM_EVT_SMS_SEND event
+ * \brief           Event helper functions for \ref LWGSM_EVT_SMS_SEND event
  */
 
 lwgsmr_t  lwgsm_evt_sms_send_get_result(lwgsm_evt_t* cc);
@@ -222,9 +222,9 @@ size_t  lwgsm_evt_sms_send_get_pos(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_SMS_DELETE
+ * \anchor          LWGSM_EVT_SMS_DELETE
  * \name            SMS delete
- * \brief           Event helper functions for \ref GSM_EVT_SMS_DELETE event
+ * \brief           Event helper functions for \ref LWGSM_EVT_SMS_DELETE event
  */
 
 lwgsmr_t      lwgsm_evt_sms_delete_get_result(lwgsm_evt_t* cc);
@@ -236,9 +236,9 @@ lwgsm_mem_t   lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_CALL_CHANGED
+ * \anchor          LWGSM_EVT_CALL_CHANGED
  * \name            Call status changed
- * \brief           Event helper functions for \ref GSM_EVT_CALL_CHANGED event
+ * \brief           Event helper functions for \ref LWGSM_EVT_CALL_CHANGED event
  */
 
 const lwgsm_call_t*  lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc);
@@ -248,9 +248,9 @@ const lwgsm_call_t*  lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc);
  */
 
 /**
- * \anchor          GSM_EVT_OPERATOR_SCAN
+ * \anchor          LWGSM_EVT_OPERATOR_SCAN
  * \name            Operator scan
- * \brief           Event helper functions for \ref GSM_EVT_OPERATOR_SCAN event
+ * \brief           Event helper functions for \ref LWGSM_EVT_OPERATOR_SCAN event
  */
 
 lwgsmr_t          lwgsm_evt_operator_scan_get_result(lwgsm_evt_t* cc);
@@ -269,4 +269,4 @@ size_t          lwgsm_evt_operator_scan_get_length(lwgsm_evt_t* cc);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_EVT_H */
+#endif /* LWGSM_HDR_EVT_H */

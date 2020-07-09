@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_DEVICE_INFO_H
-#define GSM_HDR_DEVICE_INFO_H
+#ifndef LWGSM_HDR_DEVICE_INFO_H
+#define LWGSM_HDR_DEVICE_INFO_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_DEVICE_INFO Device information
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_DEVICE_INFO Device information
  * \brief           Basic device information
  * \{
  */
@@ -60,4 +60,4 @@ lwgsmr_t      lwgsm_device_get_serial_number(char* serial, size_t len, const lwg
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_DEVICE_INFO_H */
+#endif /* LWGSM_HDR_DEVICE_INFO_H */

@@ -3,4 +3,4 @@
 Network
 =======
 
-.. doxygengroup:: GSM_NETWORK
+.. doxygengroup:: LWGSM_NETWORK

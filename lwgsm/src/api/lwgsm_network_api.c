@@ -35,7 +35,7 @@
 #include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_network.h"
 
-#if GSM_CFG_NETWORK || __DOXYGEN__
+#if LWGSM_CFG_NETWORK || __DOXYGEN__
 
 /* Network credentials used during connect operation */
 static const char* network_apn;
@@ -130,4 +130,4 @@ lwgsm_network_request_detach(void) {
     return res;
 }
 
-#endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
+#endif /* LWGSM_CFG_NETWORK || __DOXYGEN__ */

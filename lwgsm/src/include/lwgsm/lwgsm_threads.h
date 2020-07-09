@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_THREADS_H
-#define GSM_HDR_THREADS_H
+#ifndef LWGSM_HDR_THREADS_H
+#define LWGSM_HDR_THREADS_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -47,4 +47,4 @@ void    lwgsm_thread_process(void* const arg);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_THREADS_H */
+#endif /* LWGSM_HDR_THREADS_H */

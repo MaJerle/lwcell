@@ -6,9 +6,9 @@
 #include "call_sms.h"
 #include "lwgsm/lwgsm.h"
 
-#if !GSM_CFG_SMS || !GSM_CFG_CALL
+#if !LWGSM_CFG_SMS || !LWGSM_CFG_CALL
 #error "SMS & CALL must be enabled to run this example"
-#endif /* !GSM_CFG_SMS || !GSM_CFG_CALL */
+#endif /* !LWGSM_CFG_SMS || !LWGSM_CFG_CALL */
 
 static lwgsmr_t call_sms_evt_func(lwgsm_evt_t* evt);
 
@@ -52,11 +52,11 @@ call_sms_start(void) {
 static lwgsmr_t
 call_sms_evt_func(lwgsm_evt_t* evt) {
     switch (lwgsm_evt_get_type(evt)) {
-        case GSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
+        case LWGSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
             printf("SIM device SMS service is ready!\r\n");
             break;
         }
-        case GSM_EVT_SMS_RECV: {                /* New SMS received indicator */
+        case LWGSM_EVT_SMS_RECV: {                /* New SMS received indicator */
             lwgsmr_t res;
 
             printf("New SMS received!\r\n");    /* Notify user */
@@ -70,7 +70,7 @@ call_sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case GSM_EVT_SMS_READ: {                /* SMS read event */
+        case LWGSM_EVT_SMS_READ: {                /* SMS read event */
             lwgsm_sms_entry_t* entry = lwgsm_evt_sms_read_get_entry(evt);
             if (lwgsm_evt_sms_read_get_result(evt) == gsmOK && entry != NULL) {
                 /* Print SMS data */
@@ -90,7 +90,7 @@ call_sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case GSM_EVT_SMS_SEND: {                /* SMS send event */
+        case LWGSM_EVT_SMS_SEND: {                /* SMS send event */
             if (lwgsm_evt_sms_send_get_result(evt) == gsmOK) {
                 printf("SMS has been successfully sent!\r\n");
             } else {
@@ -99,13 +99,13 @@ call_sms_evt_func(lwgsm_evt_t* evt) {
             break;
         }
 
-        case GSM_EVT_CALL_READY: {              /* Call is ready notification from device */
+        case LWGSM_EVT_CALL_READY: {              /* Call is ready notification from device */
             printf("SIM device Call service is ready!\r\n");
             break;
         }
-        case GSM_EVT_CALL_CHANGED: {
+        case LWGSM_EVT_CALL_CHANGED: {
             const lwgsm_call_t* call = lwgsm_evt_call_changed_get_call(evt);
-            if (call->state == GSM_CALL_STATE_INCOMING) {   /* On incoming call */
+            if (call->state == LWGSM_CALL_STATE_INCOMING) {   /* On incoming call */
                 lwgsm_call_hangup(NULL, NULL, 0); /* Hangup call */
                 lwgsm_sms_send(call->number, "Cannot answer call. Please send SMS\r\n", NULL, NULL, 0);
             }

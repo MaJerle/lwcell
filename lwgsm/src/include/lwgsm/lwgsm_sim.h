@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_SIM_H
-#define GSM_HDR_SIM_H
+#ifndef LWGSM_HDR_SIM_H
+#define LWGSM_HDR_SIM_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_SIM SIM API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_SIM SIM API
  * \brief           SIM card manager
  * \{
  */
@@ -62,4 +62,4 @@ lwgsmr_t      lwgsm_sim_puk_enter(const char* puk, const char* new_pin, const lw
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_SIM_H */
+#endif /* LWGSM_HDR_SIM_H */

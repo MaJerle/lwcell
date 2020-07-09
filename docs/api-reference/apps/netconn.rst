@@ -50,6 +50,6 @@ When this feature is enabled, :cpp:func:`lwgsm_netconn_receive` will block for m
 When enabled, if there is no received data for timeout amount of time, function will return with timeout status and application needs to process it accordingly.
 
 .. tip::
-    :c:macro:`GSM_CFG_NETCONN_RECEIVE_TIMEOUT` must be set to ``1`` to use this feature.
+    :c:macro:`LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT` must be set to ``1`` to use this feature.
 
-.. doxygengroup:: GSM_NETCONN
+.. doxygengroup:: LWGSM_NETCONN

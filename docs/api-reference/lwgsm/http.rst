@@ -3,4 +3,4 @@
 HTTP
 ====
 
-.. doxygengroup:: GSM_HTTP
+.. doxygengroup:: LWGSM_HTTP

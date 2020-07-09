@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_OPTS_H
-#define GSM_HDR_OPTS_H
+#ifndef LWGSM_HDR_OPTS_H
+#define LWGSM_HDR_OPTS_H
 
 /* Rename this file to "lwgsm_opts.h" for your application */
 
@@ -41,4 +41,4 @@
  * copy & replace here settings you want to change values
  */
 
-#endif /* GSM_HDR_OPTS_H */
+#endif /* LWGSM_HDR_OPTS_H */

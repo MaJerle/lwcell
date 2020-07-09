@@ -15,4 +15,4 @@ When timeout elapses, GSM middleware will call timeout callback.
 
 This feature can be considered as single-shot software timer.
 
-.. doxygengroup:: GSM_TIMEOUT
+.. doxygengroup:: LWGSM_TIMEOUT

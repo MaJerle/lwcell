@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_MAIN_SYS_H
-#define GSM_HDR_MAIN_SYS_H
+#ifndef LWGSM_HDR_MAIN_SYS_H
+#define LWGSM_HDR_MAIN_SYS_H
 
 #include <stdlib.h>
 #include "lwgsm/lwgsm_opt.h"
@@ -42,7 +42,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \defgroup        GSM_SYS System functions
+ * \defgroup        LWGSM_SYS System functions
  * \brief           System based function for OS management, timings, etc
  * \{
  */
@@ -56,7 +56,7 @@ typedef void (*lwgsm_sys_thread_fn)(void*);
 #include "lwgsm_sys_port.h"
 
 /**
- * \anchor          GSM_SYS_CORE
+ * \anchor          LWGSM_SYS_CORE
  * \name            Main
  */
 
@@ -71,7 +71,7 @@ uint8_t     lwgsm_sys_unprotect(void);
  */
 
 /**
- * \anchor          GSM_SYS_MUTEX
+ * \anchor          LWGSM_SYS_MUTEX
  * \name            Mutex
  */
 
@@ -87,7 +87,7 @@ uint8_t     lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p);
  */
 
 /**
- * \anchor          GSM_SYS_SEM
+ * \anchor          LWGSM_SYS_SEM
  * \name            Semaphores
  */
 
@@ -103,7 +103,7 @@ uint8_t     lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p);
  */
 
 /**
- * \anchor          GSM_SYS_MBOX
+ * \anchor          LWGSM_SYS_MBOX
  * \name            Message queues
  */
 
@@ -121,7 +121,7 @@ uint8_t     lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b);
  */
 
 /**
- * \anchor          GSM_SYS_THREAD
+ * \anchor          LWGSM_SYS_THREAD
  * \name            Threads
  */
 
@@ -141,4 +141,4 @@ uint8_t     lwgsm_sys_thread_yield(void);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_MAIN_LL_H */
+#endif /* LWGSM_HDR_MAIN_LL_H */

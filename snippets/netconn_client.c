@@ -2,7 +2,7 @@
 #include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_network_api.h"
 
-#if GSM_CFG_NETCONN
+#if LWGSM_CFG_NETCONN
 
 /**
  * \brief           Host and port settings
@@ -41,7 +41,7 @@ netconn_client_thread(void const* arg) {
      * connection and initialize system message boxes
      * to accept received packet buffers
      */
-    client = lwgsm_netconn_new(GSM_NETCONN_TYPE_TCP);
+    client = lwgsm_netconn_new(LWGSM_NETCONN_TYPE_TCP);
     if (client != NULL) {
         /*
          * Connect to external server as client
@@ -120,4 +120,4 @@ netconn_client_thread(void const* arg) {
     lwgsm_sys_thread_terminate(NULL);             /* Terminate current thread */
 }
 
-#endif /* GSM_CFG_NETCONN */
+#endif /* LWGSM_CFG_NETCONN */

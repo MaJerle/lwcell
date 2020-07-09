@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_BUFF_H
-#define GSM_HDR_BUFF_H
+#ifndef LWGSM_HDR_BUFF_H
+#define LWGSM_HDR_BUFF_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_BUFF Ring buffer
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_BUFF Ring buffer
  * \brief           Generic ring buffer
  * \{
  */
@@ -92,4 +92,4 @@ size_t      BUF_PREF(buff_advance)(BUF_PREF(buff_t)* buff, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_BUFF_H */
+#endif /* LWGSM_HDR_BUFF_H */

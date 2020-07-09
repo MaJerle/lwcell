@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_UNICODE_H
-#define GSM_HDR_UNICODE_H
+#ifndef LWGSM_HDR_UNICODE_H
+#define LWGSM_HDR_UNICODE_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_UNICODE Unicode manager
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_UNICODE Unicode manager
  * \brief           Unicode support manager
  * \{
  */
@@ -57,4 +57,4 @@ lwgsmr_t          gsmi_unicode_decode(lwgsm_unicode_t* uni, uint8_t ch);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_UNICODE_H */
+#endif /* LWGSM_HDR_UNICODE_H */

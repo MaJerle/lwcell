@@ -91,7 +91,7 @@ init_thread(void* arg) {
     }
 
     /* Create SMS thread */
-    lwgsm_sys_thread_create(NULL, "lwgsm_sms", (lwgsm_sys_thread_fn)sms_send_receive_thread, NULL, GSM_SYS_THREAD_SS, GSM_SYS_THREAD_PRIO);
+    lwgsm_sys_thread_create(NULL, "lwgsm_sms", (lwgsm_sys_thread_fn)sms_send_receive_thread, NULL, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO);
 
     while (1) {
         lwgsm_delay(1000);
@@ -108,13 +108,13 @@ init_thread(void* arg) {
 static lwgsmr_t
 lwgsm_callback_func(lwgsm_evt_t* evt) {
     switch (lwgsm_evt_get_type(evt)) {
-        case GSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
+        case LWGSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
         /* Process and print registration change */
-        case GSM_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;
+        case LWGSM_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;
         /* Process current network operator */
-        case GSM_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
+        case LWGSM_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
         /* Process signal strength */
-        case GSM_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
+        case LWGSM_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
 
         /* Other user events here... */
 

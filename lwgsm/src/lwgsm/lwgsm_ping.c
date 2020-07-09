@@ -35,6 +35,6 @@
 #include "lwgsm/lwgsm_ping.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if GSM_CFG_PING || __DOXYGEN__
+#if LWGSM_CFG_PING || __DOXYGEN__
 
-#endif /* GSM_CFG_PING || __DOXYGEN__ */
+#endif /* LWGSM_CFG_PING || __DOXYGEN__ */

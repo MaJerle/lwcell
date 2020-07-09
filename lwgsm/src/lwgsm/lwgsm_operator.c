@@ -46,14 +46,14 @@
 lwgsmr_t
 lwgsm_operator_get(lwgsm_operator_curr_t* curr,
                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET;
-    GSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_COPS_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
 }
 
 /**
@@ -70,25 +70,25 @@ lwgsm_operator_get(lwgsm_operator_curr_t* curr,
 lwgsmr_t
 lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, const char* name, uint32_t num,
                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    if (mode != GSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
-        GSM_ASSERT("format < GSM_OPERATOR_FORMAT_INVALID", format < GSM_OPERATOR_FORMAT_INVALID);
-        if (format != GSM_OPERATOR_FORMAT_NUMBER) {
-            GSM_ASSERT("name != NULL", name != NULL);
+    if (mode != LWGSM_OPERATOR_MODE_AUTO) {       /* Check parameters only if non-auto mode */
+        LWGSM_ASSERT("format < LWGSM_OPERATOR_FORMAT_INVALID", format < LWGSM_OPERATOR_FORMAT_INVALID);
+        if (format != LWGSM_OPERATOR_FORMAT_NUMBER) {
+            LWGSM_ASSERT("name != NULL", name != NULL);
         }
     }
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_SET;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_COPS_SET;
 
-    GSM_MSG_VAR_REF(msg).msg.cops_set.mode = mode;
-    GSM_MSG_VAR_REF(msg).msg.cops_set.format = format;
-    GSM_MSG_VAR_REF(msg).msg.cops_set.name = name;
-    GSM_MSG_VAR_REF(msg).msg.cops_set.num = num;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_set.mode = mode;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_set.format = format;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_set.name = name;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_set.num = num;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
 }
 
 /**
@@ -104,18 +104,18 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
 lwgsmr_t
 lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf,
                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
     if (opf != NULL) {
         *opf = 0;
     }
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_COPS_GET_OPT;
-    GSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
-    GSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
-    GSM_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_COPS_GET_OPT;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
+    LWGSM_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 120000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 120000);
 }

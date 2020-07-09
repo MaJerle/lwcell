@@ -36,7 +36,7 @@
 #include "lwgsm/lwgsm_mem.h"
 
 /* Set size of pbuf structure */
-#define SIZEOF_PBUF_STRUCT          GSM_MEM_ALIGN(sizeof(lwgsm_pbuf_t))
+#define SIZEOF_PBUF_STRUCT          LWGSM_MEM_ALIGN(sizeof(lwgsm_pbuf_t))
 #define SET_NEW_LEN(v, len)         do { if ((v) != NULL) { *(v) = (len); } } while (0)
 
 /**
@@ -72,9 +72,9 @@ lwgsm_pbuf_new(size_t len) {
     lwgsm_pbuf_p p;
 
     p = lwgsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
-    GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p == NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p == NULL,
                "[PBUF] Failed to allocate %d bytes\r\n", (int)len);
-    GSM_DEBUGW(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE, p != NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p != NULL,
                "[PBUF] Allocated %d bytes on %p\r\n", (int)len, p);
     if (p != NULL) {
         p->next = NULL;                         /* No next element in chain */
@@ -96,7 +96,7 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
     lwgsm_pbuf_p p, pn;
     size_t ref, cnt;
 
-    GSM_ASSERT("pbuf != NULL", pbuf != NULL);
+    LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
     /*
      * Free all pbufs until first ->ref > 1 is reached
@@ -108,7 +108,7 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
         ref = --p->ref;                         /* Decrease current value and save it */
         lwgsm_core_unlock();
         if (ref == 0) {                         /* Did we reach 0 and are ready to free it? */
-            GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
                        "[PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
             pn = p->next;                       /* Save next entry */
             lwgsm_mem_free_s((void**)&p);         /* Free memory for pbuf */
@@ -134,8 +134,8 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
  */
 lwgsmr_t
 lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
-    GSM_ASSERT("head != NULL", head != NULL);
-    GSM_ASSERT("tail != NULL", tail != NULL);
+    LWGSM_ASSERT("head != NULL", head != NULL);
+    LWGSM_ASSERT("tail != NULL", tail != NULL);
 
     /*
      * For all pbuf packets in head,
@@ -203,7 +203,7 @@ lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
  */
 lwgsmr_t
 lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
-    GSM_ASSERT("pbuf != NULL", pbuf != NULL);
+    LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
     ++pbuf->ref;                                /* Increase reference count for pbuf */
     return gsmOK;
@@ -222,10 +222,10 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
     const uint8_t* d = data;
     size_t copy_len;
 
-    GSM_ASSERT("pbuf != NULL", pbuf != NULL);
-    GSM_ASSERT("data != NULL", data != NULL);
-    GSM_ASSERT("len > 0", len > 0);
-    GSM_ASSERT("pbuf->tot_len >= len", pbuf->tot_len >= len);
+    LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
+    LWGSM_ASSERT("data != NULL", data != NULL);
+    LWGSM_ASSERT("len > 0", len > 0);
+    LWGSM_ASSERT("pbuf->tot_len >= len", pbuf->tot_len >= len);
 
     /* Skip if necessary and check if we are in valid range */
     if (offset > 0) {
@@ -241,8 +241,8 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
 
     /* First only copy in case we have some offset from first pbuf */
     if (offset > 0) {
-        copy_len = GSM_MIN(pbuf->len - offset, len);    /* Get length to copy to current pbuf */
-        GSM_MEMCPY(pbuf->payload + offset, d, copy_len);/* Copy to memory with offset */
+        copy_len = LWGSM_MIN(pbuf->len - offset, len);    /* Get length to copy to current pbuf */
+        LWGSM_MEMCPY(pbuf->payload + offset, d, copy_len);/* Copy to memory with offset */
         len -= copy_len;                        /* Decrease remaining bytes to copy */
         d += copy_len;                          /* Increase data pointer */
         pbuf = pbuf->next;                      /* Go to next pbuf */
@@ -250,8 +250,8 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
 
     /* Copy user memory to sequence of pbufs */
     for (; len; pbuf = pbuf->next) {
-        copy_len = GSM_MIN(len, pbuf->len);     /* Get copy length */
-        GSM_MEMCPY(pbuf->payload, d, copy_len); /* Copy memory to pbuf payload */
+        copy_len = LWGSM_MIN(len, pbuf->len);     /* Get copy length */
+        LWGSM_MEMCPY(pbuf->payload, d, copy_len); /* Copy memory to pbuf payload */
         len -= copy_len;                        /* Decrease number of remaining bytes to send */
         d += copy_len;                          /* Increase data pointer */
     }
@@ -292,8 +292,8 @@ lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
      */
     tot = 0;
     for (; pbuf != NULL && len; pbuf = pbuf->next) {
-        tc = GSM_MIN(pbuf->len - offset, len);  /* Get length of data to copy */
-        GSM_MEMCPY(d, pbuf->payload + offset, tc);  /* Copy data from pbuf */
+        tc = LWGSM_MIN(pbuf->len - offset, len);  /* Get length of data to copy */
+        LWGSM_MEMCPY(d, pbuf->payload + offset, tc);  /* Copy data from pbuf */
         d += tc;
         len -= tc;
         tot += tc;
@@ -329,7 +329,7 @@ lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
  * \param[in]       needle: Data memory used as needle
  * \param[in]       len: Length of needle memory
  * \param[in]       off: Starting offset in pbuf memory
- * \return          `GSM_SIZET_MAX` if no match or position where in pbuf we have a match
+ * \return          `LWGSM_SIZET_MAX` if no match or position where in pbuf we have a match
  * \sa              lwgsm_pbuf_strfind
  */
 size_t
@@ -345,7 +345,7 @@ lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* needle, size_t len, size
             }
         }
     }
-    return GSM_SIZET_MAX;                       /* Return maximal value of size_t variable to indicate error */
+    return LWGSM_SIZET_MAX;                       /* Return maximal value of size_t variable to indicate error */
 }
 
 /**
@@ -353,7 +353,7 @@ lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* needle, size_t len, size
  * \param[in]       pbuf: Pbuf used as haystack
  * \param[in]       str: String to search for in pbuf
  * \param[in]       off: Starting offset in pbuf memory
- * \return          `GSM_SIZET_MAX` if no match or position where in pbuf we have a match
+ * \return          `LWGSM_SIZET_MAX` if no match or position where in pbuf we have a match
  * \sa              lwgsm_pbuf_memfind
  */
 size_t
@@ -368,7 +368,7 @@ lwgsm_pbuf_strfind(const lwgsm_pbuf_p pbuf, const char* str, size_t off) {
  * \param[in]       data: Actual data to compare with
  * \param[in]       len: Length of input data in units of bytes
  * \param[in]       offset: Start offset to use when comparing data
- * \return          `0` if equal, `GSM_SIZET_MAX` if memory/offset too big or anything between if not equal
+ * \return          `0` if equal, `LWGSM_SIZET_MAX` if memory/offset too big or anything between if not equal
  * \sa              lwgsm_pbuf_strcmp
  */
 size_t
@@ -379,7 +379,7 @@ lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t 
 
     if (pbuf == NULL || data == NULL || len == 0/* Input parameters check */
         || pbuf->tot_len < (offset + len)) {    /* Check of valid ranges */
-        return GSM_SIZET_MAX;                   /* Invalid check here */
+        return LWGSM_SIZET_MAX;                   /* Invalid check here */
     }
 
     /*
@@ -410,7 +410,7 @@ lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t 
  * \param[in]       pbuf: Pbuf used to compare with data memory
  * \param[in]       str: String to be compared with pbuf
  * \param[in]       offset: Start memory offset in pbuf
- * \return          `0` if equal, `GSM_SIZET_MAX` if memory/offset too big or anything between if not equal
+ * \return          `0` if equal, `LWGSM_SIZET_MAX` if memory/offset too big or anything between if not equal
  * \sa              lwgsm_pbuf_memcmp
  */
 size_t
@@ -477,7 +477,7 @@ lwgsm_pbuf_length(const lwgsm_pbuf_p pbuf, uint8_t tot) {
 void
 lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm_port_t port) {
     if (pbuf != NULL && ip != NULL) {
-        GSM_MEMCPY(&pbuf->ip, ip, sizeof(*ip));
+        LWGSM_MEMCPY(&pbuf->ip, ip, sizeof(*ip));
         pbuf->port = port;
     }
 }
@@ -539,17 +539,17 @@ lwgsm_pbuf_skip(lwgsm_pbuf_p pbuf, size_t offset, size_t* new_offset) {
 void
 lwgsm_pbuf_dump(lwgsm_pbuf_p p, uint8_t seq) {
     if (p != NULL) {
-        GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
                    "[PBUF] Dump start: %p\r\n", p);
         for (; p != NULL; p = p->next) {
-            GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
                        "[PBUF] Dump %p; ref: %d; len: %d; tot_len: %d, next: %p\r\n",
                        p, (int)p->ref, (int)p->len, (int)p->tot_len, p->next);
             if (!seq) {
                 break;
             }
         }
-        GSM_DEBUGF(GSM_CFG_DBG_PBUF | GSM_DBG_TYPE_TRACE,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
                    "[PBUF] Dump end\r\n");
     }
 }

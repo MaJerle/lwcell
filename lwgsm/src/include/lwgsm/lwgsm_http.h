@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_HTTP_H
-#define GSM_HDR_HTTP_H
+#ifndef LWGSM_HDR_HTTP_H
+#define LWGSM_HDR_HTTP_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_HTTP Hyper Text Transfer Protocol
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_HTTP Hyper Text Transfer Protocol
  * \brief           Hyper Text Transfer Protocol (HTTP) manager
  * \{
  *
@@ -58,4 +58,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_HTTP_H */
+#endif /* LWGSM_HDR_HTTP_H */

@@ -100,7 +100,7 @@ gsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t t
             return lwgsm_sys_mbox_get(b, m, timeout); /* Get entry from message queue */
         }
         wait_time = get_next_timeout_diff();    /* Get time to wait for next timeout execution */
-        if (wait_time == 0 || lwgsm_sys_mbox_get(b, m, wait_time) == GSM_SYS_TIMEOUT) {
+        if (wait_time == 0 || lwgsm_sys_mbox_get(b, m, wait_time) == LWGSM_SYS_TIMEOUT) {
             lwgsm_core_lock();
             process_next_timeout();             /* Process with next timeout */
             lwgsm_core_unlock();
@@ -122,7 +122,7 @@ lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg) {
     lwgsm_timeout_t* to;
     uint32_t now;
 
-    GSM_ASSERT("fn != NULL", fn != NULL);
+    LWGSM_ASSERT("fn != NULL", fn != NULL);
 
     to = lwgsm_mem_calloc(1, sizeof(*to));        /* Allocate memory for timeout structure */
     if (to == NULL) {

@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_FTP_H
-#define GSM_HDR_FTP_H
+#ifndef LWGSM_HDR_FTP_H
+#define LWGSM_HDR_FTP_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_FTP File transfer protocol
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_FTP File transfer protocol
  * \brief           File Transfer Protocol (FTP) manager
  *
  * Currently it is under development
@@ -58,4 +58,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_FTP_H */
+#endif /* LWGSM_HDR_FTP_H */

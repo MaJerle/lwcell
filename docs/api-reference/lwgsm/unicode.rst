@@ -9,4 +9,4 @@ between ``1`` and ``4`` bytes long.
 .. note::
     This is simple implementation and does not support string encoding.
 
-.. doxygengroup:: GSM_UNICODE
+.. doxygengroup:: LWGSM_UNICODE

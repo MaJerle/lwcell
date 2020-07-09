@@ -4,9 +4,9 @@
 #include "call.h"
 #include "lwgsm/lwgsm.h"
 
-#if !GSM_CFG_CALL
+#if !LWGSM_CFG_CALL
 #error "CALL must be enabled to run this example"
-#endif /* !GSM_CFG_CALL */
+#endif /* !LWGSM_CFG_CALL */
 
 static lwgsmr_t call_evt_func(lwgsm_evt_t* evt);
 
@@ -34,21 +34,21 @@ call_start(void) {
 static lwgsmr_t
 call_evt_func(lwgsm_evt_t* evt) {
     switch (lwgsm_evt_get_type(evt)) {
-        case GSM_EVT_CALL_CHANGED: {
+        case LWGSM_EVT_CALL_CHANGED: {
             const lwgsm_call_t* call = lwgsm_evt_call_changed_get_call(evt);
-            if (call->state == GSM_CALL_STATE_ACTIVE) {
+            if (call->state == LWGSM_CALL_STATE_ACTIVE) {
                 printf("Call is active!\r\n");
 
                 /* In case of mobile originated direction */
-                if (call->dir == GSM_CALL_DIR_MO) {
+                if (call->dir == LWGSM_CALL_DIR_MO) {
                     lwgsm_call_hangup(NULL, NULL, 0); /* Manually hangup call */
                 }
-            } else if (call->state == GSM_CALL_STATE_INCOMING) {
+            } else if (call->state == LWGSM_CALL_STATE_INCOMING) {
                 printf("Incoming call received! Phone number: %s\r\n", call->number);
                 lwgsm_call_answer(NULL, NULL, 0); /* Answer to a call */
-            } else if (call->state == GSM_CALL_STATE_DIALING) {
+            } else if (call->state == LWGSM_CALL_STATE_DIALING) {
                 printf("Call is dialing!\r\n");
-            } else if (call->state == GSM_CALL_STATE_DISCONNECT) {
+            } else if (call->state == LWGSM_CALL_STATE_DISCONNECT) {
                 printf("Call ended!\r\n");
             }
             break;

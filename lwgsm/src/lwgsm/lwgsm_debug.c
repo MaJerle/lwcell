@@ -35,7 +35,7 @@
 #include "lwgsm/lwgsm_debug.h"
 #include "lwgsm/lwgsm.h"
 
-#if GSM_CFG_DBG || __DOXYGEN__
+#if LWGSM_CFG_DBG || __DOXYGEN__
 
 const char*
 gsmi_dbg_msg_to_string(lwgsm_cmd_t cmd) {
@@ -47,4 +47,4 @@ gsmi_dbg_msg_to_string(lwgsm_cmd_t cmd) {
     return "";
 }
 
-#endif /* GSM_CFG_DBG || __DOXYGEN__ */
+#endif /* LWGSM_CFG_DBG || __DOXYGEN__ */

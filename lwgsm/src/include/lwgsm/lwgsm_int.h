@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_INT_H
-#define GSM_HDR_INT_H
+#ifndef LWGSM_HDR_INT_H
+#define LWGSM_HDR_INT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,4 +42,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_INT_H */
+#endif /* LWGSM_HDR_INT_H */

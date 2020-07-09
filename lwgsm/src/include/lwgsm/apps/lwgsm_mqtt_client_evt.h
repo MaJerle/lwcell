@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_APP_MQTT_CLIENT_EVT_H
-#define GSM_HDR_APP_MQTT_CLIENT_EVT_H
+#ifndef LWGSM_HDR_APP_MQTT_CLIENT_EVT_H
+#define LWGSM_HDR_APP_MQTT_CLIENT_EVT_H
 
 #include "lwgsm/apps/lwgsm_mqtt_client.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM_APP_MQTT_CLIENT
- * \defgroup        GSM_APP_MQTT_CLIENT_EVT Event helper functions
+ * \ingroup         LWGSM_APP_MQTT_CLIENT
+ * \defgroup        LWGSM_APP_MQTT_CLIENT_EVT Event helper functions
  * \brief           Event helper functions
  * \{
  */
@@ -57,11 +57,11 @@ extern "C" {
 #define lwgsm_mqtt_client_evt_get_type(client, evt)                   ((lwgsm_mqtt_evt_type_t)(evt)->type)
 
 /**
- * \anchor          GSM_APP_MQTT_CLIENT_EVT_CONNECT
+ * \anchor          LWGSM_APP_MQTT_CLIENT_EVT_CONNECT
  * \name            Connect event
  * \{
  *
- * \note            Use these functions on \ref GSM_MQTT_EVT_CONNECT event
+ * \note            Use these functions on \ref LWGSM_MQTT_EVT_CONNECT event
  */
 
 /**
@@ -78,11 +78,11 @@ extern "C" {
  */
 
 /**
- * \anchor          GSM_APP_MQTT_CLIENT_EVT_DISCONNECT
+ * \anchor          LWGSM_APP_MQTT_CLIENT_EVT_DISCONNECT
  * \name            Disconnect event
  * \{
  *
- * \note            Use these functions on \ref GSM_MQTT_EVT_DISCONNECT event
+ * \note            Use these functions on \ref LWGSM_MQTT_EVT_DISCONNECT event
  */
 
 /**
@@ -99,11 +99,11 @@ extern "C" {
  */
 
 /**
- * \anchor          GSM_APP_MQTT_CLIENT_EVT_SUB_UNSUB
+ * \anchor          LWGSM_APP_MQTT_CLIENT_EVT_SUB_UNSUB
  * \name            Subscribe/unsubscribe event
  * \{
  *
- * \note            Use these functions on \ref GSM_MQTT_EVT_SUBSCRIBE or \ref GSM_MQTT_EVT_UNSUBSCRIBE events
+ * \note            Use these functions on \ref LWGSM_MQTT_EVT_SUBSCRIBE or \ref LWGSM_MQTT_EVT_UNSUBSCRIBE events
  */
 
 /**
@@ -147,11 +147,11 @@ extern "C" {
  */
 
 /**
- * \anchor          GSM_APP_MQTT_CLIENT_EVT_PUBLISH_RECV
+ * \anchor          LWGSM_APP_MQTT_CLIENT_EVT_PUBLISH_RECV
  * \name            Publish receive event
  * \{
  *
- * \note            Use these functions on \ref GSM_MQTT_EVT_PUBLISH_RECV event
+ * \note            Use these functions on \ref LWGSM_MQTT_EVT_PUBLISH_RECV event
  */
 
 /**
@@ -170,7 +170,7 @@ extern "C" {
  * \return          Topic length
  * \hideinitializer
  */
-#define lwgsm_mqtt_client_evt_publish_recv_get_topic_len(client, evt) (GSM_SZ((evt)->evt.publish_recv.topic_len))
+#define lwgsm_mqtt_client_evt_publish_recv_get_topic_len(client, evt) (LWGSM_SZ((evt)->evt.publish_recv.topic_len))
 
 /**
  * \brief           Get payload from received publish packet
@@ -188,7 +188,7 @@ extern "C" {
  * \return          Payload length
  * \hideinitializer
  */
-#define lwgsm_mqtt_client_evt_publish_recv_get_payload_len(client, evt)   (GSM_SZ((evt)->evt.publish_recv.payload_len))
+#define lwgsm_mqtt_client_evt_publish_recv_get_payload_len(client, evt)   (LWGSM_SZ((evt)->evt.publish_recv.payload_len))
 
 /**
  * \brief           Check if packet is duplicated
@@ -197,7 +197,7 @@ extern "C" {
  * \return          `1` if duplicated, `0` otherwise
  * \hideinitializer
  */
-#define lwgsm_mqtt_client_evt_publish_recv_is_duplicate(client, evt)  (GSM_U8((evt)->evt.publish_recv.dup))
+#define lwgsm_mqtt_client_evt_publish_recv_is_duplicate(client, evt)  (LWGSM_U8((evt)->evt.publish_recv.dup))
 
 /**
  * \brief           Get received quality of service
@@ -213,11 +213,11 @@ extern "C" {
  */
 
 /**
- * \anchor          GSM_APP_MQTT_CLIENT_EVT_PUBLISH
+ * \anchor          LWGSM_APP_MQTT_CLIENT_EVT_PUBLISH
  * \name            Publish event
  * \{
  *
- * \note            Use these functions on \ref GSM_MQTT_EVT_PUBLISH event
+ * \note            Use these functions on \ref LWGSM_MQTT_EVT_PUBLISH event
  */
 
 /**
@@ -250,4 +250,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_APP_MQTT_CLIENT_EVT_H */
+#endif /* LWGSM_HDR_APP_MQTT_CLIENT_EVT_H */

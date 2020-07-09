@@ -3,4 +3,4 @@
 Structures and enumerations
 ===========================
 
-.. doxygengroup:: GSM_TYPEDEFS
+.. doxygengroup:: LWGSM_TYPEDEFS

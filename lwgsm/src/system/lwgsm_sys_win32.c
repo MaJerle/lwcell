@@ -137,7 +137,7 @@ lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p) {
 
 uint8_t
 lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p) {
-    *p = GSM_SYS_MUTEX_NULL;
+    *p = LWGSM_SYS_MUTEX_NULL;
     return 1;
 }
 
@@ -167,7 +167,7 @@ lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
         if (ret == WAIT_OBJECT_0) {
             return 1;
         } else {
-            return GSM_SYS_TIMEOUT;
+            return LWGSM_SYS_TIMEOUT;
         }
     }
 }
@@ -184,7 +184,7 @@ lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p) {
 
 uint8_t
 lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p) {
-    *p = GSM_SYS_SEM_NULL;
+    *p = LWGSM_SYS_SEM_NULL;
     return 1;
 }
 
@@ -250,13 +250,13 @@ lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     time = osKernelSysTick();
 
     /* Get exclusive access to message queue */
-    if (lwgsm_sys_sem_wait(&mbox->sem, timeout) == GSM_SYS_TIMEOUT) {
-        return GSM_SYS_TIMEOUT;
+    if (lwgsm_sys_sem_wait(&mbox->sem, timeout) == LWGSM_SYS_TIMEOUT) {
+        return LWGSM_SYS_TIMEOUT;
     }
     while (mbox_is_empty(mbox)) {
         lwgsm_sys_sem_release(&mbox->sem);
-        if (lwgsm_sys_sem_wait(&mbox->sem_not_empty, timeout) == GSM_SYS_TIMEOUT) {
-            return GSM_SYS_TIMEOUT;
+        if (lwgsm_sys_sem_wait(&mbox->sem_not_empty, timeout) == LWGSM_SYS_TIMEOUT) {
+            return LWGSM_SYS_TIMEOUT;
         }
         lwgsm_sys_sem_wait(&mbox->sem, timeout);
     }
@@ -316,7 +316,7 @@ lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
 
 uint8_t
 lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
-    *b = GSM_SYS_MBOX_NULL;                     /* Invalidate message box */
+    *b = LWGSM_SYS_MBOX_NULL;                     /* Invalidate message box */
     return 1;
 }
 

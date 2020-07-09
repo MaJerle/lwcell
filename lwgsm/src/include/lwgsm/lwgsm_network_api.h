@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_NETWORK_API_H
-#define GSM_HDR_NETWORK_API_H
+#ifndef LWGSM_HDR_NETWORK_API_H
+#define LWGSM_HDR_NETWORK_API_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM_API
- * \defgroup        GSM_NETWORK_API Network API
+ * \ingroup         LWGSM_API
+ * \defgroup        LWGSM_NETWORK_API Network API
  * \brief           Network API functions for multi-thread operations
  * \{
  */
@@ -59,4 +59,4 @@ lwgsmr_t  lwgsm_network_request_detach(void);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_NETWORK_API_H */
+#endif /* LWGSM_HDR_NETWORK_API_H */

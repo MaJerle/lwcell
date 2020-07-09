@@ -3,4 +3,4 @@
 Device info
 ===========
 
-.. doxygengroup:: GSM_DEVICE_INFO
+.. doxygengroup:: LWGSM_DEVICE_INFO

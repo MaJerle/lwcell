@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_NETCONN_H
-#define GSM_HDR_NETCONN_H
+#ifndef LWGSM_HDR_NETCONN_H
+#define LWGSM_HDR_NETCONN_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM_API
- * \defgroup        GSM_NETCONN Network connection
+ * \ingroup         LWGSM_API
+ * \defgroup        LWGSM_NETCONN Network connection
  * \brief           Network connection
  * \{
  */
@@ -58,9 +58,9 @@ typedef struct lwgsm_netconn* lwgsm_netconn_p;
  * \brief           Netconn connection type
  */
 typedef enum {
-    GSM_NETCONN_TYPE_TCP = GSM_CONN_TYPE_TCP,   /*!< TCP connection */
-    GSM_NETCONN_TYPE_UDP = GSM_CONN_TYPE_UDP,   /*!< UDP connection */
-    GSM_NETCONN_TYPE_SSL = GSM_CONN_TYPE_SSL,   /*!< TCP connection over SSL */
+    LWGSM_NETCONN_TYPE_TCP = LWGSM_CONN_TYPE_TCP,   /*!< TCP connection */
+    LWGSM_NETCONN_TYPE_UDP = LWGSM_CONN_TYPE_UDP,   /*!< UDP connection */
+    LWGSM_NETCONN_TYPE_SSL = LWGSM_CONN_TYPE_SSL,   /*!< TCP connection over SSL */
 } lwgsm_netconn_type_t;
 
 lwgsm_netconn_p   lwgsm_netconn_new(lwgsm_netconn_type_t type);
@@ -88,4 +88,4 @@ lwgsmr_t          lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip,
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_NETCONN_H */
+#endif /* LWGSM_HDR_NETCONN_H */

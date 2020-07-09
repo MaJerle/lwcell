@@ -35,7 +35,7 @@
 #include "lwgsm/lwgsm_network.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if GSM_CFG_NETWORK || __DOXYGEN__
+#if LWGSM_CFG_NETWORK || __DOXYGEN__
 
 /**
  * \brief           Attach to network and active PDP context
@@ -50,19 +50,19 @@
 lwgsmr_t
 lwgsm_network_attach(const char* apn, const char* user, const char* pass,
                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_ATTACH;
-#if GSM_CFG_CONN
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS;
-#endif /* GSM_CFG_CONN */
-    GSM_MSG_VAR_REF(msg).msg.network_attach.apn = apn;
-    GSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
-    GSM_MSG_VAR_REF(msg).msg.network_attach.pass = pass;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_NETWORK_ATTACH;
+#if LWGSM_CFG_CONN
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CIPSTATUS;
+#endif /* LWGSM_CFG_CONN */
+    LWGSM_MSG_VAR_REF(msg).msg.network_attach.apn = apn;
+    LWGSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
+    LWGSM_MSG_VAR_REF(msg).msg.network_attach.pass = pass;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 200000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 200000);
 }
 
 /**
@@ -74,16 +74,16 @@ lwgsm_network_attach(const char* apn, const char* user, const char* pass,
  */
 lwgsmr_t
 lwgsm_network_detach(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_NETWORK_DETACH;
-#if GSM_CFG_CONN
-    /* GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CIPSTATUS; */
-#endif /* GSM_CFG_CONN */
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_NETWORK_DETACH;
+#if LWGSM_CFG_CONN
+    /* LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CIPSTATUS; */
+#endif /* LWGSM_CFG_CONN */
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -95,13 +95,13 @@ lwgsm_network_detach(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, con
  */
 lwgsmr_t
 lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CIPSTATUS;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSTATUS;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -113,7 +113,7 @@ lwgsmr_t
 lwgsm_network_copy_ip(lwgsm_ip_t* ip) {
     if (lwgsm_network_is_attached()) {
         lwgsm_core_lock();
-        GSM_MEMCPY(ip, &gsm.m.network.ip_addr, sizeof(*ip));
+        LWGSM_MEMCPY(ip, &gsm.m.network.ip_addr, sizeof(*ip));
         lwgsm_core_unlock();
         return gsmOK;
     }
@@ -128,12 +128,12 @@ uint8_t
 lwgsm_network_is_attached(void) {
     uint8_t res;
     lwgsm_core_lock();
-    res = GSM_U8(gsm.m.network.is_attached);
+    res = LWGSM_U8(gsm.m.network.is_attached);
     lwgsm_core_unlock();
     return res;
 }
 
-#endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
+#endif /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
 
 /**
  * \brief           Read RSSI signal from network operator
@@ -146,14 +146,14 @@ lwgsm_network_is_attached(void) {
 lwgsmr_t
 lwgsm_network_rssi(int16_t* rssi,
                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CSQ_GET;
-    GSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CSQ_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 120000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 120000);
 }
 
 /**

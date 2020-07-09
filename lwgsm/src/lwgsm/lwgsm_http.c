@@ -35,6 +35,6 @@
 #include "lwgsm/lwgsm_http.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if GSM_CFG_HTTP || __DOXYGEN__
+#if LWGSM_CFG_HTTP || __DOXYGEN__
 
-#endif /* GSM_CFG_HTTP || __DOXYGEN__ */
+#endif /* LWGSM_CFG_HTTP || __DOXYGEN__ */

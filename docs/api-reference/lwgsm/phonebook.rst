@@ -3,4 +3,4 @@
 Phonebook
 =========
 
-.. doxygengroup:: GSM_PHONEBOOK
+.. doxygengroup:: LWGSM_PHONEBOOK

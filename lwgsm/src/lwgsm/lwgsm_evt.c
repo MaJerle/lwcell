@@ -45,7 +45,7 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
     lwgsmr_t res = gsmOK;
     lwgsm_evt_func_t* func, *newFunc;
 
-    GSM_ASSERT("fn != NULL", fn != NULL);
+    LWGSM_ASSERT("fn != NULL", fn != NULL);
 
     lwgsm_core_lock();
 
@@ -60,7 +60,7 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
     if (res == gsmOK) {
         newFunc = lwgsm_mem_malloc(sizeof(*newFunc));
         if (newFunc != NULL) {
-            GSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));
+            LWGSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));
             newFunc->fn = fn;                   /* Set function pointer */
             for (func = gsm.evt_func; func != NULL && func->next != NULL; func = func->next) {}
             if (func != NULL) {
@@ -87,7 +87,7 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
 lwgsmr_t
 lwgsm_evt_unregister(lwgsm_evt_fn fn) {
     lwgsm_evt_func_t* func, *prev;
-    GSM_ASSERT("fn != NULL", fn != NULL);
+    LWGSM_ASSERT("fn != NULL", fn != NULL);
 
     lwgsm_core_lock();
     for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
@@ -181,7 +181,7 @@ lwgsm_evt_signal_strength_get_rssi(lwgsm_evt_t* cc) {
     return cc->evt.rssi.rssi;
 }
 
-#if GSM_CFG_CONN || __DOXYGEN__
+#if LWGSM_CFG_CONN || __DOXYGEN__
 
 /**
  * \brief           Get buffer from received data
@@ -250,7 +250,7 @@ lwgsm_evt_conn_active_get_conn(lwgsm_evt_t* cc) {
  */
 uint8_t
 lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc) {
-    return GSM_U8(cc->evt.conn_active_close.client > 0);
+    return LWGSM_U8(cc->evt.conn_active_close.client > 0);
 }
 
 /**
@@ -353,9 +353,9 @@ lwgsm_evt_conn_error_get_arg(lwgsm_evt_t* cc) {
     return cc->evt.conn_error.arg;
 }
 
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
+#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
 
-#if GSM_CFG_SMS || __DOXYGEN__
+#if LWGSM_CFG_SMS || __DOXYGEN__
 
 /**
  * \brief           Get SMS position in memory which has been saved on receive
@@ -448,9 +448,9 @@ lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc) {
     return cc->evt.sms_delete.mem;
 }
 
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
+#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
 
-#if GSM_CFG_CALL || __DOXYGEN__
+#if LWGSM_CFG_CALL || __DOXYGEN__
 
 /**
  * \brief           Get call information from changed event
@@ -462,4 +462,4 @@ lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc) {
     return gsm.evt.evt.call_changed.call;
 }
 
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
+#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */

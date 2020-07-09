@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_CALL_H
-#define GSM_HDR_CALL_H
+#ifndef LWGSM_HDR_CALL_H
+#define LWGSM_HDR_CALL_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_CALL Call API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_CALL Call API
  * \brief           Call manager
  * \{
  */
@@ -62,4 +62,4 @@ lwgsmr_t      lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const e
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_CALL_H */
+#endif /* LWGSM_HDR_CALL_H */

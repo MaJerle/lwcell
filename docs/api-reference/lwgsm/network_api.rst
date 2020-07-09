@@ -8,4 +8,4 @@ It allows multiple threads to request to join to network (internet access).
 
 Network API module controls when network connection shall be active or can be closed.
 
-.. doxygengroup:: GSM_NETWORK_API
+.. doxygengroup:: LWGSM_NETWORK_API

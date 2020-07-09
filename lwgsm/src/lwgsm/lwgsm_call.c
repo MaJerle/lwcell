@@ -35,7 +35,7 @@
 #include "lwgsm/lwgsm_call.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if GSM_CFG_CALL || __DOXYGEN__
+#if LWGSM_CFG_CALL || __DOXYGEN__
 
 #if !__DOXYGEN__
 #define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
@@ -76,14 +76,14 @@ check_ready(void) {
  */
 lwgsmr_t
 lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CALL_ENABLE;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CLCC_SET;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CALL_ENABLE;
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CLCC_SET;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -115,18 +115,18 @@ lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const
 lwgsmr_t
 lwgsm_call_start(const char* number,
                const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("number != NULL", number != NULL);
+    LWGSM_ASSERT("number != NULL", number != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
-    GSM_ASSERT("check_ready == gsmOK", check_ready() == gsmOK);
+    LWGSM_ASSERT("check_ready == gsmOK", check_ready() == gsmOK);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATD;
-    GSM_MSG_VAR_REF(msg).msg.call_start.number = number;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_ATD;
+    LWGSM_MSG_VAR_REF(msg).msg.call_start.number = number;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -138,15 +138,15 @@ lwgsm_call_start(const char* number,
  */
 lwgsmr_t
 lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATA;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_ATA;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -158,15 +158,15 @@ lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
  */
 lwgsmr_t
 lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED();
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_ATH;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_ATH;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
+#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */

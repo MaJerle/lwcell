@@ -17,7 +17,7 @@ and it can be called from one of these ``3`` threads:
 
 - *Producing thread*
 - *Processing thread*
-- *Input thread*, when :c:macro:`GSM_CFG_INPUT_USE_PROCESS` is enabled and :cpp:func:`lwgsm_input_process` function is called 
+- *Input thread*, when :c:macro:`LWGSM_CFG_INPUT_USE_PROCESS` is enabled and :cpp:func:`lwgsm_input_process` function is called 
 
 .. tip::
     Check :ref:`um_inter_thread_comm` for more details about *Producing* and *Processing* thread.
@@ -59,7 +59,7 @@ This events are subset of global event callback.
 They work exactly the same way as global, but only receive events related to connections.
 
 .. tip::
-    Connection related events start with ``GSM_EVT_CONN_*``, such as :c:member:`GSM_EVT_CONN_RECV`. 
+    Connection related events start with ``LWGSM_EVT_CONN_*``, such as :c:member:`LWGSM_EVT_CONN_RECV`. 
     Check :ref:`api_lwgsm_evt` for list of all connection events.
 
 Connection events callback function is set when client (application starts connection) starts a new connection with :cpp:func:`lwgsm_conn_start` function

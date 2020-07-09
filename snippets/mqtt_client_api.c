@@ -75,7 +75,7 @@ mqtt_client_api_thread(void const* arg) {
 
         /* Try to join */
         conn_status = lwgsm_mqtt_client_api_connect(client, "mqtt.mydevices.com", 1883, &mqtt_client_info);
-        if (conn_status == GSM_MQTT_CONN_STATUS_ACCEPTED) {
+        if (conn_status == LWGSM_MQTT_CONN_STATUS_ACCEPTED) {
             printf("Connected and accepted!\r\n");
             printf("Client is ready to subscribe and publish to new messages\r\n");
         } else {
@@ -86,7 +86,7 @@ mqtt_client_api_thread(void const* arg) {
 
         /* Subscribe to topics */
         sprintf(mqtt_topic_str, "v1/%s/things/%s/cmd/#", mqtt_client_info.user, mqtt_client_info.id);
-        if (lwgsm_mqtt_client_api_subscribe(client, mqtt_topic_str, GSM_MQTT_QOS_AT_LEAST_ONCE) == gsmOK) {
+        if (lwgsm_mqtt_client_api_subscribe(client, mqtt_topic_str, LWGSM_MQTT_QOS_AT_LEAST_ONCE) == gsmOK) {
             printf("Subscribed to topic\r\n");
         } else {
             printf("Problem subscribing to topic!\r\n");
@@ -111,7 +111,7 @@ mqtt_client_api_thread(void const* arg) {
                 /* Publish data on channel 1 */
                 generate_random(random_str);
                 sprintf(mqtt_topic_str, "v1/%s/things/%s/data/1", mqtt_client_info.user, mqtt_client_info.id);
-                lwgsm_mqtt_client_api_publish(client, mqtt_topic_str, random_str, strlen(random_str), GSM_MQTT_QOS_AT_LEAST_ONCE, 0);
+                lwgsm_mqtt_client_api_publish(client, mqtt_topic_str, random_str, strlen(random_str), LWGSM_MQTT_QOS_AT_LEAST_ONCE, 0);
             }
         }
         goto terminate;

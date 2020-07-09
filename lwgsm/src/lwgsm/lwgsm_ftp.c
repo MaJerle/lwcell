@@ -35,6 +35,6 @@
 #include "lwgsm/lwgsm_ftp.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if GSM_CFG_FTP || __DOXYGEN__
+#if LWGSM_CFG_FTP || __DOXYGEN__
 
-#endif /* GSM_CFG_FTP || __DOXYGEN__ */
+#endif /* LWGSM_CFG_FTP || __DOXYGEN__ */

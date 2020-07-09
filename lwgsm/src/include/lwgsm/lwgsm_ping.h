@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_PING_H
-#define GSM_HDR_PING_H
+#ifndef LWGSM_HDR_PING_H
+#define LWGSM_HDR_PING_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_PING PING API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_PING PING API
  * \brief           PING manager
  * \{
  */
@@ -55,4 +55,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_PING_H */
+#endif /* LWGSM_HDR_PING_H */

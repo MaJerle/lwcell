@@ -47,18 +47,18 @@
 lwgsmr_t
 lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                             void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("manuf != NULL", manuf != NULL);
-    GSM_ASSERT("len > 0", len > 0);
+    LWGSM_ASSERT("manuf != NULL", manuf != NULL);
+    LWGSM_ASSERT("len > 0", len > 0);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGMI_GET;
-    GSM_MSG_VAR_REF(msg).msg.device_info.str = manuf;
-    GSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGMI_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = manuf;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -73,18 +73,18 @@ lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_f
 lwgsmr_t
 lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                      void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("model != NULL", model != NULL);
-    GSM_ASSERT("len > 0", len > 0);
+    LWGSM_ASSERT("model != NULL", model != NULL);
+    LWGSM_ASSERT("len > 0", len > 0);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGMM_GET;
-    GSM_MSG_VAR_REF(msg).msg.device_info.str = model;
-    GSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGMM_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = model;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -99,18 +99,18 @@ lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_f
 lwgsmr_t
 lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                         void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("rev != NULL", rev != NULL);
-    GSM_ASSERT("len > 0", len > 0);
+    LWGSM_ASSERT("rev != NULL", rev != NULL);
+    LWGSM_ASSERT("len > 0", len > 0);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGMR_GET;
-    GSM_MSG_VAR_REF(msg).msg.device_info.str = rev;
-    GSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGMR_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = rev;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -125,16 +125,16 @@ lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_
 lwgsmr_t
 lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
                              void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("serial != NULL", serial != NULL);
-    GSM_ASSERT("len > 0", len > 0);
+    LWGSM_ASSERT("serial != NULL", serial != NULL);
+    LWGSM_ASSERT("len > 0", len > 0);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CGSN_GET;
-    GSM_MSG_VAR_REF(msg).msg.device_info.str = serial;
-    GSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGSN_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = serial;
+    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }

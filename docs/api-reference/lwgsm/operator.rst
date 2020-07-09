@@ -3,4 +3,4 @@
 Network operator
 ================
 
-.. doxygengroup:: GSM_OPERATOR
+.. doxygengroup:: LWGSM_OPERATOR

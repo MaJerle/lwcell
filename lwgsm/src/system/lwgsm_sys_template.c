@@ -148,7 +148,7 @@ lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p) {
  */
 uint8_t
 lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p) {
-    *p = GSM_SYS_MUTEX_NULL;
+    *p = LWGSM_SYS_MUTEX_NULL;
     return 1;
 }
 
@@ -187,12 +187,12 @@ lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
  * \param[in]       p: Pointer to semaphore structure
  * \param[in]       timeout: Timeout to wait in milliseconds. When `0` is applied, wait forever
  * \return          Number of milliseconds waited for semaphore to become available or
- *                      \ref GSM_SYS_TIMEOUT if not available within given time
+ *                      \ref LWGSM_SYS_TIMEOUT if not available within given time
  */
 uint32_t
 lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
     uint32_t tick = osKernelSysTick();
-    return (osSemaphoreWait(*p, !timeout ? osWaitForever : timeout) == osOK) ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
+    return (osSemaphoreWait(*p, !timeout ? osWaitForever : timeout) == osOK) ? (osKernelSysTick() - tick) : LWGSM_SYS_TIMEOUT;
 }
 
 /**
@@ -222,7 +222,7 @@ lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p) {
  */
 uint8_t
 lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p) {
-    *p = GSM_SYS_SEM_NULL;
+    *p = LWGSM_SYS_SEM_NULL;
     return 1;
 }
 
@@ -261,7 +261,7 @@ lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
 uint32_t
 lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
     uint32_t tick = osKernelSysTick();
-    return osMessagePut(*b, (uint32_t)m, osWaitForever) == osOK ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
+    return osMessagePut(*b, (uint32_t)m, osWaitForever) == osOK ? (osKernelSysTick() - tick) : LWGSM_SYS_TIMEOUT;
 }
 
 /**
@@ -270,7 +270,7 @@ lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
  * \param[in]       m: Pointer to pointer to result to save value from message queue to
  * \param[in]       timeout: Maximal timeout to wait for new message. When `0` is applied, wait for unlimited time
  * \return          Time in units of milliseconds needed to put a message to queue
- *                      or \ref GSM_SYS_TIMEOUT if it was not successful
+ *                      or \ref LWGSM_SYS_TIMEOUT if it was not successful
  */
 uint32_t
 lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
@@ -282,7 +282,7 @@ lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
         *m = evt.value.p;
         return osKernelSysTick() - time;
     }
-    return GSM_SYS_TIMEOUT;
+    return LWGSM_SYS_TIMEOUT;
 }
 
 /**
@@ -331,7 +331,7 @@ lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
  */
 uint8_t
 lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
-    *b = GSM_SYS_MBOX_NULL;
+    *b = LWGSM_SYS_MBOX_NULL;
     return 1;
 }
 
@@ -354,7 +354,7 @@ lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_threa
         (os_pthread)thread_func,
         (osPriority)prio,
         0,
-        stack_size > 0 ? stack_size : GSM_SYS_THREAD_SS
+        stack_size > 0 ? stack_size : LWGSM_SYS_THREAD_SS
     };
     lwgsm_sys_thread_t id;
 

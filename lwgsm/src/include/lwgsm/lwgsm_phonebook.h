@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_PHONEBOOK_H
-#define GSM_HDR_PHONEBOOK_H
+#ifndef LWGSM_HDR_PHONEBOOK_H
+#define LWGSM_HDR_PHONEBOOK_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_PHONEBOOK Phonebook API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_PHONEBOOK Phonebook API
  * \brief           Phonebook manager
  * \{
  */
@@ -65,4 +65,4 @@ lwgsmr_t      lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entr
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_PHONEBOOK_H */
+#endif /* LWGSM_HDR_PHONEBOOK_H */

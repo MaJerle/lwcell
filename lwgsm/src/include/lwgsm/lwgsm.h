@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_H
-#define GSM_HDR_H
+#ifndef LWGSM_HDR_H
+#define LWGSM_HDR_H
 
 /* Get most important include files */
 #include "lwgsm/lwgsm_includes.h"
@@ -42,7 +42,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \defgroup        GSM GSM-AT Lib
+ * \defgroup        LWGSM LwGSM
  * \brief           GSM stack
  * \{
  */
@@ -69,4 +69,4 @@ uint8_t     lwgsm_delay(uint32_t ms);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_H */
+#endif /* LWGSM_HDR_H */

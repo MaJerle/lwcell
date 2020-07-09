@@ -3,4 +3,4 @@
 File Transfer Protocol
 ======================
 
-.. doxygengroup:: GSM_FTP
+.. doxygengroup:: LWGSM_FTP

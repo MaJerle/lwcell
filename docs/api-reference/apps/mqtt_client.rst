@@ -10,5 +10,5 @@ MQTT client v3.1.1 implementation, based on callback (non-netconn) connection AP
     :linenos:
     :caption: MQTT application example code
 
-.. doxygengroup:: GSM_APP_MQTT_CLIENT
-.. doxygengroup:: GSM_APP_MQTT_CLIENT_EVT
+.. doxygengroup:: LWGSM_APP_MQTT_CLIENT
+.. doxygengroup:: LWGSM_APP_MQTT_CLIENT_EVT

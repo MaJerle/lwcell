@@ -66,4 +66,4 @@ In some cases it is not possible to use temporary buffers,
 mostly because of memory constraints.
 Application can directly start *send data* instructions on *AT* level by using :cpp:func:`lwgsm_conn_send` or :cpp:func:`lwgsm_conn_sendto` functions.
 
-.. doxygengroup:: GSM_CONN
+.. doxygengroup:: LWGSM_CONN

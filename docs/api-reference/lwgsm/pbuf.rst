@@ -161,4 +161,4 @@ An example code showing proper reading of any *pbuf*:
     :linenos:
     :caption: Packet buffer data extraction
 
-.. doxygengroup:: GSM_PBUF
+.. doxygengroup:: LWGSM_PBUF

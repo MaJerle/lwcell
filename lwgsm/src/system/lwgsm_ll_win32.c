@@ -55,7 +55,7 @@ static size_t
 send_data(const void* data, size_t len) {
     DWORD written;
     if (com_port != NULL) {
-#if !GSM_CFG_AT_ECHO
+#if !LWGSM_CFG_AT_ECHO
         const uint8_t* d = data;
         HANDLE hConsole;
 
@@ -65,7 +65,7 @@ send_data(const void* data, size_t len) {
             printf("%c", d[i]);
         }
         SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-#endif /* !GSM_CFG_AT_ECHO */
+#endif /* !LWGSM_CFG_AT_ECHO */
 
         /* Write data to AT port */
         WriteFile(com_port, data, len, &written, NULL);
@@ -179,11 +179,11 @@ uart_thread(void* param) {
                 SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
                 /* Send received data to input processing module */
-#if GSM_CFG_INPUT_USE_PROCESS
+#if LWGSM_CFG_INPUT_USE_PROCESS
                 lwgsm_input_process(data_buffer, (size_t)bytes_read);
-#else /* GSM_CFG_INPUT_USE_PROCESS */
+#else /* LWGSM_CFG_INPUT_USE_PROCESS */
                 lwgsm_input(data_buffer, (size_t)bytes_read);
-#endif /* !GSM_CFG_INPUT_USE_PROCESS */
+#endif /* !LWGSM_CFG_INPUT_USE_PROCESS */
 
                 /* Write received data to output debug file */
                 if (file != NULL) {
@@ -205,14 +205,14 @@ uart_thread(void* param) {
  *                  It is important that every configuration except AT baudrate is configured only once!
  *
  * \note            This function may be called from different threads in GSM stack when using OS.
- *                  When \ref GSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
+ *                  When \ref LWGSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
  * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_ll_init(lwgsm_ll_t* ll) {
-#if !GSM_CFG_MEM_CUSTOM
+#if !LWGSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
 
@@ -225,9 +225,9 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
         { memory, sizeof(memory) }
     };
     if (!initialized) {
-        lwgsm_mem_assignmemory(mem_regions, GSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
+        lwgsm_mem_assignmemory(mem_regions, LWGSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
     }
-#endif /* !GSM_CFG_MEM_CUSTOM */
+#endif /* !LWGSM_CFG_MEM_CUSTOM */
 
     /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {

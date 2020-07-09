@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_SYSTEM_PORT_H
-#define GSM_HDR_SYSTEM_PORT_H
+#ifndef LWGSM_HDR_SYSTEM_PORT_H
+#define LWGSM_HDR_SYSTEM_PORT_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -43,7 +43,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#if GSM_CFG_OS && !__DOXYGEN__
+#if LWGSM_CFG_OS && !__DOXYGEN__
 
 typedef HANDLE                      lwgsm_sys_mutex_t;
 typedef HANDLE                      lwgsm_sys_sem_t;
@@ -51,17 +51,17 @@ typedef HANDLE                      lwgsm_sys_mbox_t;
 typedef HANDLE                      lwgsm_sys_thread_t;
 typedef int                         lwgsm_sys_thread_prio_t;
 
-#define GSM_SYS_MUTEX_NULL          ((HANDLE)0)
-#define GSM_SYS_SEM_NULL            ((HANDLE)0)
-#define GSM_SYS_MBOX_NULL           ((HANDLE)0)
-#define GSM_SYS_TIMEOUT             (INFINITE)
-#define GSM_SYS_THREAD_PRIO         (0)
-#define GSM_SYS_THREAD_SS           (4096)
+#define LWGSM_SYS_MUTEX_NULL          ((HANDLE)0)
+#define LWGSM_SYS_SEM_NULL            ((HANDLE)0)
+#define LWGSM_SYS_MBOX_NULL           ((HANDLE)0)
+#define LWGSM_SYS_TIMEOUT             (INFINITE)
+#define LWGSM_SYS_THREAD_PRIO         (0)
+#define LWGSM_SYS_THREAD_SS           (4096)
 
-#endif /* GSM_CFG_OS && !__DOXYGEN__ */
+#endif /* LWGSM_CFG_OS && !__DOXYGEN__ */
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_SYSTEM_PORT_H */
+#endif /* LWGSM_HDR_SYSTEM_PORT_H */

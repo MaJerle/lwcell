@@ -106,8 +106,8 @@ char*
 lwgsm_i32_to_gen_str(int32_t num, char* out) {
     if (num < 0) {
         *out++ = '-';
-        return lwgsm_u32_to_gen_str(GSM_U32(-num), out, 0, 0) - 1;
+        return lwgsm_u32_to_gen_str(LWGSM_U32(-num), out, 0, 0) - 1;
     } else {
-        return lwgsm_u32_to_gen_str(GSM_U32(num), out, 0, 0);
+        return lwgsm_u32_to_gen_str(LWGSM_U32(num), out, 0, 0);
     }
 }

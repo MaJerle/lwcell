@@ -35,7 +35,7 @@
 
 /* See lwgsm_mem.c file for function documentation on parameters and return values */
 
-#if GSM_CFG_MEM_CUSTOM && !__DOXYGEN__
+#if LWGSM_CFG_MEM_CUSTOM && !__DOXYGEN__
 
 /*
  * Before this driver can be used, user must:
@@ -66,4 +66,4 @@ lwgsm_mem_free(void* ptr) {
     lwmem_free(ptr);
 }
 
-#endif /* GSM_CFG_MEM_CUSTOM && !__DOXYGEN__ */
+#endif /* LWGSM_CFG_MEM_CUSTOM && !__DOXYGEN__ */

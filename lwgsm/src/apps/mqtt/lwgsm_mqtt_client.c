@@ -56,7 +56,7 @@ typedef struct lwgsm_mqtt_client {
 
     uint16_t last_packet_id;                    /*!< Packet ID used on last packet */
 
-    lwgsm_mqtt_request_t requests[GSM_CFG_MQTT_MAX_REQUESTS]; /*!< List of requests */
+    lwgsm_mqtt_request_t requests[LWGSM_CFG_MQTT_MAX_REQUESTS]; /*!< List of requests */
 
     uint8_t* rx_buff;                           /*!< Raw RX buffer */
     size_t rx_buff_len;                         /*!< Length of raw RX buffer */
@@ -71,9 +71,9 @@ typedef struct lwgsm_mqtt_client {
 } lwgsm_mqtt_client_t;
 
 /* Tracing debug message */
-#define GSM_CFG_DBG_MQTT_TRACE                  (GSM_CFG_DBG_MQTT | GSM_DBG_TYPE_TRACE)
-#define GSM_CFG_DBG_MQTT_STATE                  (GSM_CFG_DBG_MQTT | GSM_DBG_TYPE_STATE)
-#define GSM_CFG_DBG_MQTT_TRACE_WARNING          (GSM_CFG_DBG_MQTT | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING)
+#define LWGSM_CFG_DBG_MQTT_TRACE                  (LWGSM_CFG_DBG_MQTT | LWGSM_DBG_TYPE_TRACE)
+#define LWGSM_CFG_DBG_MQTT_STATE                  (LWGSM_CFG_DBG_MQTT | LWGSM_DBG_TYPE_STATE)
+#define LWGSM_CFG_DBG_MQTT_TRACE_WARNING          (LWGSM_CFG_DBG_MQTT | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING)
 
 static lwgsmr_t   mqtt_conn_cb(lwgsm_evt_t* evt);
 static void     send_data(lwgsm_mqtt_client_p client);
@@ -121,7 +121,7 @@ typedef enum {
 #define MQTT_REQUEST_FLAG_SUBSCRIBE     0x04    /*!< Request object has subscribe type */
 #define MQTT_REQUEST_FLAG_UNSUBSCRIBE   0x08    /*!< Request object has unsubscribe type */
 
-#if GSM_CFG_DBG
+#if LWGSM_CFG_DBG
 
 static const char*
 mqtt_msg_type_to_str(mqtt_msg_type_t msg_type) {
@@ -134,7 +134,7 @@ mqtt_msg_type_to_str(mqtt_msg_type_t msg_type) {
     return strings[(uint8_t)msg_type];
 }
 
-#endif /* GSM_CFG_DBG */
+#endif /* LWGSM_CFG_DBG */
 
 /**
  * \brief           Default event callback function
@@ -143,8 +143,8 @@ mqtt_msg_type_to_str(mqtt_msg_type_t msg_type) {
  */
 static void
 mqtt_evt_fn_default(lwgsm_mqtt_client_p client, lwgsm_mqtt_evt_t* evt) {
-    GSM_UNUSED(client);
-    GSM_UNUSED(evt);
+    LWGSM_UNUSED(client);
+    LWGSM_UNUSED(evt);
 }
 
 /**
@@ -179,7 +179,7 @@ request_create(lwgsm_mqtt_client_p client, uint16_t packet_id, void* arg) {
     uint16_t i;
 
     /* Try to find a new request which does not have IN_USE flag set */
-    for (request = NULL, i = 0; i < GSM_CFG_MQTT_MAX_REQUESTS; ++i) {
+    for (request = NULL, i = 0; i < LWGSM_CFG_MQTT_MAX_REQUESTS; ++i) {
         if (!(client->requests[i].status & MQTT_REQUEST_FLAG_IN_USE)) {
             request = &client->requests[i];     /* We have empty request */
             break;
@@ -201,7 +201,7 @@ request_create(lwgsm_mqtt_client_p client, uint16_t packet_id, void* arg) {
 static void
 request_delete(lwgsm_mqtt_client_p client, lwgsm_mqtt_request_t* request) {
     request->status = 0;                        /* Reset status to make request unused */
-    GSM_UNUSED(client);
+    LWGSM_UNUSED(client);
 }
 
 /**
@@ -213,7 +213,7 @@ static void
 request_set_pending(lwgsm_mqtt_client_p client, lwgsm_mqtt_request_t* request) {
     request->timeout_start_time = lwgsm_sys_now();/* Set timeout start time */
     request->status |= MQTT_REQUEST_FLAG_PENDING;   /* Set pending flag */
-    GSM_UNUSED(client);
+    LWGSM_UNUSED(client);
 }
 
 /**
@@ -225,7 +225,7 @@ request_set_pending(lwgsm_mqtt_client_p client, lwgsm_mqtt_request_t* request) {
 static lwgsm_mqtt_request_t*
 request_get_pending(lwgsm_mqtt_client_p client, int32_t pkt_id) {
     /* Try to find a new request which does not have IN_USE flag set */
-    for (size_t i = 0; i < GSM_CFG_MQTT_MAX_REQUESTS; ++i) {
+    for (size_t i = 0; i < LWGSM_CFG_MQTT_MAX_REQUESTS; ++i) {
         if ((client->requests[i].status & MQTT_REQUEST_FLAG_PENDING)
             && (pkt_id == -1 || client->requests[i].packet_id == (uint16_t)pkt_id)) {
             return &client->requests[i];
@@ -243,14 +243,14 @@ request_get_pending(lwgsm_mqtt_client_p client, int32_t pkt_id) {
 static void
 request_send_err_callback(lwgsm_mqtt_client_p client, uint8_t status, void* arg) {
     if (status & MQTT_REQUEST_FLAG_SUBSCRIBE) {
-        client->evt.type = GSM_MQTT_EVT_SUBSCRIBE;
+        client->evt.type = LWGSM_MQTT_EVT_SUBSCRIBE;
     } else if (status & MQTT_REQUEST_FLAG_UNSUBSCRIBE) {
-        client->evt.type = GSM_MQTT_EVT_UNSUBSCRIBE;
+        client->evt.type = LWGSM_MQTT_EVT_UNSUBSCRIBE;
     } else {
-        client->evt.type = GSM_MQTT_EVT_PUBLISH;
+        client->evt.type = LWGSM_MQTT_EVT_PUBLISH;
     }
 
-    if (client->evt.type == GSM_MQTT_EVT_PUBLISH) {
+    if (client->evt.type == LWGSM_MQTT_EVT_PUBLISH) {
         client->evt.evt.publish.arg = arg;
         client->evt.evt.publish.res = gsmERR;
     } else {
@@ -283,22 +283,22 @@ write_fixed_header(lwgsm_mqtt_client_p client, mqtt_msg_type_t type, uint8_t dup
      * Fixed header flags according to:
      * http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718020
      */
-    b = GSM_U8(type) << 0x04;
+    b = LWGSM_U8(type) << 0x04;
     switch (type) {
         case MQTT_MSG_TYPE_PUBLISH:
-            b |= GSM_U8(!!dup) << 0x03 | (GSM_U8(qos & 0x03)) << 0x01 | GSM_U8(!!retain);
+            b |= LWGSM_U8(!!dup) << 0x03 | (LWGSM_U8(qos & 0x03)) << 0x01 | LWGSM_U8(!!retain);
             break;
         case MQTT_MSG_TYPE_PUBREL:
         case MQTT_MSG_TYPE_SUBSCRIBE:
         case MQTT_MSG_TYPE_UNSUBSCRIBE:
-            b |= GSM_U8(GSM_MQTT_QOS_AT_LEAST_ONCE) << 0x01;
+            b |= LWGSM_U8(LWGSM_MQTT_QOS_AT_LEAST_ONCE) << 0x01;
             break;
         default:
             break;
     }
     lwgsm_buff_write(&client->tx_buff, &b, 1);    /* Write start of packet parameters */
 
-    GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+    LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                "[MQTT] Writing packet type %s to output buffer\r\n", mqtt_msg_type_to_str(type));
 
     do {                                        /* Encode length, we must write a len byte even if 0 */
@@ -306,7 +306,7 @@ write_fixed_header(lwgsm_mqtt_client_p client, mqtt_msg_type_t type, uint8_t dup
          * Length is encoded LSB first up to 127 (0x7F) long,
          * where bit 7 indicates we have more data in queue for length parameter
          */
-        b = GSM_U8((rem_len & 0x7F) | (rem_len > 0x7F ? 0x80 : 0));
+        b = LWGSM_U8((rem_len & 0x7F) | (rem_len > 0x7F ? 0x80 : 0));
         lwgsm_buff_write(&client->tx_buff, &b, 1);/* Write single byte */
         rem_len >>= 7;                          /* Go to next 127 bytes */
     } while (rem_len > 0);
@@ -329,8 +329,8 @@ write_u8(lwgsm_mqtt_client_p client, uint8_t num) {
  */
 static void
 write_u16(lwgsm_mqtt_client_p client, uint16_t num) {
-    write_u8(client, GSM_U8(num >> 8));         /* Write MSB first... */
-    write_u8(client, GSM_U8(num & 0xFF));       /* ...followed by LSB */
+    write_u8(client, LWGSM_U8(num >> 8));         /* Write MSB first... */
+    write_u8(client, LWGSM_U8(num & 0xFF));       /* ...followed by LSB */
 }
 
 /**
@@ -363,7 +363,7 @@ output_check_enough_memory(lwgsm_mqtt_client_p client, uint16_t rem_len) {
         rem_len >>= 7;                          /* Encoded with 7 bits per byte */
     } while (rem_len > 0);
 
-    return GSM_U16(lwgsm_buff_get_free(&client->tx_buff)) >= total_len ? total_len : 0;
+    return LWGSM_U16(lwgsm_buff_get_free(&client->tx_buff)) >= total_len ? total_len : 0;
 }
 
 /**
@@ -380,11 +380,11 @@ write_ack_rec_rel_resp(lwgsm_mqtt_client_p client, mqtt_msg_type_t msg_type, uin
         write_fixed_header(client, msg_type, 0, qos, 0, 2); /* Write fixed header with 2 more bytes for packet id */
         write_u16(client, pkt_id);              /* Write packet ID */
         send_data(client);                      /* Flush data to output */
-        GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                    "[MQTT] Response %s written to output memory\r\n", mqtt_msg_type_to_str(msg_type));
         return 1;
     } else {
-        GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                    "[MQTT] No memory to write %s packet\r\n", mqtt_msg_type_to_str(msg_type));
     }
     return 0;
@@ -423,7 +423,7 @@ send_data(lwgsm_mqtt_client_p client) {
             client->written_total += len;       /* Increase number of bytes written to queue */
             client->is_sending = 1;             /* Remember active sending flag */
         } else {
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE_WARNING,
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING,
                        "[MQTT] Cannot send data with error: %d\r\n", (int)res);
         }
     } else {
@@ -445,12 +445,12 @@ send_data(lwgsm_mqtt_client_p client) {
 static lwgsmr_t
 mqtt_close(lwgsm_mqtt_client_p client) {
     lwgsmr_t res = gsmERR;
-    if (client->conn_state != GSM_MQTT_CONN_DISCONNECTED
-        && client->conn_state != GSM_MQTT_CONN_DISCONNECTING) {
+    if (client->conn_state != LWGSM_MQTT_CONN_DISCONNECTED
+        && client->conn_state != LWGSM_MQTT_CONN_DISCONNECTING) {
 
         res = lwgsm_conn_close(client->conn, 0);  /* Close the connection in non-blocking mode */
         if (res == gsmOK) {
-            client->conn_state = GSM_MQTT_CONN_DISCONNECTING;
+            client->conn_state = LWGSM_MQTT_CONN_DISCONNECTING;
         }
     }
     return res;
@@ -472,7 +472,7 @@ sub_unsub(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qos, v
     uint16_t len_topic, pkt_id;
     uint8_t ret = 0;
 
-    if ((len_topic = GSM_U16(strlen(topic))) == 0) {
+    if ((len_topic = LWGSM_U16(strlen(topic))) == 0) {
         return 0;
     }
 
@@ -487,7 +487,7 @@ sub_unsub(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qos, v
     }
 
     lwgsm_core_lock();
-    if (client->conn_state == GSM_MQTT_CONNECTED
+    if (client->conn_state == LWGSM_MQTT_CONNECTED
         && output_check_enough_memory(client, rem_len)) {   /* Check if enough memory to write packet data */
         pkt_id = create_packet_id(client);      /* Create new packet ID */
         request = request_create(client, pkt_id, arg);  /* Create request for packet */
@@ -496,7 +496,7 @@ sub_unsub(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qos, v
             write_u16(client, pkt_id);          /* Write packet ID */
             write_string(client, topic, len_topic); /* Write topic string to packet */
             if (sub) {                          /* Send quality of service only on subscribe */
-                write_u8(client, GSM_MIN(GSM_U8(qos), GSM_U8(GSM_MQTT_QOS_EXACTLY_ONCE)));  /* Write quality of service */
+                write_u8(client, LWGSM_MIN(LWGSM_U8(qos), LWGSM_U8(LWGSM_MQTT_QOS_EXACTLY_ONCE)));  /* Write quality of service */
             }
 
             request->status |= sub ? MQTT_REQUEST_FLAG_SUBSCRIBE : MQTT_REQUEST_FLAG_UNSUBSCRIBE;
@@ -523,27 +523,27 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
     msg_type = MQTT_RCV_GET_PACKET_TYPE(client->msg_hdr_byte);  /* Get packet type from message header byte */
 
     /* Debug message */
-    GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
+    LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
                "[MQTT] Processing packet type %s\r\n", mqtt_msg_type_to_str(msg_type));
 
     /* Check received packet type */
     switch (msg_type) {
         case MQTT_MSG_TYPE_CONNACK: {
             lwgsm_mqtt_conn_status_t err = (lwgsm_mqtt_conn_status_t)client->rx_buff[1];
-            if (client->conn_state == GSM_MQTT_CONNECTING) {
-                if (err == GSM_MQTT_CONN_STATUS_ACCEPTED) {
-                    client->conn_state = GSM_MQTT_CONNECTED;
+            if (client->conn_state == LWGSM_MQTT_CONNECTING) {
+                if (err == LWGSM_MQTT_CONN_STATUS_ACCEPTED) {
+                    client->conn_state = LWGSM_MQTT_CONNECTED;
                 }
-                GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+                LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                            "[MQTT] CONNACK received with result: %d\r\n", (int)err);
 
                 /* Notify user layer */
-                client->evt.type = GSM_MQTT_EVT_CONNECT;
+                client->evt.type = LWGSM_MQTT_EVT_CONNECT;
                 client->evt.evt.connect.status = err;
                 client->evt_fn(client, &client->evt);
             } else {
                 /* Protocol violation here */
-                GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+                LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                            "[MQTT] Protocol violation. CONNACK received when already connected!\r\n");
             }
             break;
@@ -569,7 +569,7 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
             }
             data_len = client->msg_rem_len - (data - client->rx_buff);  /* Calculate length of remaining data */
 
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                        "[MQTT] Publish packet received on topic %.*s; QoS: %d; pkt_id: %d; data_len: %d\r\n",
                        (int)topic_len, (const char*)topic, (int)qos, (int)pkt_id, (int)data_len);
 
@@ -582,14 +582,14 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
              */
             if (qos > 0) {                      /* We have to reply on QoS > 0 */
                 mqtt_msg_type_t resp_msg_type = qos == 1 ? MQTT_MSG_TYPE_PUBACK : MQTT_MSG_TYPE_PUBREC;
-                GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending publish resp: %s on pkt_id: %d\r\n", \
+                LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending publish resp: %s on pkt_id: %d\r\n", \
                            mqtt_msg_type_to_str(resp_msg_type), (int)pkt_id);
 
                 write_ack_rec_rel_resp(client, resp_msg_type, pkt_id, qos);
             }
 
             /* Notify application layer about received packet */
-            client->evt.type = GSM_MQTT_EVT_PUBLISH_RECV;
+            client->evt.type = LWGSM_MQTT_EVT_PUBLISH_RECV;
             client->evt.evt.publish_recv.topic = topic;
             client->evt.evt.publish_recv.topic_len = topic_len;
             client->evt.evt.publish_recv.payload = data;
@@ -600,9 +600,9 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
             break;
         }
         case MQTT_MSG_TYPE_PINGRESP: {          /* Respond to PINGREQ received */
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Ping response received\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Ping response received\r\n");
 
-            client->evt.type = GSM_MQTT_EVT_KEEP_ALIVE;
+            client->evt.type = LWGSM_MQTT_EVT_KEEP_ALIVE;
             client->evt_fn(client, &client->evt);
             break;
         }
@@ -635,7 +635,7 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
                 if (request != NULL) {
                     if (msg_type == MQTT_MSG_TYPE_SUBACK
                         || msg_type == MQTT_MSG_TYPE_UNSUBACK) {
-                        client->evt.type = msg_type == MQTT_MSG_TYPE_SUBACK ? GSM_MQTT_EVT_SUBSCRIBE : GSM_MQTT_EVT_UNSUBSCRIBE;
+                        client->evt.type = msg_type == MQTT_MSG_TYPE_SUBACK ? LWGSM_MQTT_EVT_SUBSCRIBE : LWGSM_MQTT_EVT_UNSUBSCRIBE;
                         client->evt.evt.sub_unsub_scribed.arg = request->arg;
                         client->evt.evt.sub_unsub_scribed.res = client->rx_buff[2] < 3 ? gsmOK : gsmERR;
                         client->evt_fn(client, &client->evt);
@@ -646,7 +646,7 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
                          */
                     } else if (msg_type == MQTT_MSG_TYPE_PUBCOMP
                                || msg_type == MQTT_MSG_TYPE_PUBACK) {
-                        client->evt.type = GSM_MQTT_EVT_PUBLISH;
+                        client->evt.type = LWGSM_MQTT_EVT_PUBLISH;
                         client->evt.evt.publish.arg = request->arg;
                         client->evt.evt.publish.res = gsmOK;
                         client->evt_fn(client, &client->evt);
@@ -654,7 +654,7 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
                     request_delete(client, request);    /* Delete request object */
                 } else {
                     /* Protocol violation at this point! */
-                    GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+                    LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                                "[MQTT] Protocol violation. Received ACK without sent packet\r\n");
                 }
             }
@@ -687,7 +687,7 @@ mqtt_parse_incoming(lwgsm_mqtt_client_p client, lwgsm_pbuf_p pbuf) {
             ch = d[idx];
             switch (client->parser_state) {     /* Check parser state */
                 case MQTT_PARSER_STATE_INIT: {  /* We are waiting for start byte and packet type */
-                    GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
+                    LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
                                "[MQTT] Parser init state, received first byte of packet 0x%02X\r\n", (unsigned)ch);
 
                     /* Save other info about message */
@@ -705,7 +705,7 @@ mqtt_parse_incoming(lwgsm_mqtt_client_p client, lwgsm_pbuf_p pbuf) {
                     ++client->msg_rem_len_mult;
 
                     if (!(ch & 0x80)) {         /* Is this last entry? */
-                        GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
+                        LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
                                    "[MQTT] Remaining length received: %d bytes\r\n", (int)client->msg_rem_len);
 
                         if (client->msg_rem_len > 0) {
@@ -750,12 +750,12 @@ mqtt_parse_incoming(lwgsm_mqtt_client_p client, lwgsm_pbuf_p pbuf) {
                     /* We reached end of received characters? */
                     if (client->msg_curr_pos == client->msg_rem_len) {
                         if (client->msg_curr_pos <= client->rx_buff_len) {  /* Check if it was possible to write all data to rx buffer */
-                            GSM_DEBUGF(GSM_CFG_DBG_MQTT_STATE,
+                            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
                                        "[MQTT] Packet parsed and ready for processing\r\n");
 
                             mqtt_process_incoming_message(client);  /* Process incoming packet */
                         } else {
-                            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE_WARNING,
+                            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING,
                                        "[MQTT] Packet too big for rx buffer. Packet discarded\r\n");
                         }
                         client->parser_state = MQTT_PARSER_STATE_INIT;  /* Go to initial state and listen for next received packet */
@@ -795,15 +795,15 @@ mqtt_connected_cb(lwgsm_mqtt_client_p client) {
      */
     rem_len = 10;                               /* Set remaining length of fixed header */
 
-    len_id = GSM_U16(strlen(client->info->id)); /* Get cliend ID length */
+    len_id = LWGSM_U16(strlen(client->info->id)); /* Get cliend ID length */
     rem_len += len_id + 2;                      /* Add client id length including length entries */
 
     if (client->info->will_topic != NULL && client->info->will_message != NULL) {
         flags |= MQTT_FLAG_CONNECT_WILL;
-        flags |= GSM_MIN(GSM_U8(client->info->will_qos), 2) << 0x03;/* Set qos to flags */
+        flags |= LWGSM_MIN(LWGSM_U8(client->info->will_qos), 2) << 0x03;/* Set qos to flags */
 
-        len_will_topic = GSM_U16(strlen(client->info->will_topic));
-        len_will_message = GSM_U16(strlen(client->info->will_message));
+        len_will_topic = LWGSM_U16(strlen(client->info->will_topic));
+        len_will_message = LWGSM_U16(strlen(client->info->will_message));
 
         rem_len += len_will_topic + 2;          /* Add will topic parameter */
         rem_len += len_will_message + 2;        /* Add will message parameter */
@@ -812,14 +812,14 @@ mqtt_connected_cb(lwgsm_mqtt_client_p client) {
     if (client->info->user != NULL) {           /* Check for username */
         flags |= MQTT_FLAG_CONNECT_USERNAME;    /* Username is included */
 
-        len_user = GSM_U16(strlen(client->info->user)); /* Get username length */
+        len_user = LWGSM_U16(strlen(client->info->user)); /* Get username length */
         rem_len += len_user + 2;                /* Add username length including length entries */
     }
 
     if (client->info->pass != NULL) {           /* Check for password */
         flags |= MQTT_FLAG_CONNECT_PASSWORD;    /* Password is included */
 
-        len_pass = GSM_U16(strlen(client->info->pass)); /* Get username length */
+        len_pass = LWGSM_U16(strlen(client->info->pass)); /* Get username length */
         rem_len += len_pass + 2;                /* Add password length including length entries */
     }
 
@@ -848,7 +848,7 @@ mqtt_connected_cb(lwgsm_mqtt_client_p client) {
     client->parser_state = MQTT_PARSER_STATE_INIT;  /* Reset parser state */
 
     client->poll_time = 0;                      /* Reset kep alive time */
-    client->conn_state = GSM_MQTT_CONNECTING;   /* MQTT is connecting to server */
+    client->conn_state = LWGSM_MQTT_CONNECTING;   /* MQTT is connecting to server */
 
     send_data(client);                          /* Flush and send the actual data */
 }
@@ -888,7 +888,7 @@ mqtt_data_sent_cb(lwgsm_mqtt_client_p client, size_t sent_len, uint8_t successfu
      * and clear all pending requests in closed callback function
      */
     if (!successful) {
-        GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE_WARNING,
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING,
                    "[MQTT] Failed to send %d bytes. Manually closing down..\r\n", (int)sent_len);
 
         mqtt_close(client);
@@ -909,7 +909,7 @@ mqtt_data_sent_cb(lwgsm_mqtt_client_p client, size_t sent_len, uint8_t successfu
             request_delete(client, request);    /* Delete request and make space for next command */
 
             /* Call published callback */
-            client->evt.type = GSM_MQTT_EVT_PUBLISH;
+            client->evt.type = LWGSM_MQTT_EVT_PUBLISH;
             client->evt.evt.publish.arg = arg;
             client->evt.evt.publish.res = gsmOK;
             client->evt_fn(client, &client->evt);
@@ -924,7 +924,7 @@ mqtt_data_sent_cb(lwgsm_mqtt_client_p client, size_t sent_len, uint8_t successfu
 
 /**
  * \brief           Poll for client connection
- *                  Called every GSM_CFG_CONN_POLL_INTERVAL ms when MQTT client TCP connection is established
+ *                  Called every LWGSM_CFG_CONN_POLL_INTERVAL ms when MQTT client TCP connection is established
  * \param[in]       client: MQTT client
  * \return          `1` on success, `0` otherwise
  */
@@ -932,7 +932,7 @@ static uint8_t
 mqtt_poll_cb(lwgsm_mqtt_client_p client) {
     ++client->poll_time;
 
-    if (client->conn_state == GSM_MQTT_CONN_DISCONNECTING) {
+    if (client->conn_state == LWGSM_MQTT_CONN_DISCONNECTING) {
         return 0;
     }
 
@@ -942,18 +942,18 @@ mqtt_poll_cb(lwgsm_mqtt_client_p client) {
      * to make sure we are still alive
      */
     if (client->info->keep_alive                /* Keep alive must be enabled */
-        /* Poll time is in units of GSM_CFG_CONN_POLL_INTERVAL milliseconds,
+        /* Poll time is in units of LWGSM_CFG_CONN_POLL_INTERVAL milliseconds,
            while keep_alive is in units of seconds */
-        && (client->poll_time * GSM_CFG_CONN_POLL_INTERVAL) >= (uint32_t)(client->info->keep_alive * 1000)) {
+        && (client->poll_time * LWGSM_CFG_CONN_POLL_INTERVAL) >= (uint32_t)(client->info->keep_alive * 1000)) {
 
         if (output_check_enough_memory(client, 0)) {/* Check if memory available in output buffer */
             write_fixed_header(client, MQTT_MSG_TYPE_PINGREQ, 0, (lwgsm_mqtt_qos_t)0, 0, 0);  /* Write PINGREQ command to output buffer */
             send_data(client);                  /* Force send data */
             client->poll_time = 0;              /* Reset polling time */
 
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending PINGREQ packet\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending PINGREQ packet\r\n");
         } else {
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE_WARNING, "[MQTT] No memory to send PINGREQ packet\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING, "[MQTT] No memory to send PINGREQ packet\r\n");
         }
     }
 
@@ -980,9 +980,9 @@ mqtt_closed_cb(lwgsm_mqtt_client_p client, lwgsmr_t res, uint8_t forced) {
      * Call user function only if connection was closed
      * when we are connected or in disconnecting mode
      */
-    client->conn_state = GSM_MQTT_CONN_DISCONNECTED;/* Connection is disconnected, ready to be established again */
-    client->evt.evt.disconnect.is_accepted = state == GSM_MQTT_CONNECTED || state == GSM_MQTT_CONN_DISCONNECTING;   /* Set connection state */
-    client->evt.type = GSM_MQTT_EVT_DISCONNECT; /* Connection disconnected from server */
+    client->conn_state = LWGSM_MQTT_CONN_DISCONNECTED;/* Connection is disconnected, ready to be established again */
+    client->evt.evt.disconnect.is_accepted = state == LWGSM_MQTT_CONNECTED || state == LWGSM_MQTT_CONN_DISCONNECTING;   /* Set connection state */
+    client->evt.type = LWGSM_MQTT_EVT_DISCONNECT; /* Connection disconnected from server */
     client->evt_fn(client, &client->evt);       /* Notify upper layer about closed connection */
     client->conn = NULL;                        /* Reset connection handle */
 
@@ -994,13 +994,13 @@ mqtt_closed_cb(lwgsm_mqtt_client_p client, lwgsmr_t res, uint8_t forced) {
         request_delete(client, request);        /* Delete request */
         request_send_err_callback(client, status, arg); /* Send error callback to user */
     }
-    GSM_MEMSET(client->requests, 0x00, sizeof(client->requests));
+    LWGSM_MEMSET(client->requests, 0x00, sizeof(client->requests));
 
     client->is_sending = client->sent_total = client->written_total = 0;
     client->parser_state = MQTT_PARSER_STATE_INIT;
     lwgsm_buff_reset(&client->tx_buff);           /* Reset TX buffer */
 
-    GSM_UNUSED(forced);
+    LWGSM_UNUSED(forced);
 
     return 1;
 }
@@ -1022,7 +1022,7 @@ mqtt_conn_cb(lwgsm_evt_t* evt) {
             lwgsm_conn_close(conn, 0);            /* Force connection close immediately */
             return gsmERR;
         }
-    } else if (evt->type != GSM_EVT_CONN_ERROR) {
+    } else if (evt->type != LWGSM_EVT_CONN_ERROR) {
         return gsmERR;
     }
 
@@ -1032,33 +1032,33 @@ mqtt_conn_cb(lwgsm_evt_t* evt) {
          * Connection error. Connection to external
          * server was not successful
          */
-        case GSM_EVT_CONN_ERROR: {
+        case LWGSM_EVT_CONN_ERROR: {
             lwgsm_mqtt_client_p client;
             client = lwgsm_evt_conn_error_get_arg(evt);   /* Get connection argument */
             if (client != NULL) {
-                client->conn_state = GSM_MQTT_CONN_DISCONNECTED;/* Set back to disconnected state */
+                client->conn_state = LWGSM_MQTT_CONN_DISCONNECTED;/* Set back to disconnected state */
                 /* Notify user upper layer */
-                client->evt.type = GSM_MQTT_EVT_CONNECT;
-                client->evt.evt.connect.status = GSM_MQTT_CONN_STATUS_TCP_FAILED;   /* TCP connection failed */
+                client->evt.type = LWGSM_MQTT_EVT_CONNECT;
+                client->evt.evt.connect.status = LWGSM_MQTT_CONN_STATUS_TCP_FAILED;   /* TCP connection failed */
                 client->evt_fn(client, &client->evt);   /* Notify upper layer about closed connection */
             }
             break;
         }
 
         /* Connection active to MQTT server */
-        case GSM_EVT_CONN_ACTIVE: {
+        case LWGSM_EVT_CONN_ACTIVE: {
             mqtt_connected_cb(client);          /* Call function to process status */
             break;
         }
 
         /* A new packet of data received on MQTT client connection */
-        case GSM_EVT_CONN_RECV: {
+        case LWGSM_EVT_CONN_RECV: {
             mqtt_data_recv_cb(client, lwgsm_evt_conn_recv_get_buff(evt));/* Call user to process received data */
             break;
         }
 
         /* Data send event */
-        case GSM_EVT_CONN_SEND: {
+        case LWGSM_EVT_CONN_SEND: {
             /* Data sent callback */
             mqtt_data_sent_cb(client,
                               lwgsm_evt_conn_send_get_length(evt),
@@ -1067,13 +1067,13 @@ mqtt_conn_cb(lwgsm_evt_t* evt) {
         }
 
         /* Periodic poll for connection */
-        case GSM_EVT_CONN_POLL: {
+        case LWGSM_EVT_CONN_POLL: {
             mqtt_poll_cb(client);               /* Poll client */
             break;
         }
 
         /* Connection closed */
-        case GSM_EVT_CONN_CLOSE: {
+        case LWGSM_EVT_CONN_CLOSE: {
             mqtt_closed_cb(client,
                            lwgsm_evt_conn_close_get_result(evt) == gsmOK,
                            lwgsm_evt_conn_close_is_forced(evt));
@@ -1097,8 +1097,8 @@ lwgsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len) {
 
     client = lwgsm_mem_malloc(sizeof(*client));
     if (client != NULL) {
-        GSM_MEMSET(client, 0x00, sizeof(*client));
-        client->conn_state = GSM_MQTT_CONN_DISCONNECTED;/* Set to disconnected mode */
+        LWGSM_MEMSET(client, 0x00, sizeof(*client));
+        client->conn_state = LWGSM_MQTT_CONN_DISCONNECTED;/* Set to disconnected mode */
 
         if (!lwgsm_buff_init(&client->tx_buff, tx_buff_len)) {
             lwgsm_mem_free_s((void**)&client);
@@ -1144,20 +1144,20 @@ lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_po
                         lwgsm_mqtt_evt_fn evt_fn, const lwgsm_mqtt_client_info_t* info) {
     lwgsmr_t res = gsmERR;
 
-    GSM_ASSERT("client != NULL", client != NULL);   /* t input parameters */
-    GSM_ASSERT("host != NULL", host != NULL);
-    GSM_ASSERT("port > 0", port > 0);
-    GSM_ASSERT("info != NULL", info != NULL);
+    LWGSM_ASSERT("client != NULL", client != NULL);   /* t input parameters */
+    LWGSM_ASSERT("host != NULL", host != NULL);
+    LWGSM_ASSERT("port > 0", port > 0);
+    LWGSM_ASSERT("info != NULL", info != NULL);
 
     lwgsm_core_lock();
-    if (lwgsm_network_is_attached() && client->conn_state == GSM_MQTT_CONN_DISCONNECTED) {
+    if (lwgsm_network_is_attached() && client->conn_state == LWGSM_MQTT_CONN_DISCONNECTED) {
         client->info = info;                    /* Save client info parameters */
         client->evt_fn = evt_fn != NULL ? evt_fn : mqtt_evt_fn_default;
 
         /* Start a new connection in non-blocking mode */
-        res = lwgsm_conn_start(&client->conn, GSM_CONN_TYPE_TCP, host, port, client, mqtt_conn_cb, 0);
+        res = lwgsm_conn_start(&client->conn, LWGSM_CONN_TYPE_TCP, host, port, client, mqtt_conn_cb, 0);
         if (res == gsmOK) {
-            client->conn_state = GSM_MQTT_CONN_CONNECTING;
+            client->conn_state = LWGSM_MQTT_CONN_CONNECTING;
         }
     }
     lwgsm_core_unlock();
@@ -1175,8 +1175,8 @@ lwgsm_mqtt_client_disconnect(lwgsm_mqtt_client_p client) {
     lwgsmr_t res = gsmERR;
 
     lwgsm_core_lock();
-    if (client->conn_state != GSM_MQTT_CONN_DISCONNECTED
-        && client->conn_state != GSM_MQTT_CONN_DISCONNECTING) {
+    if (client->conn_state != LWGSM_MQTT_CONN_DISCONNECTED
+        && client->conn_state != LWGSM_MQTT_CONN_DISCONNECTING) {
         res = mqtt_close(client);               /* Close client connection */
     }
     lwgsm_core_unlock();
@@ -1226,9 +1226,9 @@ lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const v
     lwgsm_mqtt_request_t* request = NULL;
     uint32_t rem_len, raw_len;
     uint16_t len_topic, pkt_id;
-    uint8_t qos_u8 = GSM_U8(qos);
+    uint8_t qos_u8 = LWGSM_U8(qos);
 
-    if (!(len_topic = GSM_U16(strlen(topic)))) {    /* Get length of topic */
+    if (!(len_topic = LWGSM_U16(strlen(topic)))) {    /* Get length of topic */
         return gsmERR;
     }
 
@@ -1243,7 +1243,7 @@ lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const v
     }
 
     lwgsm_core_lock();
-    if (client->conn_state != GSM_MQTT_CONNECTED) {
+    if (client->conn_state != LWGSM_MQTT_CONNECTED) {
         res = gsmCLOSED;
     } else if ((raw_len = output_check_enough_memory(client, rem_len)) != 0) {
         pkt_id = qos_u8 > 0 ? create_packet_id(client) : 0; /* Create new packet ID */
@@ -1258,7 +1258,7 @@ lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const v
              */
             request->expected_sent_len = client->written_total + raw_len;
 
-            write_fixed_header(client, MQTT_MSG_TYPE_PUBLISH, 0, (lwgsm_mqtt_qos_t)GSM_MIN(qos_u8, GSM_U8(GSM_MQTT_QOS_EXACTLY_ONCE)), retain, rem_len);
+            write_fixed_header(client, MQTT_MSG_TYPE_PUBLISH, 0, (lwgsm_mqtt_qos_t)LWGSM_MIN(qos_u8, LWGSM_U8(LWGSM_MQTT_QOS_EXACTLY_ONCE)), retain, rem_len);
             write_string(client, topic, len_topic); /* Write topic string to packet */
             if (qos_u8) {
                 write_u16(client, pkt_id);      /* Write packet ID */
@@ -1270,14 +1270,14 @@ lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const v
 
             send_data(client);                  /* Try to send data */
 
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE,
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
                        "[MQTT] Pkt publish start. QoS: %d, pkt_id: %d\r\n", (int)qos_u8, (int)pkt_id);
         } else {
-            GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] No free request available to publish message\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] No free request available to publish message\r\n");
             res = gsmERRMEM;
         }
     } else {
-        GSM_DEBUGF(GSM_CFG_DBG_MQTT_TRACE, "[MQTT] Not enough memory to publish message\r\n");
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Not enough memory to publish message\r\n");
         res = gsmERRMEM;
     }
     lwgsm_core_unlock();
@@ -1295,7 +1295,7 @@ lwgsm_mqtt_client_is_connected(lwgsm_mqtt_client_p client) {
     uint8_t res;
 
     lwgsm_core_lock();
-    res = GSM_U8(client->conn_state == GSM_MQTT_CONNECTED);
+    res = LWGSM_U8(client->conn_state == LWGSM_MQTT_CONNECTED);
     lwgsm_core_unlock();
 
     return res;

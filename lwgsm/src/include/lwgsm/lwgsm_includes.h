@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_INCLUDES_H
-#define GSM_HDR_INCLUDES_H
+#ifndef LWGSM_HDR_INCLUDES_H
+#define LWGSM_HDR_INCLUDES_H
 
 #include "lwgsm/lwgsm_opt.h"
 #include "lwgsm/lwgsm_typedefs.h"
@@ -48,24 +48,24 @@
 #include "lwgsm/lwgsm_device_info.h"
 #include "system/lwgsm_sys.h"
 
-#if GSM_CFG_SMS || __DOXYGEN__
+#if LWGSM_CFG_SMS || __DOXYGEN__
 #include "lwgsm/lwgsm_sms.h"
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
-#if GSM_CFG_CALL || __DOXYGEN__
+#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
+#if LWGSM_CFG_CALL || __DOXYGEN__
 #include "lwgsm/lwgsm_call.h"
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
-#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
 #include "lwgsm/lwgsm_phonebook.h"
-#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
-#if GSM_CFG_CONN || __DOXYGEN__
+#endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#if LWGSM_CFG_CONN || __DOXYGEN__
 #include "lwgsm/lwgsm_conn.h"
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
-#if GSM_CFG_NETCONN || __DOXYGEN__
+#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
+#if LWGSM_CFG_NETCONN || __DOXYGEN__
 #include "lwgsm/lwgsm_netconn.h"
-#endif /* GSM_CFG_NETCONN || __DOXYGEN__ */
-#if GSM_CFG_USSD || __DOXYGEN__
+#endif /* LWGSM_CFG_NETCONN || __DOXYGEN__ */
+#if LWGSM_CFG_USSD || __DOXYGEN__
 #include "lwgsm/lwgsm_ussd.h"
-#endif /* GSM_CFG_USSD || __DOXYGEN__ */
+#endif /* LWGSM_CFG_USSD || __DOXYGEN__ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,4 +77,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_INCLUDES_H */
+#endif /* LWGSM_HDR_INCLUDES_H */

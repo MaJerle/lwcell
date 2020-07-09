@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_OPTS_H
-#define GSM_HDR_OPTS_H
+#ifndef LWGSM_HDR_OPTS_H
+#define LWGSM_HDR_OPTS_H
 
 /* Rename this file to "lwgsm_opts.h" for your application */
 
@@ -41,32 +41,32 @@
  * copy & replace here settings you want to change values
  */
 #if !__DOXYGEN__
-#define GSM_CFG_DBG                         GSM_DBG_ON
-#define GSM_CFG_DBG_TYPES_ON                GSM_DBG_TYPE_TRACE | GSM_DBG_TYPE_STATE
-#define GSM_CFG_DBG_MQTT                    GSM_DBG_OFF
+#define LWGSM_CFG_DBG                         LWGSM_DBG_ON
+#define LWGSM_CFG_DBG_TYPES_ON                LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_TYPE_STATE
+#define LWGSM_CFG_DBG_MQTT                    LWGSM_DBG_OFF
 
-#define GSM_CFG_IPD_MAX_BUFF_SIZE           1460
-#define GSM_CFG_INPUT_USE_PROCESS           1
-#define GSM_CFG_AT_ECHO                     0
+#define LWGSM_CFG_IPD_MAX_BUFF_SIZE           1460
+#define LWGSM_CFG_INPUT_USE_PROCESS           1
+#define LWGSM_CFG_AT_ECHO                     0
 
-#define GSM_CFG_NETWORK                     1
+#define LWGSM_CFG_NETWORK                     1
 
-#define GSM_CFG_CONN                        1
-#define GSM_CFG_SMS                         1
-#define GSM_CFG_CALL                        1
-#define GSM_CFG_PHONEBOOK                   1
-#define GSM_CFG_USSD                        1
+#define LWGSM_CFG_CONN                        1
+#define LWGSM_CFG_SMS                         1
+#define LWGSM_CFG_CALL                        1
+#define LWGSM_CFG_PHONEBOOK                   1
+#define LWGSM_CFG_USSD                        1
 
-#define GSM_CFG_USE_API_FUNC_EVT            1
+#define LWGSM_CFG_USE_API_FUNC_EVT            1
 
-#define GSM_CFG_NETCONN                     1
+#define LWGSM_CFG_NETCONN                     1
 
-#define GSM_CFG_MEM_CUSTOM                  1
+#define LWGSM_CFG_MEM_CUSTOM                  1
 
 #if defined(WIN32)
-#define GSM_CFG_SYS_PORT					GSM_SYS_PORT_WIN32
+#define LWGSM_CFG_SYS_PORT					LWGSM_SYS_PORT_WIN32
 #endif
 
 #endif /* !__DOXYGEN__ */
 
-#endif /* GSM_HDR_OPTS_H */
+#endif /* LWGSM_HDR_OPTS_H */

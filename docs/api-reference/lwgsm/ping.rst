@@ -3,4 +3,4 @@
 Ping support
 ============
 
-.. doxygengroup:: GSM_PING
+.. doxygengroup:: LWGSM_PING

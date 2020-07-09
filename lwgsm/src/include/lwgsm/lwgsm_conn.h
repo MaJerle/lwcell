@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_CONN_H
-#define GSM_HDR_CONN_H
+#ifndef LWGSM_HDR_CONN_H
+#define LWGSM_HDR_CONN_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_CONN Connection API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_CONN Connection API
  * \brief           Connection API functions
  * \{
  */
@@ -75,4 +75,4 @@ lwgsm_port_t  lwgsm_conn_get_local_port(lwgsm_conn_p conn);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_CONN_H */
+#endif /* LWGSM_HDR_CONN_H */

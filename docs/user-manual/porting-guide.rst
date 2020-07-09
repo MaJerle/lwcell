@@ -78,15 +78,15 @@ It uses native *Windows* features to open *COM* port and read/write from/to it.
 Notes:
 
 * It uses separate thread for received data processing.
-  It uses :cpp:func:`lwgsm_input_process` or :cpp:func:`lwgsm_input` functions, based on application configuration of :c:macro:`GSM_CFG_INPUT_USE_PROCESS` parameter.
+  It uses :cpp:func:`lwgsm_input_process` or :cpp:func:`lwgsm_input` functions, based on application configuration of :c:macro:`LWGSM_CFG_INPUT_USE_PROCESS` parameter.
 
-  * When :c:macro:`GSM_CFG_INPUT_USE_PROCESS` is disabled, dedicated receive buffer is created by *GSM-AT* library
+  * When :c:macro:`LWGSM_CFG_INPUT_USE_PROCESS` is disabled, dedicated receive buffer is created by *GSM-AT* library
     and :cpp:func:`lwgsm_input` function just writes data to it and does not process received characters immediately.
     This is handled by *Processing* thread at later stage instead.
-  * When :c:macro:`GSM_CFG_INPUT_USE_PROCESS` is enabled, :cpp:func:`lwgsm_input_process` is used,
+  * When :c:macro:`LWGSM_CFG_INPUT_USE_PROCESS` is enabled, :cpp:func:`lwgsm_input_process` is used,
     which directly processes input data and sends potential callback/event functions to application layer.
 
-* Memory manager has been assigned to ``1`` region of ``GSM_MEM_SIZE`` size
+* Memory manager has been assigned to ``1`` region of ``LWGSM_MEM_SIZE`` size
 * It sets *send* and *reset* callback functions for *GSM-AT* library
 
 .. literalinclude:: ../../lwgsm/src/system/lwgsm_ll_win32.c
@@ -104,7 +104,7 @@ Notes:
 
 * It uses separate thread for received data processing.
   It uses :cpp:func:`lwgsm_input_process` function to directly process received data without using intermediate receive buffer
-* Memory manager has been assigned to ``1`` region of ``GSM_MEM_SIZE`` size
+* Memory manager has been assigned to ``1`` region of ``LWGSM_MEM_SIZE`` size
 * It sets *send* and *reset* callback functions for *GSM-AT* library
 
 .. literalinclude:: ../../lwgsm/src/system/lwgsm_ll_stm32.c

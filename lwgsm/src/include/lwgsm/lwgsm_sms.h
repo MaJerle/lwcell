@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_SMS_H
-#define GSM_HDR_SMS_H
+#ifndef LWGSM_HDR_SMS_H
+#define LWGSM_HDR_SMS_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_SMS SMS API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_SMS SMS API
  * \brief           SMS manager
  * \{
  */
@@ -66,4 +66,4 @@ lwgsmr_t      lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_SMS_H */
+#endif /* LWGSM_HDR_SMS_H */

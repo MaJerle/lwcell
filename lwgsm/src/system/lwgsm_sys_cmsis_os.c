@@ -92,7 +92,7 @@ lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p) {
 
 uint8_t
 lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p) {
-    *p = GSM_SYS_MUTEX_NULL;
+    *p = LWGSM_SYS_MUTEX_NULL;
     return 1;
 }
 
@@ -109,7 +109,7 @@ lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
 uint32_t
 lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
     uint32_t tick = osKernelSysTick();
-    return (osSemaphoreAcquire(*p, timeout == 0 ? osWaitForever : timeout) == osOK) ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
+    return (osSemaphoreAcquire(*p, timeout == 0 ? osWaitForever : timeout) == osOK) ? (osKernelSysTick() - tick) : LWGSM_SYS_TIMEOUT;
 }
 
 uint8_t
@@ -124,7 +124,7 @@ lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p) {
 
 uint8_t
 lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p) {
-    *p = GSM_SYS_SEM_NULL;
+    *p = LWGSM_SYS_SEM_NULL;
     return 1;
 }
 
@@ -144,13 +144,13 @@ lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
 uint32_t
 lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
     uint32_t tick = osKernelSysTick();
-    return osMessageQueuePut(*b, &m, 0, osWaitForever) == osOK ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
+    return osMessageQueuePut(*b, &m, 0, osWaitForever) == osOK ? (osKernelSysTick() - tick) : LWGSM_SYS_TIMEOUT;
 }
 
 uint32_t
 lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     uint32_t tick = osKernelSysTick();
-    return osMessageQueueGet(*b, m, NULL, timeout == 0 ? osWaitForever : timeout) == osOK ? (osKernelSysTick() - tick) : GSM_SYS_TIMEOUT;
+    return osMessageQueueGet(*b, m, NULL, timeout == 0 ? osWaitForever : timeout) == osOK ? (osKernelSysTick() - tick) : LWGSM_SYS_TIMEOUT;
 }
 
 uint8_t
@@ -170,7 +170,7 @@ lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
 
 uint8_t
 lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
-    *b = GSM_SYS_MBOX_NULL;
+    *b = LWGSM_SYS_MBOX_NULL;
     return 1;
 }
 
@@ -180,7 +180,7 @@ lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_threa
     const osThreadAttr_t thread_attr = {
         .name = (char*)name,
         .priority = (osPriority)prio,
-        .stack_size = stack_size > 0 ? stack_size : GSM_SYS_THREAD_SS
+        .stack_size = stack_size > 0 ? stack_size : LWGSM_SYS_THREAD_SS
     };
 
     id = osThreadNew(thread_func, arg, &thread_attr);

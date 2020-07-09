@@ -3,4 +3,4 @@
 Ring buffer
 ===========
 
-.. doxygengroup:: GSM_BUFF
+.. doxygengroup:: LWGSM_BUFF

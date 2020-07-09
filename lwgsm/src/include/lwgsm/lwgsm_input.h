@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_INPUT_H
-#define GSM_HDR_INPUT_H
+#ifndef LWGSM_HDR_INPUT_H
+#define LWGSM_HDR_INPUT_H
 
 #include <string.h>
 #include "lwgsm/lwgsm.h"
@@ -42,8 +42,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_INPUT Input processing
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_INPUT Input processing
  * \brief           Input function for received data
  * \{
  */
@@ -59,4 +59,4 @@ lwgsmr_t      lwgsm_input_process(const void* data, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_INPUT_H */
+#endif /* LWGSM_HDR_INPUT_H */

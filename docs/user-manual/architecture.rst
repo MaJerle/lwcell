@@ -55,7 +55,7 @@ Functions need to provide:
 Low-level implementation
 ************************
 
-Low-Level, or *GSM_LL*, is part, dedicated for communication between *GSM-AT* middleware and *GSM* physical device.
+Low-Level, or *LWGSM_LL*, is part, dedicated for communication between *GSM-AT* middleware and *GSM* physical device.
 Application needs to implement output function to send necessary *AT command* instruction aswell as implement
 *input module* to send received data from *GSM* device to *GSM-AT* middleware.
 

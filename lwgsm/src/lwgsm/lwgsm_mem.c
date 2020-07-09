@@ -35,7 +35,7 @@
 #include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if !GSM_CFG_MEM_CUSTOM || __DOXYGEN__
+#if !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__
 
 #if !__DOXYGEN__
 typedef struct mem_block {
@@ -47,9 +47,9 @@ typedef struct mem_block {
 /**
  * \brief           Memory alignment bits and absolute number
  */
-#define MEM_ALIGN_BITS              GSM_SZ(GSM_CFG_MEM_ALIGNMENT - 1)
-#define MEM_ALIGN_NUM               GSM_SZ(GSM_CFG_MEM_ALIGNMENT)
-#define MEM_ALIGN(x)                GSM_MEM_ALIGN(x)
+#define MEM_ALIGN_BITS              LWGSM_SZ(LWGSM_CFG_MEM_ALIGNMENT - 1)
+#define MEM_ALIGN_NUM               LWGSM_SZ(LWGSM_CFG_MEM_ALIGNMENT)
+#define MEM_ALIGN(x)                LWGSM_MEM_ALIGN(x)
 
 #define MEMBLOCK_METASIZE           MEM_ALIGN(sizeof(mem_block_t))
 
@@ -143,8 +143,8 @@ mem_assignmem(const lwgsm_mem_region_t* regions, size_t len) {
          * if necessary, decrease memory region size
          */
         mem_start_addr = (uint8_t*)regions->start_addr; /* Actual heap memory address */
-        if (GSM_SZ(mem_start_addr) & MEM_ALIGN_BITS) {  /* Check alignment boundary */
-            mem_start_addr += MEM_ALIGN_NUM - (GSM_SZ(mem_start_addr) & MEM_ALIGN_BITS);
+        if (LWGSM_SZ(mem_start_addr) & MEM_ALIGN_BITS) {  /* Check alignment boundary */
+            mem_start_addr += MEM_ALIGN_NUM - (LWGSM_SZ(mem_start_addr) & MEM_ALIGN_BITS);
             mem_size -= mem_start_addr - (uint8_t*)regions->start_addr;
         }
 
@@ -313,7 +313,7 @@ mem_calloc(size_t num, size_t size) {
     size_t tot_len = num * size;
 
     if ((ptr = mem_alloc(tot_len)) != NULL) {   /* Try to allocate memory */
-        GSM_MEMSET(ptr, 0x00, tot_len);         /* Reset entire memory */
+        LWGSM_MEMSET(ptr, 0x00, tot_len);         /* Reset entire memory */
     }
     return ptr;
 }
@@ -338,7 +338,7 @@ mem_realloc(void* ptr, size_t size) {
     old_size = MEM_BLOCK_USER_SIZE(ptr);        /* Get size of old pointer */
     new_ptr = mem_alloc(size);                  /* Try to allocate new memory block */
     if (new_ptr != NULL) {
-        GSM_MEMCPY(new_ptr, ptr, GSM_MIN(size, old_size));  /* Copy old data to new array */
+        LWGSM_MEMCPY(new_ptr, ptr, LWGSM_MIN(size, old_size));  /* Copy old data to new array */
         mem_free(ptr);                          /* Free old pointer */
     }
     return new_ptr;
@@ -348,7 +348,7 @@ mem_realloc(void* ptr, size_t size) {
  * \brief           Allocate memory of specific size
  * \param[in]       size: Number of bytes to allocate
  * \return          Memory address on success, `NULL` otherwise
- * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void*
 lwgsm_mem_malloc(size_t size) {
@@ -356,9 +356,9 @@ lwgsm_mem_malloc(size_t size) {
     lwgsm_core_lock();
     ptr = mem_calloc(1, size);                  /* Allocate memory and return pointer */
     lwgsm_core_unlock();
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL,
                "[MEM] Allocation failed: %d bytes\r\n", (int)size);
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
                "[MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
@@ -370,16 +370,16 @@ lwgsm_mem_malloc(size_t size) {
  *                      \ref lwgsm_mem_calloc or \ref lwgsm_mem_realloc functions
  * \param[in]       size: Number of bytes to allocate on new memory
  * \return          Memory address on success, `NULL` otherwise
- * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void*
 lwgsm_mem_realloc(void* ptr, size_t size) {
     lwgsm_core_lock();
     ptr = mem_realloc(ptr, size);               /* Reallocate and return pointer */
     lwgsm_core_unlock();
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL,
                "[MEM] Reallocation failed: %d bytes\r\n", (int)size);
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
                "[MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
@@ -389,7 +389,7 @@ lwgsm_mem_realloc(void* ptr, size_t size) {
  * \param[in]       num: Number of elements to allocate
  * \param[in]       size: Size of each element
  * \return          Memory address on success, `NULL` otherwise
- * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void*
 lwgsm_mem_calloc(size_t num, size_t size) {
@@ -397,9 +397,9 @@ lwgsm_mem_calloc(size_t num, size_t size) {
     lwgsm_core_lock();
     ptr = mem_calloc(num, size);               /* Allocate memory and clear it to 0. Then return pointer */
     lwgsm_core_unlock();
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr == NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL,
                "[MEM] Callocation failed: %d bytes\r\n", (int)size * (int)num);
-    GSM_DEBUGW(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE, ptr != NULL,
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
                "[MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
     return ptr;
 }
@@ -408,14 +408,14 @@ lwgsm_mem_calloc(size_t num, size_t size) {
  * \brief           Free memory
  * \param[in]       ptr: Pointer to memory previously returned using \ref lwgsm_mem_malloc,
  *                      \ref lwgsm_mem_calloc or \ref lwgsm_mem_realloc functions
- * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void
 lwgsm_mem_free(void* ptr) {
     if (ptr == NULL) {
         return;
     }
-    GSM_DEBUGF(GSM_CFG_DBG_MEM | GSM_DBG_TYPE_TRACE,
+    LWGSM_DEBUGF(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE,
                "[MEM] Free size: %d, address: %p\r\n",
                (int)MEM_BLOCK_USER_SIZE(ptr), ptr);
     lwgsm_core_lock();
@@ -429,7 +429,7 @@ lwgsm_mem_free(void* ptr) {
  * \param[in]       regions: Pointer to list of regions to use for allocations
  * \param[in]       len: Number of regions to use
  * \return          `1` on success, `0` otherwise
- * \note            Function is not available when \ref GSM_CFG_MEM_CUSTOM is `1`
+ * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1`
  */
 uint8_t
 lwgsm_mem_assignmemory(const lwgsm_mem_region_t* regions, size_t len) {
@@ -438,7 +438,7 @@ lwgsm_mem_assignmemory(const lwgsm_mem_region_t* regions, size_t len) {
     return ret;
 }
 
-#endif /* !GSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
+#endif /* !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
 
 /**
  * \brief           Free memory in safe way by invalidating pointer after freeing

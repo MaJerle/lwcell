@@ -10,7 +10,7 @@ Input module is used to input received data from *GSM* device to *GSM-AT-Lib* mi
 * Direct processing with :cpp:func:`lwgsm_input_process`
 
 .. tip::
-    Direct or indirect processing mode is select by setting :c:macro:`GSM_CFG_INPUT_USE_PROCESS` configuration value.
+    Direct or indirect processing mode is select by setting :c:macro:`LWGSM_CFG_INPUT_USE_PROCESS` configuration value.
 
 Indirect processing
 ^^^^^^^^^^^^^^^^^^^
@@ -40,4 +40,4 @@ and process input bytes directly.
 .. tip::
 	Check :ref:`um_porting_guide` for implementation examples.
 
-.. doxygengroup:: GSM_INPUT
+.. doxygengroup:: LWGSM_INPUT

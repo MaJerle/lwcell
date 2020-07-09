@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_PBUF_H
-#define GSM_HDR_PBUF_H
+#ifndef LWGSM_HDR_PBUF_H
+#define LWGSM_HDR_PBUF_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_PBUF Packet buffer
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_PBUF Packet buffer
  * \brief           Packet buffer manager
  * \{
  */
@@ -79,4 +79,4 @@ void            lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_PBUF_H */
+#endif /* LWGSM_HDR_PBUF_H */

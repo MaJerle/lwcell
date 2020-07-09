@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_MEM_H
-#define GSM_HDR_MEM_H
+#ifndef LWGSM_HDR_MEM_H
+#define LWGSM_HDR_MEM_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,13 +41,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_MEM Memory manager
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_MEM Memory manager
  * \brief           Dynamic memory manager
  * \{
  */
 
-#if !GSM_CFG_MEM_CUSTOM || __DOXYGEN__
+#if !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__
 
 /**
  * \brief           Single memory region descriptor
@@ -59,7 +59,7 @@ typedef struct {
 
 uint8_t lwgsm_mem_assignmemory(const lwgsm_mem_region_t* regions, size_t size);
 
-#endif /* !GSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
+#endif /* !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
 
 void*   lwgsm_mem_malloc(size_t size);
 void*   lwgsm_mem_realloc(void* ptr, size_t size);
@@ -76,4 +76,4 @@ uint8_t lwgsm_mem_free_s(void** ptr);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_MEM_H */
+#endif /* LWGSM_HDR_MEM_H */

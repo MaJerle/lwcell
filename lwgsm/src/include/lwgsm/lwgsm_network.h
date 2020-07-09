@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_NETWORK_H
-#define GSM_HDR_NETWORK_H
+#ifndef LWGSM_HDR_NETWORK_H
+#define LWGSM_HDR_NETWORK_H
 
 #include "lwgsm/lwgsm.h"
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_NETWORK Network API
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_NETWORK Network API
  * \brief           Network manager
  * \{
  */
@@ -66,4 +66,4 @@ lwgsmr_t      lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_NETWORK_H */
+#endif /* LWGSM_HDR_NETWORK_H */

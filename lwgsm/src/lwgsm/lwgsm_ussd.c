@@ -35,7 +35,7 @@
 #include "lwgsm/lwgsm_ussd.h"
 #include "lwgsm/lwgsm_mem.h"
 
-#if GSM_CFG_USSD || __DOXYGEN__
+#if LWGSM_CFG_USSD || __DOXYGEN__
 
 /**
  * \brief           Run USSD command, such as `*123#` to get balance on SIM card
@@ -50,21 +50,21 @@
 lwgsmr_t
 lwgsm_ussd_run(const char* code, char* resp, size_t resp_len,
              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    GSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-    GSM_ASSERT("code != NULL && strlen(code) > 0", code != NULL && strlen(code) > 0);
-    GSM_ASSERT("resp != NULL", resp != NULL);
-    GSM_ASSERT("resp_len != NULL", resp_len > 0);
+    LWGSM_ASSERT("code != NULL && strlen(code) > 0", code != NULL && strlen(code) > 0);
+    LWGSM_ASSERT("resp != NULL", resp != NULL);
+    LWGSM_ASSERT("resp_len != NULL", resp_len > 0);
 
-    GSM_MSG_VAR_ALLOC(msg, blocking);
-    GSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    GSM_MSG_VAR_REF(msg).cmd_def = GSM_CMD_CUSD;
-    GSM_MSG_VAR_REF(msg).cmd = GSM_CMD_CUSD_GET;
-    GSM_MSG_VAR_REF(msg).msg.ussd.code = code;
-    GSM_MSG_VAR_REF(msg).msg.ussd.resp = resp;
-    GSM_MSG_VAR_REF(msg).msg.ussd.resp_len = resp_len;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CUSD;
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CUSD_GET;
+    LWGSM_MSG_VAR_REF(msg).msg.ussd.code = code;
+    LWGSM_MSG_VAR_REF(msg).msg.ussd.resp = resp;
+    LWGSM_MSG_VAR_REF(msg).msg.ussd.resp_len = resp_len;
 
-    return gsmi_send_msg_to_producer_mbox(&GSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
 }
 
-#endif /* GSM_CFG_USSD || __DOXYGEN__ */
+#endif /* LWGSM_CFG_USSD || __DOXYGEN__ */

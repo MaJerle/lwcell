@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         $_version_$
  */
-#ifndef GSM_HDR_DEFS_H
-#define GSM_HDR_DEFS_H
+#ifndef LWGSM_HDR_DEFS_H
+#define LWGSM_HDR_DEFS_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -44,8 +44,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         GSM
- * \defgroup        GSM_TYPEDEFS Structures and enumerations
+ * \ingroup         LWGSM
+ * \defgroup        LWGSM_TYPEDEFS Structures and enumerations
  * \brief           List of core structures and enumerations
  * \{
  */
@@ -55,7 +55,7 @@ extern "C" {
  */
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           Result enumeration used across application functions
  */
 typedef enum {
@@ -82,32 +82,32 @@ typedef enum {
 } lwgsmr_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           GSM device model type
  */
 typedef enum {
-#define GSM_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte)     GSM_DEVICE_MODEL_ ## name,
+#define LWGSM_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte)     LWGSM_DEVICE_MODEL_ ## name,
 #include "lwgsm/lwgsm_models.h"
-    GSM_DEVICE_MODEL_END,                       /*!< End of device model */
-    GSM_DEVICE_MODEL_UNKNOWN,                   /*!< Unknown device model */
+    LWGSM_DEVICE_MODEL_END,                       /*!< End of device model */
+    LWGSM_DEVICE_MODEL_UNKNOWN,                   /*!< Unknown device model */
 } lwgsm_device_model_t;
 
 /**
- * \ingroup         GSM_SIM
+ * \ingroup         LWGSM_SIM
  * \brief           SIM state
  */
 typedef enum {
-    GSM_SIM_STATE_NOT_INSERTED,                 /*!< SIM is not inserted in socket */
-    GSM_SIM_STATE_READY,                        /*!< SIM is ready for operations */
-    GSM_SIM_STATE_NOT_READY,                    /*!< SIM is not ready for any operation */
-    GSM_SIM_STATE_PIN,                          /*!< SIM is waiting for SIM to be given */
-    GSM_SIM_STATE_PUK,                          /*!< SIM is waiting for PUT to be given */
-    GSM_SIM_STATE_PH_PIN,
-    GSM_SIM_STATE_PH_PUK,
+    LWGSM_SIM_STATE_NOT_INSERTED,                 /*!< SIM is not inserted in socket */
+    LWGSM_SIM_STATE_READY,                        /*!< SIM is ready for operations */
+    LWGSM_SIM_STATE_NOT_READY,                    /*!< SIM is not ready for any operation */
+    LWGSM_SIM_STATE_PIN,                          /*!< SIM is waiting for SIM to be given */
+    LWGSM_SIM_STATE_PUK,                          /*!< SIM is waiting for PUT to be given */
+    LWGSM_SIM_STATE_PH_PIN,
+    LWGSM_SIM_STATE_PH_PUK,
 } lwgsm_sim_state_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           IP structure
  */
 typedef struct {
@@ -115,13 +115,13 @@ typedef struct {
 } lwgsm_ip_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           Port variable
  */
 typedef uint16_t    lwgsm_port_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           MAC address
  */
 typedef struct {
@@ -129,7 +129,7 @@ typedef struct {
 } lwgsm_mac_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           Date and time structure
  */
 typedef struct {
@@ -143,51 +143,51 @@ typedef struct {
 } lwgsm_datetime_t;
 
 /**
- * \ingroup         GSM_CONN
+ * \ingroup         LWGSM_CONN
  * \brief           List of possible connection types
  */
 typedef enum {
-    GSM_CONN_TYPE_TCP,                          /*!< Connection type is TCP */
-    GSM_CONN_TYPE_UDP,                          /*!< Connection type is UDP */
-    GSM_CONN_TYPE_SSL,                          /*!< Connection type is TCP over SSL */
+    LWGSM_CONN_TYPE_TCP,                          /*!< Connection type is TCP */
+    LWGSM_CONN_TYPE_UDP,                          /*!< Connection type is UDP */
+    LWGSM_CONN_TYPE_SSL,                          /*!< Connection type is TCP over SSL */
 } lwgsm_conn_type_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           Available device memories
  */
 typedef enum {
-#define GSM_DEV_MEMORY_ENTRY(name, str_code)    GSM_MEM_ ## name,
+#define LWGSM_DEV_MEMORY_ENTRY(name, str_code)    LWGSM_MEM_ ## name,
 #include "lwgsm/lwgsm_memories.h"
-    GSM_MEM_END,                                /*!< End of memory list */
-    GSM_MEM_CURRENT,                            /*!< Use current memory for read/delete operation */
-    GSM_MEM_UNKNOWN = 0x1F,                     /*!< Unknown memory */
+    LWGSM_MEM_END,                                /*!< End of memory list */
+    LWGSM_MEM_CURRENT,                            /*!< Use current memory for read/delete operation */
+    LWGSM_MEM_UNKNOWN = 0x1F,                     /*!< Unknown memory */
 } lwgsm_mem_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           GSM number type
  */
 typedef enum {
-    GSM_NUMBER_TYPE_NATIONAL = 129,             /*!< Number is national */
-    GSM_NUMBER_TYPE_INTERNATIONAL = 145,        /*!< Number is international */
+    LWGSM_NUMBER_TYPE_NATIONAL = 129,             /*!< Number is national */
+    LWGSM_NUMBER_TYPE_INTERNATIONAL = 145,        /*!< Number is international */
 } lwgsm_number_type_t;
 
 /**
- * \ingroup         GSM_SMS
+ * \ingroup         LWGSM_SMS
  * \brief           SMS status in current memory
  */
 typedef enum {
-    GSM_SMS_STATUS_ALL,                         /*!< Process all SMS, used for mass delete or SMS list */
-    GSM_SMS_STATUS_READ,                        /*!< SMS status is read */
-    GSM_SMS_STATUS_UNREAD,                      /*!< SMS status is unread */
-    GSM_SMS_STATUS_SENT,                        /*!< SMS status is sent */
-    GSM_SMS_STATUS_UNSENT,                      /*!< SMS status is unsent */
-    GSM_SMS_STATUS_INBOX,                       /*!< SMS status, used only for mass delete operation */
+    LWGSM_SMS_STATUS_ALL,                         /*!< Process all SMS, used for mass delete or SMS list */
+    LWGSM_SMS_STATUS_READ,                        /*!< SMS status is read */
+    LWGSM_SMS_STATUS_UNREAD,                      /*!< SMS status is unread */
+    LWGSM_SMS_STATUS_SENT,                        /*!< SMS status is sent */
+    LWGSM_SMS_STATUS_UNSENT,                      /*!< SMS status is unsent */
+    LWGSM_SMS_STATUS_INBOX,                       /*!< SMS status, used only for mass delete operation */
 } lwgsm_sms_status_t;
 
 /**
- * \ingroup         GSM_SMS
+ * \ingroup         LWGSM_SMS
  * \brief           SMS entry structure
  */
 typedef struct {
@@ -202,7 +202,7 @@ typedef struct {
 } lwgsm_sms_entry_t;
 
 /**
- * \ingroup         GSM_PB
+ * \ingroup         LWGSM_PB
  * \brief           Phonebook entry structure
  */
 typedef struct {
@@ -214,40 +214,40 @@ typedef struct {
 } lwgsm_pb_entry_t;
 
 /**
- * \ingroup         GSM_OPERATOR
+ * \ingroup         LWGSM_OPERATOR
  * \brief           Operator status value
  */
 typedef enum {
-    GSM_OPERATOR_STATUS_UNKNOWN = 0x00,         /*!< Unknown operator */
-    GSM_OPERATOR_STATUS_AVAILABLE,              /*!< Operator is available */
-    GSM_OPERATOR_STATUS_CURRENT,                /*!< Operator is currently active */
-    GSM_OPERATOR_STATUS_FORBIDDEN               /*!< Operator is forbidden */
+    LWGSM_OPERATOR_STATUS_UNKNOWN = 0x00,         /*!< Unknown operator */
+    LWGSM_OPERATOR_STATUS_AVAILABLE,              /*!< Operator is available */
+    LWGSM_OPERATOR_STATUS_CURRENT,                /*!< Operator is currently active */
+    LWGSM_OPERATOR_STATUS_FORBIDDEN               /*!< Operator is forbidden */
 } lwgsm_operator_status_t;
 
 /**
- * \ingroup         GSM_OPERATOR
+ * \ingroup         LWGSM_OPERATOR
  * \brief           Operator selection mode
  */
 typedef enum {
-    GSM_OPERATOR_MODE_AUTO = 0x00,              /*!< Operator automatic mode */
-    GSM_OPERATOR_MODE_MANUAL = 0x01,            /*!< Operator manual mode */
-    GSM_OPERATOR_MODE_DEREGISTER = 0x02,        /*!< Operator deregistered from network */
-    GSM_OPERATOR_MODE_MANUAL_AUTO = 0x04,       /*!< Operator manual mode first. If fails, auto mode enabled */
+    LWGSM_OPERATOR_MODE_AUTO = 0x00,              /*!< Operator automatic mode */
+    LWGSM_OPERATOR_MODE_MANUAL = 0x01,            /*!< Operator manual mode */
+    LWGSM_OPERATOR_MODE_DEREGISTER = 0x02,        /*!< Operator deregistered from network */
+    LWGSM_OPERATOR_MODE_MANUAL_AUTO = 0x04,       /*!< Operator manual mode first. If fails, auto mode enabled */
 } lwgsm_operator_mode_t;
 
 /**
- * \ingroup         GSM_OPERATOR
+ * \ingroup         LWGSM_OPERATOR
  * \brief           Operator data format
  */
 typedef enum {
-    GSM_OPERATOR_FORMAT_LONG_NAME = 0x00,       /*!< COPS command returned long name */
-    GSM_OPERATOR_FORMAT_SHORT_NAME,             /*!< COPS command returned short name */
-    GSM_OPERATOR_FORMAT_NUMBER,                 /*!< COPS command returned number */
-    GSM_OPERATOR_FORMAT_INVALID                 /*!< Unknown format */
+    LWGSM_OPERATOR_FORMAT_LONG_NAME = 0x00,       /*!< COPS command returned long name */
+    LWGSM_OPERATOR_FORMAT_SHORT_NAME,             /*!< COPS command returned short name */
+    LWGSM_OPERATOR_FORMAT_NUMBER,                 /*!< COPS command returned number */
+    LWGSM_OPERATOR_FORMAT_INVALID                 /*!< Unknown format */
 } lwgsm_operator_format_t;
 
 /**
- * \ingroup         GSM_OPERATOR
+ * \ingroup         LWGSM_OPERATOR
  * \brief           Operator details for scan
  */
 typedef struct {
@@ -258,7 +258,7 @@ typedef struct {
 } lwgsm_operator_t;
 
 /**
- * \ingroup         GSM_OPERATOR
+ * \ingroup         LWGSM_OPERATOR
  * \brief           Current operator info
  */
 typedef struct {
@@ -272,54 +272,54 @@ typedef struct {
 } lwgsm_operator_curr_t;
 
 /**
- * \ingroup         GSM_NETWORK
+ * \ingroup         LWGSM_NETWORK
  * \brief           Network Registration status
  */
 typedef enum {
-    GSM_NETWORK_REG_STATUS_SIM_ERR = 0x00,      /*!< SIM card error */
-    GSM_NETWORK_REG_STATUS_CONNECTED = 0x01,    /*!< Device is connected to network */
-    GSM_NETWORK_REG_STATUS_SEARCHING = 0x02,    /*!< Network search is in progress */
-    GSM_NETWORK_REG_STATUS_DENIED = 0x03,       /*!< Registration denied */
-    GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING = 0x05,/*!< Device is connected and is roaming */
-    GSM_NETWORK_REG_STATUS_CONNECTED_SMS_ONLY = 0x06,   /*!< Device is connected to home network in SMS-only mode */
-    GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING_SMS_ONLY = 0x07/*!< Device is roaming in SMS-only mode */
+    LWGSM_NETWORK_REG_STATUS_SIM_ERR = 0x00,      /*!< SIM card error */
+    LWGSM_NETWORK_REG_STATUS_CONNECTED = 0x01,    /*!< Device is connected to network */
+    LWGSM_NETWORK_REG_STATUS_SEARCHING = 0x02,    /*!< Network search is in progress */
+    LWGSM_NETWORK_REG_STATUS_DENIED = 0x03,       /*!< Registration denied */
+    LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING = 0x05,/*!< Device is connected and is roaming */
+    LWGSM_NETWORK_REG_STATUS_CONNECTED_SMS_ONLY = 0x06,   /*!< Device is connected to home network in SMS-only mode */
+    LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING_SMS_ONLY = 0x07/*!< Device is roaming in SMS-only mode */
 } lwgsm_network_reg_status_t;
 
 /**
- * \ingroup         GSM_CALL
+ * \ingroup         LWGSM_CALL
  * \brief           List of call directions
  */
 typedef enum {
-    GSM_CALL_DIR_MO = 0x00,                     /*!< Mobile Originated, outgoing call */
-    GSM_CALL_DIR_MT,                            /*!< Mobile Terminated, incoming call */
+    LWGSM_CALL_DIR_MO = 0x00,                     /*!< Mobile Originated, outgoing call */
+    LWGSM_CALL_DIR_MT,                            /*!< Mobile Terminated, incoming call */
 } lwgsm_call_dir_t;
 
 /**
- * \ingroup         GSM_CALL
+ * \ingroup         LWGSM_CALL
  * \brief           List of call states
  */
 typedef enum {
-    GSM_CALL_STATE_ACTIVE = 0x00,               /*!< Call is active */
-    GSM_CALL_STATE_HELD,                        /*!< Call is held */
-    GSM_CALL_STATE_DIALING,                     /*!< Call is dialing */
-    GSM_CALL_STATE_ALERTING,                    /*!< Call is alerting */
-    GSM_CALL_STATE_INCOMING,                    /*!< Call is incoming */
-    GSM_CALL_STATE_WAITING,                     /*!< Call is waiting */
-    GSM_CALL_STATE_DISCONNECT,                  /*!< Call disconnected, call finished */
+    LWGSM_CALL_STATE_ACTIVE = 0x00,               /*!< Call is active */
+    LWGSM_CALL_STATE_HELD,                        /*!< Call is held */
+    LWGSM_CALL_STATE_DIALING,                     /*!< Call is dialing */
+    LWGSM_CALL_STATE_ALERTING,                    /*!< Call is alerting */
+    LWGSM_CALL_STATE_INCOMING,                    /*!< Call is incoming */
+    LWGSM_CALL_STATE_WAITING,                     /*!< Call is waiting */
+    LWGSM_CALL_STATE_DISCONNECT,                  /*!< Call disconnected, call finished */
 } lwgsm_call_state_t;
 
 /**
- * \ingroup         GSM_CALL
+ * \ingroup         LWGSM_CALL
  * \brief           List of call types
  */
 typedef enum {
-    GSM_CALL_TYPE_VOICE = 0x00,                 /*!< Voice call */
-    GSM_CALL_TYPE_DATA,                         /*!< Data call */
-    GSM_CALL_TYPE_FAX,                          /*!< Fax call */
+    LWGSM_CALL_TYPE_VOICE = 0x00,                 /*!< Voice call */
+    LWGSM_CALL_TYPE_DATA,                         /*!< Data call */
+    LWGSM_CALL_TYPE_FAX,                          /*!< Fax call */
 } lwgsm_call_type_t;
 
 /**
- * \ingroup         GSM_CALL
+ * \ingroup         LWGSM_CALL
  * \brief           Call information
  * \note            Data received on `+CLCC` info
  */
@@ -343,19 +343,19 @@ struct lwgsm_conn;
 struct lwgsm_pbuf;
 
 /**
- * \ingroup         GSM_CONN
+ * \ingroup         LWGSM_CONN
  * \brief           Pointer to \ref lwgsm_conn_t structure
  */
 typedef struct lwgsm_conn* lwgsm_conn_p;
 
 /**
- * \ingroup         GSM_PBUF
+ * \ingroup         LWGSM_PBUF
  * \brief           Pointer to \ref lwgsm_pbuf_t structure
  */
 typedef struct lwgsm_pbuf* lwgsm_pbuf_p;
 
 /**
- * \ingroup         GSM_EVT
+ * \ingroup         LWGSM_EVT
  * \brief           Event function prototype
  * \param[in]       evt: Callback event data
  * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
@@ -363,70 +363,70 @@ typedef struct lwgsm_pbuf* lwgsm_pbuf_p;
 typedef lwgsmr_t  (*lwgsm_evt_fn)(struct lwgsm_evt* evt);
 
 /**
- * \ingroup         GSM_EVT
+ * \ingroup         LWGSM_EVT
  * \brief           List of possible callback types received to user
  */
 typedef enum lwgsm_cb_type_t {
-    GSM_EVT_INIT_FINISH,                        /*!< Initialization has been finished at this point */
+    LWGSM_EVT_INIT_FINISH,                        /*!< Initialization has been finished at this point */
 
-    GSM_EVT_RESET,                              /*!< Device reset operation finished */
-    GSM_EVT_RESTORE,                            /*!< Device restore operation finished */
+    LWGSM_EVT_RESET,                              /*!< Device reset operation finished */
+    LWGSM_EVT_RESTORE,                            /*!< Device restore operation finished */
 
-    GSM_EVT_CMD_TIMEOUT,                        /*!< Timeout on command.
+    LWGSM_EVT_CMD_TIMEOUT,                        /*!< Timeout on command.
                                                         When application receives this event,
                                                         it may reset system as there was (maybe) a problem in device */
 
-    GSM_EVT_DEVICE_PRESENT,                     /*!< Notification when device present status changes */
-    GSM_EVT_DEVICE_IDENTIFIED,                  /*!< Device identified event */
+    LWGSM_EVT_DEVICE_PRESENT,                     /*!< Notification when device present status changes */
+    LWGSM_EVT_DEVICE_IDENTIFIED,                  /*!< Device identified event */
 
-    GSM_EVT_SIGNAL_STRENGTH,                    /*!< Signal strength event */
+    LWGSM_EVT_SIGNAL_STRENGTH,                    /*!< Signal strength event */
 
-    GSM_EVT_SIM_STATE_CHANGED,                  /*!< SIM card state changed */
+    LWGSM_EVT_SIM_STATE_CHANGED,                  /*!< SIM card state changed */
 
-    GSM_EVT_OPERATOR_SCAN,                      /*!< Operator scan finished event */
+    LWGSM_EVT_OPERATOR_SCAN,                      /*!< Operator scan finished event */
 
-    GSM_EVT_NETWORK_OPERATOR_CURRENT,           /*!< Current operator event */
-    GSM_EVT_NETWORK_REG_CHANGED,                /*!< Network registration changed. Available even when \ref GSM_CFG_NETWORK is disabled */
-#if GSM_CFG_NETWORK || __DOXYGEN__
-    GSM_EVT_NETWORK_ATTACHED,                   /*!< Attached to network, PDP context active and ready for TCP/IP application */
-    GSM_EVT_NETWORK_DETACHED,                   /*!< Detached from network, PDP context not active anymore */
-#endif /* GSM_CFG_NETWORK || __DOXYGEN__ */
+    LWGSM_EVT_NETWORK_OPERATOR_CURRENT,           /*!< Current operator event */
+    LWGSM_EVT_NETWORK_REG_CHANGED,                /*!< Network registration changed. Available even when \ref LWGSM_CFG_NETWORK is disabled */
+#if LWGSM_CFG_NETWORK || __DOXYGEN__
+    LWGSM_EVT_NETWORK_ATTACHED,                   /*!< Attached to network, PDP context active and ready for TCP/IP application */
+    LWGSM_EVT_NETWORK_DETACHED,                   /*!< Detached from network, PDP context not active anymore */
+#endif /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
 
-#if GSM_CFG_CONN || __DOXYGEN__
-    GSM_EVT_CONN_RECV,                          /*!< Connection data received */
-    GSM_EVT_CONN_SEND,                          /*!< Connection data send */
-    GSM_EVT_CONN_ACTIVE,                        /*!< Connection just became active */
-    GSM_EVT_CONN_ERROR,                         /*!< Client connection start was not successful */
-    GSM_EVT_CONN_CLOSE,                         /*!< Connection close event. Check status if successful */
-    GSM_EVT_CONN_POLL,                          /*!< Poll for connection if there are any changes */
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
+#if LWGSM_CFG_CONN || __DOXYGEN__
+    LWGSM_EVT_CONN_RECV,                          /*!< Connection data received */
+    LWGSM_EVT_CONN_SEND,                          /*!< Connection data send */
+    LWGSM_EVT_CONN_ACTIVE,                        /*!< Connection just became active */
+    LWGSM_EVT_CONN_ERROR,                         /*!< Client connection start was not successful */
+    LWGSM_EVT_CONN_CLOSE,                         /*!< Connection close event. Check status if successful */
+    LWGSM_EVT_CONN_POLL,                          /*!< Poll for connection if there are any changes */
+#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
 
-#if GSM_CFG_SMS || __DOXYGEN__
-    GSM_EVT_SMS_ENABLE,                         /*!< SMS enable event */
-    GSM_EVT_SMS_READY,                          /*!< SMS ready event */
-    GSM_EVT_SMS_SEND,                           /*!< SMS send event */
-    GSM_EVT_SMS_RECV,                           /*!< SMS received */
-    GSM_EVT_SMS_READ,                           /*!< SMS read */
-    GSM_EVT_SMS_DELETE,                         /*!< SMS delete */
-    GSM_EVT_SMS_LIST,                           /*!< SMS list */
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
-#if GSM_CFG_CALL || __DOXYGEN__
-    GSM_EVT_CALL_ENABLE,                        /*!< Call enable event */
-    GSM_EVT_CALL_READY,                         /*!< Call ready event */
-    GSM_EVT_CALL_CHANGED,                       /*!< Call info changed, `+CLCK` statement received */
-    GSM_EVT_CALL_RING,                          /*!< Call is ringing event */
-    GSM_EVT_CALL_BUSY,                          /*!< Call is busy */
-    GSM_EVT_CALL_NO_CARRIER,                    /*!< No carrier to make a call */
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
-#if GSM_CFG_PHONEBOOK || __DOXYGEN__
-    GSM_EVT_PB_ENABLE,                          /*!< Phonebook enable event */
-    GSM_EVT_PB_LIST,                            /*!< Phonebook list event */
-    GSM_EVT_PB_SEARCH,                          /*!< Phonebook search event */
-#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#if LWGSM_CFG_SMS || __DOXYGEN__
+    LWGSM_EVT_SMS_ENABLE,                         /*!< SMS enable event */
+    LWGSM_EVT_SMS_READY,                          /*!< SMS ready event */
+    LWGSM_EVT_SMS_SEND,                           /*!< SMS send event */
+    LWGSM_EVT_SMS_RECV,                           /*!< SMS received */
+    LWGSM_EVT_SMS_READ,                           /*!< SMS read */
+    LWGSM_EVT_SMS_DELETE,                         /*!< SMS delete */
+    LWGSM_EVT_SMS_LIST,                           /*!< SMS list */
+#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
+#if LWGSM_CFG_CALL || __DOXYGEN__
+    LWGSM_EVT_CALL_ENABLE,                        /*!< Call enable event */
+    LWGSM_EVT_CALL_READY,                         /*!< Call ready event */
+    LWGSM_EVT_CALL_CHANGED,                       /*!< Call info changed, `+CLCK` statement received */
+    LWGSM_EVT_CALL_RING,                          /*!< Call is ringing event */
+    LWGSM_EVT_CALL_BUSY,                          /*!< Call is busy */
+    LWGSM_EVT_CALL_NO_CARRIER,                    /*!< No carrier to make a call */
+#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
+    LWGSM_EVT_PB_ENABLE,                          /*!< Phonebook enable event */
+    LWGSM_EVT_PB_LIST,                            /*!< Phonebook list event */
+    LWGSM_EVT_PB_SEARCH,                          /*!< Phonebook search event */
+#endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
 } lwgsm_evt_type_t;
 
 /**
- * \ingroup         GSM_EVT
+ * \ingroup         LWGSM_EVT
  * \brief           Global callback structure to pass as parameter to callback function
  */
 typedef struct lwgsm_evt {
@@ -434,116 +434,116 @@ typedef struct lwgsm_evt {
     union {
         struct {
             lwgsmr_t res;                         /*!< Reset operation result */
-        } reset;                                /*!< Reset sequence finish. Use with \ref GSM_EVT_RESET event */
+        } reset;                                /*!< Reset sequence finish. Use with \ref LWGSM_EVT_RESET event */
         struct {
             lwgsmr_t res;                         /*!< Restore operation result */
-        } restore;                              /*!< Restore sequence finish. Use with \ref GSM_EVT_RESTORE event */
+        } restore;                              /*!< Restore sequence finish. Use with \ref LWGSM_EVT_RESTORE event */
 
         struct {
             lwgsm_sim_state_t state;              /*!< SIM state */
         } cpin;                                 /*!< CPIN event */
         struct {
             const lwgsm_operator_curr_t* operator_current;    /*!< Current operator info */
-        } operator_current;                     /*!< Current operator event. Use with \ref GSM_EVT_NETWORK_OPERATOR_CURRENT event */
+        } operator_current;                     /*!< Current operator event. Use with \ref LWGSM_EVT_NETWORK_OPERATOR_CURRENT event */
         struct {
             lwgsm_operator_t* ops;                /*!< Pointer to operators */
             size_t opf;                         /*!< Number of operators found */
             lwgsmr_t res;                         /*!< Scan operation result */
-        } operator_scan;                        /*!< Operator scan event. Use with \ref GSM_EVT_OPERATOR_SCAN event */
+        } operator_scan;                        /*!< Operator scan event. Use with \ref LWGSM_EVT_OPERATOR_SCAN event */
 
         struct {
             int16_t rssi;                       /*!< Strength in units of dBm */
-        } rssi;                                 /*!< Signal strength event. Use with \ref GSM_EVT_SIGNAL_STRENGTH event */
+        } rssi;                                 /*!< Signal strength event. Use with \ref LWGSM_EVT_SIGNAL_STRENGTH event */
 
-#if GSM_CFG_CONN || __DOXYGEN__
+#if LWGSM_CFG_CONN || __DOXYGEN__
         struct {
             lwgsm_conn_p conn;                    /*!< Connection where data were received */
             lwgsm_pbuf_p buff;                    /*!< Pointer to received data */
-        } conn_data_recv;                       /*!< Network data received. Use with \ref GSM_EVT_CONN_RECV event */
+        } conn_data_recv;                       /*!< Network data received. Use with \ref LWGSM_EVT_CONN_RECV event */
         struct {
             lwgsm_conn_p conn;                    /*!< Connection where data were sent */
             size_t sent;                        /*!< Number of bytes sent on connection */
             lwgsmr_t res;                         /*!< Send data result */
-        } conn_data_send;                       /*!< Data successfully sent. Use with \ref GSM_EVT_CONN_SEND event */
+        } conn_data_send;                       /*!< Data successfully sent. Use with \ref LWGSM_EVT_CONN_SEND event */
         struct {
             const char* host;                   /*!< Host to use for connection */
             lwgsm_port_t port;                    /*!< Remote port used for connection */
             lwgsm_conn_type_t type;               /*!< Connection type */
             void* arg;                          /*!< Connection argument used on connection */
             lwgsmr_t err;                         /*!< Error value */
-        } conn_error;                           /*!< Client connection start error. Use with \ref GSM_EVT_CONN_ERROR event */
+        } conn_error;                           /*!< Client connection start error. Use with \ref LWGSM_EVT_CONN_ERROR event */
         struct {
             lwgsm_conn_p conn;                    /*!< Pointer to connection */
             uint8_t client;                     /*!< Set to `1` if connection is/was client mode */
             uint8_t forced;                     /*!< Set to `1` if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
             lwgsmr_t res;                         /*!< Result of close event. Set to \ref gsmOK on success. */
-        } conn_active_close;                    /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref GSM_EVT_CONN_CLOSE events */
+        } conn_active_close;                    /*!< Process active and closed statuses at the same time. Use with \ref LWGSM_EVT_CONN_ACTIVE or \ref LWGSM_EVT_CONN_CLOSE events */
         struct {
             lwgsm_conn_p conn;                    /*!< Set connection pointer */
-        } conn_poll;                            /*!< Polling active connection to check for timeouts. Use with \ref GSM_EVT_CONN_POLL event */
-#endif /* GSM_CFG_CONN || __DOXYGEN__ */
+        } conn_poll;                            /*!< Polling active connection to check for timeouts. Use with \ref LWGSM_EVT_CONN_POLL event */
+#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
 
-#if GSM_CFG_SMS || __DOXYGEN__
+#if LWGSM_CFG_SMS || __DOXYGEN__
         struct {
             lwgsmr_t status;                      /*!< Enable status */
-        } sms_enable;                           /*!< SMS enable event. Use with \ref GSM_EVT_SMS_ENABLE event */
+        } sms_enable;                           /*!< SMS enable event. Use with \ref LWGSM_EVT_SMS_ENABLE event */
         struct {
             size_t pos;                         /*!< Position in memory */
             lwgsmr_t res;                         /*!< SMS send result information */
-        } sms_send;                             /*!< SMS sent info. Use with \ref GSM_EVT_SMS_SEND event */
+        } sms_send;                             /*!< SMS sent info. Use with \ref LWGSM_EVT_SMS_SEND event */
         struct {
             lwgsm_mem_t mem;                      /*!< Memory of received message */
             size_t pos;                         /*!< Received position in memory for sent SMS */
-        } sms_recv;                             /*!< SMS received info. Use with \ref GSM_EVT_SMS_RECV event */
+        } sms_recv;                             /*!< SMS received info. Use with \ref LWGSM_EVT_SMS_RECV event */
         struct {
             lwgsm_sms_entry_t* entry;             /*!< SMS entry */
             lwgsmr_t res;                         /*!< SMS read result information */
-        } sms_read;                             /*!< SMS read. Use with \ref GSM_EVT_SMS_READ event */
+        } sms_read;                             /*!< SMS read. Use with \ref LWGSM_EVT_SMS_READ event */
         struct {
             lwgsm_mem_t mem;                      /*!< Memory of deleted message */
             size_t pos;                         /*!< Deleted position in memory for sent SMS */
             lwgsmr_t res;                         /*!< Operation success */
-        } sms_delete;                           /*!< SMS delete. Use with \ref GSM_EVT_SMS_DELETE event */
+        } sms_delete;                           /*!< SMS delete. Use with \ref LWGSM_EVT_SMS_DELETE event */
         struct {
             lwgsm_mem_t mem;                      /*!< Memory used for scan */
             lwgsm_sms_entry_t* entries;           /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
             lwgsmr_t res;                         /*!< Result on command */
-        } sms_list;                             /*!< SMS list. Use with \ref GSM_EVT_SMS_LIST event */
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
-#if GSM_CFG_CALL || __DOXYGEN__
+        } sms_list;                             /*!< SMS list. Use with \ref LWGSM_EVT_SMS_LIST event */
+#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
+#if LWGSM_CFG_CALL || __DOXYGEN__
         struct {
             lwgsmr_t res;                         /*!< Enable status */
-        } call_enable;                          /*!< Call enable event. Use with \ref GSM_EVT_CALL_ENABLE event */
+        } call_enable;                          /*!< Call enable event. Use with \ref LWGSM_EVT_CALL_ENABLE event */
         struct {
             const lwgsm_call_t* call;             /*!< Call information */
-        } call_changed;                         /*!< Call changed info. Use with \ref GSM_EVT_CALL_CHANGED event */
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
-#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+        } call_changed;                         /*!< Call changed info. Use with \ref LWGSM_EVT_CALL_CHANGED event */
+#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
         struct {
             lwgsmr_t res;                         /*!< Enable status */
-        } pb_enable;                            /*!< Phonebook enable event. Use with \ref GSM_EVT_PB_ENABLE event */
+        } pb_enable;                            /*!< Phonebook enable event. Use with \ref LWGSM_EVT_PB_ENABLE event */
         struct {
             lwgsm_mem_t mem;                      /*!< Memory used for scan */
             lwgsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
             lwgsmr_t res;                         /*!< Operation success */
-        } pb_list;                              /*!< Phonebok list. Use with \ref GSM_EVT_PB_LIST event */
+        } pb_list;                              /*!< Phonebok list. Use with \ref LWGSM_EVT_PB_LIST event */
         struct {
             const char* search;                 /*!< Search string */
             lwgsm_mem_t mem;                      /*!< Memory used for scan */
             lwgsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
             lwgsmr_t res;                         /*!< Operation success */
-        } pb_search;                            /*!< Phonebok search list. Use with \ref GSM_EVT_PB_SEARCH event */
-#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+        } pb_search;                            /*!< Phonebok search list. Use with \ref LWGSM_EVT_PB_SEARCH event */
+#endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
     } evt;                                      /*!< Callback event union */
 } lwgsm_evt_t;
 
-#define GSM_SIZET_MAX                           ((size_t)(-1))  /*!< Maximal value of size_t variable type */
+#define LWGSM_SIZET_MAX                           ((size_t)(-1))  /*!< Maximal value of size_t variable type */
 
 /**
- * \ingroup         GSM_LL
+ * \ingroup         LWGSM_LL
  * \brief           Function prototype for AT output data
  * \param[in]       data: Pointer to data to send. This parameter can be set to `NULL`
  * \param[in]       len: Number of bytes to send. This parameter can be set to `0`
@@ -554,7 +554,7 @@ typedef struct lwgsm_evt {
 typedef size_t  (*lwgsm_ll_send_fn)(const void* data, size_t len);
 
 /**
- * \ingroup         GSM_LL
+ * \ingroup         LWGSM_LL
  * \brief           Function prototype for hardware reset of GSM device
  * \param[in]       state: State indicating reset. When set to `1`, reset must be active (usually pin active low),
  *                      or set to `0` when reset is cleared
@@ -563,7 +563,7 @@ typedef size_t  (*lwgsm_ll_send_fn)(const void* data, size_t len);
 typedef uint8_t (*lwgsm_ll_reset_fn)(uint8_t state);
 
 /**
- * \ingroup         GSM_LL
+ * \ingroup         LWGSM_LL
  * \brief           Low level user specific functions
  */
 typedef struct {
@@ -575,14 +575,14 @@ typedef struct {
 } lwgsm_ll_t;
 
 /**
- * \ingroup         GSM_TIMEOUT
+ * \ingroup         LWGSM_TIMEOUT
  * \brief           Timeout callback function prototype
  * \param[in]       arg: Custom user argument
  */
 typedef void (*lwgsm_timeout_fn)(void* arg);
 
 /**
- * \ingroup         GSM_TIMEOUT
+ * \ingroup         LWGSM_TIMEOUT
  * \brief           Timeout structure
  */
 typedef struct lwgsm_timeout {
@@ -593,7 +593,7 @@ typedef struct lwgsm_timeout {
 } lwgsm_timeout_t;
 
 /**
- * \ingroup         GSM_BUFF
+ * \ingroup         LWGSM_BUFF
  * \brief           Buffer structure
  */
 typedef struct {
@@ -605,7 +605,7 @@ typedef struct {
 } lwgsm_buff_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           Linear buffer structure
  */
 typedef struct {
@@ -615,7 +615,7 @@ typedef struct {
 } lwgsm_linbuff_t;
 
 /**
- * \ingroup         GSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPEDEFS
  * \brief           Function declaration for API function command event callback function
  * \param[in]       res: Operation result, member of \ref lwgsmr_t enumeration
  * \param[in]       arg: Custom user argument
@@ -626,4 +626,4 @@ typedef void (*lwgsm_api_cmd_evt_fn) (lwgsmr_t res, void* arg);
 }
 #endif /* __cplusplus */
 
-#endif /* GSM_HDR_DEFS_H */
+#endif /* LWGSM_HDR_DEFS_H */

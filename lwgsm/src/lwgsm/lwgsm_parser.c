@@ -69,8 +69,8 @@ gsmi_parse_number(const char** str) {
         minus = 1;
         ++p;
     }
-    while (GSM_CHARISNUM(*p)) {                 /* Parse until character is valid number */
-        val = val * 10 + GSM_CHARTONUM(*p);
+    while (LWGSM_CHARISNUM(*p)) {                 /* Parse until character is valid number */
+        val = val * 10 + LWGSM_CHARTONUM(*p);
         ++p;
     }
     if (*p == '"') {                            /* Skip trailling quotes */
@@ -101,8 +101,8 @@ gsmi_parse_hexnumber(const char** str) {
     if (*p == '"') {                            /* Skip leading quotes */
         ++p;
     }
-    while (GSM_CHARISHEXNUM(*p)) {              /* Parse until character is valid number */
-        val = val * 16 + GSM_CHARHEXTONUM(*p);
+    while (LWGSM_CHARISHEXNUM(*p)) {              /* Parse until character is valid number */
+        val = val * 16 + LWGSM_CHARHEXTONUM(*p);
         ++p;
     }
     if (*p == ',') {                            /* Go to next entry if possible */
@@ -189,7 +189,7 @@ gsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
     if (*p == '"') {
         ++p;
     }
-    if (GSM_CHARISNUM(*p)) {
+    if (LWGSM_CHARISNUM(*p)) {
         ip->ip[0] = gsmi_parse_number(&p);
         ++p;
         ip->ip[1] = gsmi_parse_number(&p);
@@ -248,7 +248,7 @@ gsmi_parse_mac(const char** src, lwgsm_mac_t* mac) {
 lwgsm_mem_t
 gsmi_parse_memory(const char** src) {
     size_t i, sl;
-    lwgsm_mem_t mem = GSM_MEM_UNKNOWN;
+    lwgsm_mem_t mem = LWGSM_MEM_UNKNOWN;
     const char* s = *src;
 
     if (*s == ',') {
@@ -268,7 +268,7 @@ gsmi_parse_memory(const char** src) {
         }
     }
 
-    if (mem == GSM_MEM_UNKNOWN) {
+    if (mem == LWGSM_MEM_UNKNOWN) {
         gsmi_parse_string(&s, NULL, 0, 1);      /* Skip string */
     }
     if (*s == '"') {
@@ -299,7 +299,7 @@ gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
     }
     do {
         mem = gsmi_parse_memory(&str);          /* Parse memory string */
-        *mem_dst |= GSM_U32(1 << GSM_U32(mem)); /* Set as bit field */
+        *mem_dst |= LWGSM_U32(1 << LWGSM_U32(mem)); /* Set as bit field */
     } while (*str && *str != ')');
     if (*str == ')') {
         ++str;
@@ -329,19 +329,19 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
      * In case we are connected to network,
      * scan for current network info
      */
-    if (gsm.m.network.status == GSM_NETWORK_REG_STATUS_CONNECTED ||
-        gsm.m.network.status == GSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
+    if (gsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED ||
+        gsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
         /* Try to get operator */
         /* Notify user in case we are not able to add new command to queue */
         lwgsm_operator_get(&gsm.m.network.curr_operator, NULL, NULL, 0);
-#if GSM_CFG_NETWORK
+#if LWGSM_CFG_NETWORK
     } else if (lwgsm_network_is_attached()) {
         lwgsm_network_check_status(NULL, NULL, 0);    /* Do the update */
-#endif /* GSM_CFG_NETWORK */
+#endif /* LWGSM_CFG_NETWORK */
     }
 
     /* Send callback event */
-    gsmi_send_cb(GSM_EVT_NETWORK_REG_CHANGED);
+    gsmi_send_cb(LWGSM_EVT_NETWORK_REG_CHANGED);
 
     return 1;
 }
@@ -365,14 +365,14 @@ gsmi_parse_csq(const char* str) {
         rssi = 0;
     }
     gsm.m.rssi = rssi;                          /* Save RSSI to global variable */
-    if (gsm.msg->cmd_def == GSM_CMD_CSQ_GET &&
+    if (gsm.msg->cmd_def == LWGSM_CMD_CSQ_GET &&
         gsm.msg->msg.csq.rssi != NULL) {
         *gsm.msg->msg.csq.rssi = rssi;          /* Save to user variable */
     }
 
     /* Report CSQ status */
     gsm.evt.evt.rssi.rssi = rssi;
-    gsmi_send_cb(GSM_EVT_SIGNAL_STRENGTH);      /* RSSI event type */
+    gsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH);      /* RSSI event type */
 
     return 1;
 }
@@ -390,17 +390,17 @@ gsmi_parse_cpin(const char* str, uint8_t send_evt) {
         str += 7;
     }
     if (!strncmp(str, "READY", 5)) {
-        state = GSM_SIM_STATE_READY;
+        state = LWGSM_SIM_STATE_READY;
     } else if (!strncmp(str, "NOT READY", 9)) {
-        state = GSM_SIM_STATE_NOT_READY;
+        state = LWGSM_SIM_STATE_NOT_READY;
     } else if (!strncmp(str, "NOT INSERTED", 14)) {
-        state = GSM_SIM_STATE_NOT_INSERTED;
+        state = LWGSM_SIM_STATE_NOT_INSERTED;
     } else if (!strncmp(str, "SIM PIN", 7)) {
-        state = GSM_SIM_STATE_PIN;
+        state = LWGSM_SIM_STATE_PIN;
     } else if (!strncmp(str, "SIM PUK", 7)) {
-        state = GSM_SIM_STATE_PUK;
+        state = LWGSM_SIM_STATE_PUK;
     } else {
-        state = GSM_SIM_STATE_NOT_READY;
+        state = LWGSM_SIM_STATE_NOT_READY;
     }
 
     /* React only on change */
@@ -410,13 +410,13 @@ gsmi_parse_cpin(const char* str, uint8_t send_evt) {
          * In case SIM is ready,
          * start with basic info about SIM
          */
-        if (gsm.m.sim.state == GSM_SIM_STATE_READY) {
+        if (gsm.m.sim.state == LWGSM_SIM_STATE_READY) {
             gsmi_get_sim_info(0);
         }
 
         if (send_evt) {
             gsm.evt.evt.cpin.state = gsm.m.sim.state;
-            gsmi_send_cb(GSM_EVT_SIM_STATE_CHANGED);
+            gsmi_send_cb(LWGSM_EVT_SIM_STATE_CHANGED);
         }
     }
     return 1;
@@ -438,26 +438,26 @@ gsmi_parse_cops(const char* str) {
         gsm.m.network.curr_operator.format = (lwgsm_operator_format_t)gsmi_parse_number(&str);
         if (*str != '\r') {
             switch (gsm.m.network.curr_operator.format) {
-                case GSM_OPERATOR_FORMAT_LONG_NAME:
+                case LWGSM_OPERATOR_FORMAT_LONG_NAME:
                     gsmi_parse_string(&str, gsm.m.network.curr_operator.data.long_name, sizeof(gsm.m.network.curr_operator.data.long_name), 1);
                     break;
-                case GSM_OPERATOR_FORMAT_SHORT_NAME:
+                case LWGSM_OPERATOR_FORMAT_SHORT_NAME:
                     gsmi_parse_string(&str, gsm.m.network.curr_operator.data.short_name, sizeof(gsm.m.network.curr_operator.data.short_name), 1);
                     break;
-                case GSM_OPERATOR_FORMAT_NUMBER:
-                    gsm.m.network.curr_operator.data.num = GSM_U32(gsmi_parse_number(&str));
+                case LWGSM_OPERATOR_FORMAT_NUMBER:
+                    gsm.m.network.curr_operator.data.num = LWGSM_U32(gsmi_parse_number(&str));
                     break;
                 default:
                     break;
             }
         }
     } else {
-        gsm.m.network.curr_operator.format = GSM_OPERATOR_FORMAT_INVALID;
+        gsm.m.network.curr_operator.format = LWGSM_OPERATOR_FORMAT_INVALID;
     }
 
-    if (CMD_IS_DEF(GSM_CMD_COPS_GET) &&
+    if (CMD_IS_DEF(LWGSM_CMD_COPS_GET) &&
         gsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
-        GSM_MEMCPY(gsm.msg->msg.cops_get.curr, &gsm.m.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
+        LWGSM_MEMCPY(gsm.msg->msg.cops_get.curr, &gsm.m.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
     }
     return 1;
 }
@@ -482,7 +482,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     } u;
 
     if (reset) {                                /* Check for reset status */
-        GSM_MEMSET(&u, 0x00, sizeof(u));        /* Reset everything */
+        LWGSM_MEMSET(&u, 0x00, sizeof(u));        /* Reset everything */
         u.f.ch_prev = 0;
         return 1;
     }
@@ -562,7 +562,7 @@ uint8_t
 gsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
     dt->date = gsmi_parse_number(src);
     dt->month = gsmi_parse_number(src);
-    dt->year = GSM_U16(2000) + gsmi_parse_number(src);
+    dt->year = LWGSM_U16(2000) + gsmi_parse_number(src);
     dt->hours = gsmi_parse_number(src);
     dt->minutes = gsmi_parse_number(src);
     dt->seconds = gsmi_parse_number(src);
@@ -571,7 +571,7 @@ gsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
     return 1;
 }
 
-#if GSM_CFG_CALL || __DOXYGEN__
+#if LWGSM_CFG_CALL || __DOXYGEN__
 
 /**
  * \brief           Parse received +CLCC with call status info
@@ -596,14 +596,14 @@ gsmi_parse_clcc(const char* str, uint8_t send_evt) {
 
     if (send_evt) {
         gsm.evt.evt.call_changed.call = &gsm.m.call;
-        gsmi_send_cb(GSM_EVT_CALL_CHANGED);
+        gsmi_send_cb(LWGSM_EVT_CALL_CHANGED);
     }
     return 1;
 }
 
-#endif /* GSM_CFG_CALL || __DOXYGEN__ */
+#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
 
-#if GSM_CFG_SMS || __DOXYGEN__
+#if LWGSM_CFG_SMS || __DOXYGEN__
 
 /**
  * \brief           Parse string and check for type of SMS state
@@ -618,17 +618,17 @@ gsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
 
     gsmi_parse_string(src, t, sizeof(t), 1);    /* Parse string and advance */
     if (!strcmp(t, "REC UNREAD")) {
-        s = GSM_SMS_STATUS_UNREAD;
+        s = LWGSM_SMS_STATUS_UNREAD;
     } else if (!strcmp(t, "REC READ")) {
-        s = GSM_SMS_STATUS_READ;
+        s = LWGSM_SMS_STATUS_READ;
     } else if (!strcmp(t, "STO UNSENT")) {
-        s = GSM_SMS_STATUS_UNSENT;
+        s = LWGSM_SMS_STATUS_UNSENT;
     } else if (!strcmp(t, "REC SENT")) {
-        s = GSM_SMS_STATUS_SENT;
+        s = LWGSM_SMS_STATUS_SENT;
     } else {
-        s = GSM_SMS_STATUS_ALL;                 /* Error! */
+        s = LWGSM_SMS_STATUS_ALL;                 /* Error! */
     }
-    if (s != GSM_SMS_STATUS_ALL) {
+    if (s != LWGSM_SMS_STATUS_ALL) {
         *stat = s;
         return 1;
     }
@@ -686,7 +686,7 @@ uint8_t
 gsmi_parse_cmgl(const char* str) {
     lwgsm_sms_entry_t* e;
 
-    if (!CMD_IS_DEF(GSM_CMD_CMGL) ||
+    if (!CMD_IS_DEF(LWGSM_CMD_CMGL) ||
         gsm.msg->msg.sms_list.ei >= gsm.msg->msg.sms_list.etr) {
         return 0;
     }
@@ -698,7 +698,7 @@ gsmi_parse_cmgl(const char* str) {
     e = &gsm.msg->msg.sms_list.entries[gsm.msg->msg.sms_list.ei];
     e->length = 0;
     e->mem = gsm.msg->msg.sms_list.mem;         /* Manually set memory */
-    e->pos = GSM_SZ(gsmi_parse_number(&str));   /* Scan position */
+    e->pos = LWGSM_SZ(gsmi_parse_number(&str));   /* Scan position */
     gsmi_parse_sms_status(&str, &e->status);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
@@ -723,7 +723,7 @@ gsmi_parse_cmti(const char* str, uint8_t send_evt) {
     gsm.evt.evt.sms_recv.pos = gsmi_parse_number(&str);   /* Parse number */
 
     if (send_evt) {
-        gsmi_send_cb(GSM_EVT_SMS_RECV);
+        gsmi_send_cb(LWGSM_EVT_SMS_RECV);
     }
     return 1;
 }
@@ -770,9 +770,9 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
     return 1;
 }
 
-#endif /* GSM_CFG_SMS || __DOXYGEN__ */
+#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
 
-#if GSM_CFG_PHONEBOOK || __DOXYGEN__
+#if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
 
 /**
  * \brief           Parse +CPBS statement
@@ -813,7 +813,7 @@ uint8_t
 gsmi_parse_cpbr(const char* str) {
     lwgsm_pb_entry_t* e;
 
-    if (!CMD_IS_DEF(GSM_CMD_CPBR) ||
+    if (!CMD_IS_DEF(LWGSM_CMD_CPBR) ||
         gsm.msg->msg.pb_list.ei >= gsm.msg->msg.pb_list.etr) {
         return 0;
     }
@@ -823,7 +823,7 @@ gsmi_parse_cpbr(const char* str) {
     }
 
     e = &gsm.msg->msg.pb_list.entries[gsm.msg->msg.pb_list.ei];
-    e->pos = GSM_SZ(gsmi_parse_number(&str));
+    e->pos = LWGSM_SZ(gsmi_parse_number(&str));
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
     e->type = (lwgsm_number_type_t)gsmi_parse_number(&str);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
@@ -844,7 +844,7 @@ uint8_t
 gsmi_parse_cpbf(const char* str) {
     lwgsm_pb_entry_t* e;
 
-    if (!CMD_IS_DEF(GSM_CMD_CPBF) ||
+    if (!CMD_IS_DEF(LWGSM_CMD_CPBF) ||
         gsm.msg->msg.pb_search.ei >= gsm.msg->msg.pb_search.etr) {
         return 0;
     }
@@ -854,7 +854,7 @@ gsmi_parse_cpbf(const char* str) {
     }
 
     e = &gsm.msg->msg.pb_search.entries[gsm.msg->msg.pb_search.ei];
-    e->pos = GSM_SZ(gsmi_parse_number(&str));
+    e->pos = LWGSM_SZ(gsmi_parse_number(&str));
     gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
     e->type = (lwgsm_number_type_t)gsmi_parse_number(&str);
     gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
@@ -866,9 +866,9 @@ gsmi_parse_cpbf(const char* str) {
     return 1;
 }
 
-#endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
 
-#if GSM_CFG_CONN
+#if LWGSM_CFG_CONN
 
 /**
  * \brief           Parse connection info line from CIPSTATUS command
@@ -903,23 +903,23 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
             gsm.m.network.is_attached = tmp_pdp_state;
 
             /* Notify upper layer */
-            gsmi_send_cb(gsm.m.network.is_attached ? GSM_EVT_NETWORK_ATTACHED : GSM_EVT_NETWORK_DETACHED);
+            gsmi_send_cb(gsm.m.network.is_attached ? LWGSM_EVT_NETWORK_ATTACHED : LWGSM_EVT_NETWORK_DETACHED);
         }
 
         return 1;
     }
 
     /* Parse connection line */
-    num = GSM_U8(gsmi_parse_number(&str));
+    num = LWGSM_U8(gsmi_parse_number(&str));
     conn = &gsm.m.conns[num];
 
-    conn->status.f.bearer = GSM_U8(gsmi_parse_number(&str));
+    conn->status.f.bearer = LWGSM_U8(gsmi_parse_number(&str));
     gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
     if (strlen(s_tmp)) {
         if (!strcmp(s_tmp, "TCP")) {
-            conn->type = GSM_CONN_TYPE_TCP;
+            conn->type = LWGSM_CONN_TYPE_TCP;
         } else if (!strcmp(s_tmp, "UDP")) {
-            conn->type = GSM_CONN_TYPE_UDP;
+            conn->type = LWGSM_CONN_TYPE_UDP;
         }
     }
     gsmi_parse_ip(&str, &conn->remote_ip);
@@ -974,7 +974,7 @@ gsmi_parse_ipd(const char* str) {
     conn = gsmi_parse_number(&str);             /* Parse number for connection number */
     len = gsmi_parse_number(&str);              /* Parse number for number of bytes to read */
 
-    c = conn < GSM_CFG_MAX_CONNS ? &gsm.m.conns[conn] : NULL;   /* Get connection handle */
+    c = conn < LWGSM_CFG_MAX_CONNS ? &gsm.m.conns[conn] : NULL;   /* Get connection handle */
     if (c == NULL) {                            /* Invalid connection number */
         return 0;
     }
@@ -987,4 +987,4 @@ gsmi_parse_ipd(const char* str) {
     return 1;
 }
 
-#endif /* GSM_CFG_CONN */
+#endif /* LWGSM_CFG_CONN */
