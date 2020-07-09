@@ -47,20 +47,20 @@ extern "C" {
  * \{
  */
 
-gsmr_t      gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port, void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking);
-gsmr_t      gsm_conn_close(gsm_conn_p conn, const uint32_t blocking);
-gsmr_t      gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking);
-gsmr_t      gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data, size_t btw, size_t* bw, const uint32_t blocking);
-gsmr_t      gsm_conn_set_arg(gsm_conn_p conn, void* const arg);
+lwgsmr_t      gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port, void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking);
+lwgsmr_t      gsm_conn_close(gsm_conn_p conn, const uint32_t blocking);
+lwgsmr_t      gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking);
+lwgsmr_t      gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data, size_t btw, size_t* bw, const uint32_t blocking);
+lwgsmr_t      gsm_conn_set_arg(gsm_conn_p conn, void* const arg);
 void*       gsm_conn_get_arg(gsm_conn_p conn);
 uint8_t     gsm_conn_is_client(gsm_conn_p conn);
 uint8_t     gsm_conn_is_active(gsm_conn_p conn);
 uint8_t     gsm_conn_is_closed(gsm_conn_p conn);
 int8_t      gsm_conn_getnum(gsm_conn_p conn);
-gsmr_t      gsm_get_conns_status(const uint32_t blocking);
+lwgsmr_t      gsm_get_conns_status(const uint32_t blocking);
 gsm_conn_p  gsm_conn_get_from_evt(gsm_evt_t* evt);
-gsmr_t      gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
-gsmr_t      gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf);
+lwgsmr_t      gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
+lwgsmr_t      gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf);
 size_t      gsm_conn_get_total_recved_count(gsm_conn_p conn);
 
 uint8_t     gsm_conn_get_remote_ip(gsm_conn_p conn, gsm_ip_t* ip);

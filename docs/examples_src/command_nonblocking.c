@@ -1,6 +1,6 @@
 /* Hostname event function, called when gsm_sms_send() function finishes */
 void
-sms_send_fn(gsmr_t res, void* arg) {
+sms_send_fn(lwgsmr_t res, void* arg) {
     /* Check actual result from device */
     if (res == gsmOK) {
         printf("SMS sent successfully\r\n");

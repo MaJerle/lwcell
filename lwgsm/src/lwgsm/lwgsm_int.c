@@ -77,7 +77,7 @@ typedef struct {
 #endif /* !__DOXYGEN__ */
 
 static gsm_recv_t recv_buff;
-static gsmr_t gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error);
+static lwgsmr_t gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error);
 
 /**
  * \brief           Memory mapping
@@ -127,7 +127,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Send connection callback for "data send"
  * \param[in]       m: Command message
- * \param[in]       err: Error of type \ref gsmr_t
+ * \param[in]       err: Error of type \ref lwgsmr_t
  */
 #define CONN_SEND_DATA_SEND_EVT(m, err)  do { \
         CONN_SEND_DATA_FREE(m);                         \
@@ -141,7 +141,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Send reset sequence event
  * \param[in]       m: Command message
- * \param[in]       err: Error of type \ref gsmr_t
+ * \param[in]       err: Error of type \ref lwgsmr_t
  */
 #define RESET_SEND_EVT(m, err)  do {                \
         gsm.evt.evt.reset.res = err;                    \
@@ -151,7 +151,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Send restore sequence event
  * \param[in]       m: Connection send message
- * \param[in]       err: Error of type \ref gsmr_t
+ * \param[in]       err: Error of type \ref lwgsmr_t
  */
 #define RESTORE_SEND_EVT(m, err)  do {              \
         gsm.evt.evt.restore.res = err;                  \
@@ -161,7 +161,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Send operator scan sequence event
  * \param[in]       m: Command message
- * \param[in]       err: Error of type \ref gsmr_t
+ * \param[in]       err: Error of type \ref lwgsmr_t
  */
 #define OPERATOR_SCAN_SEND_EVT(m, err)  do {        \
         gsm.evt.evt.operator_scan.res = err;            \
@@ -173,7 +173,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
 * \brief           Send SMS delete operation event
 * \param[in]       m: SMS delete message
-* \param[in]       err: Error of type \ref gsmr_t
+* \param[in]       err: Error of type \ref lwgsmr_t
 */
 #define SMS_SEND_DELETE_EVT(m, err)     do {        \
         gsm.evt.evt.sms_delete.res = err;               \
@@ -185,7 +185,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Send SMS read operation event
  * \param[in]       m: SMS read message
- * \param[in]       err: Error of type \ref gsmr_t
+ * \param[in]       err: Error of type \ref lwgsmr_t
  */
 #define SMS_SEND_READ_EVT(m, err)     do {          \
         gsm.evt.evt.sms_read.res = err;                 \
@@ -196,7 +196,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Send SMS read operation event
  * \param[in]       mm: SMS list message
- * \param[in]       err: Error of type \ref gsmr_t
+ * \param[in]       err: Error of type \ref lwgsmr_t
  */
 #define SMS_SEND_LIST_EVT(mm, err)     do {        \
         gsm.evt.evt.sms_list.mem = gsm.m.sms.mem[0].current;\
@@ -209,7 +209,7 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Send SMS send operation event
  * \param[in]       m: SMS send message
- * \param[in]       err: Error of type \ref gsmr_t
+ * \param[in]       err: Error of type \ref lwgsmr_t
  */
 #define SMS_SEND_SEND_EVT(m, err)     do {          \
         gsm.evt.evt.sms_send.pos = (m)->msg.sms_send.pos;   \
@@ -220,9 +220,9 @@ gsm_dev_model_map_size = GSM_ARRAYSIZE(gsm_dev_model_map);
 /**
  * \brief           Get SIM info when SIM is ready
  * \param[in]       blocking: Blocking command
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsmi_get_sim_info(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
@@ -466,9 +466,9 @@ gsmi_reset_everything(uint8_t forced) {
 /**
  * \brief           Process callback function to user with specific type
  * \param[in]       type: Callback event type
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsmi_send_cb(gsm_evt_type_t type) {
     gsm.evt.type = type;                         /* Set callback type to process */
 
@@ -486,9 +486,9 @@ gsmi_send_cb(gsm_evt_type_t type) {
  * \note            Before calling function, callback structure must be prepared
  * \param[in]       conn: Pointer to connection to use as callback
  * \param[in]       evt: Event callback function for connection
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn evt) {
     if (conn->status.f.in_closing && gsm.evt.type != GSM_EVT_CONN_CLOSE) {  /* Do not continue if in closing mode */
         /* return gsmOK; */
@@ -520,9 +520,9 @@ gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn evt) {
 
 /**
  * \brief           Process and send data from device buffer
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-static gsmr_t
+static lwgsmr_t
 gsmi_tcpip_process_send_data(void) {
     gsm_conn_t* c = gsm.msg->msg.conn_send.conn;
     if (!gsm_conn_is_active(c) ||               /* Is the connection already closed? */
@@ -619,7 +619,7 @@ gsmi_process_cipsend_response(gsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_erro
  * \param[in]       error: Error type
  */
 static void
-gsmi_send_conn_error_cb(gsm_msg_t* msg, gsmr_t error) {
+gsmi_send_conn_error_cb(gsm_msg_t* msg, lwgsmr_t error) {
     gsm.evt.type = GSM_EVT_CONN_ERROR;          /* Connection error */
     gsm.evt.evt.conn_error.host = gsm.msg->msg.conn_start.host;
     gsm.evt.evt.conn_error.port = gsm.msg->msg.conn_start.port;
@@ -962,7 +962,7 @@ gsmi_parse_received(gsm_recv_t* rcv) {
      * and proceed with next command
      */
     if (is_ok || is_error) {
-        gsmr_t res = gsmOK;
+        lwgsmr_t res = gsmOK;
         if (gsm.msg != NULL) {                  /* Do we have active message? */
             res = gsmi_process_sub_cmd(gsm.msg, &is_ok, &is_error);
             if (res != gsmCONT) {               /* Shall we continue with next subcommand under this one? */
@@ -990,9 +990,9 @@ gsmi_parse_received(gsm_recv_t* rcv) {
 #if !GSM_CFG_INPUT_USE_PROCESS || __DOXYGEN__
 /**
  * \brief           Process data from input buffer
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsmi_process_buffer(void) {
     void* data;
     size_t len;
@@ -1028,9 +1028,9 @@ gsmi_process_buffer(void) {
  * \brief           Process input data received from GSM device
  * \param[in]       data: Pointer to data to process
  * \param[in]       data_len: Length of data to process in units of bytes
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsmi_process(const void* data, size_t data_len) {
     uint8_t ch;
     const uint8_t* d = data;
@@ -1080,7 +1080,7 @@ gsmi_process(const void* data, size_t data_len) {
 
             /* Did we reach end of buffer or no more data? */
             if (gsm.m.ipd.rem_len == 0 || (gsm.m.ipd.buff != NULL && gsm.m.ipd.buff_ptr == gsm.m.ipd.buff->len)) {
-                gsmr_t res = gsmOK;
+                lwgsmr_t res = gsmOK;
 
                 /* Call user callback function with received data */
                 if (gsm.m.ipd.buff != NULL) {     /* Do we have valid buffer? */
@@ -1200,7 +1200,7 @@ gsmi_process(const void* data, size_t data_len) {
              * Simply check for ASCII and unicode format and process data accordingly
              */
         } else {
-            gsmr_t res = gsmERR;
+            lwgsmr_t res = gsmERR;
             if (GSM_ISVALIDASCII(ch)) {         /* Manually check if valid ASCII character */
                 res = gsmOK;
                 unicode.t = 1;                  /* Manually set total to 1 */
@@ -1334,7 +1334,7 @@ gsmi_process(const void* data, size_t data_len) {
  * \param[in]       is_error: Pointer to status whether last command result was ERROR
  * \return          \ref gsmCONT if you sent more data and we need to process more data, \ref gsmOK on success, or \ref gsmERR on error
  */
-static gsmr_t
+static lwgsmr_t
 gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     gsm_cmd_t n_cmd = GSM_CMD_IDLE;
     if (CMD_IS_DEF(GSM_CMD_RESET)) {
@@ -1689,7 +1689,7 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 
     /* Check if new command was set for execution */
     if (n_cmd != GSM_CMD_IDLE) {
-        gsmr_t res;
+        lwgsmr_t res;
         msg->cmd = n_cmd;
         if ((res = msg->fn(msg)) == gsmOK) {
             return gsmCONT;
@@ -1708,9 +1708,9 @@ gsmi_process_sub_cmd(gsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
  * \brief           Function to initialize every AT command
  * \note            Never call this function directly. Set as initialization function for command and use `msg->fn(msg)`
  * \param[in]       msg: Pointer to \ref gsm_msg_t with data
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsmi_initiate_cmd(gsm_msg_t* msg) {
     switch (CMD_GET_CUR()) {                    /* Check current message we want to send over AT */
         case GSM_CMD_RESET: {                   /* Reset modem with AT commands */
@@ -2262,11 +2262,11 @@ gsmi_initiate_cmd(gsm_msg_t* msg) {
  * \param[in]       msg: New message to process
  * \param[in]       process_fn: callback function used to process message
  * \param[in]       max_block_time: Maximal time command can block in units of milliseconds
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
-gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t*), uint32_t max_block_time) {
-    gsmr_t res = msg->res = gsmOK;
+lwgsmr_t
+gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, lwgsmr_t (*process_fn)(gsm_msg_t*), uint32_t max_block_time) {
+    lwgsmr_t res = msg->res = gsmOK;
 
     /* Check here if stack is even enabled or shall we disable new command entry? */
     gsm_core_lock();
@@ -2328,7 +2328,7 @@ gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t*),
  * \param[in]       err: Error message to send
  */
 void
-gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, gsmr_t err) {
+gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, lwgsmr_t err) {
     switch (msg->cmd_def) {
         case GSM_CMD_RESET: {
             /* Reset command error */

@@ -26,7 +26,7 @@ request_header[] = ""
  */
 void
 netconn_client_thread(void const* arg) {
-    gsmr_t res;
+    lwgsmr_t res;
     gsm_pbuf_p pbuf;
     gsm_netconn_p client;
     gsm_sys_sem_t* sem = (void*)arg;

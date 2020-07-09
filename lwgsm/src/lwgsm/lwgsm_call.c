@@ -43,11 +43,11 @@
 
 /**
  * \brief           Check if sms is enabled
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 check_enabled(void) {
-    gsmr_t res;
+    lwgsmr_t res;
     gsm_core_lock();
     res = gsm.m.call.enabled ? gsmOK : gsmERR;
     gsm_core_unlock();
@@ -56,11 +56,11 @@ check_enabled(void) {
 
 /**
  * \brief           Check if call is available
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-static gsmr_t
+static lwgsmr_t
 check_ready(void) {
-    gsmr_t res;
+    lwgsmr_t res;
     gsm_core_lock();
     res = gsm.m.call.ready ? gsmOK : gsmERR;
     gsm_core_unlock();
@@ -72,9 +72,9 @@ check_ready(void) {
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_call_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
@@ -91,9 +91,9 @@ gsm_call_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_call_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     gsm_core_lock();
     gsm.m.call.enabled = 0;
@@ -110,9 +110,9 @@ gsm_call_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uin
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       number: Phone number to call, including country code starting with `+` sign
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_call_start(const char* number,
                const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
@@ -134,9 +134,9 @@ gsm_call_start(const char* number,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_call_answer(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
@@ -154,9 +154,9 @@ gsm_call_answer(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_call_hangup(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 

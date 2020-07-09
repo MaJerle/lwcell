@@ -103,9 +103,9 @@ flush_mboxes(gsm_netconn_t* nc, uint8_t protect) {
 /**
  * \brief           Callback function for every server connection
  * \param[in]       evt: Pointer to callback structure
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-static gsmr_t
+static lwgsmr_t
 netconn_evt(gsm_evt_t* evt) {
     gsm_conn_p conn;
     gsm_netconn_t* nc = NULL;
@@ -193,9 +193,9 @@ netconn_evt(gsm_evt_t* evt) {
 /**
  * \brief           Global event callback function
  * \param[in]       evt: Callback information and data
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 gsm_evt(gsm_evt_t* evt) {
     switch (gsm_evt_get_type(evt)) {
         default:
@@ -254,9 +254,9 @@ free_ret:
 /**
  * \brief           Delete netconn connection
  * \param[in]       nc: Netconn handle
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_delete(gsm_netconn_p nc) {
     GSM_ASSERT("netconn != NULL", nc != NULL);
 
@@ -288,11 +288,11 @@ gsm_netconn_delete(gsm_netconn_p nc) {
  * \param[in]       nc: Netconn handle
  * \param[in]       host: Pointer to host, such as domain name or IP address in string format
  * \param[in]       port: Target port to use
- * \return          \ref gsmOK if successfully connected, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK if successfully connected, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
-    gsmr_t res;
+    lwgsmr_t res;
 
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("host != NULL", host != NULL);
@@ -315,13 +315,13 @@ gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port) {
  * \param[in]       nc: Netconn handle used to write data to
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
     size_t len, sent;
     const uint8_t* d = data;
-    gsmr_t res;
+    lwgsmr_t res;
 
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be TCP or SSL", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);
@@ -397,9 +397,9 @@ gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw) {
  * \brief           Flush buffered data on netconn \e TCP/SSL connection
  * \note            This function may only be used on \e TCP/SSL connection
  * \param[in]       nc: Netconn handle to flush data
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_flush(gsm_netconn_p nc) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be TCP or SSL", nc->type == GSM_NETCONN_TYPE_TCP || nc->type == GSM_NETCONN_TYPE_SSL);
@@ -423,9 +423,9 @@ gsm_netconn_flush(gsm_netconn_p nc) {
  * \param[in]       nc: Netconn handle used to send
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be UDP", nc->type == GSM_NETCONN_TYPE_UDP);
@@ -442,9 +442,9 @@ gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw) {
  * \param[in]       port: Port number used to send data
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const void* data, size_t btw) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("nc->type must be UDP", nc->type == GSM_NETCONN_TYPE_UDP);
@@ -461,9 +461,9 @@ gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const 
  * \return          \ref gsmOK when new data ready,
  * \return          \ref gsmCLOSED when connection closed by remote side,
  * \return          \ref gsmTIMEOUT when receive timeout occurs
- * \return          Any other member of \ref gsmr_t otherwise
+ * \return          Any other member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf) {
     GSM_ASSERT("nc != NULL", nc != NULL);
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);
@@ -493,9 +493,9 @@ gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf) {
 /**
  * \brief           Close a netconn connection
  * \param[in]       nc: Netconn handle to close
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_netconn_close(gsm_netconn_p nc) {
     gsm_conn_p conn;
 

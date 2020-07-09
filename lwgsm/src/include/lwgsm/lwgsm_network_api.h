@@ -47,9 +47,9 @@ extern "C" {
  * \{
  */
 
-gsmr_t  gsm_network_set_credentials(const char* apn, const char* user, const char* pass);
-gsmr_t  gsm_network_request_attach(void);
-gsmr_t  gsm_network_request_detach(void);
+lwgsmr_t  gsm_network_set_credentials(const char* apn, const char* user, const char* pass);
+lwgsmr_t  gsm_network_request_attach(void);
+lwgsmr_t  gsm_network_request_detach(void);
 
 /**
  * \}

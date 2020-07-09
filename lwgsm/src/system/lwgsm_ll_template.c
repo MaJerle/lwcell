@@ -62,9 +62,9 @@ send_data(const void* data, size_t len) {
  *                  When \ref GSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
  * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
- * \return          gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_ll_init(gsm_ll_t* ll) {
 #if !GSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
@@ -97,9 +97,9 @@ gsm_ll_init(gsm_ll_t* ll) {
 /**
  * \brief           Callback function to de-init low-level communication part
  * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_ll_deinit(gsm_ll_t* ll) {
     initialized = 0;                            /* Clear initialized flag */
     return gsmOK;

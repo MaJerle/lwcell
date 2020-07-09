@@ -292,9 +292,9 @@ send_data(const void* data, size_t len) {
  * \note            This function may be called multiple times if AT baudrate is changed from application
  * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
  * \param[in]       baudrate: Baudrate to use on AT port
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_ll_init(gsm_ll_t* ll) {
 #if !GSM_CFG_MEM_CUSTOM
     static uint8_t memory[GSM_MEM_SIZE];
@@ -322,9 +322,9 @@ gsm_ll_init(gsm_ll_t* ll) {
 /**
  * \brief           Callback function to de-init low-level communication part
  * \param[in,out]   ll: Pointer to \ref gsm_ll_t structure to fill data for communication functions
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_ll_deinit(gsm_ll_t* ll) {
     if (usart_ll_mbox_id != NULL) {
         osMessageQueueId_t tmp = usart_ll_mbox_id;

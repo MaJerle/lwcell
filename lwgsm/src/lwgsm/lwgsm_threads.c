@@ -49,7 +49,7 @@ gsm_thread_produce(void* const arg) {
     gsm_sys_sem_t* sem = arg;
     gsm_t* e = &gsm;
     gsm_msg_t* msg;
-    gsmr_t res;
+    lwgsmr_t res;
     uint32_t time;
 
     /* Thread is running, unlock semaphore */

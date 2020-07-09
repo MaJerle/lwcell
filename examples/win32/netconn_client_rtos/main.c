@@ -37,7 +37,7 @@
 #include "netconn_client.h"
 #include "network_apn_settings.h"
 
-static gsmr_t gsm_callback_func(gsm_evt_t* evt);
+static lwgsmr_t gsm_callback_func(gsm_evt_t* evt);
 
 /**
  * \brief           Program entry point
@@ -80,9 +80,9 @@ main(void) {
 /**
  * \brief           Event callback function for GSM stack
  * \param[in]       evt: Event information with data
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 gsm_callback_func(gsm_evt_t* evt) {
     switch (gsm_evt_get_type(evt)) {
         case GSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;

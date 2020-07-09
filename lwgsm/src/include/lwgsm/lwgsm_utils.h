@@ -49,7 +49,7 @@ extern "C" {
 
 /**
  * \brief           Assert an input parameter if in valid range
- * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref gsmr_t enumeration
+ * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref lwgsmr_t enumeration
  * \param[in]       msg: message to print to debug if test fails
  * \param[in]       c: Condition to test
  */

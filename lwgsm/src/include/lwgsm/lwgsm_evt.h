@@ -47,8 +47,8 @@ extern "C" {
  * \{
  */
 
-gsmr_t          gsm_evt_register(gsm_evt_fn fn);
-gsmr_t          gsm_evt_unregister(gsm_evt_fn fn);
+lwgsmr_t          gsm_evt_register(gsm_evt_fn fn);
+lwgsmr_t          gsm_evt_unregister(gsm_evt_fn fn);
 gsm_evt_type_t  gsm_evt_get_type(gsm_evt_t* cc);
 
 /**
@@ -57,7 +57,7 @@ gsm_evt_type_t  gsm_evt_get_type(gsm_evt_t* cc);
  * \brief           Event helper functions for \ref GSM_EVT_RESET event
  */
 
-gsmr_t      gsm_evt_reset_get_result(gsm_evt_t* cc);
+lwgsmr_t      gsm_evt_reset_get_result(gsm_evt_t* cc);
 
 /**
  * \}
@@ -69,7 +69,7 @@ gsmr_t      gsm_evt_reset_get_result(gsm_evt_t* cc);
  * \brief           Event helper functions for \ref GSM_EVT_RESTORE event
  */
 
-gsmr_t      gsm_evt_restore_get_result(gsm_evt_t* cc);
+lwgsmr_t      gsm_evt_restore_get_result(gsm_evt_t* cc);
 
 /**
  * \}
@@ -108,7 +108,7 @@ gsm_conn_p  gsm_evt_conn_recv_get_conn(gsm_evt_t* cc);
 
 gsm_conn_p  gsm_evt_conn_send_get_conn(gsm_evt_t* cc);
 size_t      gsm_evt_conn_send_get_length(gsm_evt_t* cc);
-gsmr_t      gsm_evt_conn_send_get_result(gsm_evt_t* cc);
+lwgsmr_t      gsm_evt_conn_send_get_result(gsm_evt_t* cc);
 
 /**
  * \}
@@ -136,7 +136,7 @@ uint8_t     gsm_evt_conn_active_is_client(gsm_evt_t* cc);
 gsm_conn_p  gsm_evt_conn_close_get_conn(gsm_evt_t* cc);
 uint8_t     gsm_evt_conn_close_is_client(gsm_evt_t* cc);
 uint8_t     gsm_evt_conn_close_is_forced(gsm_evt_t* cc);
-gsmr_t      gsm_evt_conn_close_get_result(gsm_evt_t* cc);
+lwgsmr_t      gsm_evt_conn_close_get_result(gsm_evt_t* cc);
 
 /**
  * \}
@@ -160,7 +160,7 @@ gsm_conn_p  gsm_evt_conn_poll_get_conn(gsm_evt_t* cc);
  * \brief           Event helper functions for \ref GSM_EVT_CONN_ERROR event
  */
 
-gsmr_t              gsm_evt_conn_error_get_error(gsm_evt_t* cc);
+lwgsmr_t              gsm_evt_conn_error_get_error(gsm_evt_t* cc);
 gsm_conn_type_t     gsm_evt_conn_error_get_type(gsm_evt_t* cc);
 const char*         gsm_evt_conn_error_get_host(gsm_evt_t* cc);
 gsm_port_t          gsm_evt_conn_error_get_port(gsm_evt_t* cc);
@@ -202,7 +202,7 @@ gsm_mem_t   gsm_evt_sms_recv_get_mem(gsm_evt_t* cc);
  */
 
 gsm_sms_entry_t*    gsm_evt_sms_read_get_entry(gsm_evt_t* cc);
-gsmr_t              gsm_evt_sms_read_get_result(gsm_evt_t* cc);
+lwgsmr_t              gsm_evt_sms_read_get_result(gsm_evt_t* cc);
 
 /**
  * \}
@@ -214,7 +214,7 @@ gsmr_t              gsm_evt_sms_read_get_result(gsm_evt_t* cc);
  * \brief           Event helper functions for \ref GSM_EVT_SMS_SEND event
  */
 
-gsmr_t  gsm_evt_sms_send_get_result(gsm_evt_t* cc);
+lwgsmr_t  gsm_evt_sms_send_get_result(gsm_evt_t* cc);
 size_t  gsm_evt_sms_send_get_pos(gsm_evt_t* cc);
 
 /**
@@ -227,7 +227,7 @@ size_t  gsm_evt_sms_send_get_pos(gsm_evt_t* cc);
  * \brief           Event helper functions for \ref GSM_EVT_SMS_DELETE event
  */
 
-gsmr_t      gsm_evt_sms_delete_get_result(gsm_evt_t* cc);
+lwgsmr_t      gsm_evt_sms_delete_get_result(gsm_evt_t* cc);
 size_t      gsm_evt_sms_delete_get_pos(gsm_evt_t* cc);
 gsm_mem_t   gsm_evt_sms_delete_get_mem(gsm_evt_t* cc);
 
@@ -253,7 +253,7 @@ const gsm_call_t*  gsm_evt_call_changed_get_call(gsm_evt_t* cc);
  * \brief           Event helper functions for \ref GSM_EVT_OPERATOR_SCAN event
  */
 
-gsmr_t          gsm_evt_operator_scan_get_result(gsm_evt_t* cc);
+lwgsmr_t          gsm_evt_operator_scan_get_result(gsm_evt_t* cc);
 gsm_operator_t* gsm_evt_operator_scan_get_entries(gsm_evt_t* cc);
 size_t          gsm_evt_operator_scan_get_length(gsm_evt_t* cc);
 

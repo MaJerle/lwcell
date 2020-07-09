@@ -47,8 +47,8 @@ extern "C" {
  * \{
  */
 
-gsmr_t          gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg);
-gsmr_t          gsm_timeout_remove(gsm_timeout_fn fn);
+lwgsmr_t          gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg);
+lwgsmr_t          gsm_timeout_remove(gsm_timeout_fn fn);
 
 /**
  * \}

@@ -10,7 +10,7 @@
 #error "SMS must be enabled to run this example"
 #endif /* !GSM_CFG_SMS */
 
-static gsmr_t sms_evt_func(gsm_evt_t* evt);
+static lwgsmr_t sms_evt_func(gsm_evt_t* evt);
 
 /**
  * \brief           SMS entry
@@ -40,9 +40,9 @@ sms_send_receive_start(void) {
 /**
  * \brief           Event function for received SMS
  * \param[in]       evt: GSM event
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 sms_evt_func(gsm_evt_t* evt) {
     switch (gsm_evt_get_type(evt)) {
         case GSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
@@ -50,7 +50,7 @@ sms_evt_func(gsm_evt_t* evt) {
             break;
         }
         case GSM_EVT_SMS_RECV: {                /* New SMS received indicator */
-            gsmr_t res;
+            lwgsmr_t res;
 
             printf("New SMS received!\r\n");    /* Notify user */
 

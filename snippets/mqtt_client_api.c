@@ -55,7 +55,7 @@ mqtt_client_api_thread(void const* arg) {
     gsm_mqtt_client_api_p client;
     gsm_mqtt_conn_status_t conn_status;
     gsm_mqtt_client_api_buf_p buf;
-    gsmr_t res;
+    lwgsmr_t res;
     char random_str[10];
 
     /* Request network attach */

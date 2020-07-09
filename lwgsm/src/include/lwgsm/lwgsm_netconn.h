@@ -64,21 +64,21 @@ typedef enum {
 } gsm_netconn_type_t;
 
 gsm_netconn_p   gsm_netconn_new(gsm_netconn_type_t type);
-gsmr_t          gsm_netconn_delete(gsm_netconn_p nc);
-gsmr_t          gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port);
-gsmr_t          gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf);
-gsmr_t          gsm_netconn_close(gsm_netconn_p nc);
+lwgsmr_t          gsm_netconn_delete(gsm_netconn_p nc);
+lwgsmr_t          gsm_netconn_connect(gsm_netconn_p nc, const char* host, gsm_port_t port);
+lwgsmr_t          gsm_netconn_receive(gsm_netconn_p nc, gsm_pbuf_p* pbuf);
+lwgsmr_t          gsm_netconn_close(gsm_netconn_p nc);
 int8_t          gsm_netconn_getconnnum(gsm_netconn_p nc);
 void            gsm_netconn_set_receive_timeout(gsm_netconn_p nc, uint32_t timeout);
 uint32_t        gsm_netconn_get_receive_timeout(gsm_netconn_p nc);
 
 /* TCP only */
-gsmr_t          gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw);
-gsmr_t          gsm_netconn_flush(gsm_netconn_p nc);
+lwgsmr_t          gsm_netconn_write(gsm_netconn_p nc, const void* data, size_t btw);
+lwgsmr_t          gsm_netconn_flush(gsm_netconn_p nc);
 
 /* UDP only */
-gsmr_t          gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw);
-gsmr_t          gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const void* data, size_t btw);
+lwgsmr_t          gsm_netconn_send(gsm_netconn_p nc, const void* data, size_t btw);
+lwgsmr_t          gsm_netconn_sendto(gsm_netconn_p nc, const gsm_ip_t* ip, gsm_port_t port, const void* data, size_t btw);
 
 /**
  * \}

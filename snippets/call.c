@@ -8,7 +8,7 @@
 #error "CALL must be enabled to run this example"
 #endif /* !GSM_CFG_CALL */
 
-static gsmr_t call_evt_func(gsm_evt_t* evt);
+static lwgsmr_t call_evt_func(gsm_evt_t* evt);
 
 /**
  * \brief           Start CALL example
@@ -29,9 +29,9 @@ call_start(void) {
 /**
  * \brief           Event function for calls
  * \param[in]       evt: GSM event
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 call_evt_func(gsm_evt_t* evt) {
     switch (gsm_evt_get_type(evt)) {
         case GSM_EVT_CALL_CHANGED: {

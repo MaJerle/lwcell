@@ -115,9 +115,9 @@ gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t tim
  * \param[in]       time: Time in units of milliseconds for timeout execution
  * \param[in]       fn: Callback function to call when timeout expires
  * \param[in]       arg: Pointer to user specific argument to call when timeout callback function is executed
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
     gsm_timeout_t* to;
     uint32_t now;
@@ -189,9 +189,9 @@ gsm_timeout_add(uint32_t time, gsm_timeout_fn fn, void* arg) {
 /**
  * \brief           Remove callback from timeout list
  * \param[in]       fn: Callback function to identify timeout to remove
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_timeout_remove(gsm_timeout_fn fn) {
     uint8_t success = 0;
 

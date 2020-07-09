@@ -40,7 +40,7 @@
 #error GSM_CFG_OS must be set to 1!
 #endif
 
-static gsmr_t   def_callback(gsm_evt_t* cb);
+static lwgsmr_t   def_callback(gsm_evt_t* cb);
 static gsm_evt_func_t def_evt_link;
 
 gsm_t gsm;
@@ -48,9 +48,9 @@ gsm_t gsm;
 /**
  * \brief           Default callback function for events
  * \param[in]       evt: Pointer to callback data structure
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-static gsmr_t
+static lwgsmr_t
 def_callback(gsm_evt_t* evt) {
     GSM_UNUSED(evt);
     return gsmOK;
@@ -66,11 +66,11 @@ def_callback(gsm_evt_t* evt) {
  * \param[in]       evt_func: Global event callback function for all major events
  * \param[in]       blocking: Status whether command should be blocking or not.
  *                      Used when \ref GSM_CFG_RESET_ON_INIT is enabled.
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_init(gsm_evt_fn evt_func, const uint32_t blocking) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
 
     gsm.status.f.initialized = 0;               /* Clear possible init flag */
 
@@ -169,9 +169,9 @@ cleanup:
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_reset(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     return gsm_reset_with_delay(0, evt_fn, evt_arg, blocking);
 }
@@ -182,9 +182,9 @@ gsm_reset(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t b
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_reset_with_delay(uint32_t delay,
                      const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
@@ -205,9 +205,9 @@ gsm_reset_with_delay(uint32_t delay,
  * \note            Function may be called multiple times to increase locks.
  *                  Application must take care to call \ref gsm_core_unlock
  *                  the same amount of time to make sure lock gets back to `0`
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_core_lock(void) {
     gsm_sys_protect();
     ++gsm.locked_cnt;
@@ -222,9 +222,9 @@ gsm_core_lock(void) {
  * If lock was non-zero before function call, lock is decreased.
  * When `lock == 0`, protection is disabled and other threads may access to core
  *
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_core_unlock(void) {
     --gsm.locked_cnt;
     gsm_sys_unprotect();
@@ -263,9 +263,9 @@ gsm_delay(uint32_t ms) {
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_set_func_mode(uint8_t mode,
                   const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
@@ -288,12 +288,12 @@ gsm_set_func_mode(uint8_t mode,
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_device_set_present(uint8_t present,
                        const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
     gsm_core_lock();
     present = present ? 1 : 0;
     if (present != gsm.status.f.dev_present) {

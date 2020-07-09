@@ -43,7 +43,7 @@
  * \param[in]       conn: Connection handle
  */
 #define CONN_CHECK_CLOSED_IN_CLOSING(conn) do { \
-        gsmr_t r = gsmOK;                           \
+        lwgsmr_t r = gsmOK;                           \
         gsm_core_lock();                         \
         if (conn->status.f.in_closing || !conn->status.f.active) {  \
             r = gsmCLOSED;                          \
@@ -108,9 +108,9 @@ gsmi_conn_get_val_id(gsm_conn_p conn) {
  * \param[out]      bw: Pointer to output variable to save number of sent data when successfully sent
  * \param[in]       fau: "Free After Use" flag. Set to `1` if stack should free the memory after data sent
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-static gsmr_t
+static lwgsmr_t
 conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data,
           size_t btw, size_t* const bw, uint8_t fau, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
@@ -143,11 +143,11 @@ conn_send(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void
 /**
  * \brief           Flush buffer on connection
  * \param[in]       conn: Connection to flush buffer on
- * \return          \ref gsmOK if data flushed and put to queue, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK if data flushed and put to queue, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 flush_buff(gsm_conn_p conn) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
     gsm_core_lock();
     if (conn != NULL && conn->buff.buff != NULL) {  /* Do we have something ready? */
         /*
@@ -187,9 +187,9 @@ gsmi_conn_init(void) {
  * \param[in]       arg: Pointer to user argument passed to connection if successfully connected
  * \param[in]       conn_evt_fn: Callback function for this connection
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, gsm_port_t port,
                void* const arg, gsm_evt_fn conn_evt_fn, const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
@@ -216,11 +216,11 @@ gsm_conn_start(gsm_conn_p* conn, gsm_conn_type_t type, const char* const host, g
  * \brief           Close specific or all connections
  * \param[in]       conn: Connection handle to close. Set to NULL if you want to close all connections.
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
     GSM_MSG_VAR_DEFINE(msg);
 
     GSM_ASSERT("conn != NULL", conn != NULL);
@@ -255,9 +255,9 @@ gsm_conn_close(gsm_conn_p conn, const uint32_t blocking) {
  * \param[in]       btw: Number of bytes to send
  * \param[out]      bw: Pointer to output variable to save number of sent data when successfully sent
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, const void* data,
                 size_t btw, size_t* bw, const uint32_t blocking) {
     GSM_ASSERT("conn != NULL", conn != NULL);
@@ -274,12 +274,12 @@ gsm_conn_sendto(gsm_conn_p conn, const gsm_ip_t* const ip, gsm_port_t port, cons
  * \param[out]      bw: Pointer to output variable to save number of sent data when successfully sent.
  *                      Parameter value might not be accurate if you combine \ref gsm_conn_write and \ref gsm_conn_send functions
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
               const uint32_t blocking) {
-    gsmr_t res;
+    lwgsmr_t res;
     const uint8_t* d = data;
 
     GSM_ASSERT("conn != NULL", conn != NULL);
@@ -317,9 +317,9 @@ gsm_conn_send(gsm_conn_p conn, const void* data, size_t btw, size_t* const bw,
  *
  * \param[in]       conn: Connection handle
  * \param[in]       pbuf: Packet buffer received on connection
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf) {
 #if GSM_CFG_CONN_MANUAL_TCP_RECEIVE
     size_t len;
@@ -341,10 +341,10 @@ gsm_conn_recved(gsm_conn_p conn, gsm_pbuf_p pbuf) {
  * \brief           Set argument variable for connection
  * \param[in]       conn: Connection handle to set argument
  * \param[in]       arg: Pointer to argument
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  * \sa              gsm_conn_get_arg
  */
-gsmr_t
+lwgsmr_t
 gsm_conn_set_arg(gsm_conn_p conn, void* const arg) {
     gsm_core_lock();
     conn->arg = arg;                            /* Set argument for connection */
@@ -370,9 +370,9 @@ gsm_conn_get_arg(gsm_conn_p conn) {
 /**
  * \brief           Gets connections status
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_get_conns_status(const uint32_t blocking) {
     GSM_MSG_VAR_DEFINE(msg);
 
@@ -479,9 +479,9 @@ gsm_conn_get_from_evt(gsm_evt_t* evt) {
  *                  When the buffer length is reached, current one is sent and a new one is automatically created.
  *                  If function returns \ref gsmOK and `*mem_available = 0`, there was a problem
  *                  allocating a new buffer for next operation
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_conn_write(gsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available) {
     size_t len;
 

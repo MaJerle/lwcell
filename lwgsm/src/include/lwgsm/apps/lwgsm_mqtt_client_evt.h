@@ -119,10 +119,10 @@ extern "C" {
  * \brief           Get result of subscribe event
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_subscribe_get_result(client, evt)       ((gsmr_t)(evt)->evt.sub_unsub_scribed.res)
+#define gsm_mqtt_client_evt_subscribe_get_result(client, evt)       ((lwgsmr_t)(evt)->evt.sub_unsub_scribed.res)
 
 /**
  * \brief           Get user argument used on \ref gsm_mqtt_client_unsubscribe
@@ -137,10 +137,10 @@ extern "C" {
  * \brief           Get result of unsubscribe event
  * \param[in]       client: MQTT client
  * \param[in]       evt: Event handle
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  * \hideinitializer
  */
-#define gsm_mqtt_client_evt_unsubscribe_get_result(client, evt)     ((gsmr_t)(evt)->evt.sub_unsub_scribed.res)
+#define gsm_mqtt_client_evt_unsubscribe_get_result(client, evt)     ((lwgsmr_t)(evt)->evt.sub_unsub_scribed.res)
 
 /**
  * \}
@@ -233,10 +233,10 @@ extern "C" {
 * \brief           Get result of publish event
 * \param[in]       client: MQTT client
 * \param[in]       evt: Event handle
-* \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+* \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
 * \hideinitializer
 */
-#define gsm_mqtt_client_evt_publish_get_result(client, evt)     ((gsmr_t)(evt)->evt.publish.res)
+#define gsm_mqtt_client_evt_publish_get_result(client, evt)     ((lwgsmr_t)(evt)->evt.publish.res)
 
 /**
  * \}

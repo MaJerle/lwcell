@@ -334,8 +334,8 @@ typedef struct gsm_msg {
     gsm_sys_sem_t   sem;                        /*!< Semaphore for the message */
     uint8_t         is_blocking;                /*!< Status if command is blocking */
     uint32_t        block_time;                 /*!< Maximal blocking time in units of milliseconds. Use 0 to for non-blocking call */
-    gsmr_t          res;                        /*!< Result of message operation */
-    gsmr_t          (*fn)(struct gsm_msg*);     /*!< Processing callback function to process packet */
+    lwgsmr_t          res;                        /*!< Result of message operation */
+    lwgsmr_t          (*fn)(struct gsm_msg*);     /*!< Processing callback function to process packet */
 
 #if GSM_CFG_USE_API_FUNC_EVT
     gsm_api_cmd_evt_fn evt_fn;                  /*!< Command callback API function */
@@ -703,7 +703,7 @@ typedef struct {
     uint8_t ch[4];                              /*!< UTF-8 max characters */
     uint8_t t;                                  /*!< Total expected length in UTF-8 sequence */
     uint8_t r;                                  /*!< Remaining bytes in UTF-8 sequence */
-    gsmr_t res;                                 /*!< Current result of processing */
+    lwgsmr_t res;                                 /*!< Current result of processing */
 } gsm_unicode_t;
 
 /**
@@ -773,22 +773,22 @@ extern const size_t         gsm_dev_model_map_size;
 #define GSM_PORT2NUM(port)                  ((uint32_t)(port))
 
 const char* gsmi_dbg_msg_to_string(gsm_cmd_t cmd);
-gsmr_t      gsmi_process(const void* data, size_t len);
-gsmr_t      gsmi_process_buffer(void);
-gsmr_t      gsmi_initiate_cmd(gsm_msg_t* msg);
+lwgsmr_t      gsmi_process(const void* data, size_t len);
+lwgsmr_t      gsmi_process_buffer(void);
+lwgsmr_t      gsmi_initiate_cmd(gsm_msg_t* msg);
 uint8_t     gsmi_is_valid_conn_ptr(gsm_conn_p conn);
-gsmr_t      gsmi_send_cb(gsm_evt_type_t type);
-gsmr_t      gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn cb);
+lwgsmr_t      gsmi_send_cb(gsm_evt_type_t type);
+lwgsmr_t      gsmi_send_conn_cb(gsm_conn_t* conn, gsm_evt_fn cb);
 void        gsmi_conn_init(void);
-gsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, gsmr_t (*process_fn)(gsm_msg_t*), uint32_t max_block_time);
+lwgsmr_t      gsmi_send_msg_to_producer_mbox(gsm_msg_t* msg, lwgsmr_t (*process_fn)(gsm_msg_t*), uint32_t max_block_time);
 uint32_t    gsmi_get_from_mbox_with_timeout_checks(gsm_sys_mbox_t* b, void** m, uint32_t timeout);
 uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
 void        gsmi_conn_start_timeout(gsm_conn_p conn);
 
-gsmr_t      gsmi_get_sim_info(const uint32_t blocking);
+lwgsmr_t      gsmi_get_sim_info(const uint32_t blocking);
 
 void        gsmi_reset_everything(uint8_t forced);
-void        gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, gsmr_t err);
+void        gsmi_process_events_for_timeout_or_error(gsm_msg_t* msg, lwgsmr_t err);
 
 /**
  * \}

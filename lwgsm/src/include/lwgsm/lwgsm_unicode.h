@@ -47,7 +47,7 @@ extern "C" {
  * \{
  */
 
-gsmr_t          gsmi_unicode_decode(gsm_unicode_t* uni, uint8_t ch);
+lwgsmr_t          gsmi_unicode_decode(gsm_unicode_t* uni, uint8_t ch);
 
 /**
  * \}

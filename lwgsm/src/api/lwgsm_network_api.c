@@ -48,9 +48,9 @@ static uint32_t network_counter;
  * \param[in]       apn: APN domain. Set to `NULL` if not used
  * \param[in]       user: APN username. Set to `NULL` if not used
  * \param[in]       pass: APN password. Set to `NULL` if not used
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
     network_apn = apn;
     network_user = user;
@@ -62,11 +62,11 @@ gsm_network_set_credentials(const char* apn, const char* user, const char* pass)
 /**
  * \brief           Request manager to attach to network
  * \note            This function is blocking and cannot be called from event functions
- * \return          \ref gsmOK on success (when attached), member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success (when attached), member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_network_request_attach(void) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
     uint8_t do_conn = 0;
 
     /* Check if we need to connect */
@@ -100,11 +100,11 @@ gsm_network_request_attach(void) {
  * otherwise it will disable network access
  *
  * \note            This function is blocking and cannot be called from event functions
- * \return          \ref gsmOK on success (when attached), member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success (when attached), member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_network_request_detach(void) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
     uint8_t do_disconn = 0;
 
     /* Check if we need to disconnect */

@@ -129,10 +129,10 @@ gsm_pbuf_free(gsm_pbuf_p pbuf) {
  *                  as it might make memory undefined for `head` pbuf.
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  * \sa              gsm_pbuf_chain
  */
-gsmr_t
+lwgsmr_t
 gsm_pbuf_cat(gsm_pbuf_p head, const gsm_pbuf_p tail) {
     GSM_ASSERT("head != NULL", head != NULL);
     GSM_ASSERT("tail != NULL", tail != NULL);
@@ -157,12 +157,12 @@ gsm_pbuf_cat(gsm_pbuf_p head, const gsm_pbuf_p tail) {
  *                  its reference to tail pbuf and allow control to head pbuf: gsm_pbuf_free(tail)
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  * \sa              gsm_pbuf_cat
  */
-gsmr_t
+lwgsmr_t
 gsm_pbuf_chain(gsm_pbuf_p head, gsm_pbuf_p tail) {
-    gsmr_t res;
+    lwgsmr_t res;
 
     /*
      * To prevent issues with multi-thread access,
@@ -199,9 +199,9 @@ gsm_pbuf_unchain(gsm_pbuf_p head) {
 /**
  * \brief           Increment reference count on pbuf
  * \param[in]       pbuf: pbuf to increase reference
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_pbuf_ref(gsm_pbuf_p pbuf) {
     GSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
@@ -215,9 +215,9 @@ gsm_pbuf_ref(gsm_pbuf_p pbuf) {
  * \param[in]       data: Input data to copy to pbuf memory
  * \param[in]       len: Length of input data to copy
  * \param[in]       offset: Start offset in pbuf where to start copying
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
     const uint8_t* d = data;
     size_t copy_len;

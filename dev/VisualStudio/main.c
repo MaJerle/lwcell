@@ -19,8 +19,8 @@
 static void main_thread(void* arg);
 DWORD main_thread_id;
 
-static gsmr_t gsm_evt(gsm_evt_t* evt);
-static gsmr_t gsm_conn_evt(gsm_evt_t* evt);
+static lwgsmr_t gsm_evt(gsm_evt_t* evt);
+static lwgsmr_t gsm_conn_evt(gsm_evt_t* evt);
 
 gsm_operator_t operators[10];
 size_t operators_len;
@@ -82,12 +82,12 @@ uint8_t request_data[] = ""
 "\r\n";
 
 void
-pin_evt(gsmr_t res, void* arg) {
+pin_evt(lwgsmr_t res, void* arg) {
     printf("PIN EVT function!\r\n");
 }
 
 void
-puk_evt(gsmr_t res, void* arg) {
+puk_evt(lwgsmr_t res, void* arg) {
     printf("PUK EVT function!\r\n");
 }
 
@@ -245,7 +245,7 @@ main_thread(void* arg) {
     gsm_sys_thread_terminate(NULL);
 }
 
-static gsmr_t
+static lwgsmr_t
 gsm_conn_evt(gsm_evt_t* evt) {
     gsm_conn_p c;
     c = gsm_conn_get_from_evt(evt);
@@ -265,7 +265,7 @@ gsm_conn_evt(gsm_evt_t* evt) {
             break;
         }
         case GSM_EVT_CONN_SEND: {
-            gsmr_t res = gsm_evt_conn_send_get_result(evt);
+            lwgsmr_t res = gsm_evt_conn_send_get_result(evt);
             if (res == gsmOK) {
                 printf("Data sent!\r\n");
             } else {
@@ -288,9 +288,9 @@ gsm_conn_evt(gsm_evt_t* evt) {
 /**
  * \brief           Global GSM event function callback
  * \param[in]       cb: Event information
- * \return          gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 gsm_evt(gsm_evt_t* evt) {
     switch (gsm_evt_get_type(evt)) {
         case GSM_EVT_INIT_FINISH: {

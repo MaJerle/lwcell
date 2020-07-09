@@ -47,16 +47,16 @@ extern "C" {
  * \{
  */
 
-gsmr_t      gsm_sms_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-gsmr_t      gsm_sms_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_sms_enable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_sms_disable(const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-gsmr_t      gsm_sms_send(const char* num, const char* text, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-gsmr_t      gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-gsmr_t      gsm_sms_delete(gsm_mem_t mem, size_t pos, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-gsmr_t      gsm_sms_delete_all(gsm_sms_status_t status, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-gsmr_t      gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwgsmr_t      gsm_sms_send(const char* num, const char* text, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_sms_read(gsm_mem_t mem, size_t pos, gsm_sms_entry_t* entry, uint8_t update, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_sms_delete(gsm_mem_t mem, size_t pos, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_sms_delete_all(gsm_sms_status_t status, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_sms_list(gsm_mem_t mem, gsm_sms_status_t stat, gsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
                          const uint32_t blocking);
-gsmr_t      gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_sms_set_preferred_storage(gsm_mem_t mem1, gsm_mem_t mem2, gsm_mem_t mem3, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

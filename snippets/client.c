@@ -6,7 +6,7 @@
 #define CONN_HOST           "example.com"
 #define CONN_PORT           80
 
-static gsmr_t   conn_callback_func(gsm_evt_t* evt);
+static lwgsmr_t   conn_callback_func(gsm_evt_t* evt);
 
 /**
  * \brief           Request data for connection
@@ -23,7 +23,7 @@ uint8_t req_data[] = ""
  */
 void
 client_connect(void) {
-    gsmr_t res;
+    lwgsmr_t res;
 
     /* Attach to GSM network */
     gsm_network_request_attach();
@@ -39,12 +39,12 @@ client_connect(void) {
 /**
  * \brief           Event callback function for connection-only
  * \param[in]       evt: Event information with data
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
+static lwgsmr_t
 conn_callback_func(gsm_evt_t* evt) {
     gsm_conn_p conn;
-    gsmr_t res;
+    lwgsmr_t res;
     uint8_t conn_num;
 
     conn = gsm_conn_get_from_evt(evt);          /* Get connection handle from event */
@@ -73,7 +73,7 @@ conn_callback_func(gsm_evt_t* evt) {
             break;
         }
         case GSM_EVT_CONN_SEND: {               /* Data send event */
-            gsmr_t res = gsm_evt_conn_send_get_result(evt);
+            lwgsmr_t res = gsm_evt_conn_send_get_result(evt);
             if (res == gsmOK) {
                 printf("Data sent successfully on connection %d...waiting to receive data from remote side...\r\n", (int)conn_num);
             } else {

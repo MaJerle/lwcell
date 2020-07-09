@@ -149,11 +149,11 @@ typedef struct {
         } disconnect;                           /*!< Event for disconnecting from server */
         struct {
             void* arg;                          /*!< User argument for callback function */
-            gsmr_t res;                         /*!< Rgsmonse status */
+            lwgsmr_t res;                         /*!< Rgsmonse status */
         } sub_unsub_scribed;                    /*!< Event for (un)subscribe to/from topics */
         struct {
             void* arg;                          /*!< User argument for callback function */
-            gsmr_t res;                         /*!< Rgsmonse status */
+            lwgsmr_t res;                         /*!< Rgsmonse status */
         } publish;                              /*!< Published event */
         struct {
             const uint8_t* topic;               /*!< Pointer to topic identifier */
@@ -176,14 +176,14 @@ typedef void        (*gsm_mqtt_evt_fn)(gsm_mqtt_client_p client, gsm_mqtt_evt_t*
 gsm_mqtt_client_p   gsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len);
 void                gsm_mqtt_client_delete(gsm_mqtt_client_p client);
 
-gsmr_t              gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t port, gsm_mqtt_evt_fn evt_fn, const gsm_mqtt_client_info_t* info);
-gsmr_t              gsm_mqtt_client_disconnect(gsm_mqtt_client_p client);
+lwgsmr_t              gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t port, gsm_mqtt_evt_fn evt_fn, const gsm_mqtt_client_info_t* info);
+lwgsmr_t              gsm_mqtt_client_disconnect(gsm_mqtt_client_p client);
 uint8_t             gsm_mqtt_client_is_connected(gsm_mqtt_client_p client);
 
-gsmr_t              gsm_mqtt_client_subscribe(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void* arg);
-gsmr_t              gsm_mqtt_client_unsubscribe(gsm_mqtt_client_p client, const char* topic, void* arg);
+lwgsmr_t              gsm_mqtt_client_subscribe(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void* arg);
+lwgsmr_t              gsm_mqtt_client_unsubscribe(gsm_mqtt_client_p client, const char* topic, void* arg);
 
-gsmr_t              gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void* payload, uint16_t len, gsm_mqtt_qos_t qos, uint8_t retain, void* arg);
+lwgsmr_t              gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void* payload, uint16_t len, gsm_mqtt_qos_t qos, uint8_t retain, void* arg);
 
 void*               gsm_mqtt_client_get_arg(gsm_mqtt_client_p client);
 void                gsm_mqtt_client_set_arg(gsm_mqtt_client_p client, void* arg);

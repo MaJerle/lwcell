@@ -50,7 +50,7 @@ struct gsm_mqtt_client_api {
     gsm_sys_mutex_t mutex;                      /*!< Mutex handle */
     uint8_t release_sem;                        /*!< Set to `1` to release semaphore */
     gsm_mqtt_conn_status_t connect_resp;        /*!< Response when connecting to server */
-    gsmr_t sub_pub_resp;                        /*!< Subscribe/Unsubscribe/Publish response */
+    lwgsmr_t sub_pub_resp;                        /*!< Subscribe/Unsubscribe/Publish response */
 } gsm_mqtt_client_api_t;
 
 /**
@@ -334,11 +334,11 @@ gsm_mqtt_client_api_connect(gsm_mqtt_client_api_p client, const char* host,
 /**
  * \brief           Close MQTT connection
  * \param[in]       client: MQTT API client handle
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_api_close(gsm_mqtt_client_api_p client) {
-    gsmr_t res = gsmERR;
+    lwgsmr_t res = gsmERR;
 
     GSM_ASSERT("client != NULL", client != NULL);
 
@@ -363,12 +363,12 @@ gsm_mqtt_client_api_close(gsm_mqtt_client_api_p client) {
  * \param[in]       client: MQTT API client handle
  * \param[in]       topic: Topic to subscribe on
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref gsm_mqtt_qos_t
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_api_subscribe(gsm_mqtt_client_api_p client, const char* topic,
                               gsm_mqtt_qos_t qos) {
-    gsmr_t res = gsmERR;
+    lwgsmr_t res = gsmERR;
 
     GSM_ASSERT("client != NULL", client != NULL);
     GSM_ASSERT("topic != NULL", topic != NULL);
@@ -394,11 +394,11 @@ gsm_mqtt_client_api_subscribe(gsm_mqtt_client_api_p client, const char* topic,
  * \brief           Unsubscribe from topic
  * \param[in]       client: MQTT API client handle
  * \param[in]       topic: Topic to unsubscribe from
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_api_unsubscribe(gsm_mqtt_client_api_p client, const char* topic) {
-    gsmr_t res = gsmERR;
+    lwgsmr_t res = gsmERR;
 
     GSM_ASSERT("client != NULL", client != NULL);
     GSM_ASSERT("topic != NULL", topic != NULL);
@@ -428,12 +428,12 @@ gsm_mqtt_client_api_unsubscribe(gsm_mqtt_client_api_p client, const char* topic)
  * \param[in]       btw: Number of bytes to send for data parameter
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref gsm_mqtt_qos_t
  * \param[in]       retain: Set to `1` for retain flag, `0` otherwise
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_api_publish(gsm_mqtt_client_api_p client, const char* topic, const void* data,
                             size_t btw, gsm_mqtt_qos_t qos, uint8_t retain) {
-    gsmr_t res = gsmERR;
+    lwgsmr_t res = gsmERR;
 
     GSM_ASSERT("client != NULL", client != NULL);
     GSM_ASSERT("topic != NULL", topic != NULL);
@@ -486,7 +486,7 @@ gsm_mqtt_client_api_is_connected(gsm_mqtt_client_api_p client) {
  * \param[in]       timeout: Maximal time to wait before function returns timeout
  * \return          \ref gsmOK on success, \ref gsmCLOSED if MQTT is closed, \ref gsmTIMEOUT on timeout
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_api_receive(gsm_mqtt_client_api_p client, gsm_mqtt_client_api_buf_p* p,
                             uint32_t timeout) {
     GSM_ASSERT("client != NULL", client != NULL);

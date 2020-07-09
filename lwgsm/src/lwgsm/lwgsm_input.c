@@ -46,9 +46,9 @@ static uint32_t gsm_recv_calls;
  * \note            \ref GSM_CFG_INPUT_USE_PROCESS must be disabled to use this function
  * \param[in]       data: Pointer to data to write
  * \param[in]       len: Number of data elements in units of bytes
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_input(const void* data, size_t len) {
     if (!gsm.status.f.initialized || gsm.buff.buff == NULL) {
         return gsmERR;
@@ -73,11 +73,11 @@ gsm_input(const void* data, size_t len) {
  *
  * \param[in]       data: Pointer to received data to be processed
  * \param[in]       len: Length of data to process in units of bytes
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_input_process(const void* data, size_t len) {
-    gsmr_t res;
+    lwgsmr_t res;
 
     if (!gsm.status.f.initialized) {
         return gsmERR;

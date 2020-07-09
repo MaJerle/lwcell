@@ -75,7 +75,7 @@ typedef struct gsm_mqtt_client {
 #define GSM_CFG_DBG_MQTT_STATE                  (GSM_CFG_DBG_MQTT | GSM_DBG_TYPE_STATE)
 #define GSM_CFG_DBG_MQTT_TRACE_WARNING          (GSM_CFG_DBG_MQTT | GSM_DBG_TYPE_TRACE | GSM_DBG_LVL_WARNING)
 
-static gsmr_t   mqtt_conn_cb(gsm_evt_t* evt);
+static lwgsmr_t   mqtt_conn_cb(gsm_evt_t* evt);
 static void     send_data(gsm_mqtt_client_p client);
 
 /**
@@ -417,7 +417,7 @@ send_data(gsm_mqtt_client_p client) {
 
     len = gsm_buff_get_linear_block_read_length(&client->tx_buff);  /* Get length of linear memory */
     if (len > 0) {                                  /* Anything to send? */
-        gsmr_t res;
+        lwgsmr_t res;
         addr = gsm_buff_get_linear_block_read_address(&client->tx_buff);/* Get address of linear memory */
         if ((res = gsm_conn_send(client->conn, addr, len, NULL, 0)) == gsmOK) {
             client->written_total += len;       /* Increase number of bytes written to queue */
@@ -440,11 +440,11 @@ send_data(gsm_mqtt_client_p client) {
 /**
  * \brief           Close a MQTT connection with server
  * \param[in]       client: MQTT client
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-static gsmr_t
+static lwgsmr_t
 mqtt_close(gsm_mqtt_client_p client) {
-    gsmr_t res = gsmERR;
+    lwgsmr_t res = gsmERR;
     if (client->conn_state != GSM_MQTT_CONN_DISCONNECTED
         && client->conn_state != GSM_MQTT_CONN_DISCONNECTING) {
 
@@ -972,7 +972,7 @@ mqtt_poll_cb(gsm_mqtt_client_p client) {
  * \return          `1` on success, `0` otherwise
  */
 static uint8_t
-mqtt_closed_cb(gsm_mqtt_client_p client, gsmr_t res, uint8_t forced) {
+mqtt_closed_cb(gsm_mqtt_client_p client, lwgsmr_t res, uint8_t forced) {
     gsm_mqtt_state_t state = client->conn_state;
     gsm_mqtt_request_t* request;
 
@@ -1008,9 +1008,9 @@ mqtt_closed_cb(gsm_mqtt_client_p client, gsmr_t res, uint8_t forced) {
 /**
  * \brief           Connection callback
  * \param[in]       evt: Callback parameters
- * \result          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \result          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-static gsmr_t
+static lwgsmr_t
 mqtt_conn_cb(gsm_evt_t* evt) {
     gsm_conn_p conn;
     gsm_mqtt_client_p client = NULL;
@@ -1137,12 +1137,12 @@ gsm_mqtt_client_delete(gsm_mqtt_client_p client) {
  * \param[in]       port: Host port number
  * \param[in]       evt_fn: Callback function for all events on this MQTT client
  * \param[in]       info: Information structure for connection
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t port,
                         gsm_mqtt_evt_fn evt_fn, const gsm_mqtt_client_info_t* info) {
-    gsmr_t res = gsmERR;
+    lwgsmr_t res = gsmERR;
 
     GSM_ASSERT("client != NULL", client != NULL);   /* t input parameters */
     GSM_ASSERT("host != NULL", host != NULL);
@@ -1168,11 +1168,11 @@ gsm_mqtt_client_connect(gsm_mqtt_client_p client, const char* host, gsm_port_t p
 /**
  * \brief           Disconnect from MQTT server
  * \param[in]       client: MQTT client
- * \return          \ref gsmOK if request sent to queue or member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK if request sent to queue or member of \ref lwgsmr_t otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_disconnect(gsm_mqtt_client_p client) {
-    gsmr_t res = gsmERR;
+    lwgsmr_t res = gsmERR;
 
     gsm_core_lock();
     if (client->conn_state != GSM_MQTT_CONN_DISCONNECTED
@@ -1189,9 +1189,9 @@ gsm_mqtt_client_disconnect(gsm_mqtt_client_p client) {
  * \param[in]       topic: Topic name to subscribe to
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref gsm_mqtt_qos_t
  * \param[in]       arg: User custom argument used in callback
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_subscribe(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_qos_t qos, void* arg) {
     return sub_unsub(client, topic, qos, arg, 1) == 1 ? gsmOK : gsmERR;  /* Subscribe to topic */
 }
@@ -1201,9 +1201,9 @@ gsm_mqtt_client_subscribe(gsm_mqtt_client_p client, const char* topic, gsm_mqtt_
  * \param[in]       client: MQTT client
  * \param[in]       topic: Topic name to unsubscribe from
  * \param[in]       arg: User custom argument used in callback
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_unsubscribe(gsm_mqtt_client_p client, const char* topic, void* arg) {
     return sub_unsub(client, topic, (gsm_mqtt_qos_t)0, arg, 0) == 1 ? gsmOK : gsmERR;    /* Unsubscribe from topic */
 }
@@ -1217,12 +1217,12 @@ gsm_mqtt_client_unsubscribe(gsm_mqtt_client_p client, const char* topic, void* a
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref gsm_mqtt_qos_t enumeration
  * \param[in]       retain: Retian parameter value
  * \param[in]       arg: User custom argument used in callback
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_mqtt_client_publish(gsm_mqtt_client_p client, const char* topic, const void* payload,
                         uint16_t payload_len, gsm_mqtt_qos_t qos, uint8_t retain, void* arg) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
     gsm_mqtt_request_t* request = NULL;
     uint32_t rem_len, raw_len;
     uint16_t len_topic, pkt_id;

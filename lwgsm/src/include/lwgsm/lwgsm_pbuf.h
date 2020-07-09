@@ -51,12 +51,12 @@ gsm_pbuf_p      gsm_pbuf_new(size_t len);
 size_t          gsm_pbuf_free(gsm_pbuf_p pbuf);
 void*           gsm_pbuf_data(const gsm_pbuf_p pbuf);
 size_t          gsm_pbuf_length(const gsm_pbuf_p pbuf, uint8_t tot);
-gsmr_t          gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
+lwgsmr_t          gsm_pbuf_take(gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
 size_t          gsm_pbuf_copy(gsm_pbuf_p pbuf, void* data, size_t len, size_t offset);
 
-gsmr_t          gsm_pbuf_cat(gsm_pbuf_p head, const gsm_pbuf_p tail);
-gsmr_t          gsm_pbuf_chain(gsm_pbuf_p head, gsm_pbuf_p tail);
-gsmr_t          gsm_pbuf_ref(gsm_pbuf_p pbuf);
+lwgsmr_t          gsm_pbuf_cat(gsm_pbuf_p head, const gsm_pbuf_p tail);
+lwgsmr_t          gsm_pbuf_chain(gsm_pbuf_p head, gsm_pbuf_p tail);
+lwgsmr_t          gsm_pbuf_ref(gsm_pbuf_p pbuf);
 
 uint8_t         gsm_pbuf_get_at(const gsm_pbuf_p pbuf, size_t pos, uint8_t* el);
 size_t          gsm_pbuf_memcmp(const gsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);

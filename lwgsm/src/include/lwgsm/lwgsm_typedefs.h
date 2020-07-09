@@ -79,7 +79,7 @@ typedef enum {
     gsmERRWIFINOTCONNECTED,                     /*!< Wifi not connected to access point */
     gsmERRNODEVICE,                             /*!< Device is not present */
     gsmERRBLOCKING,                             /*!< Blocking mode command is not allowed */
-} gsmr_t;
+} lwgsmr_t;
 
 /**
  * \ingroup         GSM_TYPEDEFS
@@ -358,9 +358,9 @@ typedef struct gsm_pbuf* gsm_pbuf_p;
  * \ingroup         GSM_EVT
  * \brief           Event function prototype
  * \param[in]       evt: Callback event data
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
  */
-typedef gsmr_t  (*gsm_evt_fn)(struct gsm_evt* evt);
+typedef lwgsmr_t  (*gsm_evt_fn)(struct gsm_evt* evt);
 
 /**
  * \ingroup         GSM_EVT
@@ -433,10 +433,10 @@ typedef struct gsm_evt {
     gsm_evt_type_t type;                        /*!< Callback type */
     union {
         struct {
-            gsmr_t res;                         /*!< Reset operation result */
+            lwgsmr_t res;                         /*!< Reset operation result */
         } reset;                                /*!< Reset sequence finish. Use with \ref GSM_EVT_RESET event */
         struct {
-            gsmr_t res;                         /*!< Restore operation result */
+            lwgsmr_t res;                         /*!< Restore operation result */
         } restore;                              /*!< Restore sequence finish. Use with \ref GSM_EVT_RESTORE event */
 
         struct {
@@ -448,7 +448,7 @@ typedef struct gsm_evt {
         struct {
             gsm_operator_t* ops;                /*!< Pointer to operators */
             size_t opf;                         /*!< Number of operators found */
-            gsmr_t res;                         /*!< Scan operation result */
+            lwgsmr_t res;                         /*!< Scan operation result */
         } operator_scan;                        /*!< Operator scan event. Use with \ref GSM_EVT_OPERATOR_SCAN event */
 
         struct {
@@ -463,20 +463,20 @@ typedef struct gsm_evt {
         struct {
             gsm_conn_p conn;                    /*!< Connection where data were sent */
             size_t sent;                        /*!< Number of bytes sent on connection */
-            gsmr_t res;                         /*!< Send data result */
+            lwgsmr_t res;                         /*!< Send data result */
         } conn_data_send;                       /*!< Data successfully sent. Use with \ref GSM_EVT_CONN_SEND event */
         struct {
             const char* host;                   /*!< Host to use for connection */
             gsm_port_t port;                    /*!< Remote port used for connection */
             gsm_conn_type_t type;               /*!< Connection type */
             void* arg;                          /*!< Connection argument used on connection */
-            gsmr_t err;                         /*!< Error value */
+            lwgsmr_t err;                         /*!< Error value */
         } conn_error;                           /*!< Client connection start error. Use with \ref GSM_EVT_CONN_ERROR event */
         struct {
             gsm_conn_p conn;                    /*!< Pointer to connection */
             uint8_t client;                     /*!< Set to `1` if connection is/was client mode */
             uint8_t forced;                     /*!< Set to `1` if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
-            gsmr_t res;                         /*!< Result of close event. Set to \ref gsmOK on success. */
+            lwgsmr_t res;                         /*!< Result of close event. Set to \ref gsmOK on success. */
         } conn_active_close;                    /*!< Process active and closed statuses at the same time. Use with \ref GSM_EVT_CONN_ACTIVE or \ref GSM_EVT_CONN_CLOSE events */
         struct {
             gsm_conn_p conn;                    /*!< Set connection pointer */
@@ -485,11 +485,11 @@ typedef struct gsm_evt {
 
 #if GSM_CFG_SMS || __DOXYGEN__
         struct {
-            gsmr_t status;                      /*!< Enable status */
+            lwgsmr_t status;                      /*!< Enable status */
         } sms_enable;                           /*!< SMS enable event. Use with \ref GSM_EVT_SMS_ENABLE event */
         struct {
             size_t pos;                         /*!< Position in memory */
-            gsmr_t res;                         /*!< SMS send result information */
+            lwgsmr_t res;                         /*!< SMS send result information */
         } sms_send;                             /*!< SMS sent info. Use with \ref GSM_EVT_SMS_SEND event */
         struct {
             gsm_mem_t mem;                      /*!< Memory of received message */
@@ -497,23 +497,23 @@ typedef struct gsm_evt {
         } sms_recv;                             /*!< SMS received info. Use with \ref GSM_EVT_SMS_RECV event */
         struct {
             gsm_sms_entry_t* entry;             /*!< SMS entry */
-            gsmr_t res;                         /*!< SMS read result information */
+            lwgsmr_t res;                         /*!< SMS read result information */
         } sms_read;                             /*!< SMS read. Use with \ref GSM_EVT_SMS_READ event */
         struct {
             gsm_mem_t mem;                      /*!< Memory of deleted message */
             size_t pos;                         /*!< Deleted position in memory for sent SMS */
-            gsmr_t res;                         /*!< Operation success */
+            lwgsmr_t res;                         /*!< Operation success */
         } sms_delete;                           /*!< SMS delete. Use with \ref GSM_EVT_SMS_DELETE event */
         struct {
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_sms_entry_t* entries;           /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
-            gsmr_t res;                         /*!< Result on command */
+            lwgsmr_t res;                         /*!< Result on command */
         } sms_list;                             /*!< SMS list. Use with \ref GSM_EVT_SMS_LIST event */
 #endif /* GSM_CFG_SMS || __DOXYGEN__ */
 #if GSM_CFG_CALL || __DOXYGEN__
         struct {
-            gsmr_t res;                         /*!< Enable status */
+            lwgsmr_t res;                         /*!< Enable status */
         } call_enable;                          /*!< Call enable event. Use with \ref GSM_EVT_CALL_ENABLE event */
         struct {
             const gsm_call_t* call;             /*!< Call information */
@@ -521,20 +521,20 @@ typedef struct gsm_evt {
 #endif /* GSM_CFG_CALL || __DOXYGEN__ */
 #if GSM_CFG_PHONEBOOK || __DOXYGEN__
         struct {
-            gsmr_t res;                         /*!< Enable status */
+            lwgsmr_t res;                         /*!< Enable status */
         } pb_enable;                            /*!< Phonebook enable event. Use with \ref GSM_EVT_PB_ENABLE event */
         struct {
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
-            gsmr_t res;                         /*!< Operation success */
+            lwgsmr_t res;                         /*!< Operation success */
         } pb_list;                              /*!< Phonebok list. Use with \ref GSM_EVT_PB_LIST event */
         struct {
             const char* search;                 /*!< Search string */
             gsm_mem_t mem;                      /*!< Memory used for scan */
             gsm_pb_entry_t* entries;            /*!< Pointer to entries */
             size_t size;                        /*!< Number of valid entries */
-            gsmr_t res;                         /*!< Operation success */
+            lwgsmr_t res;                         /*!< Operation success */
         } pb_search;                            /*!< Phonebok search list. Use with \ref GSM_EVT_PB_SEARCH event */
 #endif /* GSM_CFG_PHONEBOOK || __DOXYGEN__ */
     } evt;                                      /*!< Callback event union */
@@ -617,10 +617,10 @@ typedef struct {
 /**
  * \ingroup         GSM_TYPEDEFS
  * \brief           Function declaration for API function command event callback function
- * \param[in]       res: Operation result, member of \ref gsmr_t enumeration
+ * \param[in]       res: Operation result, member of \ref lwgsmr_t enumeration
  * \param[in]       arg: Custom user argument
  */
-typedef void (*gsm_api_cmd_evt_fn) (gsmr_t res, void* arg);
+typedef void (*gsm_api_cmd_evt_fn) (lwgsmr_t res, void* arg);
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,6 @@
 size_t rem_len;
 gsm_conn_p conn;
-gsmr_t res;
+lwgsmr_t res;
 
 /* ... other tasks to make sure connection is established */
 

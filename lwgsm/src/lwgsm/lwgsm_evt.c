@@ -38,11 +38,11 @@
 /**
  * \brief           Register callback function for global (non-connection based) events
  * \param[in]       fn: Callback function to call on specific event
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_register(gsm_evt_fn fn) {
-    gsmr_t res = gsmOK;
+    lwgsmr_t res = gsmOK;
     gsm_evt_func_t* func, *newFunc;
 
     GSM_ASSERT("fn != NULL", fn != NULL);
@@ -82,9 +82,9 @@ gsm_evt_register(gsm_evt_fn fn) {
  * \brief           Unregister callback function for global (non-connection based) events
  * \note            Function must be first registered using \ref gsm_evt_register
  * \param[in]       fn: Callback function to remove from event list
- * \return          \ref gsmOK on success, member of \ref gsmr_t enumeration otherwise
+ * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_unregister(gsm_evt_fn fn) {
     gsm_evt_func_t* func, *prev;
     GSM_ASSERT("fn != NULL", fn != NULL);
@@ -114,9 +114,9 @@ gsm_evt_get_type(gsm_evt_t* cc) {
 /**
  * \brief           Get reset sequence operation status
  * \param[in]       cc: Event data
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_reset_get_result(gsm_evt_t* cc) {
     return cc->evt.reset.res;
 }
@@ -124,9 +124,9 @@ gsm_evt_reset_get_result(gsm_evt_t* cc) {
 /**
  * \brief           Get restore sequence operation status
  * \param[in]       cc: Event data
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_restore_get_result(gsm_evt_t* cc) {
     return cc->evt.restore.res;
 }
@@ -144,9 +144,9 @@ gsm_evt_network_operator_get_current(gsm_evt_t* cc) {
 /**
  * \brief           Get operator scan operation status
  * \param[in]       cc: Event data
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_operator_scan_get_result(gsm_evt_t* cc) {
     return cc->evt.operator_scan.res;
 }
@@ -226,9 +226,9 @@ gsm_evt_conn_send_get_length(gsm_evt_t* cc) {
 /**
  * \brief           Check if connection send was successful
  * \param[in]       cc: Event handle
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_conn_send_get_result(gsm_evt_t* cc) {
     return cc->evt.conn_data_send.res;
 }
@@ -286,9 +286,9 @@ gsm_evt_conn_close_is_forced(gsm_evt_t* cc) {
 /**
  * \brief           Get connection close event result
  * \param[in]       cc: Event handle
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_conn_close_get_result(gsm_evt_t* cc) {
     return cc->evt.conn_active_close.res;
 }
@@ -306,9 +306,9 @@ gsm_evt_conn_poll_get_conn(gsm_evt_t* cc) {
 /**
  * \brief           Get connection error type
  * \param[in]       cc: Event handle
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_conn_error_get_error(gsm_evt_t* cc) {
     return cc->evt.conn_error.err;
 }
@@ -316,7 +316,7 @@ gsm_evt_conn_error_get_error(gsm_evt_t* cc) {
 /**
  * \brief           Get connection type
  * \param[in]       cc: Event handle
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
 gsm_conn_type_t
 gsm_evt_conn_error_get_type(gsm_evt_t* cc) {
@@ -392,7 +392,7 @@ gsm_evt_sms_read_get_entry(gsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS entry
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_sms_read_get_result(gsm_evt_t* cc) {
     return cc->evt.sms_read.res;
 }
@@ -400,9 +400,9 @@ gsm_evt_sms_read_get_result(gsm_evt_t* cc) {
 /**
  * \brief           Get SMS send result status
  * \param[in]       cc: Event handle
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_sms_send_get_result(gsm_evt_t* cc) {
     return cc->evt.sms_send.res;
 }
@@ -421,9 +421,9 @@ gsm_evt_sms_send_get_pos(gsm_evt_t* cc) {
 /**
  * \brief           Get SMS delete result status
  * \param[in]       cc: Event handle
- * \return          Member of \ref gsmr_t enumeration
+ * \return          Member of \ref lwgsmr_t enumeration
  */
-gsmr_t
+lwgsmr_t
 gsm_evt_sms_delete_get_result(gsm_evt_t* cc) {
     return cc->evt.sms_delete.res;
 }

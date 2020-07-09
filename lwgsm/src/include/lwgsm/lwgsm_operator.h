@@ -47,10 +47,10 @@ extern "C" {
  * \{
  */
 
-gsmr_t      gsm_operator_get(gsm_operator_curr_t* curr, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-gsmr_t      gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_operator_get(gsm_operator_curr_t* curr, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_operator_set(gsm_operator_mode_t mode, gsm_operator_format_t format, const char* name, uint32_t num, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-gsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t      gsm_operator_scan(gsm_operator_t* ops, size_t opsl, size_t* opf, const gsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

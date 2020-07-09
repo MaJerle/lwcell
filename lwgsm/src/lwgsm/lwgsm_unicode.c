@@ -42,7 +42,7 @@
  * \retval          gsmINPROG: Function continues well but expects some more data to finish sequence
  * \retval          gsmERR: Error in UTF-8 sequence
  */
-gsmr_t
+lwgsmr_t
 gsmi_unicode_decode(gsm_unicode_t* s, uint8_t c) {
     if (s->r == 0) {                            /* Are we expecting a first character? */
         s->t = 0;                               /* Reset sequence */
