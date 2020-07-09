@@ -93,7 +93,7 @@ process_next_timeout(void) {
  * \return          Time in milliseconds required for next message
  */
 uint32_t
-gsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
+lwgsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     uint32_t wait_time;
     do {
         if (first_timeout == NULL) {            /* We have no timeouts ready? */
@@ -115,7 +115,7 @@ gsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t t
  * \param[in]       time: Time in units of milliseconds for timeout execution
  * \param[in]       fn: Callback function to call when timeout expires
  * \param[in]       arg: Pointer to user specific argument to call when timeout callback function is executed
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg) {
@@ -126,7 +126,7 @@ lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg) {
 
     to = lwgsm_mem_calloc(1, sizeof(*to));        /* Allocate memory for timeout structure */
     if (to == NULL) {
-        return gsmERR;
+        return lwgsmERR;
     }
 
     lwgsm_core_lock();
@@ -182,14 +182,14 @@ lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg) {
         }
     }
     lwgsm_core_unlock();
-    lwgsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Insert dummy value to wakeup process thread */
-    return gsmOK;
+    lwgsm_sys_mbox_putnow(&lwgsm.mbox_process, NULL);   /* Insert dummy value to wakeup process thread */
+    return lwgsmOK;
 }
 
 /**
  * \brief           Remove callback from timeout list
  * \param[in]       fn: Callback function to identify timeout to remove
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_timeout_remove(lwgsm_timeout_fn fn) {
@@ -226,5 +226,5 @@ lwgsm_timeout_remove(lwgsm_timeout_fn fn) {
         }
     }
     lwgsm_core_unlock();
-    return success ? gsmOK : gsmERR;
+    return success ? lwgsmOK : lwgsmERR;
 }

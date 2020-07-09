@@ -161,7 +161,7 @@ netconn_evt(lwgsm_evt_t* evt) {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN,
                            "[NETCONN] Ignoring more data for receive!\r\n");
                 lwgsm_pbuf_free(pbuf);            /* Free pbuf */
-                return gsmOKIGNOREMORE;         /* Return OK to free the memory and ignore further data */
+                return lwgsmOKIGNOREMORE;         /* Return OK to free the memory and ignore further data */
             }
             ++nc->rcv_packets;                  /* Increase number of received packets */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE,
@@ -185,15 +185,15 @@ netconn_evt(lwgsm_evt_t* evt) {
             break;
         }
         default:
-            return gsmERR;
+            return lwgsmERR;
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
  * \brief           Global event callback function
  * \param[in]       evt: Callback information and data
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 lwgsm_evt(lwgsm_evt_t* evt) {
@@ -201,7 +201,7 @@ lwgsm_evt(lwgsm_evt_t* evt) {
         default:
             break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -254,7 +254,7 @@ free_ret:
 /**
  * \brief           Delete netconn connection
  * \param[in]       nc: Netconn handle
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_netconn_delete(lwgsm_netconn_p nc) {
@@ -280,7 +280,7 @@ lwgsm_netconn_delete(lwgsm_netconn_p nc) {
     lwgsm_core_unlock();
 
     lwgsm_mem_free_s((void**)&nc);
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -288,7 +288,7 @@ lwgsm_netconn_delete(lwgsm_netconn_p nc) {
  * \param[in]       nc: Netconn handle
  * \param[in]       host: Pointer to host, such as domain name or IP address in string format
  * \param[in]       port: Target port to use
- * \return          \ref gsmOK if successfully connected, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK if successfully connected, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port) {
@@ -315,7 +315,7 @@ lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port) {
  * \param[in]       nc: Netconn handle used to write data to
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
@@ -352,11 +352,11 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
             res = lwgsm_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
 
             lwgsm_mem_free_s((void**)&nc->buff.buff);
-            if (res != gsmOK) {
+            if (res != lwgsmOK) {
                 return res;
             }
         } else {
-            return gsmOK;                       /* Buffer is not yet full yet */
+            return lwgsmOK;                       /* Buffer is not yet full yet */
         }
     }
 
@@ -365,7 +365,7 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
         size_t rem;
         rem = btw % LWGSM_CFG_CONN_MAX_DATA_LEN;  /* Get remaining bytes for max data length */
         res = lwgsm_conn_send(nc->conn, d, btw - rem, &sent, 1);  /* Write data directly */
-        if (res != gsmOK) {
+        if (res != lwgsmOK) {
             return res;
         }
         d += sent;                              /* Advance in data pointer */
@@ -373,7 +373,7 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
     }
 
     if (btw == 0) {                             /* Sent everything? */
-        return gsmOK;
+        return lwgsmOK;
     }
 
     /* Step 3 */
@@ -390,14 +390,14 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
     } else {                                    /* Still no memory available? */
         return lwgsm_conn_send(nc->conn, data, btw, NULL, 1); /* Simply send directly blocking */
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
  * \brief           Flush buffered data on netconn \e TCP/SSL connection
  * \note            This function may only be used on \e TCP/SSL connection
  * \param[in]       nc: Netconn handle to flush data
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_netconn_flush(lwgsm_netconn_p nc) {
@@ -415,7 +415,7 @@ lwgsm_netconn_flush(lwgsm_netconn_p nc) {
         }
         lwgsm_mem_free_s((void**)&nc->buff.buff);
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -423,7 +423,7 @@ lwgsm_netconn_flush(lwgsm_netconn_p nc) {
  * \param[in]       nc: Netconn handle used to send
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw) {
@@ -442,7 +442,7 @@ lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw) {
  * \param[in]       port: Port number used to send data
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port, const void* data, size_t btw) {
@@ -458,9 +458,9 @@ lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port
  * \param[in]       nc: Netconn handle used to receive from
  * \param[in]       pbuf: Pointer to pointer to save new receive buffer to.
  *                     When function returns, user must check for valid pbuf value `pbuf != NULL`
- * \return          \ref gsmOK when new data ready,
- * \return          \ref gsmCLOSED when connection closed by remote side,
- * \return          \ref gsmTIMEOUT when receive timeout occurs
+ * \return          \ref lwgsmOK when new data ready,
+ * \return          \ref lwgsmCLOSED when connection closed by remote side,
+ * \return          \ref lwgsmTIMEOUT when receive timeout occurs
  * \return          Any other member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
@@ -475,7 +475,7 @@ lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf) {
      * or throw error for timeout notification
      */
     if (lwgsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == LWGSM_SYS_TIMEOUT) {
-        return gsmTIMEOUT;
+        return lwgsmTIMEOUT;
     }
 #else /* LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT */
     /* Forever wait for new receive packet */
@@ -485,15 +485,15 @@ lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf) {
     /* Check if connection closed */
     if ((uint8_t*)(*pbuf) == (uint8_t*)&recv_closed) {
         *pbuf = NULL;                           /* Reset pbuf */
-        return gsmCLOSED;
+        return lwgsmCLOSED;
     }
-    return gsmOK;                               /* We have data available */
+    return lwgsmOK;                               /* We have data available */
 }
 
 /**
  * \brief           Close a netconn connection
  * \param[in]       nc: Netconn handle to close
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_netconn_close(lwgsm_netconn_p nc) {
@@ -510,7 +510,7 @@ lwgsm_netconn_close(lwgsm_netconn_p nc) {
     lwgsm_conn_set_arg(conn, NULL);               /* Reset argument */
     lwgsm_conn_close(conn, 1);                    /* Close the connection */
     flush_mboxes(nc, 1);                        /* Flush message queues */
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**

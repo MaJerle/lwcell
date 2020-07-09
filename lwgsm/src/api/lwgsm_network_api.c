@@ -48,7 +48,7 @@ static uint32_t network_counter;
  * \param[in]       apn: APN domain. Set to `NULL` if not used
  * \param[in]       user: APN username. Set to `NULL` if not used
  * \param[in]       pass: APN password. Set to `NULL` if not used
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
@@ -56,17 +56,17 @@ lwgsm_network_set_credentials(const char* apn, const char* user, const char* pas
     network_user = user;
     network_pass = pass;
 
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
  * \brief           Request manager to attach to network
  * \note            This function is blocking and cannot be called from event functions
- * \return          \ref gsmOK on success (when attached), member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success (when attached), member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_network_request_attach(void) {
-    lwgsmr_t res = gsmOK;
+    lwgsmr_t res = lwgsmOK;
     uint8_t do_conn = 0;
 
     /* Check if we need to connect */
@@ -84,7 +84,7 @@ lwgsm_network_request_attach(void) {
     /* Connect to network */
     if (do_conn) {
         res = lwgsm_network_attach(network_apn, network_user, network_pass, NULL, NULL, 1);
-        if (res == gsmOK) {
+        if (res == lwgsmOK) {
             lwgsm_core_lock();
             ++network_counter;
             lwgsm_core_unlock();
@@ -100,11 +100,11 @@ lwgsm_network_request_attach(void) {
  * otherwise it will disable network access
  *
  * \note            This function is blocking and cannot be called from event functions
- * \return          \ref gsmOK on success (when attached), member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success (when attached), member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_network_request_detach(void) {
-    lwgsmr_t res = gsmOK;
+    lwgsmr_t res = lwgsmOK;
     uint8_t do_disconn = 0;
 
     /* Check if we need to disconnect */
@@ -121,7 +121,7 @@ lwgsm_network_request_detach(void) {
     /* Connect to network */
     if (do_disconn) {
         res = lwgsm_network_detach(NULL, NULL, 1);
-        if (res == gsmOK) {
+        if (res == lwgsmOK) {
             lwgsm_core_lock();
             --network_counter;
             lwgsm_core_unlock();

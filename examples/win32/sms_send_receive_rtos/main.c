@@ -46,7 +46,7 @@ main(void) {
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
-    if (lwgsm_init(lwgsm_callback_func, 1) != gsmOK) {
+    if (lwgsm_init(lwgsm_callback_func, 1) != lwgsmOK) {
         printf("Cannot initialize GSM-AT Library\r\n");
     }
 
@@ -76,7 +76,7 @@ main(void) {
 /**
  * \brief           Event callback function for GSM stack
  * \param[in]       evt: Event information with data
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 lwgsm_callback_func(lwgsm_evt_t* evt) {
@@ -93,5 +93,5 @@ lwgsm_callback_func(lwgsm_evt_t* evt) {
 
         default: break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }

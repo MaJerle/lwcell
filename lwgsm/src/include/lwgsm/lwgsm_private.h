@@ -719,7 +719,7 @@ typedef struct {
  * \{
  */
 
-extern lwgsm_t                gsm;
+extern lwgsm_t                lwgsm;
 
 extern const lwgsm_dev_mem_map_t  lwgsm_dev_mem_map[];
 extern const size_t         lwgsm_dev_mem_map_size;
@@ -727,10 +727,10 @@ extern const size_t         lwgsm_dev_mem_map_size;
 extern const lwgsm_dev_model_map_t    lwgsm_dev_model_map[];
 extern const size_t         lwgsm_dev_model_map_size;
 
-#define CMD_IS_CUR(c)       (gsm.msg != NULL && gsm.msg->cmd == (c))
-#define CMD_IS_DEF(c)       (gsm.msg != NULL && gsm.msg->cmd_def == (c))
-#define CMD_GET_CUR()       ((lwgsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd : LWGSM_CMD_IDLE)))
-#define CMD_GET_DEF()       ((lwgsm_cmd_t)(((gsm.msg != NULL) ? gsm.msg->cmd_def : LWGSM_CMD_IDLE)))
+#define CMD_IS_CUR(c)       (lwgsm.msg != NULL && lwgsm.msg->cmd == (c))
+#define CMD_IS_DEF(c)       (lwgsm.msg != NULL && lwgsm.msg->cmd_def == (c))
+#define CMD_GET_CUR()       ((lwgsm_cmd_t)(((lwgsm.msg != NULL) ? lwgsm.msg->cmd : LWGSM_CMD_IDLE)))
+#define CMD_GET_DEF()       ((lwgsm_cmd_t)(((lwgsm.msg != NULL) ? lwgsm.msg->cmd_def : LWGSM_CMD_IDLE)))
 
 #define CRLF                "\r\n"
 #define CRLF_LEN            2
@@ -741,7 +741,7 @@ extern const size_t         lwgsm_dev_model_map_size;
         LWGSM_DEBUGW(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
         LWGSM_DEBUGW(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", sizeof(*(name))); \
         if ((name) == NULL) {                           \
-            return gsmERRMEM;                           \
+            return lwgsmERRMEM;                           \
         }                                               \
         LWGSM_MEMSET((name), 0x00, sizeof(*(name)));      \
         (name)->is_blocking = LWGSM_U8((blocking) > 0);   \
@@ -772,23 +772,23 @@ extern const size_t         lwgsm_dev_model_map_size;
 
 #define LWGSM_PORT2NUM(port)                  ((uint32_t)(port))
 
-const char* gsmi_dbg_msg_to_string(lwgsm_cmd_t cmd);
-lwgsmr_t      gsmi_process(const void* data, size_t len);
-lwgsmr_t      gsmi_process_buffer(void);
-lwgsmr_t      gsmi_initiate_cmd(lwgsm_msg_t* msg);
-uint8_t     gsmi_is_valid_conn_ptr(lwgsm_conn_p conn);
-lwgsmr_t      gsmi_send_cb(lwgsm_evt_type_t type);
-lwgsmr_t      gsmi_send_conn_cb(lwgsm_conn_t* conn, lwgsm_evt_fn cb);
-void        gsmi_conn_init(void);
-lwgsmr_t      gsmi_send_msg_to_producer_mbox(lwgsm_msg_t* msg, lwgsmr_t (*process_fn)(lwgsm_msg_t*), uint32_t max_block_time);
-uint32_t    gsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout);
-uint8_t     gsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
-void        gsmi_conn_start_timeout(lwgsm_conn_p conn);
+const char* lwgsmi_dbg_msg_to_string(lwgsm_cmd_t cmd);
+lwgsmr_t      lwgsmi_process(const void* data, size_t len);
+lwgsmr_t      lwgsmi_process_buffer(void);
+lwgsmr_t      lwgsmi_initiate_cmd(lwgsm_msg_t* msg);
+uint8_t     lwgsmi_is_valid_conn_ptr(lwgsm_conn_p conn);
+lwgsmr_t      lwgsmi_send_cb(lwgsm_evt_type_t type);
+lwgsmr_t      lwgsmi_send_conn_cb(lwgsm_conn_t* conn, lwgsm_evt_fn cb);
+void        lwgsmi_conn_init(void);
+lwgsmr_t      lwgsmi_send_msg_to_producer_mbox(lwgsm_msg_t* msg, lwgsmr_t (*process_fn)(lwgsm_msg_t*), uint32_t max_block_time);
+uint32_t    lwgsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout);
+uint8_t     lwgsmi_conn_closed_process(uint8_t conn_num, uint8_t forced);
+void        lwgsmi_conn_start_timeout(lwgsm_conn_p conn);
 
-lwgsmr_t      gsmi_get_sim_info(const uint32_t blocking);
+lwgsmr_t      lwgsmi_get_sim_info(const uint32_t blocking);
 
-void        gsmi_reset_everything(uint8_t forced);
-void        gsmi_process_events_for_timeout_or_error(lwgsm_msg_t* msg, lwgsmr_t err);
+void        lwgsmi_reset_everything(uint8_t forced);
+void        lwgsmi_process_events_for_timeout_or_error(lwgsm_msg_t* msg, lwgsmr_t err);
 
 /**
  * \}

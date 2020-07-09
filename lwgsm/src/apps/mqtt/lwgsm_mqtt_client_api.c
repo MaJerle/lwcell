@@ -319,7 +319,7 @@ lwgsm_mqtt_client_api_connect(lwgsm_mqtt_client_api_p client, const char* host,
     client->connect_resp = LWGSM_MQTT_CONN_STATUS_TCP_FAILED;
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
     client->release_sem = 1;
-    if (lwgsm_mqtt_client_connect(client->mc, host, port, mqtt_evt, info) == gsmOK) {
+    if (lwgsm_mqtt_client_connect(client->mc, host, port, mqtt_evt, info) == lwgsmOK) {
         lwgsm_sys_sem_wait(&client->sync_sem, 0);
     } else {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_API_TRACE_WARNING,
@@ -334,19 +334,19 @@ lwgsm_mqtt_client_api_connect(lwgsm_mqtt_client_api_p client, const char* host,
 /**
  * \brief           Close MQTT connection
  * \param[in]       client: MQTT API client handle
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_api_close(lwgsm_mqtt_client_api_p client) {
-    lwgsmr_t res = gsmERR;
+    lwgsmr_t res = lwgsmERR;
 
     LWGSM_ASSERT("client != NULL", client != NULL);
 
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
     client->release_sem = 1;
-    if (lwgsm_mqtt_client_disconnect(client->mc) == gsmOK) {
-        res = gsmOK;
+    if (lwgsm_mqtt_client_disconnect(client->mc) == lwgsmOK) {
+        res = lwgsmOK;
         lwgsm_sys_sem_wait(&client->sync_sem, 0);
     } else {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_API_TRACE_WARNING,
@@ -363,12 +363,12 @@ lwgsm_mqtt_client_api_close(lwgsm_mqtt_client_api_p client) {
  * \param[in]       client: MQTT API client handle
  * \param[in]       topic: Topic to subscribe on
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref lwgsm_mqtt_qos_t
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topic,
                               lwgsm_mqtt_qos_t qos) {
-    lwgsmr_t res = gsmERR;
+    lwgsmr_t res = lwgsmERR;
 
     LWGSM_ASSERT("client != NULL", client != NULL);
     LWGSM_ASSERT("topic != NULL", topic != NULL);
@@ -376,7 +376,7 @@ lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topi
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
     client->release_sem = 1;
-    if (lwgsm_mqtt_client_subscribe(client->mc, topic, qos, NULL) == gsmOK) {
+    if (lwgsm_mqtt_client_subscribe(client->mc, topic, qos, NULL) == lwgsmOK) {
         lwgsm_sys_sem_wait(&client->sync_sem, 0);
         res = client->sub_pub_resp;
     } else {
@@ -394,11 +394,11 @@ lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topi
  * \brief           Unsubscribe from topic
  * \param[in]       client: MQTT API client handle
  * \param[in]       topic: Topic to unsubscribe from
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* topic) {
-    lwgsmr_t res = gsmERR;
+    lwgsmr_t res = lwgsmERR;
 
     LWGSM_ASSERT("client != NULL", client != NULL);
     LWGSM_ASSERT("topic != NULL", topic != NULL);
@@ -406,7 +406,7 @@ lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* to
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
     client->release_sem = 1;
-    if (lwgsm_mqtt_client_unsubscribe(client->mc, topic, NULL) == gsmOK) {
+    if (lwgsm_mqtt_client_unsubscribe(client->mc, topic, NULL) == lwgsmOK) {
         lwgsm_sys_sem_wait(&client->sync_sem, 0);
         res = client->sub_pub_resp;
     } else {
@@ -428,12 +428,12 @@ lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* to
  * \param[in]       btw: Number of bytes to send for data parameter
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref lwgsm_mqtt_qos_t
  * \param[in]       retain: Set to `1` for retain flag, `0` otherwise
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_api_publish(lwgsm_mqtt_client_api_p client, const char* topic, const void* data,
                             size_t btw, lwgsm_mqtt_qos_t qos, uint8_t retain) {
-    lwgsmr_t res = gsmERR;
+    lwgsmr_t res = lwgsmERR;
 
     LWGSM_ASSERT("client != NULL", client != NULL);
     LWGSM_ASSERT("topic != NULL", topic != NULL);
@@ -443,7 +443,7 @@ lwgsm_mqtt_client_api_publish(lwgsm_mqtt_client_api_p client, const char* topic,
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
     client->release_sem = 1;
-    if (lwgsm_mqtt_client_publish(client->mc, topic, data, LWGSM_U16(btw), qos, retain, NULL) == gsmOK) {
+    if (lwgsm_mqtt_client_publish(client->mc, topic, data, LWGSM_U16(btw), qos, retain, NULL) == lwgsmOK) {
         lwgsm_sys_sem_wait(&client->sync_sem, 0);
         res = client->sub_pub_resp;
     } else {
@@ -484,7 +484,7 @@ lwgsm_mqtt_client_api_is_connected(lwgsm_mqtt_client_api_p client) {
  * \param[in]       client: MQTT API client handle
  * \param[in]       p: Pointer to output buffer
  * \param[in]       timeout: Maximal time to wait before function returns timeout
- * \return          \ref gsmOK on success, \ref gsmCLOSED if MQTT is closed, \ref gsmTIMEOUT on timeout
+ * \return          \ref lwgsmOK on success, \ref lwgsmCLOSED if MQTT is closed, \ref lwgsmTIMEOUT on timeout
  */
 lwgsmr_t
 lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_api_buf_p* p,
@@ -497,10 +497,10 @@ lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_
     /* Get new entry from mbox */
     if (timeout == 0) {
         if (!lwgsm_sys_mbox_getnow(&client->rcv_mbox, (void**)p)) {
-            return gsmTIMEOUT;
+            return lwgsmTIMEOUT;
         }
     } else if (lwgsm_sys_mbox_get(&client->rcv_mbox, (void**)p, timeout) == LWGSM_SYS_TIMEOUT) {
-        return gsmTIMEOUT;
+        return lwgsmTIMEOUT;
     }
 
     /* Check for MQTT closed event */
@@ -509,9 +509,9 @@ lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_
                    "[MQTT API] Closed event received from queue\r\n");
 
         *p = NULL;
-        return gsmCLOSED;
+        return lwgsmCLOSED;
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**

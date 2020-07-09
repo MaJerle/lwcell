@@ -42,32 +42,32 @@
 #define LWGSM_SMS_RECEIVE_IDX             2   /*!< Receive index for memory array */
 
 #if !__DOXYGEN__
-#define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
-#define CHECK_READY()                   if (!(check_ready() == gsmOK)) { return gsmERR; }
+#define CHECK_ENABLED()                 if (!(check_enabled() == lwgsmOK)) { return lwgsmERRNOTENABLED; }
+#define CHECK_READY()                   if (!(check_ready() == lwgsmOK)) { return lwgsmERR; }
 #endif /* !__DOXYGEN__ */
 
 /**
  * \brief           Check if sms is enabled
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 check_enabled(void) {
     lwgsmr_t res;
     lwgsm_core_lock();
-    res = gsm.m.sms.enabled ? gsmOK : gsmERR;
+    res = lwgsm.m.sms.enabled ? lwgsmOK : lwgsmERR;
     lwgsm_core_unlock();
     return res;
 }
 
 /**
  * \brief           Check if SMS is available
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 static lwgsmr_t
 check_ready(void) {
     lwgsmr_t res;
     lwgsm_core_lock();
-    res = gsm.m.sms.ready ? gsmOK : gsmERR;
+    res = lwgsm.m.sms.ready ? lwgsmOK : lwgsmERR;
     lwgsm_core_unlock();
     return res;
 }
@@ -76,15 +76,15 @@ check_ready(void) {
  * \brief           Check if input memory is available in modem
  * \param[in]       mem: Memory to test
  * \param[in]       can_curr: Flag indicates if \ref LWGSM_MEM_CURRENT option can be used
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 check_sms_mem(lwgsm_mem_t mem, uint8_t can_curr) {
-    lwgsmr_t res = gsmERRMEM;
+    lwgsmr_t res = lwgsmERRMEM;
     lwgsm_core_lock();
-    if ((mem < LWGSM_MEM_END && gsm.m.sms.mem[LWGSM_SMS_OPERATION_IDX].mem_available & (1 << (uint32_t)mem)) ||
+    if ((mem < LWGSM_MEM_END && lwgsm.m.sms.mem[LWGSM_SMS_OPERATION_IDX].mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == LWGSM_MEM_CURRENT)) {
-        res = gsmOK;
+        res = lwgsmOK;
     }
     lwgsm_core_unlock();
     return res;
@@ -95,7 +95,7 @@ check_sms_mem(lwgsm_mem_t mem, uint8_t can_curr) {
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
@@ -106,7 +106,7 @@ lwgsm_sms_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_SMS_ENABLE;
     LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET_OPT;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -114,18 +114,18 @@ lwgsm_sms_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     lwgsm_core_lock();
-    gsm.m.sms.enabled = 0;
+    lwgsm.m.sms.enabled = 0;
     if (evt_fn != NULL) {
-        evt_fn(gsmOK, evt_arg);
+        evt_fn(lwgsmOK, evt_arg);
     }
     lwgsm_core_unlock();
     LWGSM_UNUSED(blocking);
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -135,7 +135,7 @@ lwgsm_sms_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_send(const char* num, const char* text,
@@ -155,7 +155,7 @@ lwgsm_sms_send(const char* num, const char* text,
     LWGSM_MSG_VAR_REF(msg).msg.sms_send.text = text;
     LWGSM_MSG_VAR_REF(msg).msg.sms_send.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -167,7 +167,7 @@ lwgsm_sms_send(const char* num, const char* text,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t update,
@@ -177,7 +177,7 @@ lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t up
     LWGSM_ASSERT("entry != NULL", entry != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    LWGSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem() == lwgsmOK", check_sms_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -198,7 +198,7 @@ lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t up
     LWGSM_MSG_VAR_REF(msg).msg.sms_read.update = update;
     LWGSM_MSG_VAR_REF(msg).msg.sms_read.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -208,7 +208,7 @@ lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t up
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
@@ -217,7 +217,7 @@ lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
 
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    LWGSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem() == lwgsmOK", check_sms_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -230,7 +230,7 @@ lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
     LWGSM_MSG_VAR_REF(msg).msg.sms_delete.mem = mem;
     LWGSM_MSG_VAR_REF(msg).msg.sms_delete.pos = pos;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 1000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 1000);
 }
 
 /**
@@ -239,7 +239,7 @@ lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_delete_all(lwgsm_sms_status_t status,
@@ -256,7 +256,7 @@ lwgsm_sms_delete_all(lwgsm_sms_status_t status,
     LWGSM_MSG_VAR_REF(msg).msg.sms_delete_all.status = status;
 
     /* This command may take a while */
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -270,7 +270,7 @@ lwgsm_sms_delete_all(lwgsm_sms_status_t status,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entries, size_t etr, size_t* er, uint8_t update,
@@ -281,7 +281,7 @@ lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entr
     LWGSM_ASSERT("etr > 0", etr > 0);
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    LWGSM_ASSERT("check_sms_mem() == gsmOK", check_sms_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem() == lwgsmOK", check_sms_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -304,7 +304,7 @@ lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entr
     LWGSM_MSG_VAR_REF(msg).msg.sms_list.update = update;
     LWGSM_MSG_VAR_REF(msg).msg.sms_list.format = 1;   /* Send as plain text */
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -315,7 +315,7 @@ lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entr
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwgsm_mem_t mem3,
@@ -324,9 +324,9 @@ lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwgsm_mem_t 
 
     CHECK_ENABLED();                            /* Check if enabled */
     CHECK_READY();                              /* Check if ready */
-    LWGSM_ASSERT("check_sms_mem(1) == gsmOK", check_sms_mem(mem1, 1) == gsmOK);
-    LWGSM_ASSERT("check_sms_mem(2) == gsmOK", check_sms_mem(mem2, 1) == gsmOK);
-    LWGSM_ASSERT("check_sms_mem(3) == gsmOK", check_sms_mem(mem3, 1) == gsmOK);
+    LWGSM_ASSERT("check_sms_mem(1) == lwgsmOK", check_sms_mem(mem1, 1) == lwgsmOK);
+    LWGSM_ASSERT("check_sms_mem(2) == lwgsmOK", check_sms_mem(mem2, 1) == lwgsmOK);
+    LWGSM_ASSERT("check_sms_mem(3) == lwgsmOK", check_sms_mem(mem3, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -340,7 +340,7 @@ lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwgsm_mem_t 
     LWGSM_MSG_VAR_REF(msg).msg.sms_memory.mem[1] = mem2;
     LWGSM_MSG_VAR_REF(msg).msg.sms_memory.mem[2] = mem3;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 #endif /* LWGSM_CFG_SMS || __DOXYGEN__ */

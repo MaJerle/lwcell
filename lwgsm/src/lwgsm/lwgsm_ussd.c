@@ -45,7 +45,7 @@
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_ussd_run(const char* code, char* resp, size_t resp_len,
@@ -64,7 +64,7 @@ lwgsm_ussd_run(const char* code, char* resp, size_t resp_len,
     LWGSM_MSG_VAR_REF(msg).msg.ussd.resp = resp;
     LWGSM_MSG_VAR_REF(msg).msg.ussd.resp_len = resp_len;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 #endif /* LWGSM_CFG_USSD || __DOXYGEN__ */

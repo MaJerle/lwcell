@@ -64,7 +64,7 @@
  * \ref lwgsm_mem_calloc, \ref lwgsm_mem_realloc and \ref lwgsm_mem_free
  *
  * \note            Function declaration follows standard C functions `malloc, calloc, realloc, free`.
- *                  Declaration is available in `gsm/lwgsm_mem.h` file. Include this file to final
+ *                  Declaration is available in `lwgsm/lwgsm_mem.h` file. Include this file to final
  *                  implementation file
  *
  * \note            When implementing custom memory allocation, it is necessary

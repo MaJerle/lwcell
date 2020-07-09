@@ -142,18 +142,18 @@ typedef struct {
     lwgsm_mqtt_evt_type_t type;                   /*!< Event type */
     union {
         struct {
-            lwgsm_mqtt_conn_status_t status;      /*!< Connection status with MQTT */
+            lwgsm_mqtt_conn_status_t status;    /*!< Connection status with MQTT */
         } connect;                              /*!< Event for connecting to server */
         struct {
             uint8_t is_accepted;                /*!< Status if client was accepted to MQTT prior disconnect event */
         } disconnect;                           /*!< Event for disconnecting from server */
         struct {
             void* arg;                          /*!< User argument for callback function */
-            lwgsmr_t res;                         /*!< Rgsmonse status */
+            lwgsmr_t res;                       /*!< Response status */
         } sub_unsub_scribed;                    /*!< Event for (un)subscribe to/from topics */
         struct {
             void* arg;                          /*!< User argument for callback function */
-            lwgsmr_t res;                         /*!< Rgsmonse status */
+            lwgsmr_t res;                       /*!< Response status */
         } publish;                              /*!< Published event */
         struct {
             const uint8_t* topic;               /*!< Pointer to topic identifier */
@@ -161,7 +161,7 @@ typedef struct {
             const void* payload;                /*!< Topic payload */
             size_t payload_len;                 /*!< Length of topic payload */
             uint8_t dup;                        /*!< Duplicate flag if message was sent again */
-            lwgsm_mqtt_qos_t qos;                 /*!< Received packet quality of service */
+            lwgsm_mqtt_qos_t qos;               /*!< Received packet quality of service */
         } publish_recv;                         /*!< Publish received event */
     } evt;                                      /*!< Event data parameters */
 } lwgsm_mqtt_evt_t;
@@ -173,17 +173,17 @@ typedef struct {
  */
 typedef void        (*lwgsm_mqtt_evt_fn)(lwgsm_mqtt_client_p client, lwgsm_mqtt_evt_t* evt);
 
-lwgsm_mqtt_client_p   lwgsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len);
+lwgsm_mqtt_client_p lwgsm_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_len);
 void                lwgsm_mqtt_client_delete(lwgsm_mqtt_client_p client);
 
-lwgsmr_t              lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_port_t port, lwgsm_mqtt_evt_fn evt_fn, const lwgsm_mqtt_client_info_t* info);
-lwgsmr_t              lwgsm_mqtt_client_disconnect(lwgsm_mqtt_client_p client);
+lwgsmr_t            lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_port_t port, lwgsm_mqtt_evt_fn evt_fn, const lwgsm_mqtt_client_info_t* info);
+lwgsmr_t            lwgsm_mqtt_client_disconnect(lwgsm_mqtt_client_p client);
 uint8_t             lwgsm_mqtt_client_is_connected(lwgsm_mqtt_client_p client);
 
-lwgsmr_t              lwgsm_mqtt_client_subscribe(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qos, void* arg);
-lwgsmr_t              lwgsm_mqtt_client_unsubscribe(lwgsm_mqtt_client_p client, const char* topic, void* arg);
+lwgsmr_t            lwgsm_mqtt_client_subscribe(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qos, void* arg);
+lwgsmr_t            lwgsm_mqtt_client_unsubscribe(lwgsm_mqtt_client_p client, const char* topic, void* arg);
 
-lwgsmr_t              lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const void* payload, uint16_t len, lwgsm_mqtt_qos_t qos, uint8_t retain, void* arg);
+lwgsmr_t            lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const void* payload, uint16_t len, lwgsm_mqtt_qos_t qos, uint8_t retain, void* arg);
 
 void*               lwgsm_mqtt_client_get_arg(lwgsm_mqtt_client_p client);
 void                lwgsm_mqtt_client_set_arg(lwgsm_mqtt_client_p client, void* arg);

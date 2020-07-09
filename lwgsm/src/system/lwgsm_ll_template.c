@@ -62,7 +62,7 @@ send_data(const void* data, size_t len) {
  *                  When \ref LWGSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
  * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_ll_init(lwgsm_ll_t* ll) {
@@ -91,16 +91,16 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
     /* Step 3: Configure AT port to be able to send/receive data to/from GSM device */
     configure_uart(ll->uart.baudrate);          /* Initialize UART for communication */
     initialized = 1;
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
  * \brief           Callback function to de-init low-level communication part
  * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_ll_deinit(lwgsm_ll_t* ll) {
     initialized = 0;                            /* Clear initialized flag */
-    return gsmOK;
+    return lwgsmOK;
 }

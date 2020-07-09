@@ -46,18 +46,18 @@ static uint32_t lwgsm_recv_calls;
  * \note            \ref LWGSM_CFG_INPUT_USE_PROCESS must be disabled to use this function
  * \param[in]       data: Pointer to data to write
  * \param[in]       len: Number of data elements in units of bytes
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_input(const void* data, size_t len) {
-    if (!gsm.status.f.initialized || gsm.buff.buff == NULL) {
-        return gsmERR;
+    if (!lwgsm.status.f.initialized || lwgsm.buff.buff == NULL) {
+        return lwgsmERR;
     }
-    lwgsm_buff_write(&gsm.buff, data, len);       /* Write data to buffer */
-    lwgsm_sys_mbox_putnow(&gsm.mbox_process, NULL);   /* Write empty box, don't care if write fails */
+    lwgsm_buff_write(&lwgsm.buff, data, len);       /* Write data to buffer */
+    lwgsm_sys_mbox_putnow(&lwgsm.mbox_process, NULL);   /* Write empty box, don't care if write fails */
     lwgsm_recv_total_len += len;                  /* Update total number of received bytes */
     ++lwgsm_recv_calls;                           /* Update number of calls */
-    return gsmOK;
+    return lwgsmOK;
 }
 
 #endif /* !LWGSM_CFG_INPUT_USE_PROCESS || __DOXYGEN__ */
@@ -73,21 +73,21 @@ lwgsm_input(const void* data, size_t len) {
  *
  * \param[in]       data: Pointer to received data to be processed
  * \param[in]       len: Length of data to process in units of bytes
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_input_process(const void* data, size_t len) {
     lwgsmr_t res;
 
-    if (!gsm.status.f.initialized) {
-        return gsmERR;
+    if (!lwgsm.status.f.initialized) {
+        return lwgsmERR;
     }
 
     lwgsm_recv_total_len += len;                  /* Update total number of received bytes */
     ++lwgsm_recv_calls;                           /* Update number of calls */
 
     lwgsm_core_lock();
-    res = gsmi_process(data, len);              /* Process input data */
+    res = lwgsmi_process(data, len);              /* Process input data */
     lwgsm_core_unlock();
     return res;
 }

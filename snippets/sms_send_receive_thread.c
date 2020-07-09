@@ -46,12 +46,12 @@ sms_send_receive_thread(void const* arg) {
     }
 
     /* Register callback function for SMS */
-    if (lwgsm_evt_register(sms_evt_func) != gsmOK) {
+    if (lwgsm_evt_register(sms_evt_func) != lwgsmOK) {
         goto terminate;
     }
 
     /* First enable SMS functionality */
-    if (lwgsm_sms_enable(NULL, NULL, 1) == gsmOK) {
+    if (lwgsm_sms_enable(NULL, NULL, 1) == lwgsmOK) {
         printf("SMS enabled. Send new SMS from your phone to device.\r\n");
     } else {
         printf("Cannot enable SMS functionality!\r\n");
@@ -71,18 +71,18 @@ sms_send_receive_thread(void const* arg) {
         printf("New SMS received!\r\n");
 
         /* Read SMS from device */
-        if (lwgsm_sms_read(sms->mem, sms->pos, &sms_entry, 1, NULL, NULL, 1) == gsmOK) {
+        if (lwgsm_sms_read(sms->mem, sms->pos, &sms_entry, 1, NULL, NULL, 1) == lwgsmOK) {
             printf("SMS read ok. Number: %s, content: %s\r\n", sms_entry.number, sms_entry.data);
 
             /* Send reply back */
-            if (lwgsm_sms_send(sms_entry.number, sms_entry.data, NULL, NULL, 1) == gsmOK) {
+            if (lwgsm_sms_send(sms_entry.number, sms_entry.data, NULL, NULL, 1) == lwgsmOK) {
                 printf("SMS sent back successfully!\r\n");
             } else {
                 printf("Cannot send SMS back!\r\n");
             }
 
             /* Delete SMS from device memory */
-            if (lwgsm_sms_delete(sms->mem, sms->pos, NULL, NULL, 1) == gsmOK) {
+            if (lwgsm_sms_delete(sms->mem, sms->pos, NULL, NULL, 1) == lwgsmOK) {
                 printf("Received SMS deleted!\r\n");
             } else {
                 printf("Cannot delete received SMS!\r\n");
@@ -118,7 +118,7 @@ terminate:
 /**
  * \brief           Event function for received SMS
  * \param[in]       evt: GSM event
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 sms_evt_func(lwgsm_evt_t* evt) {
@@ -148,5 +148,5 @@ sms_evt_func(lwgsm_evt_t* evt) {
             break;
     }
 
-    return gsmOK;
+    return lwgsmOK;
 }

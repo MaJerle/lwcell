@@ -44,7 +44,7 @@ lwgsm_sim_state_t
 lwgsm_sim_get_current_state(void) {
     lwgsm_sim_state_t state;
     lwgsm_core_lock();
-    state = gsm.m.sim.state;
+    state = lwgsm.m.sim.state;
     lwgsm_core_unlock();
     return state;
 }
@@ -55,7 +55,7 @@ lwgsm_sim_get_current_state(void) {
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_sim_pin_enter(const char* pin,
@@ -70,7 +70,7 @@ lwgsm_sim_pin_enter(const char* pin,
     LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPIN_GET;
     LWGSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 30000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 30000);
 }
 
 /**
@@ -81,7 +81,7 @@ lwgsm_sim_pin_enter(const char* pin,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_sim_pin_add(const char* pin,
@@ -95,7 +95,7 @@ lwgsm_sim_pin_add(const char* pin,
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_ADD;
     LWGSM_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -105,7 +105,7 @@ lwgsm_sim_pin_add(const char* pin,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_sim_pin_change(const char* pin, const char* new_pin,
@@ -121,7 +121,7 @@ lwgsm_sim_pin_change(const char* pin, const char* new_pin,
     LWGSM_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
     LWGSM_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -130,7 +130,7 @@ lwgsm_sim_pin_change(const char* pin, const char* new_pin,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_sim_pin_remove(const char* pin,
@@ -144,7 +144,7 @@ lwgsm_sim_pin_remove(const char* pin,
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_REMOVE;
     LWGSM_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -154,7 +154,7 @@ lwgsm_sim_pin_remove(const char* pin,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_sim_puk_enter(const char* puk, const char* new_pin,
@@ -170,5 +170,5 @@ lwgsm_sim_puk_enter(const char* puk, const char* new_pin,
     LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
     LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }

@@ -59,7 +59,7 @@ mqtt_client_api_thread(void const* arg) {
     char random_str[10];
 
     /* Request network attach */
-    while (lwgsm_network_request_attach() != gsmOK) {
+    while (lwgsm_network_request_attach() != lwgsmOK) {
         lwgsm_delay(1000);
     }
 
@@ -86,7 +86,7 @@ mqtt_client_api_thread(void const* arg) {
 
         /* Subscribe to topics */
         sprintf(mqtt_topic_str, "v1/%s/things/%s/cmd/#", mqtt_client_info.user, mqtt_client_info.id);
-        if (lwgsm_mqtt_client_api_subscribe(client, mqtt_topic_str, LWGSM_MQTT_QOS_AT_LEAST_ONCE) == gsmOK) {
+        if (lwgsm_mqtt_client_api_subscribe(client, mqtt_topic_str, LWGSM_MQTT_QOS_AT_LEAST_ONCE) == lwgsmOK) {
             printf("Subscribed to topic\r\n");
         } else {
             printf("Problem subscribing to topic!\r\n");
@@ -95,17 +95,17 @@ mqtt_client_api_thread(void const* arg) {
         while (1) {
             /* Receive MQTT packet with 1000ms timeout */
             res = lwgsm_mqtt_client_api_receive(client, &buf, 5000);
-            if (res == gsmOK) {
+            if (res == lwgsmOK) {
                 if (buf != NULL) {
                     printf("Publish received!\r\n");
                     printf("Topic: %s, payload: %s\r\n", buf->topic, buf->payload);
                     lwgsm_mqtt_client_api_buf_free(buf);
                     buf = NULL;
                 }
-            } else if (res == gsmCLOSED) {
+            } else if (res == lwgsmCLOSED) {
                 printf("MQTT connection closed!\r\n");
                 break;
-            } else if (res == gsmTIMEOUT) {
+            } else if (res == lwgsmTIMEOUT) {
                 printf("Timeout on MQTT receive function. Manually publishing.\r\n");
 
                 /* Publish data on channel 1 */

@@ -59,26 +59,26 @@ extern "C" {
  * \brief           Result enumeration used across application functions
  */
 typedef enum {
-    gsmOK = 0,                                  /*!< Function returned OK */
-    gsmOKIGNOREMORE,                            /*!< Function succedded, should continue as gsmOK but ignore sending more data. This result is possible on connection data receive callback */
-    gsmERR,                                     /*!< Generic error */
-    gsmPARERR,                                  /*!< Wrong parameters on function call */
-    gsmERRMEM,                                  /*!< Memory error occurred */
-    gsmTIMEOUT,                                 /*!< Timeout occurred on command */
-    gsmCONT,                                    /*!< There is still some command to be processed in current command */
-    gsmCLOSED,                                  /*!< Connection just closed */
-    gsmINPROG,                                  /*!< Operation is in progress */
+    lwgsmOK = 0,                                  /*!< Function returned OK */
+    lwgsmOKIGNOREMORE,                            /*!< Function succedded, should continue as lwgsmOK but ignore sending more data. This result is possible on connection data receive callback */
+    lwgsmERR,                                     /*!< Generic error */
+    lwgsmPARERR,                                  /*!< Wrong parameters on function call */
+    lwgsmERRMEM,                                  /*!< Memory error occurred */
+    lwgsmTIMEOUT,                                 /*!< Timeout occurred on command */
+    lwgsmCONT,                                    /*!< There is still some command to be processed in current command */
+    lwgsmCLOSED,                                  /*!< Connection just closed */
+    lwgsmINPROG,                                  /*!< Operation is in progress */
 
-    gsmERRNOTENABLED,                           /*!< Feature not enabled error */
-    gsmERRNOIP,                                 /*!< Station does not have IP address */
-    gsmERRNOFREECONN,                           /*!< There is no free connection available to start */
-    gsmERRCONNTIMEOUT,                          /*!< Timeout received when connection to access point */
-    gsmERRPASS,                                 /*!< Invalid password for access point */
-    gsmERRNOAP,                                 /*!< No access point found with specific SSID and MAC address */
-    gsmERRCONNFAIL,                             /*!< Connection failed to access point */
-    gsmERRWIFINOTCONNECTED,                     /*!< Wifi not connected to access point */
-    gsmERRNODEVICE,                             /*!< Device is not present */
-    gsmERRBLOCKING,                             /*!< Blocking mode command is not allowed */
+    lwgsmERRNOTENABLED,                           /*!< Feature not enabled error */
+    lwgsmERRNOIP,                                 /*!< Station does not have IP address */
+    lwgsmERRNOFREECONN,                           /*!< There is no free connection available to start */
+    lwgsmERRCONNTIMEOUT,                          /*!< Timeout received when connection to access point */
+    lwgsmERRPASS,                                 /*!< Invalid password for access point */
+    lwgsmERRNOAP,                                 /*!< No access point found with specific SSID and MAC address */
+    lwgsmERRCONNFAIL,                             /*!< Connection failed to access point */
+    lwgsmERRWIFINOTCONNECTED,                     /*!< Wifi not connected to access point */
+    lwgsmERRNODEVICE,                             /*!< Device is not present */
+    lwgsmERRBLOCKING,                             /*!< Blocking mode command is not allowed */
 } lwgsmr_t;
 
 /**
@@ -358,7 +358,7 @@ typedef struct lwgsm_pbuf* lwgsm_pbuf_p;
  * \ingroup         LWGSM_EVT
  * \brief           Event function prototype
  * \param[in]       evt: Callback event data
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 typedef lwgsmr_t  (*lwgsm_evt_fn)(struct lwgsm_evt* evt);
 
@@ -476,7 +476,7 @@ typedef struct lwgsm_evt {
             lwgsm_conn_p conn;                    /*!< Pointer to connection */
             uint8_t client;                     /*!< Set to `1` if connection is/was client mode */
             uint8_t forced;                     /*!< Set to `1` if connection action was forced (when active: 1 = CLIENT, 0 = SERVER: when closed, 1 = CMD, 0 = REMOTE) */
-            lwgsmr_t res;                         /*!< Result of close event. Set to \ref gsmOK on success. */
+            lwgsmr_t res;                         /*!< Result of close event. Set to \ref lwgsmOK on success. */
         } conn_active_close;                    /*!< Process active and closed statuses at the same time. Use with \ref LWGSM_EVT_CONN_ACTIVE or \ref LWGSM_EVT_CONN_CLOSE events */
         struct {
             lwgsm_conn_p conn;                    /*!< Set connection pointer */

@@ -266,7 +266,7 @@ lwgsm_conn_evt(lwgsm_evt_t* evt) {
         }
         case LWGSM_EVT_CONN_SEND: {
             lwgsmr_t res = lwgsm_evt_conn_send_get_result(evt);
-            if (res == gsmOK) {
+            if (res == lwgsmOK) {
                 printf("Data sent!\r\n");
             } else {
                 printf("Data send error!\r\n");
@@ -282,13 +282,13 @@ lwgsm_conn_evt(lwgsm_evt_t* evt) {
 #endif /* LWGSM_CFG_CONN */
         default: break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
  * \brief           Global GSM event function callback
  * \param[in]       cb: Event information
- * \return          gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 lwgsm_evt(lwgsm_evt_t* evt) {
@@ -297,7 +297,7 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             break;
         }
         case LWGSM_EVT_RESET: {
-            if (lwgsm_evt_reset_get_result(evt) == gsmOK) {
+            if (lwgsm_evt_reset_get_result(evt) == lwgsmOK) {
                 printf("Reset sequence finished with success!\r\n");
             }
             break;
@@ -344,7 +344,7 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             size_t length;
 
             printf("Operator scan finished!\r\n");
-            if (lwgsm_evt_operator_scan_get_result(evt) == gsmOK) {
+            if (lwgsm_evt_operator_scan_get_result(evt) == lwgsmOK) {
                 ops = lwgsm_evt_operator_scan_get_entries(evt);
                 length = lwgsm_evt_operator_scan_get_length(evt);
 
@@ -361,7 +361,7 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             lwgsm_ip_t ip;
 
             printf("\r\n---\r\n--- Network attached! ---\r\n---\r\n");
-            if (lwgsm_network_copy_ip(&ip) == gsmOK) {
+            if (lwgsm_network_copy_ip(&ip) == lwgsmOK) {
                 printf("\r\n---\r\n--- IP: %d.%d.%d.%d ---\r\n---\r\n",
                     (int)ip.ip[0], (int)ip.ip[1], (int)ip.ip[2], (int)ip.ip[3]
                 );
@@ -396,7 +396,7 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             break;
         }
         case LWGSM_EVT_SMS_SEND: {
-            if (evt->evt.sms_send.res == gsmOK) {
+            if (evt->evt.sms_send.res == lwgsmOK) {
                 printf("SMS sent successfully!\r\n");
             } else {
                 printf("SMS was not sent!\r\n");
@@ -452,7 +452,7 @@ lwgsm_evt(lwgsm_evt_t* evt) {
 #endif /* LWGSM_CFG_PHONECALL */
         default: break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 #if LWGSM_CFG_MEM_CUSTOM && 0

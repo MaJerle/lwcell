@@ -19,7 +19,7 @@ call_start(void) {
     lwgsm_evt_register(call_evt_func);
 
     /* Enable calls */
-    if (lwgsm_call_enable(NULL, NULL, 1) == gsmOK) {
+    if (lwgsm_call_enable(NULL, NULL, 1) == lwgsmOK) {
         printf("Calls enabled. You may take your phone and call GSM device number.\r\n");
     } else {
         printf("Could not enable call functionality!\r\n");
@@ -29,7 +29,7 @@ call_start(void) {
 /**
  * \brief           Event function for calls
  * \param[in]       evt: GSM event
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 call_evt_func(lwgsm_evt_t* evt) {
@@ -57,5 +57,5 @@ call_evt_func(lwgsm_evt_t* evt) {
             break;
     }
 
-    return gsmOK;
+    return lwgsmOK;
 }

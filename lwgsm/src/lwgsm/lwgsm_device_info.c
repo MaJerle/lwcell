@@ -42,7 +42,7 @@
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
@@ -58,7 +58,7 @@ lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_f
     LWGSM_MSG_VAR_REF(msg).msg.device_info.str = manuf;
     LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -68,7 +68,7 @@ lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_f
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
@@ -84,7 +84,7 @@ lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_f
     LWGSM_MSG_VAR_REF(msg).msg.device_info.str = model;
     LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -94,7 +94,7 @@ lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_f
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
@@ -110,7 +110,7 @@ lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_
     LWGSM_MSG_VAR_REF(msg).msg.device_info.str = rev;
     LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -120,7 +120,7 @@ lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
@@ -136,5 +136,5 @@ lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt
     LWGSM_MSG_VAR_REF(msg).msg.device_info.str = serial;
     LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }

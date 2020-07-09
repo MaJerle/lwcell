@@ -38,11 +38,11 @@
 /**
  * \brief           Register callback function for global (non-connection based) events
  * \param[in]       fn: Callback function to call on specific event
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_evt_register(lwgsm_evt_fn fn) {
-    lwgsmr_t res = gsmOK;
+    lwgsmr_t res = lwgsmOK;
     lwgsm_evt_func_t* func, *newFunc;
 
     LWGSM_ASSERT("fn != NULL", fn != NULL);
@@ -50,28 +50,28 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
     lwgsm_core_lock();
 
     /* Check if function already exists on list */
-    for (func = gsm.evt_func; func != NULL; func = func->next) {
+    for (func = lwgsm.evt_func; func != NULL; func = func->next) {
         if (func->fn == fn) {
-            res = gsmERR;
+            res = lwgsmERR;
             break;
         }
     }
 
-    if (res == gsmOK) {
+    if (res == lwgsmOK) {
         newFunc = lwgsm_mem_malloc(sizeof(*newFunc));
         if (newFunc != NULL) {
             LWGSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));
             newFunc->fn = fn;                   /* Set function pointer */
-            for (func = gsm.evt_func; func != NULL && func->next != NULL; func = func->next) {}
+            for (func = lwgsm.evt_func; func != NULL && func->next != NULL; func = func->next) {}
             if (func != NULL) {
                 func->next = newFunc;           /* Set new function as next */
-                res = gsmOK;
+                res = lwgsmOK;
             } else {
                 lwgsm_mem_free_s((void**)& newFunc);
-                res = gsmERRMEM;
+                res = lwgsmERRMEM;
             }
         } else {
-            res = gsmERRMEM;
+            res = lwgsmERRMEM;
         }
     }
     lwgsm_core_unlock();
@@ -82,7 +82,7 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
  * \brief           Unregister callback function for global (non-connection based) events
  * \note            Function must be first registered using \ref lwgsm_evt_register
  * \param[in]       fn: Callback function to remove from event list
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_evt_unregister(lwgsm_evt_fn fn) {
@@ -90,7 +90,7 @@ lwgsm_evt_unregister(lwgsm_evt_fn fn) {
     LWGSM_ASSERT("fn != NULL", fn != NULL);
 
     lwgsm_core_lock();
-    for (prev = gsm.evt_func, func = gsm.evt_func->next; func != NULL; prev = func, func = func->next) {
+    for (prev = lwgsm.evt_func, func = lwgsm.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
             lwgsm_mem_free_s((void**)&func);
@@ -98,7 +98,7 @@ lwgsm_evt_unregister(lwgsm_evt_fn fn) {
         }
     }
     lwgsm_core_unlock();
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -459,7 +459,7 @@ lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc) {
  */
 const lwgsm_call_t*
 lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc) {
-    return gsm.evt.evt.call_changed.call;
+    return lwgsm.evt.evt.call_changed.call;
 }
 
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */

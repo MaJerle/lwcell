@@ -42,7 +42,7 @@
  * \return          Parsed number
  */
 int32_t
-gsmi_parse_number(const char** str) {
+lwgsmi_parse_number(const char** str) {
     int32_t val = 0;
     uint8_t minus = 0;
     const char* p = *str;                       /*  */
@@ -88,7 +88,7 @@ gsmi_parse_number(const char** str) {
  * \return          Parsed number
  */
 uint32_t
-gsmi_parse_hexnumber(const char** str) {
+lwgsmi_parse_hexnumber(const char** str) {
     int32_t val = 0;
     const char* p = *str;                       /*  */
 
@@ -124,7 +124,7 @@ gsmi_parse_hexnumber(const char** str) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
+lwgsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
     const char* p = *src;
     size_t i;
 
@@ -166,10 +166,10 @@ gsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
  * \param[in]       src: Pointer to pointer to input string
  */
 void
-gsmi_check_and_trim(const char** src) {
+lwgsmi_check_and_trim(const char** src) {
     const char* t = *src;
     if (*t != '"' && *t != '\r' && *t != ',') { /* Check if trim required */
-        gsmi_parse_string(src, NULL, 0, 1);     /* Trim to the end */
+        lwgsmi_parse_string(src, NULL, 0, 1);     /* Trim to the end */
     }
 }
 
@@ -180,7 +180,7 @@ gsmi_check_and_trim(const char** src) {
  * \return          `1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
+lwgsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
     const char* p = *src;
 
     if (*p == ',') {
@@ -190,13 +190,13 @@ gsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
         ++p;
     }
     if (LWGSM_CHARISNUM(*p)) {
-        ip->ip[0] = gsmi_parse_number(&p);
+        ip->ip[0] = lwgsmi_parse_number(&p);
         ++p;
-        ip->ip[1] = gsmi_parse_number(&p);
+        ip->ip[1] = lwgsmi_parse_number(&p);
         ++p;
-        ip->ip[2] = gsmi_parse_number(&p);
+        ip->ip[2] = lwgsmi_parse_number(&p);
         ++p;
-        ip->ip[3] = gsmi_parse_number(&p);
+        ip->ip[3] = lwgsmi_parse_number(&p);
     }
     if (*p == '"') {
         ++p;
@@ -213,23 +213,23 @@ gsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_mac(const char** src, lwgsm_mac_t* mac) {
+lwgsmi_parse_mac(const char** src, lwgsm_mac_t* mac) {
     const char* p = *src;
 
     if (*p == '"') {
         ++p;
     }
-    mac->mac[0] = gsmi_parse_hexnumber(&p);
+    mac->mac[0] = lwgsmi_parse_hexnumber(&p);
     ++p;
-    mac->mac[1] = gsmi_parse_hexnumber(&p);
+    mac->mac[1] = lwgsmi_parse_hexnumber(&p);
     ++p;
-    mac->mac[2] = gsmi_parse_hexnumber(&p);
+    mac->mac[2] = lwgsmi_parse_hexnumber(&p);
     ++p;
-    mac->mac[3] = gsmi_parse_hexnumber(&p);
+    mac->mac[3] = lwgsmi_parse_hexnumber(&p);
     ++p;
-    mac->mac[4] = gsmi_parse_hexnumber(&p);
+    mac->mac[4] = lwgsmi_parse_hexnumber(&p);
     ++p;
-    mac->mac[5] = gsmi_parse_hexnumber(&p);
+    mac->mac[5] = lwgsmi_parse_hexnumber(&p);
     if (*p == '"') {
         ++p;
     }
@@ -246,7 +246,7 @@ gsmi_parse_mac(const char** src, lwgsm_mac_t* mac) {
  * \return          Parsed memory
  */
 lwgsm_mem_t
-gsmi_parse_memory(const char** src) {
+lwgsmi_parse_memory(const char** src) {
     size_t i, sl;
     lwgsm_mem_t mem = LWGSM_MEM_UNKNOWN;
     const char* s = *src;
@@ -269,7 +269,7 @@ gsmi_parse_memory(const char** src) {
     }
 
     if (mem == LWGSM_MEM_UNKNOWN) {
-        gsmi_parse_string(&s, NULL, 0, 1);      /* Skip string */
+        lwgsmi_parse_string(&s, NULL, 0, 1);      /* Skip string */
     }
     if (*s == '"') {
         ++s;
@@ -286,7 +286,7 @@ gsmi_parse_memory(const char** src) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
+lwgsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
     const char* str = *src;
     lwgsm_mem_t mem;
 
@@ -298,7 +298,7 @@ gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
         ++str;
     }
     do {
-        mem = gsmi_parse_memory(&str);          /* Parse memory string */
+        mem = lwgsmi_parse_memory(&str);          /* Parse memory string */
         *mem_dst |= LWGSM_U32(1 << LWGSM_U32(mem)); /* Set as bit field */
     } while (*str && *str != ')');
     if (*str == ')') {
@@ -315,25 +315,25 @@ gsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_creg(const char* str, uint8_t skip_first) {
+lwgsmi_parse_creg(const char* str, uint8_t skip_first) {
     if (*str == '+') {
         str += 7;
     }
 
     if (skip_first) {
-        gsmi_parse_number(&str);
+        lwgsmi_parse_number(&str);
     }
-    gsm.m.network.status = (lwgsm_network_reg_status_t)gsmi_parse_number(&str);
+    lwgsm.m.network.status = (lwgsm_network_reg_status_t)lwgsmi_parse_number(&str);
 
     /*
      * In case we are connected to network,
      * scan for current network info
      */
-    if (gsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED ||
-        gsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
+    if (lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED ||
+        lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
         /* Try to get operator */
         /* Notify user in case we are not able to add new command to queue */
-        lwgsm_operator_get(&gsm.m.network.curr_operator, NULL, NULL, 0);
+        lwgsm_operator_get(&lwgsm.m.network.curr_operator, NULL, NULL, 0);
 #if LWGSM_CFG_NETWORK
     } else if (lwgsm_network_is_attached()) {
         lwgsm_network_check_status(NULL, NULL, 0);    /* Do the update */
@@ -341,7 +341,7 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
     }
 
     /* Send callback event */
-    gsmi_send_cb(LWGSM_EVT_NETWORK_REG_CHANGED);
+    lwgsmi_send_cb(LWGSM_EVT_NETWORK_REG_CHANGED);
 
     return 1;
 }
@@ -352,27 +352,27 @@ gsmi_parse_creg(const char* str, uint8_t skip_first) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_csq(const char* str) {
+lwgsmi_parse_csq(const char* str) {
     int16_t rssi;
     if (*str == '+') {
         str += 6;
     }
 
-    rssi = gsmi_parse_number(&str);
+    rssi = lwgsmi_parse_number(&str);
     if (rssi < 32) {
         rssi = -(113 - (rssi * 2));
     } else {
         rssi = 0;
     }
-    gsm.m.rssi = rssi;                          /* Save RSSI to global variable */
-    if (gsm.msg->cmd_def == LWGSM_CMD_CSQ_GET &&
-        gsm.msg->msg.csq.rssi != NULL) {
-        *gsm.msg->msg.csq.rssi = rssi;          /* Save to user variable */
+    lwgsm.m.rssi = rssi;                          /* Save RSSI to global variable */
+    if (lwgsm.msg->cmd_def == LWGSM_CMD_CSQ_GET &&
+        lwgsm.msg->msg.csq.rssi != NULL) {
+        *lwgsm.msg->msg.csq.rssi = rssi;          /* Save to user variable */
     }
 
     /* Report CSQ status */
-    gsm.evt.evt.rssi.rssi = rssi;
-    gsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH);      /* RSSI event type */
+    lwgsm.evt.evt.rssi.rssi = rssi;
+    lwgsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH);      /* RSSI event type */
 
     return 1;
 }
@@ -384,7 +384,7 @@ gsmi_parse_csq(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cpin(const char* str, uint8_t send_evt) {
+lwgsmi_parse_cpin(const char* str, uint8_t send_evt) {
     lwgsm_sim_state_t state;
     if (*str == '+') {
         str += 7;
@@ -404,19 +404,19 @@ gsmi_parse_cpin(const char* str, uint8_t send_evt) {
     }
 
     /* React only on change */
-    if (state != gsm.m.sim.state) {
-        gsm.m.sim.state = state;
+    if (state != lwgsm.m.sim.state) {
+        lwgsm.m.sim.state = state;
         /*
          * In case SIM is ready,
          * start with basic info about SIM
          */
-        if (gsm.m.sim.state == LWGSM_SIM_STATE_READY) {
-            gsmi_get_sim_info(0);
+        if (lwgsm.m.sim.state == LWGSM_SIM_STATE_READY) {
+            lwgsmi_get_sim_info(0);
         }
 
         if (send_evt) {
-            gsm.evt.evt.cpin.state = gsm.m.sim.state;
-            gsmi_send_cb(LWGSM_EVT_SIM_STATE_CHANGED);
+            lwgsm.evt.evt.cpin.state = lwgsm.m.sim.state;
+            lwgsmi_send_cb(LWGSM_EVT_SIM_STATE_CHANGED);
         }
     }
     return 1;
@@ -428,36 +428,36 @@ gsmi_parse_cpin(const char* str, uint8_t send_evt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cops(const char* str) {
+lwgsmi_parse_cops(const char* str) {
     if (*str == '+') {
         str += 7;
     }
 
-    gsm.m.network.curr_operator.mode = (lwgsm_operator_mode_t)gsmi_parse_number(&str);
+    lwgsm.m.network.curr_operator.mode = (lwgsm_operator_mode_t)lwgsmi_parse_number(&str);
     if (*str != '\r') {
-        gsm.m.network.curr_operator.format = (lwgsm_operator_format_t)gsmi_parse_number(&str);
+        lwgsm.m.network.curr_operator.format = (lwgsm_operator_format_t)lwgsmi_parse_number(&str);
         if (*str != '\r') {
-            switch (gsm.m.network.curr_operator.format) {
+            switch (lwgsm.m.network.curr_operator.format) {
                 case LWGSM_OPERATOR_FORMAT_LONG_NAME:
-                    gsmi_parse_string(&str, gsm.m.network.curr_operator.data.long_name, sizeof(gsm.m.network.curr_operator.data.long_name), 1);
+                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.long_name, sizeof(lwgsm.m.network.curr_operator.data.long_name), 1);
                     break;
                 case LWGSM_OPERATOR_FORMAT_SHORT_NAME:
-                    gsmi_parse_string(&str, gsm.m.network.curr_operator.data.short_name, sizeof(gsm.m.network.curr_operator.data.short_name), 1);
+                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.short_name, sizeof(lwgsm.m.network.curr_operator.data.short_name), 1);
                     break;
                 case LWGSM_OPERATOR_FORMAT_NUMBER:
-                    gsm.m.network.curr_operator.data.num = LWGSM_U32(gsmi_parse_number(&str));
+                    lwgsm.m.network.curr_operator.data.num = LWGSM_U32(lwgsmi_parse_number(&str));
                     break;
                 default:
                     break;
             }
         }
     } else {
-        gsm.m.network.curr_operator.format = LWGSM_OPERATOR_FORMAT_INVALID;
+        lwgsm.m.network.curr_operator.format = LWGSM_OPERATOR_FORMAT_INVALID;
     }
 
     if (CMD_IS_DEF(LWGSM_CMD_COPS_GET) &&
-        gsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
-        LWGSM_MEMCPY(gsm.msg->msg.cops_get.curr, &gsm.m.network.curr_operator, sizeof(*gsm.msg->msg.cops_get.curr));
+        lwgsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
+        LWGSM_MEMCPY(lwgsm.msg->msg.cops_get.curr, &lwgsm.m.network.curr_operator, sizeof(*lwgsm.msg->msg.cops_get.curr));
     }
     return 1;
 }
@@ -470,7 +470,7 @@ gsmi_parse_cops(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
+lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     static union {
         struct {
             uint8_t bo: 1;                      /*!< Bracket open flag (Bracket Open) */
@@ -496,7 +496,7 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     }
 
     if (u.f.ccd ||                              /* Ignore data after 2 commas in a row */
-        gsm.msg->msg.cops_scan.opsi >= gsm.msg->msg.cops_scan.opsl) {   /* or if array is full */
+        lwgsm.msg->msg.cops_scan.opsi >= lwgsm.msg->msg.cops_scan.opsl) {   /* or if array is full */
         return 1;
     }
 
@@ -505,36 +505,36 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             u.f.bo = 0;                         /* Clear bracket open flag */
             u.f.tn = 0;                         /* Go to next term */
             u.f.tp = 0;                         /* Go to beginning of next term */
-            ++gsm.msg->msg.cops_scan.opsi;      /* Increase index */
-            if (gsm.msg->msg.cops_scan.opf != NULL) {
-                *gsm.msg->msg.cops_scan.opf = gsm.msg->msg.cops_scan.opsi;
+            ++lwgsm.msg->msg.cops_scan.opsi;      /* Increase index */
+            if (lwgsm.msg->msg.cops_scan.opf != NULL) {
+                *lwgsm.msg->msg.cops_scan.opf = lwgsm.msg->msg.cops_scan.opsi;
             }
         } else if (ch == ',') {
             ++u.f.tn;                           /* Go to next term */
             u.f.tp = 0;                         /* Go to beginning of next term */
         } else if (ch != '"') {                 /* We have valid data */
-            size_t i = gsm.msg->msg.cops_scan.opsi;
+            size_t i = lwgsm.msg->msg.cops_scan.opsi;
             switch (u.f.tn) {
                 case 0: {                       /* Parse status info */
-                    gsm.msg->msg.cops_scan.ops[i].stat = (lwgsm_operator_status_t)(10 * (size_t)gsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
+                    lwgsm.msg->msg.cops_scan.ops[i].stat = (lwgsm_operator_status_t)(10 * (size_t)lwgsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
                     break;
                 }
                 case 1: {                       /*!< Parse long name */
-                    if (u.f.tp < sizeof(gsm.msg->msg.cops_scan.ops[i].long_name) - 1) {
-                        gsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = ch;
-                        gsm.msg->msg.cops_scan.ops[i].long_name[++u.f.tp] = 0;
+                    if (u.f.tp < sizeof(lwgsm.msg->msg.cops_scan.ops[i].long_name) - 1) {
+                        lwgsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = ch;
+                        lwgsm.msg->msg.cops_scan.ops[i].long_name[++u.f.tp] = 0;
                     }
                     break;
                 }
                 case 2: {                       /*!< Parse short name */
-                    if (u.f.tp < sizeof(gsm.msg->msg.cops_scan.ops[i].short_name) - 1) {
-                        gsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = ch;
-                        gsm.msg->msg.cops_scan.ops[i].short_name[++u.f.tp] = 0;
+                    if (u.f.tp < sizeof(lwgsm.msg->msg.cops_scan.ops[i].short_name) - 1) {
+                        lwgsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = ch;
+                        lwgsm.msg->msg.cops_scan.ops[i].short_name[++u.f.tp] = 0;
                     }
                     break;
                 }
                 case 3: {                       /*!< Parse number */
-                    gsm.msg->msg.cops_scan.ops[i].num = (10 * gsm.msg->msg.cops_scan.ops[i].num) + (ch - '0');
+                    lwgsm.msg->msg.cops_scan.ops[i].num = (10 * lwgsm.msg->msg.cops_scan.ops[i].num) + (ch - '0');
                     break;
                 }
                 default:
@@ -559,15 +559,15 @@ gsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
-    dt->date = gsmi_parse_number(src);
-    dt->month = gsmi_parse_number(src);
-    dt->year = LWGSM_U16(2000) + gsmi_parse_number(src);
-    dt->hours = gsmi_parse_number(src);
-    dt->minutes = gsmi_parse_number(src);
-    dt->seconds = gsmi_parse_number(src);
+lwgsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
+    dt->date = lwgsmi_parse_number(src);
+    dt->month = lwgsmi_parse_number(src);
+    dt->year = LWGSM_U16(2000) + lwgsmi_parse_number(src);
+    dt->hours = lwgsmi_parse_number(src);
+    dt->minutes = lwgsmi_parse_number(src);
+    dt->seconds = lwgsmi_parse_number(src);
 
-    gsmi_check_and_trim(src);                   /* Trim text to the end */
+    lwgsmi_check_and_trim(src);                   /* Trim text to the end */
     return 1;
 }
 
@@ -580,23 +580,23 @@ gsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_clcc(const char* str, uint8_t send_evt) {
+lwgsmi_parse_clcc(const char* str, uint8_t send_evt) {
     if (*str == '+') {
         str += 7;
     }
 
-    gsm.m.call.id = gsmi_parse_number(&str);
-    gsm.m.call.dir = (lwgsm_call_dir_t)gsmi_parse_number(&str);
-    gsm.m.call.state = (lwgsm_call_state_t)gsmi_parse_number(&str);
-    gsm.m.call.type = (lwgsm_call_type_t)gsmi_parse_number(&str);
-    gsm.m.call.is_multipart = (lwgsm_call_type_t)gsmi_parse_number(&str);
-    gsmi_parse_string(&str, gsm.m.call.number, sizeof(gsm.m.call.number), 1);
-    gsm.m.call.addr_type = gsmi_parse_number(&str);
-    gsmi_parse_string(&str, gsm.m.call.name, sizeof(gsm.m.call.name), 1);
+    lwgsm.m.call.id = lwgsmi_parse_number(&str);
+    lwgsm.m.call.dir = (lwgsm_call_dir_t)lwgsmi_parse_number(&str);
+    lwgsm.m.call.state = (lwgsm_call_state_t)lwgsmi_parse_number(&str);
+    lwgsm.m.call.type = (lwgsm_call_type_t)lwgsmi_parse_number(&str);
+    lwgsm.m.call.is_multipart = (lwgsm_call_type_t)lwgsmi_parse_number(&str);
+    lwgsmi_parse_string(&str, lwgsm.m.call.number, sizeof(lwgsm.m.call.number), 1);
+    lwgsm.m.call.addr_type = lwgsmi_parse_number(&str);
+    lwgsmi_parse_string(&str, lwgsm.m.call.name, sizeof(lwgsm.m.call.name), 1);
 
     if (send_evt) {
-        gsm.evt.evt.call_changed.call = &gsm.m.call;
-        gsmi_send_cb(LWGSM_EVT_CALL_CHANGED);
+        lwgsm.evt.evt.call_changed.call = &lwgsm.m.call;
+        lwgsmi_send_cb(LWGSM_EVT_CALL_CHANGED);
     }
     return 1;
 }
@@ -612,11 +612,11 @@ gsmi_parse_clcc(const char* str, uint8_t send_evt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
+lwgsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
     lwgsm_sms_status_t s;
     char t[11];
 
-    gsmi_parse_string(src, t, sizeof(t), 1);    /* Parse string and advance */
+    lwgsmi_parse_string(src, t, sizeof(t), 1);    /* Parse string and advance */
     if (!strcmp(t, "REC UNREAD")) {
         s = LWGSM_SMS_STATUS_UNREAD;
     } else if (!strcmp(t, "REC READ")) {
@@ -642,13 +642,13 @@ gsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_parse_cmgs(const char* str, size_t* num) {
+lwgsmi_parse_cmgs(const char* str, size_t* num) {
     if (*str == '+') {
         str += 7;
     }
 
     if (num != NULL) {
-        *num = (size_t)gsmi_parse_number(&str);
+        *num = (size_t)lwgsmi_parse_number(&str);
     }
     return 1;
 }
@@ -660,18 +660,18 @@ gsmi_parse_cmgs(const char* str, size_t* num) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cmgr(const char* str) {
+lwgsmi_parse_cmgr(const char* str) {
     lwgsm_sms_entry_t* e;
     if (*str == '+') {
         str += 7;
     }
 
-    e = gsm.msg->msg.sms_read.entry;
+    e = lwgsm.msg->msg.sms_read.entry;
     e->length = 0;
-    gsmi_parse_sms_status(&str, &e->status);
-    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
-    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    gsmi_parse_datetime(&str, &e->datetime);
+    lwgsmi_parse_sms_status(&str, &e->status);
+    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
+    lwgsmi_parse_datetime(&str, &e->datetime);
 
     return 1;
 }
@@ -683,11 +683,11 @@ gsmi_parse_cmgr(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cmgl(const char* str) {
+lwgsmi_parse_cmgl(const char* str) {
     lwgsm_sms_entry_t* e;
 
     if (!CMD_IS_DEF(LWGSM_CMD_CMGL) ||
-        gsm.msg->msg.sms_list.ei >= gsm.msg->msg.sms_list.etr) {
+        lwgsm.msg->msg.sms_list.ei >= lwgsm.msg->msg.sms_list.etr) {
         return 0;
     }
 
@@ -695,14 +695,14 @@ gsmi_parse_cmgl(const char* str) {
         str += 7;
     }
 
-    e = &gsm.msg->msg.sms_list.entries[gsm.msg->msg.sms_list.ei];
+    e = &lwgsm.msg->msg.sms_list.entries[lwgsm.msg->msg.sms_list.ei];
     e->length = 0;
-    e->mem = gsm.msg->msg.sms_list.mem;         /* Manually set memory */
-    e->pos = LWGSM_SZ(gsmi_parse_number(&str));   /* Scan position */
-    gsmi_parse_sms_status(&str, &e->status);
-    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
-    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    gsmi_parse_datetime(&str, &e->datetime);
+    e->mem = lwgsm.msg->msg.sms_list.mem;         /* Manually set memory */
+    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));   /* Scan position */
+    lwgsmi_parse_sms_status(&str, &e->status);
+    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
+    lwgsmi_parse_datetime(&str, &e->datetime);
 
     return 1;
 }
@@ -714,16 +714,16 @@ gsmi_parse_cmgl(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cmti(const char* str, uint8_t send_evt) {
+lwgsmi_parse_cmti(const char* str, uint8_t send_evt) {
     if (*str == '+') {
         str += 7;
     }
 
-    gsm.evt.evt.sms_recv.mem = gsmi_parse_memory(&str);   /* Parse memory string */
-    gsm.evt.evt.sms_recv.pos = gsmi_parse_number(&str);   /* Parse number */
+    lwgsm.evt.evt.sms_recv.mem = lwgsmi_parse_memory(&str);   /* Parse memory string */
+    lwgsm.evt.evt.sms_recv.pos = lwgsmi_parse_number(&str);   /* Parse number */
 
     if (send_evt) {
-        gsmi_send_cb(LWGSM_EVT_SMS_RECV);
+        lwgsmi_send_cb(LWGSM_EVT_SMS_RECV);
     }
     return 1;
 }
@@ -735,7 +735,7 @@ gsmi_parse_cmti(const char* str, uint8_t send_evt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cpms(const char* str, uint8_t opt) {
+lwgsmi_parse_cpms(const char* str, uint8_t opt) {
     uint8_t i;
     if (*str == '+') {
         str += 7;
@@ -743,7 +743,7 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
     switch (opt) {                              /* Check expected input string */
         case 0: {                               /* Get list of CPMS options: +CPMS: (("","","",..),("....")("...")) */
             for (i = 0; i < 3; ++i) {           /* 3 different memories for "operation","receive","sent" */
-                if (!gsmi_parse_memories_string(&str, &gsm.m.sms.mem[i].mem_available)) {
+                if (!lwgsmi_parse_memories_string(&str, &lwgsm.m.sms.mem[i].mem_available)) {
                     return 0;
                 }
             }
@@ -751,16 +751,16 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
         }
         case 1: {                               /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
             for (i = 0; i < 3; ++i) {           /* 3 memories expected */
-                gsm.m.sms.mem[i].current = gsmi_parse_memory(&str); /* Parse memory string and save it as current */
-                gsm.m.sms.mem[i].used = gsmi_parse_number(&str);/* Get used memory size */
-                gsm.m.sms.mem[i].total = gsmi_parse_number(&str);   /* Get total memory size */
+                lwgsm.m.sms.mem[i].current = lwgsmi_parse_memory(&str); /* Parse memory string and save it as current */
+                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);/* Get used memory size */
+                lwgsm.m.sms.mem[i].total = lwgsmi_parse_number(&str);   /* Get total memory size */
             }
             break;
         }
         case 2: {                               /* Received statement of set info: +CPMS: 10,20,2,20 */
             for (i = 0; i < 3; ++i) {           /* 3 memories expected */
-                gsm.m.sms.mem[i].used = gsmi_parse_number(&str);/* Get used memory size */
-                gsm.m.sms.mem[i].total = gsmi_parse_number(&str);   /* Get total memory size */
+                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);/* Get used memory size */
+                lwgsm.m.sms.mem[i].total = lwgsmi_parse_number(&str);   /* Get total memory size */
             }
             break;
         }
@@ -781,23 +781,23 @@ gsmi_parse_cpms(const char* str, uint8_t opt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cpbs(const char* str, uint8_t opt) {
+lwgsmi_parse_cpbs(const char* str, uint8_t opt) {
     if (*str == '+') {
         str += 7;
     }
     switch (opt) {                              /* Check expected input string */
         case 0: {                               /* Get list of CPBS options: ("M1","M2","M3",...) */
-            return gsmi_parse_memories_string(&str, &gsm.m.pb.mem.mem_available);
+            return lwgsmi_parse_memories_string(&str, &lwgsm.m.pb.mem.mem_available);
         }
         case 1: {                               /* Received statement of current info: +CPBS: "ME",10,20 */
-            gsm.m.pb.mem.current = gsmi_parse_memory(&str); /* Parse memory string and save it as current */
-            gsm.m.pb.mem.used = gsmi_parse_number(&str);/* Get used memory size */
-            gsm.m.pb.mem.total = gsmi_parse_number(&str);   /* Get total memory size */
+            lwgsm.m.pb.mem.current = lwgsmi_parse_memory(&str); /* Parse memory string and save it as current */
+            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);/* Get used memory size */
+            lwgsm.m.pb.mem.total = lwgsmi_parse_number(&str);   /* Get total memory size */
             break;
         }
         case 2: {                               /* Received statement of set info: +CPBS: 10,20 */
-            gsm.m.pb.mem.used = gsmi_parse_number(&str);/* Get used memory size */
-            gsm.m.pb.mem.total = gsmi_parse_number(&str);   /* Get total memory size */
+            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);/* Get used memory size */
+            lwgsm.m.pb.mem.total = lwgsmi_parse_number(&str);   /* Get total memory size */
             break;
         }
     }
@@ -810,11 +810,11 @@ gsmi_parse_cpbs(const char* str, uint8_t opt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cpbr(const char* str) {
+lwgsmi_parse_cpbr(const char* str) {
     lwgsm_pb_entry_t* e;
 
     if (!CMD_IS_DEF(LWGSM_CMD_CPBR) ||
-        gsm.msg->msg.pb_list.ei >= gsm.msg->msg.pb_list.etr) {
+        lwgsm.msg->msg.pb_list.ei >= lwgsm.msg->msg.pb_list.etr) {
         return 0;
     }
 
@@ -822,15 +822,15 @@ gsmi_parse_cpbr(const char* str) {
         str += 7;
     }
 
-    e = &gsm.msg->msg.pb_list.entries[gsm.msg->msg.pb_list.ei];
-    e->pos = LWGSM_SZ(gsmi_parse_number(&str));
-    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    e->type = (lwgsm_number_type_t)gsmi_parse_number(&str);
-    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    e = &lwgsm.msg->msg.pb_list.entries[lwgsm.msg->msg.pb_list.ei];
+    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));
+    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
+    e->type = (lwgsm_number_type_t)lwgsmi_parse_number(&str);
+    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
 
-    ++gsm.msg->msg.pb_list.ei;
-    if (gsm.msg->msg.pb_list.er != NULL) {
-        *gsm.msg->msg.pb_list.er = gsm.msg->msg.pb_list.ei;
+    ++lwgsm.msg->msg.pb_list.ei;
+    if (lwgsm.msg->msg.pb_list.er != NULL) {
+        *lwgsm.msg->msg.pb_list.er = lwgsm.msg->msg.pb_list.ei;
     }
     return 1;
 }
@@ -841,11 +841,11 @@ gsmi_parse_cpbr(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-gsmi_parse_cpbf(const char* str) {
+lwgsmi_parse_cpbf(const char* str) {
     lwgsm_pb_entry_t* e;
 
     if (!CMD_IS_DEF(LWGSM_CMD_CPBF) ||
-        gsm.msg->msg.pb_search.ei >= gsm.msg->msg.pb_search.etr) {
+        lwgsm.msg->msg.pb_search.ei >= lwgsm.msg->msg.pb_search.etr) {
         return 0;
     }
 
@@ -853,15 +853,15 @@ gsmi_parse_cpbf(const char* str) {
         str += 7;
     }
 
-    e = &gsm.msg->msg.pb_search.entries[gsm.msg->msg.pb_search.ei];
-    e->pos = LWGSM_SZ(gsmi_parse_number(&str));
-    gsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    e->type = (lwgsm_number_type_t)gsmi_parse_number(&str);
-    gsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    e = &lwgsm.msg->msg.pb_search.entries[lwgsm.msg->msg.pb_search.ei];
+    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));
+    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
+    e->type = (lwgsm_number_type_t)lwgsmi_parse_number(&str);
+    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
 
-    ++gsm.msg->msg.pb_search.ei;
-    if (gsm.msg->msg.pb_search.er != NULL) {
-        *gsm.msg->msg.pb_search.er = gsm.msg->msg.pb_search.ei;
+    ++lwgsm.msg->msg.pb_search.ei;
+    if (lwgsm.msg->msg.pb_search.er != NULL) {
+        *lwgsm.msg->msg.pb_search.er = lwgsm.msg->msg.pb_search.ei;
     }
     return 1;
 }
@@ -878,7 +878,7 @@ gsmi_parse_cpbf(const char* str) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan) {
+lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan) {
     uint8_t num;
     lwgsm_conn_t* conn;
     char s_tmp[16];
@@ -899,22 +899,22 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
         }
 
         /* Check if we have to update status for application */
-        if (gsm.m.network.is_attached != tmp_pdp_state) {
-            gsm.m.network.is_attached = tmp_pdp_state;
+        if (lwgsm.m.network.is_attached != tmp_pdp_state) {
+            lwgsm.m.network.is_attached = tmp_pdp_state;
 
             /* Notify upper layer */
-            gsmi_send_cb(gsm.m.network.is_attached ? LWGSM_EVT_NETWORK_ATTACHED : LWGSM_EVT_NETWORK_DETACHED);
+            lwgsmi_send_cb(lwgsm.m.network.is_attached ? LWGSM_EVT_NETWORK_ATTACHED : LWGSM_EVT_NETWORK_DETACHED);
         }
 
         return 1;
     }
 
     /* Parse connection line */
-    num = LWGSM_U8(gsmi_parse_number(&str));
-    conn = &gsm.m.conns[num];
+    num = LWGSM_U8(lwgsmi_parse_number(&str));
+    conn = &lwgsm.m.conns[num];
 
-    conn->status.f.bearer = LWGSM_U8(gsmi_parse_number(&str));
-    gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
+    conn->status.f.bearer = LWGSM_U8(lwgsmi_parse_number(&str));
+    lwgsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
     if (strlen(s_tmp)) {
         if (!strcmp(s_tmp, "TCP")) {
             conn->type = LWGSM_CONN_TYPE_TCP;
@@ -922,11 +922,11 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
             conn->type = LWGSM_CONN_TYPE_UDP;
         }
     }
-    gsmi_parse_ip(&str, &conn->remote_ip);
-    conn->remote_port = gsmi_parse_number(&str);
+    lwgsmi_parse_ip(&str, &conn->remote_ip);
+    conn->remote_port = lwgsmi_parse_number(&str);
 
     /* Get connection status */
-    gsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);
+    lwgsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);
 
     /* TODO: Implement all connection states */
     if (!strcmp(s_tmp, "INITIAL")) {
@@ -941,12 +941,12 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
 
     } else if (!strcmp(s_tmp, "CLOSED")) {      /* Connection closed */
         if (conn->status.f.active) {            /* Check if connection is not */
-            gsmi_conn_closed_process(conn->num, 0); /* Process closed event */
+            lwgsmi_conn_closed_process(conn->num, 0); /* Process closed event */
         }
     }
 
     /* Save last parsed connection */
-    gsm.m.active_conns_cur_parse_num = num;
+    lwgsm.m.active_conns_cur_parse_num = num;
 
     return 1;
 }
@@ -957,7 +957,7 @@ gsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* contin
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-gsmi_parse_ipd(const char* str) {
+lwgsmi_parse_ipd(const char* str) {
     uint8_t conn;
     size_t len;
     lwgsm_conn_p c;
@@ -971,18 +971,18 @@ gsmi_parse_ipd(const char* str) {
         }
     }
 
-    conn = gsmi_parse_number(&str);             /* Parse number for connection number */
-    len = gsmi_parse_number(&str);              /* Parse number for number of bytes to read */
+    conn = lwgsmi_parse_number(&str);             /* Parse number for connection number */
+    len = lwgsmi_parse_number(&str);              /* Parse number for number of bytes to read */
 
-    c = conn < LWGSM_CFG_MAX_CONNS ? &gsm.m.conns[conn] : NULL;   /* Get connection handle */
+    c = conn < LWGSM_CFG_MAX_CONNS ? &lwgsm.m.conns[conn] : NULL;   /* Get connection handle */
     if (c == NULL) {                            /* Invalid connection number */
         return 0;
     }
 
-    gsm.m.ipd.read = 1;                         /* Start reading network data */
-    gsm.m.ipd.tot_len = len;                    /* Total number of bytes in this received packet */
-    gsm.m.ipd.rem_len = len;                    /* Number of remaining bytes to read */
-    gsm.m.ipd.conn = c;                         /* Pointer to connection we have data for */
+    lwgsm.m.ipd.read = 1;                         /* Start reading network data */
+    lwgsm.m.ipd.tot_len = len;                    /* Total number of bytes in this received packet */
+    lwgsm.m.ipd.rem_len = len;                    /* Number of remaining bytes to read */
+    lwgsm.m.ipd.conn = c;                         /* Pointer to connection we have data for */
 
     return 1;
 }

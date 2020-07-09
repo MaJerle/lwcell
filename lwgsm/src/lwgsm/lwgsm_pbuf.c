@@ -129,7 +129,7 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
  *                  as it might make memory undefined for `head` pbuf.
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  * \sa              lwgsm_pbuf_chain
  */
 lwgsmr_t
@@ -147,7 +147,7 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
     head->tot_len += tail->tot_len;             /* Increase total length of last packet in chain */
     head->next = tail;                          /* Set next packet buffer as next one */
 
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -157,7 +157,7 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
  *                  its reference to tail pbuf and allow control to head pbuf: lwgsm_pbuf_free(tail)
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  * \sa              lwgsm_pbuf_cat
  */
 lwgsmr_t
@@ -169,7 +169,7 @@ lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
      * first reference pbuf and increase counter
      */
     lwgsm_pbuf_ref(tail);                         /* Reference tail pbuf by head pbuf now */
-    if ((res = lwgsm_pbuf_cat(head, tail)) != gsmOK) {    /* Did we contencate them together successfully? */
+    if ((res = lwgsm_pbuf_cat(head, tail)) != lwgsmOK) {    /* Did we contencate them together successfully? */
         lwgsm_pbuf_free(tail);                    /* Call free to decrease reference counter */
     }
     return res;
@@ -199,14 +199,14 @@ lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
 /**
  * \brief           Increment reference count on pbuf
  * \param[in]       pbuf: pbuf to increase reference
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
     LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
     ++pbuf->ref;                                /* Increase reference count for pbuf */
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -215,7 +215,7 @@ lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
  * \param[in]       data: Input data to copy to pbuf memory
  * \param[in]       len: Length of input data to copy
  * \param[in]       offset: Start offset in pbuf where to start copying
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
@@ -231,12 +231,12 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
     if (offset > 0) {
         pbuf = pbuf_skip(pbuf, offset, &offset);    /* Offset and check for new length */
         if (pbuf == NULL) {
-            return gsmERR;
+            return lwgsmERR;
         }
     }
 
     if (pbuf->tot_len < (len + offset)) {
-        return gsmPARERR;
+        return lwgsmPARERR;
     }
 
     /* First only copy in case we have some offset from first pbuf */
@@ -255,7 +255,7 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
         len -= copy_len;                        /* Decrease number of remaining bytes to send */
         d += copy_len;                          /* Increase data pointer */
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**

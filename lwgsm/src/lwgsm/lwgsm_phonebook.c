@@ -38,18 +38,18 @@
 #if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
 
 #if !__DOXYGEN__
-#define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
+#define CHECK_ENABLED()                 if (!(check_enabled() == lwgsmOK)) { return lwgsmERRNOTENABLED; }
 #endif /* !__DOXYGEN__ */
 
 /**
  * \brief           Check if phonebook is enabled
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 check_enabled(void) {
     lwgsmr_t res;
     lwgsm_core_lock();
-    res = gsm.m.pb.enabled ? gsmOK : gsmERR;
+    res = lwgsm.m.pb.enabled ? lwgsmOK : lwgsmERR;
     lwgsm_core_unlock();
     return res;
 }
@@ -58,15 +58,15 @@ check_enabled(void) {
  * \brief           Check if input memory is available in modem
  * \param[in]       mem: Memory to test
  * \param[in]       can_curr: Flag indicates if \ref LWGSM_MEM_CURRENT option can be used
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 check_mem(lwgsm_mem_t mem, uint8_t can_curr) {
-    lwgsmr_t res = gsmERRMEM;
+    lwgsmr_t res = lwgsmERRMEM;
     lwgsm_core_lock();
-    if ((mem < LWGSM_MEM_END && gsm.m.pb.mem.mem_available & (1 << (uint32_t)mem)) ||
+    if ((mem < LWGSM_MEM_END && lwgsm.m.pb.mem.mem_available & (1 << (uint32_t)mem)) ||
         (can_curr && mem == LWGSM_MEM_CURRENT)) {
-        res = gsmOK;
+        res = lwgsmOK;
     }
     lwgsm_core_unlock();
     return res;
@@ -77,7 +77,7 @@ check_mem(lwgsm_mem_t mem, uint8_t can_curr) {
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
@@ -88,7 +88,7 @@ lwgsm_pb_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const ui
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_PHONEBOOK_ENABLE;
     LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET_OPT;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -96,17 +96,17 @@ lwgsm_pb_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const ui
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     lwgsm_core_lock();
-    gsm.m.pb.enabled = 0;
+    lwgsm.m.pb.enabled = 0;
     if (evt_fn != NULL) {
-        evt_fn(gsmOK, evt_arg);
+        evt_fn(lwgsmOK, evt_arg);
     }
     lwgsm_core_unlock();
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -118,7 +118,7 @@ lwgsm_pb_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_type_t type,
@@ -128,7 +128,7 @@ lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_ty
     LWGSM_ASSERT("name != NULL", name != NULL);
     LWGSM_ASSERT("num != NULL", num != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == gsmOK", check_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_mem() == lwgsmOK", check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -145,7 +145,7 @@ lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_ty
     LWGSM_MSG_VAR_REF(msg).msg.pb_write.num = num;
     LWGSM_MSG_VAR_REF(msg).msg.pb_write.type = type;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -156,7 +156,7 @@ lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_ty
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_read(lwgsm_mem_t mem, size_t pos, lwgsm_pb_entry_t* entry,
@@ -174,7 +174,7 @@ lwgsm_pb_read(lwgsm_mem_t mem, size_t pos, lwgsm_pb_entry_t* entry,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lwgsm_number_type_t type,
@@ -184,7 +184,7 @@ lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lw
     LWGSM_ASSERT("name != NULL", name != NULL);
     LWGSM_ASSERT("num != NULL", num != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -201,7 +201,7 @@ lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lw
     LWGSM_MSG_VAR_REF(msg).msg.pb_write.num = num;
     LWGSM_MSG_VAR_REF(msg).msg.pb_write.type = type;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -211,7 +211,7 @@ lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lw
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos,
@@ -220,7 +220,7 @@ lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos,
 
     LWGSM_ASSERT("pos > 0", pos > 0);
     CHECK_ENABLED();                            /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == gsmOK", check_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_mem() == lwgsmOK", check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -235,7 +235,7 @@ lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos,
     LWGSM_MSG_VAR_REF(msg).msg.pb_write.pos = pos;
     LWGSM_MSG_VAR_REF(msg).msg.pb_write.del = 1;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -248,7 +248,7 @@ lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, size_t etr, size_t* er,
@@ -259,7 +259,7 @@ lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, si
     LWGSM_ASSERT("entries != NULL", entries != NULL);
     LWGSM_ASSERT("etr > 0", etr > 0);
     CHECK_ENABLED();
-    LWGSM_ASSERT("check_mem() == gsmOK", check_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_mem() == lwgsmOK", check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -281,7 +281,7 @@ lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, si
     LWGSM_MSG_VAR_REF(msg).msg.pb_list.etr = etr;
     LWGSM_MSG_VAR_REF(msg).msg.pb_list.er = er;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -295,7 +295,7 @@ lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, si
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* entries, size_t etr, size_t* er,
@@ -306,7 +306,7 @@ lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* entries, 
     LWGSM_ASSERT("entries != NULL", entries != NULL);
     LWGSM_ASSERT("etr > 0", etr > 0);
     CHECK_ENABLED();                            /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == gsmOK);
+    LWGSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -328,7 +328,7 @@ lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* entries, 
     LWGSM_MSG_VAR_REF(msg).msg.pb_search.etr = etr;
     LWGSM_MSG_VAR_REF(msg).msg.pb_search.er = er;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 #endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */

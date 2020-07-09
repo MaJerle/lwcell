@@ -74,15 +74,15 @@ typedef struct lwgsm_mqtt_client_api* lwgsm_mqtt_client_api_p;
  */
 typedef struct lwgsm_mqtt_client_api_buf* lwgsm_mqtt_client_api_buf_p;
 
-lwgsm_mqtt_client_api_p   lwgsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len);
+lwgsm_mqtt_client_api_p lwgsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len);
 void                    lwgsm_mqtt_client_api_delete(lwgsm_mqtt_client_api_p client);
-lwgsm_mqtt_conn_status_t  lwgsm_mqtt_client_api_connect(lwgsm_mqtt_client_api_p client, const char* host, lwgsm_port_t port, const lwgsm_mqtt_client_info_t* info);
-lwgsmr_t                  lwgsm_mqtt_client_api_close(lwgsm_mqtt_client_api_p client);
-lwgsmr_t                  lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topic, lwgsm_mqtt_qos_t qos);
-lwgsmr_t                  lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* topic);
-lwgsmr_t                  lwgsm_mqtt_client_api_publish(lwgsm_mqtt_client_api_p client, const char* topic, const void* data, size_t btw, lwgsm_mqtt_qos_t qos, uint8_t retain);
+lwgsm_mqtt_conn_status_t    lwgsm_mqtt_client_api_connect(lwgsm_mqtt_client_api_p client, const char* host, lwgsm_port_t port, const lwgsm_mqtt_client_info_t* info);
+lwgsmr_t                lwgsm_mqtt_client_api_close(lwgsm_mqtt_client_api_p client);
+lwgsmr_t                lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topic, lwgsm_mqtt_qos_t qos);
+lwgsmr_t                lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* topic);
+lwgsmr_t                lwgsm_mqtt_client_api_publish(lwgsm_mqtt_client_api_p client, const char* topic, const void* data, size_t btw, lwgsm_mqtt_qos_t qos, uint8_t retain);
 uint8_t                 lwgsm_mqtt_client_api_is_connected(lwgsm_mqtt_client_api_p client);
-lwgsmr_t                  lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_api_buf_p* p, uint32_t timeout);
+lwgsmr_t                lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_api_buf_p* p, uint32_t timeout);
 void                    lwgsm_mqtt_client_api_buf_free(lwgsm_mqtt_client_api_buf_p p);
 
 /**

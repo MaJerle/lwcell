@@ -252,10 +252,10 @@ request_send_err_callback(lwgsm_mqtt_client_p client, uint8_t status, void* arg)
 
     if (client->evt.type == LWGSM_MQTT_EVT_PUBLISH) {
         client->evt.evt.publish.arg = arg;
-        client->evt.evt.publish.res = gsmERR;
+        client->evt.evt.publish.res = lwgsmERR;
     } else {
         client->evt.evt.sub_unsub_scribed.arg = arg;
-        client->evt.evt.sub_unsub_scribed.res = gsmERR;
+        client->evt.evt.sub_unsub_scribed.res = lwgsmERR;
     }
     client->evt_fn(client, &client->evt);
 }
@@ -419,7 +419,7 @@ send_data(lwgsm_mqtt_client_p client) {
     if (len > 0) {                                  /* Anything to send? */
         lwgsmr_t res;
         addr = lwgsm_buff_get_linear_block_read_address(&client->tx_buff);/* Get address of linear memory */
-        if ((res = lwgsm_conn_send(client->conn, addr, len, NULL, 0)) == gsmOK) {
+        if ((res = lwgsm_conn_send(client->conn, addr, len, NULL, 0)) == lwgsmOK) {
             client->written_total += len;       /* Increase number of bytes written to queue */
             client->is_sending = 1;             /* Remember active sending flag */
         } else {
@@ -440,16 +440,16 @@ send_data(lwgsm_mqtt_client_p client) {
 /**
  * \brief           Close a MQTT connection with server
  * \param[in]       client: MQTT client
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 static lwgsmr_t
 mqtt_close(lwgsm_mqtt_client_p client) {
-    lwgsmr_t res = gsmERR;
+    lwgsmr_t res = lwgsmERR;
     if (client->conn_state != LWGSM_MQTT_CONN_DISCONNECTED
         && client->conn_state != LWGSM_MQTT_CONN_DISCONNECTING) {
 
         res = lwgsm_conn_close(client->conn, 0);  /* Close the connection in non-blocking mode */
-        if (res == gsmOK) {
+        if (res == lwgsmOK) {
             client->conn_state = LWGSM_MQTT_CONN_DISCONNECTING;
         }
     }
@@ -637,7 +637,7 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
                         || msg_type == MQTT_MSG_TYPE_UNSUBACK) {
                         client->evt.type = msg_type == MQTT_MSG_TYPE_SUBACK ? LWGSM_MQTT_EVT_SUBSCRIBE : LWGSM_MQTT_EVT_UNSUBSCRIBE;
                         client->evt.evt.sub_unsub_scribed.arg = request->arg;
-                        client->evt.evt.sub_unsub_scribed.res = client->rx_buff[2] < 3 ? gsmOK : gsmERR;
+                        client->evt.evt.sub_unsub_scribed.res = client->rx_buff[2] < 3 ? lwgsmOK : lwgsmERR;
                         client->evt_fn(client, &client->evt);
 
                         /*
@@ -648,7 +648,7 @@ mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
                                || msg_type == MQTT_MSG_TYPE_PUBACK) {
                         client->evt.type = LWGSM_MQTT_EVT_PUBLISH;
                         client->evt.evt.publish.arg = request->arg;
-                        client->evt.evt.publish.res = gsmOK;
+                        client->evt.evt.publish.res = lwgsmOK;
                         client->evt_fn(client, &client->evt);
                     }
                     request_delete(client, request);    /* Delete request object */
@@ -911,7 +911,7 @@ mqtt_data_sent_cb(lwgsm_mqtt_client_p client, size_t sent_len, uint8_t successfu
             /* Call published callback */
             client->evt.type = LWGSM_MQTT_EVT_PUBLISH;
             client->evt.evt.publish.arg = arg;
-            client->evt.evt.publish.res = gsmOK;
+            client->evt.evt.publish.res = lwgsmOK;
             client->evt_fn(client, &client->evt);
         } else {
             break;
@@ -1008,7 +1008,7 @@ mqtt_closed_cb(lwgsm_mqtt_client_p client, lwgsmr_t res, uint8_t forced) {
 /**
  * \brief           Connection callback
  * \param[in]       evt: Callback parameters
- * \result          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \result          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 static lwgsmr_t
 mqtt_conn_cb(lwgsm_evt_t* evt) {
@@ -1020,10 +1020,10 @@ mqtt_conn_cb(lwgsm_evt_t* evt) {
         client = lwgsm_conn_get_arg(conn);        /* Get client structure from connection */
         if (client == NULL) {
             lwgsm_conn_close(conn, 0);            /* Force connection close immediately */
-            return gsmERR;
+            return lwgsmERR;
         }
     } else if (evt->type != LWGSM_EVT_CONN_ERROR) {
-        return gsmERR;
+        return lwgsmERR;
     }
 
     /* Check and process events */
@@ -1062,7 +1062,7 @@ mqtt_conn_cb(lwgsm_evt_t* evt) {
             /* Data sent callback */
             mqtt_data_sent_cb(client,
                               lwgsm_evt_conn_send_get_length(evt),
-                              lwgsm_evt_conn_send_get_result(evt) == gsmOK);
+                              lwgsm_evt_conn_send_get_result(evt) == lwgsmOK);
             break;
         }
 
@@ -1075,14 +1075,14 @@ mqtt_conn_cb(lwgsm_evt_t* evt) {
         /* Connection closed */
         case LWGSM_EVT_CONN_CLOSE: {
             mqtt_closed_cb(client,
-                           lwgsm_evt_conn_close_get_result(evt) == gsmOK,
+                           lwgsm_evt_conn_close_get_result(evt) == lwgsmOK,
                            lwgsm_evt_conn_close_is_forced(evt));
             break;
         }
         default:
             break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -1137,12 +1137,12 @@ lwgsm_mqtt_client_delete(lwgsm_mqtt_client_p client) {
  * \param[in]       port: Host port number
  * \param[in]       evt_fn: Callback function for all events on this MQTT client
  * \param[in]       info: Information structure for connection
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_port_t port,
                         lwgsm_mqtt_evt_fn evt_fn, const lwgsm_mqtt_client_info_t* info) {
-    lwgsmr_t res = gsmERR;
+    lwgsmr_t res = lwgsmERR;
 
     LWGSM_ASSERT("client != NULL", client != NULL);   /* t input parameters */
     LWGSM_ASSERT("host != NULL", host != NULL);
@@ -1156,7 +1156,7 @@ lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_po
 
         /* Start a new connection in non-blocking mode */
         res = lwgsm_conn_start(&client->conn, LWGSM_CONN_TYPE_TCP, host, port, client, mqtt_conn_cb, 0);
-        if (res == gsmOK) {
+        if (res == lwgsmOK) {
             client->conn_state = LWGSM_MQTT_CONN_CONNECTING;
         }
     }
@@ -1168,11 +1168,11 @@ lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_po
 /**
  * \brief           Disconnect from MQTT server
  * \param[in]       client: MQTT client
- * \return          \ref gsmOK if request sent to queue or member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK if request sent to queue or member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_disconnect(lwgsm_mqtt_client_p client) {
-    lwgsmr_t res = gsmERR;
+    lwgsmr_t res = lwgsmERR;
 
     lwgsm_core_lock();
     if (client->conn_state != LWGSM_MQTT_CONN_DISCONNECTED
@@ -1189,11 +1189,11 @@ lwgsm_mqtt_client_disconnect(lwgsm_mqtt_client_p client) {
  * \param[in]       topic: Topic name to subscribe to
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref lwgsm_mqtt_qos_t
  * \param[in]       arg: User custom argument used in callback
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_subscribe(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qos, void* arg) {
-    return sub_unsub(client, topic, qos, arg, 1) == 1 ? gsmOK : gsmERR;  /* Subscribe to topic */
+    return sub_unsub(client, topic, qos, arg, 1) == 1 ? lwgsmOK : lwgsmERR;  /* Subscribe to topic */
 }
 
 /**
@@ -1201,11 +1201,11 @@ lwgsm_mqtt_client_subscribe(lwgsm_mqtt_client_p client, const char* topic, lwgsm
  * \param[in]       client: MQTT client
  * \param[in]       topic: Topic name to unsubscribe from
  * \param[in]       arg: User custom argument used in callback
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_unsubscribe(lwgsm_mqtt_client_p client, const char* topic, void* arg) {
-    return sub_unsub(client, topic, (lwgsm_mqtt_qos_t)0, arg, 0) == 1 ? gsmOK : gsmERR;    /* Unsubscribe from topic */
+    return sub_unsub(client, topic, (lwgsm_mqtt_qos_t)0, arg, 0) == 1 ? lwgsmOK : lwgsmERR;    /* Unsubscribe from topic */
 }
 
 /**
@@ -1217,19 +1217,19 @@ lwgsm_mqtt_client_unsubscribe(lwgsm_mqtt_client_p client, const char* topic, voi
  * \param[in]       qos: Quality of service. This parameter can be a value of \ref lwgsm_mqtt_qos_t enumeration
  * \param[in]       retain: Retian parameter value
  * \param[in]       arg: User custom argument used in callback
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const void* payload,
                         uint16_t payload_len, lwgsm_mqtt_qos_t qos, uint8_t retain, void* arg) {
-    lwgsmr_t res = gsmOK;
+    lwgsmr_t res = lwgsmOK;
     lwgsm_mqtt_request_t* request = NULL;
     uint32_t rem_len, raw_len;
     uint16_t len_topic, pkt_id;
     uint8_t qos_u8 = LWGSM_U8(qos);
 
     if (!(len_topic = LWGSM_U16(strlen(topic)))) {    /* Get length of topic */
-        return gsmERR;
+        return lwgsmERR;
     }
 
     /*
@@ -1244,7 +1244,7 @@ lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const v
 
     lwgsm_core_lock();
     if (client->conn_state != LWGSM_MQTT_CONNECTED) {
-        res = gsmCLOSED;
+        res = lwgsmCLOSED;
     } else if ((raw_len = output_check_enough_memory(client, rem_len)) != 0) {
         pkt_id = qos_u8 > 0 ? create_packet_id(client) : 0; /* Create new packet ID */
         request = request_create(client, pkt_id, arg);  /* Create request for packet */
@@ -1274,11 +1274,11 @@ lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const v
                        "[MQTT] Pkt publish start. QoS: %d, pkt_id: %d\r\n", (int)qos_u8, (int)pkt_id);
         } else {
             LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] No free request available to publish message\r\n");
-            res = gsmERRMEM;
+            res = lwgsmERRMEM;
         }
     } else {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Not enough memory to publish message\r\n");
-        res = gsmERRMEM;
+        res = lwgsmERRMEM;
     }
     lwgsm_core_unlock();
     return res;

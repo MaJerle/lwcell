@@ -29,7 +29,7 @@ client_connect(void) {
     lwgsm_network_request_attach();
 
     /* Start a new connection as client in non-blocking mode */
-    if ((res = lwgsm_conn_start(NULL, LWGSM_CONN_TYPE_TCP, "example.com", 80, NULL, conn_callback_func, 0)) == gsmOK) {
+    if ((res = lwgsm_conn_start(NULL, LWGSM_CONN_TYPE_TCP, "example.com", 80, NULL, conn_callback_func, 0)) == lwgsmOK) {
         printf("Connection to " CONN_HOST " started...\r\n");
     } else {
         printf("Cannot start connection to " CONN_HOST "!\r\n");
@@ -39,7 +39,7 @@ client_connect(void) {
 /**
  * \brief           Event callback function for connection-only
  * \param[in]       evt: Event information with data
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 conn_callback_func(lwgsm_evt_t* evt) {
@@ -49,14 +49,14 @@ conn_callback_func(lwgsm_evt_t* evt) {
 
     conn = lwgsm_conn_get_from_evt(evt);          /* Get connection handle from event */
     if (conn == NULL) {
-        return gsmERR;
+        return lwgsmERR;
     }
     conn_num = lwgsm_conn_getnum(conn);           /* Get connection number for identification */
     switch (lwgsm_evt_get_type(evt)) {
         case LWGSM_EVT_CONN_ACTIVE: {             /* Connection just active */
             printf("Connection %d active!\r\n", (int)conn_num);
             res = lwgsm_conn_send(conn, req_data, sizeof(req_data) - 1, NULL, 0); /* Start sending data in non-blocking mode */
-            if (res == gsmOK) {
+            if (res == lwgsmOK) {
                 printf("Sending request data to server...\r\n");
             } else {
                 printf("Cannot send request data to server. Closing connection manually...\r\n");
@@ -74,7 +74,7 @@ conn_callback_func(lwgsm_evt_t* evt) {
         }
         case LWGSM_EVT_CONN_SEND: {               /* Data send event */
             lwgsmr_t res = lwgsm_evt_conn_send_get_result(evt);
-            if (res == gsmOK) {
+            if (res == lwgsmOK) {
                 printf("Data sent successfully on connection %d...waiting to receive data from remote side...\r\n", (int)conn_num);
             } else {
                 printf("Error while sending data on connection %d!\r\n", (int)conn_num);
@@ -96,5 +96,5 @@ conn_callback_func(lwgsm_evt_t* evt) {
         default:
             break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }

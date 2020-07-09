@@ -41,7 +41,7 @@
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_operator_get(lwgsm_operator_curr_t* curr,
@@ -53,7 +53,7 @@ lwgsm_operator_get(lwgsm_operator_curr_t* curr,
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_COPS_GET;
     LWGSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 2000);
 }
 
 /**
@@ -65,7 +65,7 @@ lwgsm_operator_get(lwgsm_operator_curr_t* curr,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, const char* name, uint32_t num,
@@ -88,7 +88,7 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
     LWGSM_MSG_VAR_REF(msg).msg.cops_set.name = name;
     LWGSM_MSG_VAR_REF(msg).msg.cops_set.num = num;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 2000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 2000);
 }
 
 /**
@@ -99,7 +99,7 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf,
@@ -117,5 +117,5 @@ lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf,
     LWGSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
     LWGSM_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 120000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 120000);
 }

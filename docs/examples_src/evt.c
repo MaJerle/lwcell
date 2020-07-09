@@ -13,5 +13,5 @@ lwgsm_callback_function(lwgsm_evt_t* evt) {
         }
         default: break;
     }
-    return gsmOK;
+    return lwgsmOK;
 }

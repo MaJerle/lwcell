@@ -38,7 +38,7 @@
 #if LWGSM_CFG_DBG || __DOXYGEN__
 
 const char*
-gsmi_dbg_msg_to_string(lwgsm_cmd_t cmd) {
+lwgsmi_dbg_msg_to_string(lwgsm_cmd_t cmd) {
     static char tmp_arr[100];
     if (cmd) {
         sprintf(tmp_arr, "%d", (int)cmd);

@@ -45,7 +45,7 @@
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_network_attach(const char* apn, const char* user, const char* pass,
@@ -62,7 +62,7 @@ lwgsm_network_attach(const char* apn, const char* user, const char* pass,
     LWGSM_MSG_VAR_REF(msg).msg.network_attach.user = user;
     LWGSM_MSG_VAR_REF(msg).msg.network_attach.pass = pass;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 200000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 200000);
 }
 
 /**
@@ -70,7 +70,7 @@ lwgsm_network_attach(const char* apn, const char* user, const char* pass,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_network_detach(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
@@ -83,7 +83,7 @@ lwgsm_network_detach(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, con
     /* LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CIPSTATUS; */
 #endif /* LWGSM_CFG_CONN */
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -91,7 +91,7 @@ lwgsm_network_detach(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, con
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
@@ -101,23 +101,23 @@ lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_ar
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSTATUS;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
  * \brief           Copy IP address from internal value to user variable
  * \param[out]      ip: Pointer to output IP variable
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_network_copy_ip(lwgsm_ip_t* ip) {
     if (lwgsm_network_is_attached()) {
         lwgsm_core_lock();
-        LWGSM_MEMCPY(ip, &gsm.m.network.ip_addr, sizeof(*ip));
+        LWGSM_MEMCPY(ip, &lwgsm.m.network.ip_addr, sizeof(*ip));
         lwgsm_core_unlock();
-        return gsmOK;
+        return lwgsmOK;
     }
-    return gsmERR;
+    return lwgsmERR;
 }
 
 /**
@@ -128,7 +128,7 @@ uint8_t
 lwgsm_network_is_attached(void) {
     uint8_t res;
     lwgsm_core_lock();
-    res = LWGSM_U8(gsm.m.network.is_attached);
+    res = LWGSM_U8(lwgsm.m.network.is_attached);
     lwgsm_core_unlock();
     return res;
 }
@@ -141,7 +141,7 @@ lwgsm_network_is_attached(void) {
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_network_rssi(int16_t* rssi,
@@ -153,7 +153,7 @@ lwgsm_network_rssi(int16_t* rssi,
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CSQ_GET;
     LWGSM_MSG_VAR_REF(msg).msg.csq.rssi = rssi;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 120000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 120000);
 }
 
 /**
@@ -164,7 +164,7 @@ lwgsm_network_reg_status_t
 lwgsm_network_get_reg_status(void) {
     lwgsm_network_reg_status_t ret;
     lwgsm_core_lock();
-    ret = gsm.m.network.status;
+    ret = lwgsm.m.network.status;
     lwgsm_core_unlock();
     return ret;
 }

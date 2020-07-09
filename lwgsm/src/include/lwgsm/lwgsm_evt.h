@@ -47,8 +47,8 @@ extern "C" {
  * \{
  */
 
-lwgsmr_t          lwgsm_evt_register(lwgsm_evt_fn fn);
-lwgsmr_t          lwgsm_evt_unregister(lwgsm_evt_fn fn);
+lwgsmr_t        lwgsm_evt_register(lwgsm_evt_fn fn);
+lwgsmr_t        lwgsm_evt_unregister(lwgsm_evt_fn fn);
 lwgsm_evt_type_t  lwgsm_evt_get_type(lwgsm_evt_t* cc);
 
 /**
@@ -57,7 +57,7 @@ lwgsm_evt_type_t  lwgsm_evt_get_type(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_RESET event
  */
 
-lwgsmr_t      lwgsm_evt_reset_get_result(lwgsm_evt_t* cc);
+lwgsmr_t        lwgsm_evt_reset_get_result(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -69,7 +69,7 @@ lwgsmr_t      lwgsm_evt_reset_get_result(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_RESTORE event
  */
 
-lwgsmr_t      lwgsm_evt_restore_get_result(lwgsm_evt_t* cc);
+lwgsmr_t        lwgsm_evt_restore_get_result(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -93,8 +93,8 @@ const lwgsm_operator_curr_t*  lwgsm_evt_network_operator_get_current(lwgsm_evt_t
  * \brief           Event helper functions for \ref LWGSM_EVT_CONN_RECV event
  */
 
-lwgsm_pbuf_p  lwgsm_evt_conn_recv_get_buff(lwgsm_evt_t* cc);
-lwgsm_conn_p  lwgsm_evt_conn_recv_get_conn(lwgsm_evt_t* cc);
+lwgsm_pbuf_p    lwgsm_evt_conn_recv_get_buff(lwgsm_evt_t* cc);
+lwgsm_conn_p    lwgsm_evt_conn_recv_get_conn(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -106,9 +106,9 @@ lwgsm_conn_p  lwgsm_evt_conn_recv_get_conn(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_CONN_SEND event
  */
 
-lwgsm_conn_p  lwgsm_evt_conn_send_get_conn(lwgsm_evt_t* cc);
-size_t      lwgsm_evt_conn_send_get_length(lwgsm_evt_t* cc);
-lwgsmr_t      lwgsm_evt_conn_send_get_result(lwgsm_evt_t* cc);
+lwgsm_conn_p    lwgsm_evt_conn_send_get_conn(lwgsm_evt_t* cc);
+size_t          lwgsm_evt_conn_send_get_length(lwgsm_evt_t* cc);
+lwgsmr_t        lwgsm_evt_conn_send_get_result(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -120,8 +120,8 @@ lwgsmr_t      lwgsm_evt_conn_send_get_result(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_CONN_ACTIVE event
  */
 
-lwgsm_conn_p  lwgsm_evt_conn_active_get_conn(lwgsm_evt_t* cc);
-uint8_t     lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc);
+lwgsm_conn_p    lwgsm_evt_conn_active_get_conn(lwgsm_evt_t* cc);
+uint8_t         lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -133,10 +133,10 @@ uint8_t     lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_CONN_CLOSE event
  */
 
-lwgsm_conn_p  lwgsm_evt_conn_close_get_conn(lwgsm_evt_t* cc);
-uint8_t     lwgsm_evt_conn_close_is_client(lwgsm_evt_t* cc);
-uint8_t     lwgsm_evt_conn_close_is_forced(lwgsm_evt_t* cc);
-lwgsmr_t      lwgsm_evt_conn_close_get_result(lwgsm_evt_t* cc);
+lwgsm_conn_p    lwgsm_evt_conn_close_get_conn(lwgsm_evt_t* cc);
+uint8_t         lwgsm_evt_conn_close_is_client(lwgsm_evt_t* cc);
+uint8_t         lwgsm_evt_conn_close_is_forced(lwgsm_evt_t* cc);
+lwgsmr_t        lwgsm_evt_conn_close_get_result(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -148,7 +148,7 @@ lwgsmr_t      lwgsm_evt_conn_close_get_result(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_CONN_POLL event
  */
 
-lwgsm_conn_p  lwgsm_evt_conn_poll_get_conn(lwgsm_evt_t* cc);
+lwgsm_conn_p    lwgsm_evt_conn_poll_get_conn(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -160,10 +160,10 @@ lwgsm_conn_p  lwgsm_evt_conn_poll_get_conn(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_CONN_ERROR event
  */
 
-lwgsmr_t              lwgsm_evt_conn_error_get_error(lwgsm_evt_t* cc);
-lwgsm_conn_type_t     lwgsm_evt_conn_error_get_type(lwgsm_evt_t* cc);
+lwgsmr_t            lwgsm_evt_conn_error_get_error(lwgsm_evt_t* cc);
+lwgsm_conn_type_t   lwgsm_evt_conn_error_get_type(lwgsm_evt_t* cc);
 const char*         lwgsm_evt_conn_error_get_host(lwgsm_evt_t* cc);
-lwgsm_port_t          lwgsm_evt_conn_error_get_port(lwgsm_evt_t* cc);
+lwgsm_port_t        lwgsm_evt_conn_error_get_port(lwgsm_evt_t* cc);
 void*               lwgsm_evt_conn_error_get_arg(lwgsm_evt_t* cc);
 
 /**
@@ -189,7 +189,7 @@ int16_t lwgsm_evt_signal_strength_get_rssi(lwgsm_evt_t* cc);
  */
 
 size_t      lwgsm_evt_sms_recv_get_pos(lwgsm_evt_t* cc);
-lwgsm_mem_t   lwgsm_evt_sms_recv_get_mem(lwgsm_evt_t* cc);
+lwgsm_mem_t lwgsm_evt_sms_recv_get_mem(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -201,8 +201,8 @@ lwgsm_mem_t   lwgsm_evt_sms_recv_get_mem(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_SMS_READ event
  */
 
-lwgsm_sms_entry_t*    lwgsm_evt_sms_read_get_entry(lwgsm_evt_t* cc);
-lwgsmr_t              lwgsm_evt_sms_read_get_result(lwgsm_evt_t* cc);
+lwgsm_sms_entry_t*  lwgsm_evt_sms_read_get_entry(lwgsm_evt_t* cc);
+lwgsmr_t            lwgsm_evt_sms_read_get_result(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -214,8 +214,8 @@ lwgsmr_t              lwgsm_evt_sms_read_get_result(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_SMS_SEND event
  */
 
-lwgsmr_t  lwgsm_evt_sms_send_get_result(lwgsm_evt_t* cc);
-size_t  lwgsm_evt_sms_send_get_pos(lwgsm_evt_t* cc);
+lwgsmr_t    lwgsm_evt_sms_send_get_result(lwgsm_evt_t* cc);
+size_t      lwgsm_evt_sms_send_get_pos(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -227,9 +227,9 @@ size_t  lwgsm_evt_sms_send_get_pos(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_SMS_DELETE event
  */
 
-lwgsmr_t      lwgsm_evt_sms_delete_get_result(lwgsm_evt_t* cc);
+lwgsmr_t    lwgsm_evt_sms_delete_get_result(lwgsm_evt_t* cc);
 size_t      lwgsm_evt_sms_delete_get_pos(lwgsm_evt_t* cc);
-lwgsm_mem_t   lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc);
+lwgsm_mem_t lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -241,7 +241,7 @@ lwgsm_mem_t   lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_CALL_CHANGED event
  */
 
-const lwgsm_call_t*  lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc);
+const lwgsm_call_t* lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc);
 
 /**
  * \}
@@ -253,9 +253,9 @@ const lwgsm_call_t*  lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc);
  * \brief           Event helper functions for \ref LWGSM_EVT_OPERATOR_SCAN event
  */
 
-lwgsmr_t          lwgsm_evt_operator_scan_get_result(lwgsm_evt_t* cc);
-lwgsm_operator_t* lwgsm_evt_operator_scan_get_entries(lwgsm_evt_t* cc);
-size_t          lwgsm_evt_operator_scan_get_length(lwgsm_evt_t* cc);
+lwgsmr_t            lwgsm_evt_operator_scan_get_result(lwgsm_evt_t* cc);
+lwgsm_operator_t*   lwgsm_evt_operator_scan_get_entries(lwgsm_evt_t* cc);
+size_t              lwgsm_evt_operator_scan_get_length(lwgsm_evt_t* cc);
 
 /**
  * \}

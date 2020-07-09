@@ -32,7 +32,7 @@ netconn_client_thread(void const* arg) {
     lwgsm_sys_sem_t* sem = (void*)arg;
 
     /* Request attach to network */
-    while (lwgsm_network_request_attach() != gsmOK) {
+    while (lwgsm_network_request_attach() != lwgsmOK) {
         lwgsm_delay(1000);
     }
 
@@ -50,13 +50,13 @@ netconn_client_thread(void const* arg) {
          * Function will block thread until we are successfully connected (or not) to server
          */
         res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT);
-        if (res == gsmOK) {                     /* Are we successfully connected? */
+        if (res == lwgsmOK) {                     /* Are we successfully connected? */
             printf("Connected to " NETCONN_HOST "\r\n");
             res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1);    /* Send data to server */
-            if (res == gsmOK) {
+            if (res == lwgsmOK) {
                 res = lwgsm_netconn_flush(client);/* Flush data to output */
             }
-            if (res == gsmOK) {                 /* Were data sent? */
+            if (res == lwgsmOK) {                 /* Were data sent? */
                 printf("Data were successfully sent to server\r\n");
 
                 /*
@@ -76,14 +76,14 @@ netconn_client_thread(void const* arg) {
                      * was closed too early from remote side
                      */
                     res = lwgsm_netconn_receive(client, &pbuf);
-                    if (res == gsmCLOSED) {     /* Was the connection closed? This can be checked by return status of receive function */
+                    if (res == lwgsmCLOSED) {     /* Was the connection closed? This can be checked by return status of receive function */
                         printf("Connection closed by remote side...\r\n");
                         break;
-                    } else if (res == gsmTIMEOUT) {
+                    } else if (res == lwgsmTIMEOUT) {
                         printf("Netconn timeout while receiving data. You may try multiple readings before deciding to close manually\r\n");
                     }
 
-                    if (res == gsmOK && pbuf != NULL) { /* Make sure we have valid packet buffer */
+                    if (res == lwgsmOK && pbuf != NULL) { /* Make sure we have valid packet buffer */
                         /*
                          * At this point read and manipulate
                          * with received buffer and check if you expect more data
@@ -104,7 +104,7 @@ netconn_client_thread(void const* arg) {
              * Check if connection was closed by remote server
              * and in case it wasn't, close it manually
              */
-            if (res != gsmCLOSED) {
+            if (res != lwgsmCLOSED) {
                 lwgsm_netconn_close(client);
             }
         } else {

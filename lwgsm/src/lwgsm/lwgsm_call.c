@@ -38,31 +38,31 @@
 #if LWGSM_CFG_CALL || __DOXYGEN__
 
 #if !__DOXYGEN__
-#define CHECK_ENABLED()                 if (!(check_enabled() == gsmOK)) { return gsmERRNOTENABLED; }
+#define CHECK_ENABLED()                 if (!(check_enabled() == lwgsmOK)) { return lwgsmERRNOTENABLED; }
 #endif /* !__DOXYGEN__ */
 
 /**
  * \brief           Check if sms is enabled
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 static lwgsmr_t
 check_enabled(void) {
     lwgsmr_t res;
     lwgsm_core_lock();
-    res = gsm.m.call.enabled ? gsmOK : gsmERR;
+    res = lwgsm.m.call.enabled ? lwgsmOK : lwgsmERR;
     lwgsm_core_unlock();
     return res;
 }
 
 /**
  * \brief           Check if call is available
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 static lwgsmr_t
 check_ready(void) {
     lwgsmr_t res;
     lwgsm_core_lock();
-    res = gsm.m.call.ready ? gsmOK : gsmERR;
+    res = lwgsm.m.call.ready ? lwgsmOK : lwgsmERR;
     lwgsm_core_unlock();
     return res;
 }
@@ -72,7 +72,7 @@ check_ready(void) {
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
@@ -83,7 +83,7 @@ lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CALL_ENABLE;
     LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CLCC_SET;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 60000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
 
 /**
@@ -91,17 +91,17 @@ lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
 lwgsmr_t
 lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     lwgsm_core_lock();
-    gsm.m.call.enabled = 0;
+    lwgsm.m.call.enabled = 0;
     if (evt_fn != NULL) {
-        evt_fn(gsmOK, evt_arg);
+        evt_fn(lwgsmOK, evt_arg);
     }
     lwgsm_core_unlock();
-    return gsmOK;
+    return lwgsmOK;
 }
 
 /**
@@ -110,7 +110,7 @@ lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       number: Phone number to call, including country code starting with `+` sign
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_call_start(const char* number,
@@ -119,14 +119,14 @@ lwgsm_call_start(const char* number,
 
     LWGSM_ASSERT("number != NULL", number != NULL);
     CHECK_ENABLED();                            /* Check if enabled */
-    LWGSM_ASSERT("check_ready == gsmOK", check_ready() == gsmOK);
+    LWGSM_ASSERT("check_ready == lwgsmOK", check_ready() == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_ATD;
     LWGSM_MSG_VAR_REF(msg).msg.call_start.number = number;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -134,7 +134,7 @@ lwgsm_call_start(const char* number,
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
@@ -146,7 +146,7 @@ lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_ATA;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -154,7 +154,7 @@ lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref gsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
 lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
@@ -166,7 +166,7 @@ lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_ATH;
 
-    return gsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), gsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
