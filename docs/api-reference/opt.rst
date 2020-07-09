@@ -1,7 +1,7 @@
 .. _api_lwgsm_opt:
 
-GSM Configuration
-=================
+Configuration
+=============
 
 This is the default configuration of the middleware.
 When any of the settings shall be modified, it shall be done in dedicated application config ``lwgsm_opts.h`` file.
