@@ -1,7 +1,7 @@
-.. _api_gsm:
+.. _api_lwgsm:
 
-GSM AT Lib
-==========
+LwGSM
+=====
 
 .. toctree::
 	:maxdepth: 2
@@ -9,4 +9,4 @@ GSM AT Lib
 
 	*
 
-.. doxygengroup:: GSM
+.. doxygengroup:: LWGSM
