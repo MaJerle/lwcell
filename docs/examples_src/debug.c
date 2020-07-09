@@ -1,4 +1,4 @@
-#include "gsm/gsm_debug.h"
+#include "lwgsm/lwgsm_debug.h"
 
 /*
  * Print debug message to the screen

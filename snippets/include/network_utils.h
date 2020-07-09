@@ -2,7 +2,7 @@
 #define SNIPPET_HDR_NETWORK_UTILS_H
 
 #include <stdint.h>
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 
 #ifdef __cplusplus
 extern "C" {

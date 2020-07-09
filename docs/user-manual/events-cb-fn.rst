@@ -47,7 +47,7 @@ custom, event function.
     receive event when station disconnected from wifi access point.
     Check its source file for actual implementation.
 
-.. literalinclude:: ../../gsm_at_lib/src/api/gsm_netconn.c
+.. literalinclude:: ../../lwgsm/src/api/gsm_netconn.c
     :language: c
     :linenos:
     :caption: Netconn API module actual implementation

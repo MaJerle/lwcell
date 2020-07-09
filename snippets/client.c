@@ -1,6 +1,6 @@
 #include "client.h"
-#include "gsm/gsm.h"
-#include "gsm/gsm_network_api.h"
+#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_network_api.h"
 
 /* Host parameter */
 #define CONN_HOST           "example.com"

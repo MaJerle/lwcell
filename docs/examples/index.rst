@@ -29,7 +29,7 @@ External USB to UART converter (FTDI-like device) is necessary in order to conne
 .. note::
 	*GSM* device is connected with *USB to UART converter* only by *RX* and *TX* pins.
 
-Device driver is located in ``/gsm_at_lib/src/system/gsm_ll_win32.c``
+Device driver is located in ``/lwgsm/src/system/gsm_ll_win32.c``
 
 STM32
 *****

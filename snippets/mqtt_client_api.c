@@ -10,10 +10,10 @@
  * test.mosquitto.org server and subscribe to publishing topic
  */
 
-#include "gsm/apps/gsm_mqtt_client_api.h"
+#include "lwgsm/apps/lwgsm_mqtt_client_api.h"
 #include "mqtt_client_api.h"
-#include "gsm/gsm_mem.h"
-#include "gsm/gsm_network_api.h"
+#include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_network_api.h"
 
 /**
  * \brief           Connection information for MQTT CONNECT packet

@@ -1,5 +1,5 @@
 #include "sim_manager.h"
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 
 /**
  * \brief           SIM card pin code

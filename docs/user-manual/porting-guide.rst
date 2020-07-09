@@ -89,7 +89,7 @@ Notes:
 * Memory manager has been assigned to ``1`` region of ``GSM_MEM_SIZE`` size
 * It sets *send* and *reset* callback functions for *GSM-AT* library
 
-.. literalinclude:: ../../gsm_at_lib/src/system/gsm_ll_win32.c
+.. literalinclude:: ../../lwgsm/src/system/gsm_ll_win32.c
     :language: c
     :linenos:
     :caption: Actual implementation of low-level driver for WIN32
@@ -107,7 +107,7 @@ Notes:
 * Memory manager has been assigned to ``1`` region of ``GSM_MEM_SIZE`` size
 * It sets *send* and *reset* callback functions for *GSM-AT* library
 
-.. literalinclude:: ../../gsm_at_lib/src/system/gsm_ll_stm32.c
+.. literalinclude:: ../../lwgsm/src/system/gsm_ll_stm32.c
     :language: c
     :linenos:
     :caption: Actual implementation of low-level driver for STM32
@@ -115,12 +115,12 @@ Notes:
 Example: System functions for WIN32
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../gsm_at_lib/src/include/system/port/win32/gsm_sys_port.h
+.. literalinclude:: ../../lwgsm/src/include/system/port/win32/gsm_sys_port.h
     :language: c
     :linenos:
     :caption: Actual header implementation of system functions for WIN32
 
-.. literalinclude:: ../../gsm_at_lib/src/system/gsm_sys_win32.c
+.. literalinclude:: ../../lwgsm/src/system/gsm_sys_win32.c
     :language: c
     :linenos:
     :caption: Actual implementation of system functions for WIN32
@@ -128,12 +128,12 @@ Example: System functions for WIN32
 Example: System functions for CMSIS-OS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../gsm_at_lib/src/include/system/port/cmsis_os/gsm_sys_port.h
+.. literalinclude:: ../../lwgsm/src/include/system/port/cmsis_os/gsm_sys_port.h
     :language: c
     :linenos:
     :caption: Actual header implementation of system functions for CMSIS-OS based operating systems
 
-.. literalinclude:: ../../gsm_at_lib/src/system/gsm_sys_cmsis_os.c
+.. literalinclude:: ../../lwgsm/src/system/gsm_sys_cmsis_os.c
     :language: c
     :linenos:
     :caption: Actual implementation of system functions for CMSIS-OS based operating systems

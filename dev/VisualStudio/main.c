@@ -2,11 +2,11 @@
 //
 
 #include "windows.h"
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 
-#include "gsm/apps/gsm_mqtt_client_api.h"
-#include "gsm/gsm_mem.h"
-#include "gsm/gsm_network_api.h"
+#include "lwgsm/apps/lwgsm_mqtt_client_api.h"
+#include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_network_api.h"
 
 #include "mqtt_client_api.h"
 #include "netconn_client.h"

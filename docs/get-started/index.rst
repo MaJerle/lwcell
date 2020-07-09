@@ -55,7 +55,7 @@ At this point it is assumed that you have successfully download library, either 
 * Add port architecture ``gsm_at_lib/src/include/system/port/_arch_`` folder to *include path* of your toolchain
 * Add source files from ``gsm_at_lib/src/`` folder to toolchain build
 * Add source files from ``gsm_at_lib/src/system/`` folder to toolchain build for arch port
-* Copy ``gsm_at_lib/src/include/gsm/gsm_opts_template.h`` to project folder and rename it to ``gsm_opts.h``
+* Copy ``gsm_at_lib/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``gsm_opts.h``
 * Build the project
 
 Configuration file
@@ -67,7 +67,7 @@ This file shall be named ``gsm_opts.h`` and its default template looks like the 
 .. tip::
     Check :ref:`api_gsm_opt` section for possible configuration settings
 
-.. literalinclude:: ../../gsm_at_lib/src/include/gsm/gsm_opts_template.h
+.. literalinclude:: ../../lwgsm/src/include/lwgsm/lwgsm_opts_template.h
     :language: c
     :linenos:
     :caption: Template options file

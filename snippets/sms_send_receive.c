@@ -4,7 +4,7 @@
  * Waits for received SMS and then replies with
  */
 #include "sms_send_receive.h"
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 
 #if !GSM_CFG_SMS
 #error "SMS must be enabled to run this example"

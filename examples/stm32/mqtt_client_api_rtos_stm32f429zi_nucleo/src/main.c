@@ -32,7 +32,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 #include "sim_manager.h"
 #include "network_utils.h"
 #include "mqtt_client_api.h"

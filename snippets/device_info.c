@@ -1,7 +1,7 @@
 /*
  * Read device information
  */
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 
 /**
  * \brief           Device info string array

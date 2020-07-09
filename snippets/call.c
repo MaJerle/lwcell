@@ -2,7 +2,7 @@
  * Receive call and answer to it example
  */
 #include "call.h"
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 
 #if !GSM_CFG_CALL
 #error "CALL must be enabled to run this example"
