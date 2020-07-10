@@ -1,4 +1,4 @@
-LwMEM |version| documentation
+LwGSM |version| documentation
 =============================
 
 Welcome to the documentation for version |version|.

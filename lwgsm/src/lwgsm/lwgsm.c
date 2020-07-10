@@ -200,7 +200,7 @@ lwgsm_reset_with_delay(uint32_t delay,
 /**
  * \brief           Lock stack from multi-thread access, enable atomic access to core
  *
- * If lock was `0` prior funcion call, lock is enabled and increased
+ * If lock was `0` prior function call, lock is enabled and increased
  *
  * \note            Function may be called multiple times to increase locks.
  *                  Application must take care to call \ref lwgsm_core_unlock
