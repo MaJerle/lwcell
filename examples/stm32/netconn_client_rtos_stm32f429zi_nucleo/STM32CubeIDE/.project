@@ -119,157 +119,157 @@
 			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/timers.c</locationURI>
 		</link>
 		<link>
-			<name>GSM API/lwgsm_netconn.c</name>
+			<name>lwgsm_api/lwgsm_netconn.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/api/lwgsm_netconn.c</locationURI>
 		</link>
 		<link>
-			<name>GSM API/lwgsm_network_api.c</name>
+			<name>lwgsm_api/lwgsm_network_api.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/api/lwgsm_network_api.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm.c</name>
+			<name>lwgsm/lwgsm.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_buff.c</name>
+			<name>lwgsm/lwgsm_buff.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_buff.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_call.c</name>
+			<name>lwgsm/lwgsm_call.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_call.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_conn.c</name>
+			<name>lwgsm/lwgsm_conn.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_conn.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_debug.c</name>
+			<name>lwgsm/lwgsm_debug.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_debug.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_device_info.c</name>
+			<name>lwgsm/lwgsm_device_info.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_device_info.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_evt.c</name>
+			<name>lwgsm/lwgsm_evt.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_evt.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_ftp.c</name>
+			<name>lwgsm/lwgsm_ftp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_ftp.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_http.c</name>
+			<name>lwgsm/lwgsm_http.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_http.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_input.c</name>
+			<name>lwgsm/lwgsm_input.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_input.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_int.c</name>
+			<name>lwgsm/lwgsm_int.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_int.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_mem.c</name>
+			<name>lwgsm/lwgsm_mem.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_mem.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_network.c</name>
+			<name>lwgsm/lwgsm_network.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_network.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_operator.c</name>
+			<name>lwgsm/lwgsm_operator.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_operator.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_parser.c</name>
+			<name>lwgsm/lwgsm_parser.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_parser.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_pbuf.c</name>
+			<name>lwgsm/lwgsm_pbuf.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_pbuf.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_phonebook.c</name>
+			<name>lwgsm/lwgsm_phonebook.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_phonebook.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_ping.c</name>
+			<name>lwgsm/lwgsm_ping.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_ping.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_sim.c</name>
+			<name>lwgsm/lwgsm_sim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_sim.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_sms.c</name>
+			<name>lwgsm/lwgsm_sms.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_sms.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_threads.c</name>
+			<name>lwgsm/lwgsm_threads.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_threads.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_timeout.c</name>
+			<name>lwgsm/lwgsm_timeout.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_timeout.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_unicode.c</name>
+			<name>lwgsm/lwgsm_unicode.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_unicode.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/lwgsm_utils.c</name>
+			<name>lwgsm/lwgsm_utils.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_utils.c</locationURI>
 		</link>
 		<link>
-			<name>GSM LL/lwgsm_ll_stm32f429zi_nucleo.c</name>
+			<name>lwgsm_ll/lwgsm_ll_stm32f429zi_nucleo.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/system/lwgsm_ll_stm32f429zi_nucleo.c</locationURI>
 		</link>
 		<link>
-			<name>GSM LL/lwgsm_sys_cmsis_os.c</name>
+			<name>lwgsm_ll/lwgsm_sys_cmsis_os.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/system/lwgsm_sys_cmsis_os.c</locationURI>
 		</link>
 		<link>
-			<name>GSM SNIPPETS/netconn_client.c</name>
+			<name>lwgsm_snippets/netconn_client.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/netconn_client.c</locationURI>
 		</link>
 		<link>
-			<name>GSM SNIPPETS/network_utils.c</name>
+			<name>lwgsm_snippets/network_utils.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/network_utils.c</locationURI>
 		</link>
 		<link>
-			<name>GSM SNIPPETS/sim_manager.c</name>
+			<name>lwgsm_snippets/sim_manager.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/sim_manager.c</locationURI>
 		</link>
