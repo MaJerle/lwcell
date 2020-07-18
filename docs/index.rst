@@ -3,13 +3,13 @@ LwGSM |version| documentation
 
 Welcome to the documentation for version |version|.
 
-LwGSM is generic, platform independent, library to control *SIM800/SIM900* or *SIM7000/SIM7020 (NB-Iot LTE)* devices from *SIMCom*. 
-Its objective is to run on master system, while SIMCom device runs official AT commands firmware developed and maintained by *SIMCom*. 
+LwGSM is generic, platform independent, library to control *SIM800/SIM900* or *SIM7000/SIM7020 (NB-Iot LTE)* devices from *SIMCom*.
+Its objective is to run on master system, while SIMCom device runs official AT commands firmware developed and maintained by *SIMCom*.
 
 .. rst-class:: center
 .. rst-class:: index_links
 
-	:ref:`download_library` · :ref:`getting_started` · `Open Github <https://github.com/MaJerle/lwgsm>`_
+	:ref:`download_library` :ref:`getting_started` `Open Github <https://github.com/MaJerle/lwgsm>`_
 
 Features
 ^^^^^^^^
