@@ -43,7 +43,7 @@
 lwgsmr_t
 lwgsm_evt_register(lwgsm_evt_fn fn) {
     lwgsmr_t res = lwgsmOK;
-    lwgsm_evt_func_t* func, *newFunc;
+    lwgsm_evt_func_t* func, *new_func;
 
     LWGSM_ASSERT("fn != NULL", fn != NULL);
 
@@ -58,16 +58,16 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
     }
 
     if (res == lwgsmOK) {
-        newFunc = lwgsm_mem_malloc(sizeof(*newFunc));
-        if (newFunc != NULL) {
-            LWGSM_MEMSET(newFunc, 0x00, sizeof(*newFunc));
-            newFunc->fn = fn;                   /* Set function pointer */
+        new_func = lwgsm_mem_malloc(sizeof(*new_func));
+        if (new_func != NULL) {
+            LWGSM_MEMSET(new_func, 0x00, sizeof(*new_func));
+            new_func->fn = fn;                  /* Set function pointer */
             for (func = lwgsm.evt_func; func != NULL && func->next != NULL; func = func->next) {}
             if (func != NULL) {
-                func->next = newFunc;           /* Set new function as next */
+                func->next = new_func;          /* Set new function as next */
                 res = lwgsmOK;
             } else {
-                lwgsm_mem_free_s((void**)& newFunc);
+                lwgsm_mem_free_s((void**)&new_func);
                 res = lwgsmERRMEM;
             }
         } else {
