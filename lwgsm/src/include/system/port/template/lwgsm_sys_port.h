@@ -36,7 +36,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "lwgsm_opts.h"
+#include "lwgsm/lwgsm_opt.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -35,7 +35,9 @@
 #define LWGSM_HDR_OPT_H
 
 /* Include application options */
+#ifndef LWGSM_IGNORE_USER_OPTS
 #include "lwgsm_opts.h"
+#endif /* LWGSM_IGNORE_USER_OPTS */
 
 /**
  * \defgroup        LWGSM_OPT Configuration
