@@ -66,7 +66,7 @@ This file shall be named ``lwgsm_opts.h`` and its default template looks like th
 
 .. note::
     Default configuration template file location: ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h``.
-    File must first be renamed to ``lwgsm_opts.h`` and then copied to the project directory (or simply renamed in-place) where compiler
+    File must be renamed to ``lwgsm_opts.h`` first and then copied to the project directory (or simply renamed in-place) where compiler
     include paths have access to it by using ``#include "lwgsm_opts.h"``.
 
 .. tip::
