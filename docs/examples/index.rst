@@ -3,7 +3,7 @@
 Examples and demos
 ==================
 
-Various examples are provided for fast library evaluation on embedded systems. These are optimized prepared and maintained for ``2`` platforms, but could be easily extended to more platforms:
+Various examples are provided for fast library evaluation on embedded systems. These are prepared and maintained for ``2`` platforms, but could be easily extended to more platforms:
 
 * WIN32 examples, prepared as `Visual Studio Community <https://visualstudio.microsoft.com/vs/community/>`_ projects
 * ARM Cortex-M examples for STM32, prepared as `STM32CubeIDE <https://www.st.com/en/development-tools/stm32cubeide.html>`_ GCC projects
@@ -23,7 +23,7 @@ WIN32
 Examples for *WIN32* are prepared as `Visual Studio Community <https://visualstudio.microsoft.com/vs/community/>`_ projects.
 You can directly open project in the IDE, compile & debug.
 
-Application opens *COM* port, set in the low-level driver. 
+Application opens *COM* port, set in the low-level driver.
 External USB to UART converter (FTDI-like device) is necessary in order to connect to *GSM* device.
 
 .. note::
