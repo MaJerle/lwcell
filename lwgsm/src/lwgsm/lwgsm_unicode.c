@@ -50,7 +50,7 @@ lwgsmi_unicode_decode(lwgsm_unicode_t* s, uint8_t c) {
         if (c < 0x80) {                         /* One byte only in UTF-8 representation */
             s->r = 0;                           /* Remaining bytes */
             s->t = 1;
-            return lwgsmOK;                       /* Return OK */
+            return lwgsmOK;                     /* Return OK */
         }
         if ((c & 0xE0) == 0xC0) {               /* 1 additional byte in a row = 110x xxxx */
             s->r = 1;
@@ -59,17 +59,17 @@ lwgsmi_unicode_decode(lwgsm_unicode_t* s, uint8_t c) {
         } else if ((c & 0xF8) == 0xF0) {        /* 3 additional bytes in a row = 1111 0xxx */
             s->r = 3;
         } else {
-            return lwgsmERR;                      /* Error parsing unicode byte */
+            return lwgsmERR;                    /* Error parsing unicode byte */
         }
         s->t = s->r + 1;                        /* Number of bytes is 1 byte more than remaining in sequence */
-        return lwgsmINPROG;                       /* Return in progress status */
+        return lwgsmINPROG;                     /* Return in progress status */
     } else if ((c & 0xC0) == 0x80) {            /* Next character in sequence */
         --s->r;                                 /* Decrease character */
         s->ch[s->t - s->r - 1] = c;             /* Save character to array */
         if (s->r == 0) {                        /* Did we finish? */
-            return lwgsmOK;                       /* Return OK, we are ready to proceed */
+            return lwgsmOK;                     /* Return OK, we are ready to proceed */
         }
-        return lwgsmINPROG;                       /* Still in progress */
+        return lwgsmINPROG;                     /* Still in progress */
     }
-    return lwgsmERR;                              /* An error, unknown UTF-8 character entered */
+    return lwgsmERR;                            /* An error, unknown UTF-8 character entered */
 }

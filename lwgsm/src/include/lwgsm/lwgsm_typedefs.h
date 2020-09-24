@@ -385,7 +385,7 @@ typedef enum lwgsm_cb_type_t {
 
     LWGSM_EVT_SIM_STATE_CHANGED,                /*!< SIM card state changed */
 
-    LWGSM_EVT_OPERATOR_SCAN,                      /*!< Operator scan finished event */
+    LWGSM_EVT_OPERATOR_SCAN,                    /*!< Operator scan finished event */
 
     LWGSM_EVT_NETWORK_OPERATOR_CURRENT,         /*!< Current operator event */
     LWGSM_EVT_NETWORK_REG_CHANGED,              /*!< Network registration changed.

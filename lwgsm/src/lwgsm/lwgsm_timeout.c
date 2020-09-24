@@ -48,7 +48,7 @@ get_next_timeout_diff(void) {
     if (first_timeout == NULL) {
         return 0xFFFFFFFF;
     }
-    diff = lwgsm_sys_now() - last_timeout_time;   /* Get difference between current time and last process time */
+    diff = lwgsm_sys_now() - last_timeout_time; /* Get difference between current time and last process time */
     if (diff >= first_timeout->time) {          /* Are we over already? */
         return 0;                               /* We have to immediately process this timeout */
     }
@@ -97,7 +97,7 @@ lwgsmi_get_from_mbox_with_timeout_checks(lwgsm_sys_mbox_t* b, void** m, uint32_t
     uint32_t wait_time;
     do {
         if (first_timeout == NULL) {            /* We have no timeouts ready? */
-            return lwgsm_sys_mbox_get(b, m, timeout); /* Get entry from message queue */
+            return lwgsm_sys_mbox_get(b, m, timeout);   /* Get entry from message queue */
         }
         wait_time = get_next_timeout_diff();    /* Get time to wait for next timeout execution */
         if (wait_time == 0 || lwgsm_sys_mbox_get(b, m, wait_time) == LWGSM_SYS_TIMEOUT) {
@@ -124,13 +124,13 @@ lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg) {
 
     LWGSM_ASSERT("fn != NULL", fn != NULL);
 
-    to = lwgsm_mem_calloc(1, sizeof(*to));        /* Allocate memory for timeout structure */
+    to = lwgsm_mem_calloc(1, sizeof(*to));      /* Allocate memory for timeout structure */
     if (to == NULL) {
         return lwgsmERR;
     }
 
     lwgsm_core_lock();
-    now = lwgsm_sys_now();                        /* Get current time */
+    now = lwgsm_sys_now();                      /* Get current time */
     if (first_timeout != NULL) {
         /*
          * Since we want timeout value to start from NOW,
@@ -197,7 +197,7 @@ lwgsm_timeout_remove(lwgsm_timeout_fn fn) {
 
     lwgsm_core_lock();
     for (lwgsm_timeout_t* t = first_timeout, *t_prev = NULL; t != NULL;
-         t_prev = t, t = t->next) {          /* Check all entries */
+         t_prev = t, t = t->next) {             /* Check all entries */
         if (t->fn == fn) {                      /* Do we have a match from callback point of view? */
 
             /*

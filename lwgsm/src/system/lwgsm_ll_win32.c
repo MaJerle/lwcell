@@ -155,10 +155,10 @@ uart_thread(void* param) {
     lwgsm_sys_sem_t sem;
     FILE* file = NULL;
 
-    lwgsm_sys_sem_create(&sem, 0);                /* Create semaphore for delay functions */
+    lwgsm_sys_sem_create(&sem, 0);              /* Create semaphore for delay functions */
 
     while (com_port == NULL) {
-        lwgsm_sys_sem_wait(&sem, 1);              /* Add some delay with yield */
+        lwgsm_sys_sem_wait(&sem, 1);            /* Add some delay with yield */
     }
 
     fopen_s(&file, "log_file.txt", "w+");       /* Open debug file in write mode */

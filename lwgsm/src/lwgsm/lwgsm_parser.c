@@ -69,7 +69,7 @@ lwgsmi_parse_number(const char** str) {
         minus = 1;
         ++p;
     }
-    while (LWGSM_CHARISNUM(*p)) {                 /* Parse until character is valid number */
+    while (LWGSM_CHARISNUM(*p)) {               /* Parse until character is valid number */
         val = val * 10 + LWGSM_CHARTONUM(*p);
         ++p;
     }
@@ -101,7 +101,7 @@ lwgsmi_parse_hexnumber(const char** str) {
     if (*p == '"') {                            /* Skip leading quotes */
         ++p;
     }
-    while (LWGSM_CHARISHEXNUM(*p)) {              /* Parse until character is valid number */
+    while (LWGSM_CHARISHEXNUM(*p)) {            /* Parse until character is valid number */
         val = val * 16 + LWGSM_CHARHEXTONUM(*p);
         ++p;
     }
@@ -169,7 +169,7 @@ void
 lwgsmi_check_and_trim(const char** src) {
     const char* t = *src;
     if (*t != '"' && *t != '\r' && *t != ',') { /* Check if trim required */
-        lwgsmi_parse_string(src, NULL, 0, 1);     /* Trim to the end */
+        lwgsmi_parse_string(src, NULL, 0, 1);   /* Trim to the end */
     }
 }
 
@@ -269,7 +269,7 @@ lwgsmi_parse_memory(const char** src) {
     }
 
     if (mem == LWGSM_MEM_UNKNOWN) {
-        lwgsmi_parse_string(&s, NULL, 0, 1);      /* Skip string */
+        lwgsmi_parse_string(&s, NULL, 0, 1);    /* Skip string */
     }
     if (*s == '"') {
         ++s;
@@ -298,7 +298,7 @@ lwgsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
         ++str;
     }
     do {
-        mem = lwgsmi_parse_memory(&str);          /* Parse memory string */
+        mem = lwgsmi_parse_memory(&str);        /* Parse memory string */
         *mem_dst |= LWGSM_U32(1 << LWGSM_U32(mem)); /* Set as bit field */
     } while (*str && *str != ')');
     if (*str == ')') {
@@ -336,7 +336,7 @@ lwgsmi_parse_creg(const char* str, uint8_t skip_first) {
         lwgsm_operator_get(&lwgsm.m.network.curr_operator, NULL, NULL, 0);
 #if LWGSM_CFG_NETWORK
     } else if (lwgsm_network_is_attached()) {
-        lwgsm_network_check_status(NULL, NULL, 0);    /* Do the update */
+        lwgsm_network_check_status(NULL, NULL, 0);  /* Do the update */
 #endif /* LWGSM_CFG_NETWORK */
     }
 
@@ -364,15 +364,15 @@ lwgsmi_parse_csq(const char* str) {
     } else {
         rssi = 0;
     }
-    lwgsm.m.rssi = rssi;                          /* Save RSSI to global variable */
+    lwgsm.m.rssi = rssi;                        /* Save RSSI to global variable */
     if (lwgsm.msg->cmd_def == LWGSM_CMD_CSQ_GET &&
         lwgsm.msg->msg.csq.rssi != NULL) {
-        *lwgsm.msg->msg.csq.rssi = rssi;          /* Save to user variable */
+        *lwgsm.msg->msg.csq.rssi = rssi;        /* Save to user variable */
     }
 
     /* Report CSQ status */
     lwgsm.evt.evt.rssi.rssi = rssi;
-    lwgsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH);      /* RSSI event type */
+    lwgsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH);  /* RSSI event type */
 
     return 1;
 }
@@ -456,7 +456,7 @@ lwgsmi_parse_cops(const char* str) {
     }
 
     if (CMD_IS_DEF(LWGSM_CMD_COPS_GET) &&
-        lwgsm.msg->msg.cops_get.curr != NULL) {   /* Check and copy to user variable */
+        lwgsm.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
         LWGSM_MEMCPY(lwgsm.msg->msg.cops_get.curr, &lwgsm.m.network.curr_operator, sizeof(*lwgsm.msg->msg.cops_get.curr));
     }
     return 1;
@@ -482,7 +482,7 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     } u;
 
     if (reset) {                                /* Check for reset status */
-        LWGSM_MEMSET(&u, 0x00, sizeof(u));        /* Reset everything */
+        LWGSM_MEMSET(&u, 0x00, sizeof(u));      /* Reset everything */
         u.f.ch_prev = 0;
         return 1;
     }
@@ -505,7 +505,7 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             u.f.bo = 0;                         /* Clear bracket open flag */
             u.f.tn = 0;                         /* Go to next term */
             u.f.tp = 0;                         /* Go to beginning of next term */
-            ++lwgsm.msg->msg.cops_scan.opsi;      /* Increase index */
+            ++lwgsm.msg->msg.cops_scan.opsi;    /* Increase index */
             if (lwgsm.msg->msg.cops_scan.opf != NULL) {
                 *lwgsm.msg->msg.cops_scan.opf = lwgsm.msg->msg.cops_scan.opsi;
             }
@@ -567,7 +567,7 @@ lwgsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
     dt->minutes = lwgsmi_parse_number(src);
     dt->seconds = lwgsmi_parse_number(src);
 
-    lwgsmi_check_and_trim(src);                   /* Trim text to the end */
+    lwgsmi_check_and_trim(src);                 /* Trim text to the end */
     return 1;
 }
 
@@ -616,7 +616,7 @@ lwgsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
     lwgsm_sms_status_t s;
     char t[11];
 
-    lwgsmi_parse_string(src, t, sizeof(t), 1);    /* Parse string and advance */
+    lwgsmi_parse_string(src, t, sizeof(t), 1);  /* Parse string and advance */
     if (!strcmp(t, "REC UNREAD")) {
         s = LWGSM_SMS_STATUS_UNREAD;
     } else if (!strcmp(t, "REC READ")) {
@@ -626,7 +626,7 @@ lwgsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
     } else if (!strcmp(t, "REC SENT")) {
         s = LWGSM_SMS_STATUS_SENT;
     } else {
-        s = LWGSM_SMS_STATUS_ALL;                 /* Error! */
+        s = LWGSM_SMS_STATUS_ALL;               /* Error! */
     }
     if (s != LWGSM_SMS_STATUS_ALL) {
         *stat = s;
@@ -697,7 +697,7 @@ lwgsmi_parse_cmgl(const char* str) {
 
     e = &lwgsm.msg->msg.sms_list.entries[lwgsm.msg->msg.sms_list.ei];
     e->length = 0;
-    e->mem = lwgsm.msg->msg.sms_list.mem;         /* Manually set memory */
+    e->mem = lwgsm.msg->msg.sms_list.mem;       /* Manually set memory */
     e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));   /* Scan position */
     lwgsmi_parse_sms_status(&str, &e->status);
     lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
@@ -719,8 +719,8 @@ lwgsmi_parse_cmti(const char* str, uint8_t send_evt) {
         str += 7;
     }
 
-    lwgsm.evt.evt.sms_recv.mem = lwgsmi_parse_memory(&str);   /* Parse memory string */
-    lwgsm.evt.evt.sms_recv.pos = lwgsmi_parse_number(&str);   /* Parse number */
+    lwgsm.evt.evt.sms_recv.mem = lwgsmi_parse_memory(&str); /* Parse memory string */
+    lwgsm.evt.evt.sms_recv.pos = lwgsmi_parse_number(&str); /* Parse number */
 
     if (send_evt) {
         lwgsmi_send_cb(LWGSM_EVT_SMS_RECV);
@@ -914,7 +914,7 @@ lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* cont
     conn = &lwgsm.m.conns[num];
 
     conn->status.f.bearer = LWGSM_U8(lwgsmi_parse_number(&str));
-    lwgsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);   /* Parse TCP/UPD */
+    lwgsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1); /* Parse TCP/UPD */
     if (strlen(s_tmp)) {
         if (!strcmp(s_tmp, "TCP")) {
             conn->type = LWGSM_CONN_TYPE_TCP;
@@ -941,7 +941,7 @@ lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* cont
 
     } else if (!strcmp(s_tmp, "CLOSED")) {      /* Connection closed */
         if (conn->status.f.active) {            /* Check if connection is not */
-            lwgsmi_conn_closed_process(conn->num, 0); /* Process closed event */
+            lwgsmi_conn_closed_process(conn->num, 0);   /* Process closed event */
         }
     }
 
@@ -971,18 +971,18 @@ lwgsmi_parse_ipd(const char* str) {
         }
     }
 
-    conn = lwgsmi_parse_number(&str);             /* Parse number for connection number */
-    len = lwgsmi_parse_number(&str);              /* Parse number for number of bytes to read */
+    conn = lwgsmi_parse_number(&str);           /* Parse number for connection number */
+    len = lwgsmi_parse_number(&str);            /* Parse number for number of bytes to read */
 
     c = conn < LWGSM_CFG_MAX_CONNS ? &lwgsm.m.conns[conn] : NULL;   /* Get connection handle */
     if (c == NULL) {                            /* Invalid connection number */
         return 0;
     }
 
-    lwgsm.m.ipd.read = 1;                         /* Start reading network data */
-    lwgsm.m.ipd.tot_len = len;                    /* Total number of bytes in this received packet */
-    lwgsm.m.ipd.rem_len = len;                    /* Number of remaining bytes to read */
-    lwgsm.m.ipd.conn = c;                         /* Pointer to connection we have data for */
+    lwgsm.m.ipd.read = 1;                       /* Start reading network data */
+    lwgsm.m.ipd.tot_len = len;                  /* Total number of bytes in this received packet */
+    lwgsm.m.ipd.rem_len = len;                  /* Number of remaining bytes to read */
+    lwgsm.m.ipd.conn = c;                       /* Pointer to connection we have data for */
 
     return 1;
 }

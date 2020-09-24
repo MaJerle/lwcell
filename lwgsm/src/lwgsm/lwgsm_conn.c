@@ -60,14 +60,14 @@
  */
 static void
 conn_timeout_cb(void* arg) {
-    lwgsm_conn_p conn = arg;                      /* Argument is actual connection */
+    lwgsm_conn_p conn = arg;                    /* Argument is actual connection */
 
     if (conn->status.f.active) {                /* Handle only active connections */
-        lwgsm.evt.type = LWGSM_EVT_CONN_POLL;       /* Poll connection event */
-        lwgsm.evt.evt.conn_poll.conn = conn;      /* Set connection pointer */
-        lwgsmi_send_conn_cb(conn, NULL);          /* Send connection callback */
+        lwgsm.evt.type = LWGSM_EVT_CONN_POLL;   /* Poll connection event */
+        lwgsm.evt.evt.conn_poll.conn = conn;    /* Set connection pointer */
+        lwgsmi_send_conn_cb(conn, NULL);        /* Send connection callback */
 
-        lwgsmi_conn_start_timeout(conn);          /* Schedule new timeout */
+        lwgsmi_conn_start_timeout(conn);        /* Schedule new timeout */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
                    "[CONN] Poll event: %p\r\n", conn);
     }
@@ -235,7 +235,7 @@ lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
 
     flush_buff(conn);                           /* First flush buffer */
     res = lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 1000);
-    if (res == lwgsmOK && !blocking) {            /* Function succedded in non-blocking mode */
+    if (res == lwgsmOK && !blocking) {          /* Function succedded in non-blocking mode */
         lwgsm_core_lock();
         LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
                    "[CONN] Connection %d set to closing state\r\n", (int)conn->num);
@@ -323,7 +323,7 @@ lwgsmr_t
 lwgsm_conn_recved(lwgsm_conn_p conn, lwgsm_pbuf_p pbuf) {
 #if LWGSM_CFG_CONN_MANUAL_TCP_RECEIVE
     size_t len;
-    len = lwgsm_pbuf_length(pbuf, 1);             /* Get length of pbuf */
+    len = lwgsm_pbuf_length(pbuf, 1);           /* Get length of pbuf */
     if (conn->tcp_available_data > len) {
         conn->tcp_available_data -= len;        /* Decrease for available length */
         if (conn->tcp_available_data > 0) {
@@ -539,8 +539,8 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
             return lwgsmERRMEM;
         }
 
-        btw -= LWGSM_CFG_CONN_MAX_DATA_LEN;       /* Decrease remaining length */
-        d += LWGSM_CFG_CONN_MAX_DATA_LEN;         /* Advance data pointer */
+        btw -= LWGSM_CFG_CONN_MAX_DATA_LEN;     /* Decrease remaining length */
+        d += LWGSM_CFG_CONN_MAX_DATA_LEN;       /* Advance data pointer */
     }
 
     /* Step 3 */
@@ -556,7 +556,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
     }
     if (btw > 0) {
         if (conn->buff.buff != NULL) {
-            LWGSM_MEMCPY(conn->buff.buff, d, btw);    /* Copy data to memory */
+            LWGSM_MEMCPY(conn->buff.buff, d, btw);  /* Copy data to memory */
             conn->buff.ptr = btw;
         } else {
             return lwgsmERRMEM;
@@ -607,7 +607,7 @@ uint8_t
 lwgsm_conn_get_remote_ip(lwgsm_conn_p conn, lwgsm_ip_t* ip) {
     if (conn != NULL && ip != NULL) {
         lwgsm_core_lock();
-        LWGSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip));  /* Copy data */
+        LWGSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip));/* Copy data */
         lwgsm_core_unlock();
         return 1;
     }

@@ -44,13 +44,13 @@
  * \brief           MQTT API client structure
  */
 struct lwgsm_mqtt_client_api {
-    lwgsm_mqtt_client_p mc;                       /*!< MQTT client handle */
-    lwgsm_sys_mbox_t rcv_mbox;                    /*!< Received data mbox */
-    lwgsm_sys_sem_t sync_sem;                     /*!< Synchronization semaphore */
-    lwgsm_sys_mutex_t mutex;                      /*!< Mutex handle */
+    lwgsm_mqtt_client_p mc;                     /*!< MQTT client handle */
+    lwgsm_sys_mbox_t rcv_mbox;                  /*!< Received data mbox */
+    lwgsm_sys_sem_t sync_sem;                   /*!< Synchronization semaphore */
+    lwgsm_sys_mutex_t mutex;                    /*!< Mutex handle */
     uint8_t release_sem;                        /*!< Set to `1` to release semaphore */
-    lwgsm_mqtt_conn_status_t connect_resp;        /*!< Response when connecting to server */
-    lwgsmr_t sub_pub_resp;                        /*!< Subscribe/Unsubscribe/Publish response */
+    lwgsm_mqtt_conn_status_t connect_resp;      /*!< Response when connecting to server */
+    lwgsmr_t sub_pub_resp;                      /*!< Subscribe/Unsubscribe/Publish response */
 } lwgsm_mqtt_client_api_t;
 
 /**
@@ -221,10 +221,10 @@ lwgsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len) {
     lwgsm_mqtt_client_api_p client;
     size_t size;
 
-    size = LWGSM_MEM_ALIGN(sizeof(*client));      /* Get size of client itself */
+    size = LWGSM_MEM_ALIGN(sizeof(*client));    /* Get size of client itself */
 
     /* Create client APi structure */
-    client = lwgsm_mem_calloc(1, size);           /* Allocate client memory */
+    client = lwgsm_mem_calloc(1, size);         /* Allocate client memory */
     if (client != NULL) {
         /* Create MQTT raw client structure */
         client->mc = lwgsm_mqtt_client_new(tx_buff_len, rx_buff_len);
@@ -235,7 +235,7 @@ lwgsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len) {
                 if (lwgsm_sys_sem_create(&client->sync_sem, 1)) {
                     /* Create mutex */
                     if (lwgsm_sys_mutex_create(&client->mutex)) {
-                        lwgsm_mqtt_client_set_arg(client->mc, client);/* Set client to mqtt client argument */
+                        lwgsm_mqtt_client_set_arg(client->mc, client);  /* Set client to mqtt client argument */
                         return client;
                     } else {
                         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_API,

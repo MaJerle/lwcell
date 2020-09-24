@@ -52,9 +52,9 @@ extern "C" {
  * \brief           Quality of service enumeration
  */
 typedef enum {
-    LWGSM_MQTT_QOS_AT_MOST_ONCE = 0x00,           /*!< Delivery is not guaranteed to arrive, but can arrive `up to 1 time` = non-critical packets where losses are allowed */
-    LWGSM_MQTT_QOS_AT_LEAST_ONCE = 0x01,          /*!< Delivery is quaranteed `at least once`, but it may be delivered multiple times with the same content */
-    LWGSM_MQTT_QOS_EXACTLY_ONCE = 0x02,           /*!< Delivery is quaranteed `exactly once` = very critical packets such as billing informations or similar */
+    LWGSM_MQTT_QOS_AT_MOST_ONCE = 0x00,         /*!< Delivery is not guaranteed to arrive, but can arrive `up to 1 time` = non-critical packets where losses are allowed */
+    LWGSM_MQTT_QOS_AT_LEAST_ONCE = 0x01,        /*!< Delivery is quaranteed `at least once`, but it may be delivered multiple times with the same content */
+    LWGSM_MQTT_QOS_EXACTLY_ONCE = 0x02,         /*!< Delivery is quaranteed `exactly once` = very critical packets such as billing informations or similar */
 } lwgsm_mqtt_qos_t;
 
 struct lwgsm_mqtt_client;
@@ -68,11 +68,11 @@ typedef struct lwgsm_mqtt_client* lwgsm_mqtt_client_p;
  * \brief           State of MQTT client
  */
 typedef enum {
-    LWGSM_MQTT_CONN_DISCONNECTED = 0x00,          /*!< Connection with server is not established */
-    LWGSM_MQTT_CONN_CONNECTING,                   /*!< Client is connecting to server */
-    LWGSM_MQTT_CONN_DISCONNECTING,                /*!< Client connection is disconnecting from server */
-    LWGSM_MQTT_CONNECTING,                        /*!< MQTT client is connecting... CONNECT command has been sent to server */
-    LWGSM_MQTT_CONNECTED,                         /*!< MQTT is fully connected and ready to send data on topics */
+    LWGSM_MQTT_CONN_DISCONNECTED = 0x00,        /*!< Connection with server is not established */
+    LWGSM_MQTT_CONN_CONNECTING,                 /*!< Client is connecting to server */
+    LWGSM_MQTT_CONN_DISCONNECTING,              /*!< Client connection is disconnecting from server */
+    LWGSM_MQTT_CONNECTING,                      /*!< MQTT client is connecting... CONNECT command has been sent to server */
+    LWGSM_MQTT_CONNECTED,                       /*!< MQTT is fully connected and ready to send data on topics */
 } lwgsm_mqtt_state_t;
 
 /**
@@ -89,7 +89,7 @@ typedef struct {
 
     const char* will_topic;                     /*!< Will topic */
     const char* will_message;                   /*!< Will message */
-    lwgsm_mqtt_qos_t will_qos;                    /*!< Will topic quality of service */
+    lwgsm_mqtt_qos_t will_qos;                  /*!< Will topic quality of service */
 } lwgsm_mqtt_client_info_t;
 
 /**
@@ -110,36 +110,36 @@ typedef struct {
  * \brief           MQTT event types
  */
 typedef enum {
-    LWGSM_MQTT_EVT_CONNECT,                       /*!< MQTT client connect event */
-    LWGSM_MQTT_EVT_SUBSCRIBE,                     /*!< MQTT client subscribed to specific topic */
-    LWGSM_MQTT_EVT_UNSUBSCRIBE,                   /*!< MQTT client unsubscribed from specific topic */
+    LWGSM_MQTT_EVT_CONNECT,                     /*!< MQTT client connect event */
+    LWGSM_MQTT_EVT_SUBSCRIBE,                   /*!< MQTT client subscribed to specific topic */
+    LWGSM_MQTT_EVT_UNSUBSCRIBE,                 /*!< MQTT client unsubscribed from specific topic */
     LWGSM_MQTT_EVT_PUBLISH,                       /*!< MQTT client publish message to server event.
                                                     \note   When publishing packet with quality of service \ref LWGSM_MQTT_QOS_AT_MOST_ONCE,
                                                             you may not receive event, even if packet was successfully sent,
                                                             thus do not rely on this event for packet with `qos = LWGSM_MQTT_QOS_AT_MOST_ONCE` */
-    LWGSM_MQTT_EVT_PUBLISH_RECV,                  /*!< MQTT client received a publish message from server */
-    LWGSM_MQTT_EVT_DISCONNECT,                    /*!< MQTT client disconnected from MQTT server */
-    LWGSM_MQTT_EVT_KEEP_ALIVE,                    /*!< MQTT keep-alive sent to server and reply received */
+    LWGSM_MQTT_EVT_PUBLISH_RECV,                /*!< MQTT client received a publish message from server */
+    LWGSM_MQTT_EVT_DISCONNECT,                  /*!< MQTT client disconnected from MQTT server */
+    LWGSM_MQTT_EVT_KEEP_ALIVE,                  /*!< MQTT keep-alive sent to server and reply received */
 } lwgsm_mqtt_evt_type_t;
 
 /**
  * \brief           List of possible results from MQTT server when executing connect command
  */
 typedef enum {
-    LWGSM_MQTT_CONN_STATUS_ACCEPTED =                 0x00,   /*!< Connection accepted and ready to use */
-    LWGSM_MQTT_CONN_STATUS_REFUSED_PROTOCOL_VERSION = 0x01,   /*!< Connection Refused, unacceptable protocol version */
-    LWGSM_MQTT_CONN_STATUS_REFUSED_ID =               0x02,   /*!< Connection refused, identifier rejected  */
-    LWGSM_MQTT_CONN_STATUS_REFUSED_SERVER =           0x03,   /*!< Connection refused, server unavailable */
-    LWGSM_MQTT_CONN_STATUS_REFUSED_USER_PASS =        0x04,   /*!< Connection refused, bad user name or password */
-    LWGSM_MQTT_CONN_STATUS_REFUSED_NOT_AUTHORIZED =   0x05,   /*!< Connection refused, not authorized */
-    LWGSM_MQTT_CONN_STATUS_TCP_FAILED =               0x100,  /*!< TCP connection to server was not successful */
+    LWGSM_MQTT_CONN_STATUS_ACCEPTED =                 0x00, /*!< Connection accepted and ready to use */
+    LWGSM_MQTT_CONN_STATUS_REFUSED_PROTOCOL_VERSION = 0x01, /*!< Connection Refused, unacceptable protocol version */
+    LWGSM_MQTT_CONN_STATUS_REFUSED_ID =               0x02, /*!< Connection refused, identifier rejected  */
+    LWGSM_MQTT_CONN_STATUS_REFUSED_SERVER =           0x03, /*!< Connection refused, server unavailable */
+    LWGSM_MQTT_CONN_STATUS_REFUSED_USER_PASS =        0x04, /*!< Connection refused, bad user name or password */
+    LWGSM_MQTT_CONN_STATUS_REFUSED_NOT_AUTHORIZED =   0x05, /*!< Connection refused, not authorized */
+    LWGSM_MQTT_CONN_STATUS_TCP_FAILED =               0x100,/*!< TCP connection to server was not successful */
 } lwgsm_mqtt_conn_status_t;
 
 /**
  * \brief           MQTT event structure for callback function
  */
 typedef struct {
-    lwgsm_mqtt_evt_type_t type;                   /*!< Event type */
+    lwgsm_mqtt_evt_type_t type;                 /*!< Event type */
     union {
         struct {
             lwgsm_mqtt_conn_status_t status;    /*!< Connection status with MQTT */

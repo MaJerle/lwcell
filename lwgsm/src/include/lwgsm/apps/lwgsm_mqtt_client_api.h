@@ -61,7 +61,7 @@ typedef struct lwgsm_mqtt_client_api_buf {
     size_t topic_len;                           /*!< Topic length */
     uint8_t* payload;                           /*!< Payload data */
     size_t payload_len;                         /*!< Payload length */
-    lwgsm_mqtt_qos_t qos;                         /*!< Quality of service */
+    lwgsm_mqtt_qos_t qos;                       /*!< Quality of service */
 } lwgsm_mqtt_client_api_buf_t;
 
 /**

@@ -133,7 +133,7 @@ lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_ty
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPBW_SET;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
         LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;/* First get memory */
     } else {
         LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;/* First set memory */
@@ -189,7 +189,7 @@ lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lw
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPBW_SET;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
         LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;/* First get memory */
     } else {
         LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;/* First set memory */
@@ -225,10 +225,10 @@ lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos,
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPBW_SET;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;    /* First get memory */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;/* First get memory */
     } else {
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;/* First set memory */
     }
 
     LWGSM_MSG_VAR_REF(msg).msg.pb_write.mem = mem;
@@ -267,12 +267,12 @@ lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, si
     if (er != NULL) {
         *er = 0;
     }
-    LWGSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    LWGSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);/* Reset data structure */
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPBR;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;    /* First get memory */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;/* First get memory */
     } else {
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;/* First set memory */
     }
 
     LWGSM_MSG_VAR_REF(msg).msg.pb_list.mem = mem;
@@ -314,12 +314,12 @@ lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* entries, 
     if (er != NULL) {
         *er = 0;
     }
-    LWGSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    LWGSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);/* Reset data structure */
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPBF;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;    /* First get memory */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_GET;/* First get memory */
     } else {
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPBS_SET;/* First set memory */
     }
 
     LWGSM_MSG_VAR_REF(msg).msg.pb_search.mem = mem;

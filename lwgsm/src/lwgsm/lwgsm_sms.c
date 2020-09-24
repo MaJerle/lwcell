@@ -37,9 +37,9 @@
 
 #if LWGSM_CFG_SMS || __DOXYGEN__
 
-#define LWGSM_SMS_OPERATION_IDX           0   /*!< Operation index for memory array (read, delete, list) */
-#define LWGSM_SMS_SEND_IDX                1   /*!< Send index for memory array */
-#define LWGSM_SMS_RECEIVE_IDX             2   /*!< Receive index for memory array */
+#define LWGSM_SMS_OPERATION_IDX           0     /*!< Operation index for memory array (read, delete, list) */
+#define LWGSM_SMS_SEND_IDX                1     /*!< Send index for memory array */
+#define LWGSM_SMS_RECEIVE_IDX             2     /*!< Receive index for memory array */
 
 #if !__DOXYGEN__
 #define CHECK_ENABLED()                 if (!(check_enabled() == lwgsmOK)) { return lwgsmERRNOTENABLED; }
@@ -153,7 +153,7 @@ lwgsm_sms_send(const char* num, const char* text,
     LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CMGF;
     LWGSM_MSG_VAR_REF(msg).msg.sms_send.num = num;
     LWGSM_MSG_VAR_REF(msg).msg.sms_send.text = text;
-    LWGSM_MSG_VAR_REF(msg).msg.sms_send.format = 1;   /* Send as plain text */
+    LWGSM_MSG_VAR_REF(msg).msg.sms_send.format = 1; /* Send as plain text */
 
     return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
@@ -182,21 +182,21 @@ lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t up
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
-    LWGSM_MEMSET(entry, 0x00, sizeof(*entry));    /* Reset data structure */
+    LWGSM_MEMSET(entry, 0x00, sizeof(*entry));  /* Reset data structure */
 
     entry->mem = mem;                           /* Set memory */
     entry->pos = pos;                           /* Set device position */
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGR;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;    /* First get memory */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;/* First get memory */
     } else {
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;/* First set memory */
     }
     LWGSM_MSG_VAR_REF(msg).msg.sms_read.mem = mem;
     LWGSM_MSG_VAR_REF(msg).msg.sms_read.pos = pos;
     LWGSM_MSG_VAR_REF(msg).msg.sms_read.entry = entry;
     LWGSM_MSG_VAR_REF(msg).msg.sms_read.update = update;
-    LWGSM_MSG_VAR_REF(msg).msg.sms_read.format = 1;   /* Send as plain text */
+    LWGSM_MSG_VAR_REF(msg).msg.sms_read.format = 1; /* Send as plain text */
 
     return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }
@@ -222,10 +222,10 @@ lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos,
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGD;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;    /* First get memory */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;/* First get memory */
     } else {
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;/* First set memory */
     }
     LWGSM_MSG_VAR_REF(msg).msg.sms_delete.mem = mem;
     LWGSM_MSG_VAR_REF(msg).msg.sms_delete.pos = pos;
@@ -252,7 +252,7 @@ lwgsm_sms_delete_all(lwgsm_sms_status_t status,
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGDA;
-    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CMGF;    /* By default format = 1 */
+    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CMGF;/* By default format = 1 */
     LWGSM_MSG_VAR_REF(msg).msg.sms_delete_all.status = status;
 
     /* This command may take a while */
@@ -289,12 +289,12 @@ lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entr
     if (er != NULL) {
         *er = 0;
     }
-    LWGSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    LWGSM_MEMSET(entries, 0x00, sizeof(*entries) * etr);/* Reset data structure */
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CMGL;
-    if (mem == LWGSM_MEM_CURRENT) {               /* Should be always false */
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;    /* First get memory */
+    if (mem == LWGSM_MEM_CURRENT) {             /* Should be always false */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_GET;/* First get memory */
     } else {
-        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;    /* First set memory */
+        LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPMS_SET;/* First set memory */
     }
     LWGSM_MSG_VAR_REF(msg).msg.sms_list.mem = mem;
     LWGSM_MSG_VAR_REF(msg).msg.sms_list.status = stat;
@@ -302,7 +302,7 @@ lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entr
     LWGSM_MSG_VAR_REF(msg).msg.sms_list.etr = etr;
     LWGSM_MSG_VAR_REF(msg).msg.sms_list.er = er;
     LWGSM_MSG_VAR_REF(msg).msg.sms_list.update = update;
-    LWGSM_MSG_VAR_REF(msg).msg.sms_list.format = 1;   /* Send as plain text */
+    LWGSM_MSG_VAR_REF(msg).msg.sms_list.format = 1; /* Send as plain text */
 
     return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }

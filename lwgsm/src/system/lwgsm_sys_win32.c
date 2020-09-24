@@ -41,15 +41,15 @@
  * \brief           Custom message queue implementation for WIN32
  */
 typedef struct {
-    lwgsm_sys_sem_t sem_not_empty;                /*!< Semaphore indicates not empty */
-    lwgsm_sys_sem_t sem_not_full;                 /*!< Semaphore indicates not full */
-    lwgsm_sys_sem_t sem;                          /*!< Semaphore to lock access */
+    lwgsm_sys_sem_t sem_not_empty;              /*!< Semaphore indicates not empty */
+    lwgsm_sys_sem_t sem_not_full;               /*!< Semaphore indicates not full */
+    lwgsm_sys_sem_t sem;                        /*!< Semaphore to lock access */
     size_t in, out, size;
     void* entries[1];
 } win32_mbox_t;
 
 static LARGE_INTEGER freq, sys_start_time;
-static lwgsm_sys_mutex_t sys_mutex;               /* Mutex ID for main protection */
+static lwgsm_sys_mutex_t sys_mutex;             /* Mutex ID for main protection */
 
 static uint8_t
 mbox_is_full(win32_mbox_t* m) {
@@ -221,7 +221,7 @@ lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
     win32_mbox_t* mbox = *b;
     uint32_t time = osKernelSysTick();          /* Get start time */
 
-    lwgsm_sys_sem_wait(&mbox->sem, 0);            /* Wait for access */
+    lwgsm_sys_sem_wait(&mbox->sem, 0);          /* Wait for access */
 
     /*
      * Since function is blocking until ready to write something to queue,
@@ -229,16 +229,16 @@ lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
      * to process the queue before we can write new value.
      */
     while (mbox_is_full(mbox)) {
-        lwgsm_sys_sem_release(&mbox->sem);        /* Release semaphore */
-        lwgsm_sys_sem_wait(&mbox->sem_not_full, 0);   /* Wait for semaphore indicating not full */
-        lwgsm_sys_sem_wait(&mbox->sem, 0);        /* Wait availability again */
+        lwgsm_sys_sem_release(&mbox->sem);      /* Release semaphore */
+        lwgsm_sys_sem_wait(&mbox->sem_not_full, 0); /* Wait for semaphore indicating not full */
+        lwgsm_sys_sem_wait(&mbox->sem, 0);      /* Wait availability again */
     }
     mbox->entries[mbox->in] = m;
     if (++mbox->in >= mbox->size) {
         mbox->in = 0;
     }
-    lwgsm_sys_sem_release(&mbox->sem_not_empty);  /* Signal non-empty state */
-    lwgsm_sys_sem_release(&mbox->sem);            /* Release access for other threads */
+    lwgsm_sys_sem_release(&mbox->sem_not_empty);/* Signal non-empty state */
+    lwgsm_sys_sem_release(&mbox->sem);          /* Release access for other threads */
     return osKernelSysTick() - time;
 }
 
@@ -294,9 +294,9 @@ uint8_t
 lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
     win32_mbox_t* mbox = *b;
 
-    lwgsm_sys_sem_wait(&mbox->sem, 0);            /* Wait exclusive access */
+    lwgsm_sys_sem_wait(&mbox->sem, 0);          /* Wait exclusive access */
     if (mbox->in == mbox->out) {
-        lwgsm_sys_sem_release(&mbox->sem);        /* Release access */
+        lwgsm_sys_sem_release(&mbox->sem);      /* Release access */
         return 0;
     }
 
@@ -304,8 +304,8 @@ lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
     if (++mbox->out >= mbox->size) {
         mbox->out = 0;
     }
-    lwgsm_sys_sem_release(&mbox->sem_not_full);   /* Queue not full anymore */
-    lwgsm_sys_sem_release(&mbox->sem);            /* Release semaphore */
+    lwgsm_sys_sem_release(&mbox->sem_not_full); /* Queue not full anymore */
+    lwgsm_sys_sem_release(&mbox->sem);          /* Release semaphore */
     return 1;
 }
 
@@ -316,7 +316,7 @@ lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
 
 uint8_t
 lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
-    *b = LWGSM_SYS_MBOX_NULL;                     /* Invalidate message box */
+    *b = LWGSM_SYS_MBOX_NULL;                   /* Invalidate message box */
     return 1;
 }
 
