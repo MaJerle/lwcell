@@ -164,7 +164,7 @@ typedef enum {
     LWGSM_CMD_CPIN_ADD,                         /*!< Add new PIN to SIM if pin is not set */
     LWGSM_CMD_CPIN_CHANGE,                      /*!< Change already active SIM */
     LWGSM_CMD_CPIN_REMOVE,                      /*!< Remove current PIN */
-    GMM_CMD_CPUK_SET,                           /*!< Enter PUK and set new PIN */
+    LWGSM_CMD_CPUK_SET,                         /*!< Enter PUK and set new PIN */
 
     LWGSM_CMD_CSQ_GET,                          /*!< Signal Quality Report */
     LWGSM_CMD_CFUN_SET,                         /*!< Set Phone Functionality */

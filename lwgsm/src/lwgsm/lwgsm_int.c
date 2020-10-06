@@ -1841,7 +1841,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case GMM_CMD_CPUK_SET: {                /* Enter PUK and set new PIN */
+        case LWGSM_CMD_CPUK_SET: {              /* Enter PUK and set new PIN */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPIN=");
             lwgsmi_send_string(msg->msg.cpuk_enter.puk, 0, 1, 0);

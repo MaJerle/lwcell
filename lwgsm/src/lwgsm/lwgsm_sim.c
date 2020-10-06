@@ -166,7 +166,7 @@ lwgsm_sim_puk_enter(const char* puk, const char* new_pin,
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = GMM_CMD_CPUK_SET;
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPUK_SET;
     LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
     LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
 
