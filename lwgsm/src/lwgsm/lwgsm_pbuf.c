@@ -124,7 +124,7 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
 /**
  * \brief           Concatenate `2` packet buffers together to one big packet
  * \note            After `tail` pbuf has been added to `head` pbuf chain,
- *                  it must not be referenced by user anymore as it is now completelly controlled by `head` pbuf.
+ *                  it must not be referenced by user anymore as it is now completely controlled by `head` pbuf.
  *                  In simple words, when user calls this function, it should not call \ref lwgsm_pbuf_free function anymore,
  *                  as it might make memory undefined for `head` pbuf.
  * \param[in]       head: Head packet buffer to append new pbuf to
@@ -154,7 +154,7 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
  * \brief           Chain 2 pbufs together. Similar to \ref lwgsm_pbuf_cat
  *                  but now new reference is done from head pbuf to tail pbuf.
  * \note            After this function call, user must call \ref lwgsm_pbuf_free to remove
- *                  its reference to tail pbuf and allow control to head pbuf: lwgsm_pbuf_free(tail)
+ *                  its reference to tail pbuf and allow control to head pbuf: `lwgsm_pbuf_free(tail)`
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
@@ -169,7 +169,7 @@ lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
      * first reference pbuf and increase counter
      */
     lwgsm_pbuf_ref(tail);                       /* Reference tail pbuf by head pbuf now */
-    if ((res = lwgsm_pbuf_cat(head, tail)) != lwgsmOK) {/* Did we contencate them together successfully? */
+    if ((res = lwgsm_pbuf_cat(head, tail)) != lwgsmOK) {/* Did we concatenate them together successfully? */
         lwgsm_pbuf_free(tail);                  /* Call free to decrease reference counter */
     }
     return res;
