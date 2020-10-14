@@ -12,7 +12,7 @@ Module is highly configurable using library configuration methods.
 Application must enable some options to decide what type of messages and for which modules it would like to output messages.
 
 With default configuration, ``printf`` is used as output function.
-This behavior can be changed with :c:macro:`LWGSM_CF_DBG_OUT` configuration.
+This behavior can be changed with :c:macro:`LWGSM_CFG_DBG_OUT` configuration.
 
 For successful debugging, application must:
 
