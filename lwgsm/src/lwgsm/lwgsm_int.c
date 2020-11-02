@@ -1412,6 +1412,8 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                     }
                 }
             }
+            break;
+
             default:
                 break;
         }
