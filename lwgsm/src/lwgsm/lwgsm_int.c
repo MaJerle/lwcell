@@ -1401,19 +1401,16 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             OPERATOR_SCAN_SEND_EVT(lwgsm.msg, *is_ok ? lwgsmOK : lwgsmERR);
         }
     } else if (CMD_IS_DEF(LWGSM_CMD_SIM_PROCESS_BASIC_CMDS)) {
-        switch (CMD_GET_CUR()) {
-            case LWGSM_CMD_CNUM: {              /* Get own phone number */
-                if (!*is_ok) {
-                    /* Sometimes SIM is not ready just after PIN entered */
-                    if (msg->msg.sim_info.cnum_tries < 5) {
-                        ++msg->msg.sim_info.cnum_tries;
-                        SET_NEW_CMD(LWGSM_CMD_CNUM);
-                        lwgsm_delay(1000);
-                    }
+        if (CMD_IS_CUR(LWGSM_CMD_CNUM)) {
+            /* Get own phone number */
+            if (!*is_ok) {
+                /* Sometimes SIM is not ready just after PIN entered */
+                if (msg->msg.sim_info.cnum_tries < 5) {
+                    ++msg->msg.sim_info.cnum_tries;
+                    SET_NEW_CMD(LWGSM_CMD_CNUM);
+                    lwgsm_delay(1000);
                 }
             }
-            default:
-                break;
         }
     } else if (CMD_IS_DEF(LWGSM_CMD_CPIN_SET)) {/* Set PIN code */
         switch (CMD_GET_CUR()) {
