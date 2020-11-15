@@ -1,138 +1,107 @@
 /*
- * SMS send and receive thread.
+ * SMS send and receive basic event based example
  *
  * Waits for received SMS and then replies with
  */
-
 #include "sms_send_receive.h"
-#include "gsm/gsm.h"
-#include "gsm/gsm_mem.h"
+#include "lwgsm/lwgsm.h"
 
-static gsmr_t sms_evt_func(gsm_evt_t* evt);
+#if !LWGSM_CFG_SMS
+#error "SMS must be enabled to run this example"
+#endif /* !LWGSM_CFG_SMS */
 
-/**
- * \brief           SMS entry information
- */
-typedef struct {
-    gsm_mem_t mem;
-    size_t pos;
-} sms_receive_t;
+static lwgsmr_t sms_evt_func(lwgsm_evt_t* evt);
 
 /**
- * \brief			SMS message box
+ * \brief           SMS entry
  */
-static gsm_sys_mbox_t
-sms_mbox;
-
-/**
- * \brief           SMS read entry
- */
-static gsm_sms_entry_t
+static lwgsm_sms_entry_t
 sms_entry;
 
 /**
- * \brief           SMS Receive Send thread function
+ * \brief           Start SMS send receive procedure
  */
 void
-sms_send_receive_thread(void const* arg) {
-    sms_receive_t* sms;
+sms_send_receive_start(void) {
+    /* Add custom callback */
+    lwgsm_evt_register(sms_evt_func);
 
-	/* Create message box */
-	if (!gsm_sys_mbox_create(&sms_mbox, 5)) {
-	    goto terminate;
-	}
+    /* First enable SMS functionality */
+    if (lwgsm_sms_enable(NULL, NULL, 1) == lwgsmOK) {
+        printf("SMS enabled. Send new SMS from your phone to device.\r\n");
+    } else {
+        printf("Cannot enable SMS functionality!\r\n");
+    }
 
-	/* Register callback function for SMS */
-	if (gsm_evt_register(sms_evt_func) != gsmOK) {
-		goto terminate;
-	}
-
-	/* User can start now */
-	printf("Start by sending first SMS to device...\r\n");
-
-	while (1) {
-	    /* Get SMS entry from message queue */
-	    while (gsm_sys_mbox_get(&sms_mbox, (void **)&sms, 0) == GSM_SYS_TIMEOUT || sms == NULL) {}
-
-	    /* We have new SMS now */
-	    printf("New SMS received!\r\n");
-
-	    /* Read SMS from device */
-	    if (gsm_sms_read(sms->mem, sms->pos, &sms_entry, 1, NULL, NULL, 1) == gsmOK) {
-	        printf("SMS read ok. Number: %s, content: %s\r\n", sms_entry.number, sms_entry.data);
-
-	        /* Send reply back */
-	        if (gsm_sms_send(sms_entry.number, sms_entry.data, NULL, NULL, 1) == gsmOK) {
-	            printf("SMS sent back successfully!\r\n");
-	        } else {
-	            printf("Cannot send SMS back!\r\n");
-	        }
-
-	        /* Delete SMS from device memory */
-	        if (gsm_sms_delete(sms->mem, sms->pos, NULL, NULL, 1) == gsmOK) {
-	            printf("Received SMS deleted!\r\n");
-	        } else {
-	            printf("Cannot delete received SMS!\r\n");
-	        }
-	    } else {
-	        printf("Cannot read SMS!\r\n");
-	    }
-
-	    /* Now free the memory */
-	    gsm_mem_free_s((void **)&sms);
-	}
-
-terminate:
-	if (gsm_sys_mbox_isvalid(&sms_mbox)) {
-	    /* Lock to make sure GSM stack won't process any callbacks while we are cleaning */
-	    gsm_core_lock();
-
-	    /* Clean mbox first */
-	    while (gsm_sys_mbox_getnow(&sms_mbox, (void **)&sms)) {
-	        gsm_mem_free_s((void **)&sms);
-	    }
-
-	    /* Delete mbox */
-		gsm_sys_mbox_delete(&sms_mbox);
-		gsm_sys_mbox_invalid(&sms_mbox);
-
-        gsm_core_unlock();
-
-        /* Now mbox is not valid anymore and event won't write any data */
-	}
+    /* Now send SMS from phone to device */
+    printf("Start by sending SMS message to device...\r\n");
 }
 
 /**
  * \brief           Event function for received SMS
  * \param[in]       evt: GSM event
- * \return          \ref gsmOK on success, member of \ref gsmr_t otherwise
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
  */
-static gsmr_t
-sms_evt_func(gsm_evt_t* evt) {
-    switch (gsm_evt_get_type(evt)) {
-        case GSM_EVT_SMS_RECV: {                /* New SMS received indicator */
-            uint8_t success = 0;
-            sms_receive_t* sms_rx = gsm_mem_malloc(sizeof(*sms_rx));
-            if (sms_rx != NULL) {
-                sms_rx->mem = gsm_evt_sms_recv_get_mem(evt);
-                sms_rx->pos = gsm_evt_sms_recv_get_pos(evt);
+static lwgsmr_t
+sms_evt_func(lwgsm_evt_t* evt) {
+    switch (lwgsm_evt_get_type(evt)) {
+        case LWGSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
+            printf("SIM device SMS service is ready!\r\n");
+            break;
+        }
+        case LWGSM_EVT_SMS_RECV: {                /* New SMS received indicator */
+            lwgsmr_t res;
 
-                /* Write to receive queue */
-                if (!gsm_sys_mbox_isvalid(&sms_mbox) || !gsm_sys_mbox_putnow(&sms_mbox, sms_rx)) {
-                    gsm_mem_free_s((void **)&sms_rx);
-                } else {
-                    success = 1;
-                }
-            }
+            printf("New SMS received!\r\n");    /* Notify user */
 
-            /* Force SMS delete if not written successfully */
-            if (!success) {
-                gsm_sms_delete(gsm_evt_sms_recv_get_mem(evt), gsm_evt_sms_recv_get_pos(evt), NULL, NULL, 0);
+            /* Try to read SMS */
+            res = lwgsm_sms_read(lwgsm_evt_sms_recv_get_mem(evt), lwgsm_evt_sms_recv_get_pos(evt), &sms_entry, 1, NULL, NULL, 0);
+            if (res == lwgsmOK) {
+                printf("SMS read in progress!\r\n");
+            } else {
+                printf("Cannot start SMS read procedure!\r\n");
             }
             break;
         }
-        default: break;
+        case LWGSM_EVT_SMS_READ: {                /* SMS read event */
+            lwgsm_sms_entry_t* entry = lwgsm_evt_sms_read_get_entry(evt);
+            if (lwgsm_evt_sms_read_get_result(evt) == lwgsmOK && entry != NULL) {
+                /* Print SMS data */
+                printf("SMS read. From: %s, content: %s\r\n",
+                       entry->number, entry->data
+                      );
+
+                /* Try to send SMS back */
+                if (lwgsm_sms_send(entry->number, entry->data, NULL, NULL, 0) == lwgsmOK) {
+                    printf("SMS send in progress!\r\n");
+                } else {
+                    printf("Cannot start SMS send procedure!\r\n");
+                }
+
+                /* Delete SMS from device memory */
+                lwgsm_sms_delete(entry->mem, entry->pos, NULL, NULL, 0);
+            }
+            break;
+        }
+        case LWGSM_EVT_SMS_SEND: {                /* SMS send event */
+            if (lwgsm_evt_sms_send_get_result(evt) == lwgsmOK) {
+                printf("SMS has been successfully sent!\r\n");
+            } else {
+                printf("SMS has not been sent successfully!\r\n");
+            }
+            break;
+        }
+        case LWGSM_EVT_SMS_DELETE: {              /* SMS delete event */
+            if (lwgsm_evt_sms_delete_get_result(evt) == lwgsmOK) {
+                printf("SMS deleted, memory position: %d\r\n", (int)lwgsm_evt_sms_delete_get_pos(evt));
+            } else {
+                printf("SMS delete operation failed!\r\n");
+            }
+            break;
+        }
+        default:
+            break;
     }
 
-    return gsmOK;
+    return lwgsmOK;
 }

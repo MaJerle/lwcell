@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>GSM_STM32F429ZI_Nucleo_SMS_Send_Receive_RTOS</name>
+	<name>lwgsm_stm32f429zi_nucleo_sms_send_receive_rtos</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -74,234 +74,234 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>FreeRTOS/cmsis_os.c</name>
+			<name>FreeRTOS/cmsis_os2.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/CMSIS_RTOS/cmsis_os.c</locationURI>
-		</link>
-		<link>
-			<name>FreeRTOS/cpu_utils.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/CMSIS_RTOS/cpu_utils.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/CMSIS_RTOS_V2/cmsis_os2.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/croutine.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/croutine.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/croutine.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/event_groups.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/event_groups.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/event_groups.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/list.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/list.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/portable/GCC/ARM_CM4F/port.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/portable/GCC/ARM_CM4F/port.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/queue.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/queue.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/tasks.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/FreeRTOS/timers.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/FreeRTOS/timers.c</locationURI>
 		</link>
 		<link>
-			<name>GSM API/gsm_netconn.c</name>
+			<name>lwgsm_api/lwgsm_netconn.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/api/gsm_netconn.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/api/lwgsm_netconn.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm.c</name>
+			<name>lwgsm/lwgsm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_buff.c</name>
+			<name>lwgsm/lwgsm_buff.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_buff.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_buff.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_call.c</name>
+			<name>lwgsm/lwgsm_call.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_call.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_call.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_conn.c</name>
+			<name>lwgsm/lwgsm_conn.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_conn.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_conn.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_debug.c</name>
+			<name>lwgsm/lwgsm_debug.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_debug.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_debug.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_device_info.c</name>
+			<name>lwgsm/lwgsm_device_info.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_device_info.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_device_info.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_evt.c</name>
+			<name>lwgsm/lwgsm_evt.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_evt.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_evt.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_ftp.c</name>
+			<name>lwgsm/lwgsm_ftp.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_ftp.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_ftp.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_http.c</name>
+			<name>lwgsm/lwgsm_http.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_http.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_http.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_input.c</name>
+			<name>lwgsm/lwgsm_input.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_input.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_input.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_int.c</name>
+			<name>lwgsm/lwgsm_int.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_int.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_int.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_mem.c</name>
+			<name>lwgsm/lwgsm_mem.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_mem.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_mem.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_network.c</name>
+			<name>lwgsm/lwgsm_network.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_network.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_network.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_operator.c</name>
+			<name>lwgsm/lwgsm_operator.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_operator.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_operator.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_parser.c</name>
+			<name>lwgsm/lwgsm_parser.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_parser.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_parser.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_pbuf.c</name>
+			<name>lwgsm/lwgsm_pbuf.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_pbuf.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_pbuf.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_phonebook.c</name>
+			<name>lwgsm/lwgsm_phonebook.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_phonebook.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_phonebook.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_ping.c</name>
+			<name>lwgsm/lwgsm_ping.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_ping.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_ping.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_sim.c</name>
+			<name>lwgsm/lwgsm_sim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_sim.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_sim.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_sms.c</name>
+			<name>lwgsm/lwgsm_sms.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_sms.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_sms.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_threads.c</name>
+			<name>lwgsm/lwgsm_threads.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_threads.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_threads.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_timeout.c</name>
+			<name>lwgsm/lwgsm_timeout.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_timeout.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_timeout.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_unicode.c</name>
+			<name>lwgsm/lwgsm_unicode.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_unicode.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_unicode.c</locationURI>
 		</link>
 		<link>
-			<name>GSM CORE/gsm_utils.c</name>
+			<name>lwgsm/lwgsm_utils.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/gsm/gsm_utils.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_utils.c</locationURI>
 		</link>
 		<link>
-			<name>GSM LL/gsm_ll_stm32f429zi_nucleo.c</name>
+			<name>lwgsm_ll/lwgsm_ll_stm32f429zi_nucleo.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/system/gsm_ll_stm32f429zi_nucleo.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/system/lwgsm_ll_stm32f429zi_nucleo.c</locationURI>
 		</link>
 		<link>
-			<name>GSM LL/gsm_sys_cmsis_os.c</name>
+			<name>lwgsm_ll/lwgsm_sys_cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/GSM_AT_Lib/src/system/gsm_sys_cmsis_os.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/system/lwgsm_sys_cmsis_os.c</locationURI>
 		</link>
 		<link>
-			<name>GSM SNIPPETS/network_utils.c</name>
+			<name>lwgsm_snippets/network_utils.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/network_utils.c</locationURI>
 		</link>
 		<link>
-			<name>GSM SNIPPETS/sim_manager.c</name>
+			<name>lwgsm_snippets/sim_manager.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/sim_manager.c</locationURI>
 		</link>
 		<link>
+			<name>lwgsm_snippets/sms_send_receive.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/snippets/sms_send_receive.c</locationURI>
+		</link>
+		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_dma.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c</locationURI>
 		</link>
 		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_exti.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c</locationURI>
 		</link>
 		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_gpio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c</locationURI>
 		</link>
 		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_pwr.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_pwr.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_pwr.c</locationURI>
 		</link>
 		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_rcc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c</locationURI>
 		</link>
 		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_usart.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usart.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usart.c</locationURI>
 		</link>
 		<link>
 			<name>STM32F4xx_HAL_Driver/stm32f4xx_ll_utils.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/third_party/Embedded_Libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c</locationURI>
 		</link>
 		<link>
 			<name>User/main.c</name>

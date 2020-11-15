@@ -1,14 +1,14 @@
-#ifndef __SMS_SEND_RECEIVE_H
-#define __SMS_SEND_RECEIVE_H
+#ifndef SNIPPET_HDR_SMS_SEND_RECEIVE_H
+#define SNIPPET_HDR_SMS_SEND_RECEIVE_H
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-void sms_send_receive_thread(void const* arg);
+void sms_send_receive_start(void);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_SMS_SEND_RECEIVE_H */

@@ -1,8 +1,8 @@
 #include "netconn_client.h"
-#include "gsm/gsm.h"
-#include "gsm/gsm_network_api.h"
+#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_network_api.h"
 
-#if GSM_CFG_NETCONN
+#if LWGSM_CFG_NETCONN
 
 /**
  * \brief           Host and port settings
@@ -15,10 +15,10 @@
  */
 static const char
 request_header[] = ""
-"GET / HTTP/1.1\r\n"
-"Host: " NETCONN_HOST "\r\n"
-"Connection: close\r\n"
-"\r\n";
+                   "GET / HTTP/1.1\r\n"
+                   "Host: " NETCONN_HOST "\r\n"
+                   "Connection: close\r\n"
+                   "\r\n";
 
 /**
  * \brief           Netconn client thread implementation
@@ -26,14 +26,14 @@ request_header[] = ""
  */
 void
 netconn_client_thread(void const* arg) {
-    gsmr_t res;
-    gsm_pbuf_p pbuf;
-    gsm_netconn_p client;
-    gsm_sys_sem_t* sem = (void *)arg;
+    lwgsmr_t res;
+    lwgsm_pbuf_p pbuf;
+    lwgsm_netconn_p client;
+    lwgsm_sys_sem_t* sem = (void*)arg;
 
     /* Request attach to network */
-    while (gsm_network_request_attach() != gsmOK) {
-        gsm_delay(1000);
+    while (lwgsm_network_request_attach() != lwgsmOK) {
+        lwgsm_delay(1000);
     }
 
     /*
@@ -41,7 +41,7 @@ netconn_client_thread(void const* arg) {
      * connection and initialize system message boxes
      * to accept received packet buffers
      */
-    client = gsm_netconn_new(GSM_NETCONN_TYPE_TCP);
+    client = lwgsm_netconn_new(LWGSM_NETCONN_TYPE_TCP);
     if (client != NULL) {
         /*
          * Connect to external server as client
@@ -49,14 +49,14 @@ netconn_client_thread(void const* arg) {
          *
          * Function will block thread until we are successfully connected (or not) to server
          */
-        res = gsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT);
-        if (res == gsmOK) {                     /* Are we successfully connected? */
+        res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT);
+        if (res == lwgsmOK) {                     /* Are we successfully connected? */
             printf("Connected to " NETCONN_HOST "\r\n");
-            res = gsm_netconn_write(client, request_header, sizeof(request_header) - 1);    /* Send data to server */
-            if (res == gsmOK) {
-                res = gsm_netconn_flush(client);/* Flush data to output */
+            res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1);    /* Send data to server */
+            if (res == lwgsmOK) {
+                res = lwgsm_netconn_flush(client);/* Flush data to output */
             }
-            if (res == gsmOK) {                 /* Were data sent? */
+            if (res == lwgsmOK) {                 /* Were data sent? */
                 printf("Data were successfully sent to server\r\n");
 
                 /*
@@ -75,15 +75,15 @@ netconn_client_thread(void const* arg) {
                      * Returned status will give you info in case connection
                      * was closed too early from remote side
                      */
-                    res = gsm_netconn_receive(client, &pbuf);
-                    if (res == gsmCLOSED) {     /* Was the connection closed? This can be checked by return status of receive function */
+                    res = lwgsm_netconn_receive(client, &pbuf);
+                    if (res == lwgsmCLOSED) {     /* Was the connection closed? This can be checked by return status of receive function */
                         printf("Connection closed by remote side...\r\n");
                         break;
-                    } else if (res == gsmTIMEOUT) {
+                    } else if (res == lwgsmTIMEOUT) {
                         printf("Netconn timeout while receiving data. You may try multiple readings before deciding to close manually\r\n");
                     }
 
-                    if (res == gsmOK && pbuf != NULL) { /* Make sure we have valid packet buffer */
+                    if (res == lwgsmOK && pbuf != NULL) { /* Make sure we have valid packet buffer */
                         /*
                          * At this point read and manipulate
                          * with received buffer and check if you expect more data
@@ -91,8 +91,8 @@ netconn_client_thread(void const* arg) {
                          * After you are done using it, it is important
                          * you free the memory otherwise memory leaks will appear
                          */
-                        printf("Received new data packet of %d bytes\r\n", (int)gsm_pbuf_length(pbuf, 1));
-                        gsm_pbuf_free(pbuf);    /* Free the memory after usage */
+                        printf("Received new data packet of %d bytes\r\n", (int)lwgsm_pbuf_length(pbuf, 1));
+                        lwgsm_pbuf_free(pbuf);    /* Free the memory after usage */
                         pbuf = NULL;
                     }
                 } while (1);
@@ -104,20 +104,20 @@ netconn_client_thread(void const* arg) {
              * Check if connection was closed by remote server
              * and in case it wasn't, close it manually
              */
-            if (res != gsmCLOSED) {
-                gsm_netconn_close(client);
+            if (res != lwgsmCLOSED) {
+                lwgsm_netconn_close(client);
             }
         } else {
             printf("Cannot connect to remote host %s:%d!\r\n", NETCONN_HOST, NETCONN_PORT);
         }
-        gsm_netconn_delete(client);             /* Delete netconn structure */
+        lwgsm_netconn_delete(client);             /* Delete netconn structure */
     }
-    gsm_network_request_detach();               /* Detach from network */
+    lwgsm_network_request_detach();               /* Detach from network */
 
-    if (gsm_sys_sem_isvalid(sem)) {
-        gsm_sys_sem_release(sem);
+    if (lwgsm_sys_sem_isvalid(sem)) {
+        lwgsm_sys_sem_release(sem);
     }
-    gsm_sys_thread_terminate(NULL);             /* Terminate current thread */
+    lwgsm_sys_thread_terminate(NULL);             /* Terminate current thread */
 }
 
-#endif /* GSM_CFG_NETCONN */
+#endif /* LWGSM_CFG_NETCONN */

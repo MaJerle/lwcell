@@ -4,21 +4,21 @@
  * Once device is connected to network,
  * it will try to connect to mosquitto test server and start the MQTT.
  *
- * If successfully connected, it will publish data to "gsm_mqtt_topic" topic every x seconds.
+ * If successfully connected, it will publish data to "lwgsm_mqtt_topic" topic every x seconds.
  *
  * To check if data are sent, you can use mqtt-spy PC software to inspect
  * test.mosquitto.org server and subscribe to publishing topic
  */
 
-#include "gsm/apps/gsm_mqtt_client_api.h"
+#include "lwgsm/apps/lwgsm_mqtt_client_api.h"
 #include "mqtt_client_api.h"
-#include "gsm/gsm_mem.h"
-#include "gsm/gsm_network_api.h"
+#include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_network_api.h"
 
 /**
  * \brief           Connection information for MQTT CONNECT packet
  */
-static const gsm_mqtt_client_info_t
+static const lwgsm_mqtt_client_info_t
 mqtt_client_info = {
     .keep_alive = 10,
 
@@ -52,19 +52,19 @@ generate_random(char* str) {
  */
 void
 mqtt_client_api_thread(void const* arg) {
-    gsm_mqtt_client_api_p client;
-    gsm_mqtt_conn_status_t conn_status;
-    gsm_mqtt_client_api_buf_p buf;
-    gsmr_t res;
+    lwgsm_mqtt_client_api_p client;
+    lwgsm_mqtt_conn_status_t conn_status;
+    lwgsm_mqtt_client_api_buf_p buf;
+    lwgsmr_t res;
     char random_str[10];
 
     /* Request network attach */
-    while (gsm_network_request_attach() != gsmOK) {
-        gsm_delay(1000);
+    while (lwgsm_network_request_attach() != lwgsmOK) {
+        lwgsm_delay(1000);
     }
 
     /* Create new MQTT API */
-    client = gsm_mqtt_client_api_new(256, 128);
+    client = lwgsm_mqtt_client_api_new(256, 128);
     if (client == NULL) {
         goto terminate;
     }
@@ -74,19 +74,19 @@ mqtt_client_api_thread(void const* arg) {
         printf("Joining MQTT server\r\n");
 
         /* Try to join */
-        conn_status = gsm_mqtt_client_api_connect(client, "mqtt.mydevices.com", 1883, &mqtt_client_info);
-        if (conn_status == GSM_MQTT_CONN_STATUS_ACCEPTED) {
+        conn_status = lwgsm_mqtt_client_api_connect(client, "mqtt.mydevices.com", 1883, &mqtt_client_info);
+        if (conn_status == LWGSM_MQTT_CONN_STATUS_ACCEPTED) {
             printf("Connected and accepted!\r\n");
             printf("Client is ready to subscribe and publish to new messages\r\n");
         } else {
             printf("Connect API response: %d\r\n", (int)conn_status);
-            gsm_delay(5000);
+            lwgsm_delay(5000);
             continue;
         }
 
         /* Subscribe to topics */
         sprintf(mqtt_topic_str, "v1/%s/things/%s/cmd/#", mqtt_client_info.user, mqtt_client_info.id);
-        if (gsm_mqtt_client_api_subscribe(client, mqtt_topic_str, GSM_MQTT_QOS_AT_LEAST_ONCE) == gsmOK) {
+        if (lwgsm_mqtt_client_api_subscribe(client, mqtt_topic_str, LWGSM_MQTT_QOS_AT_LEAST_ONCE) == lwgsmOK) {
             printf("Subscribed to topic\r\n");
         } else {
             printf("Problem subscribing to topic!\r\n");
@@ -94,32 +94,32 @@ mqtt_client_api_thread(void const* arg) {
 
         while (1) {
             /* Receive MQTT packet with 1000ms timeout */
-            res = gsm_mqtt_client_api_receive(client, &buf, 5000);
-            if (res == gsmOK) {
+            res = lwgsm_mqtt_client_api_receive(client, &buf, 5000);
+            if (res == lwgsmOK) {
                 if (buf != NULL) {
                     printf("Publish received!\r\n");
                     printf("Topic: %s, payload: %s\r\n", buf->topic, buf->payload);
-                    gsm_mqtt_client_api_buf_free(buf);
+                    lwgsm_mqtt_client_api_buf_free(buf);
                     buf = NULL;
                 }
-            } else if (res == gsmCLOSED) {
+            } else if (res == lwgsmCLOSED) {
                 printf("MQTT connection closed!\r\n");
                 break;
-            } else if (res == gsmTIMEOUT) {
+            } else if (res == lwgsmTIMEOUT) {
                 printf("Timeout on MQTT receive function. Manually publishing.\r\n");
 
                 /* Publish data on channel 1 */
                 generate_random(random_str);
                 sprintf(mqtt_topic_str, "v1/%s/things/%s/data/1", mqtt_client_info.user, mqtt_client_info.id);
-                gsm_mqtt_client_api_publish(client, mqtt_topic_str, random_str, strlen(random_str), GSM_MQTT_QOS_AT_LEAST_ONCE, 0);
+                lwgsm_mqtt_client_api_publish(client, mqtt_topic_str, random_str, strlen(random_str), LWGSM_MQTT_QOS_AT_LEAST_ONCE, 0);
             }
         }
         goto terminate;
     }
 
-terminate: 
-    gsm_mqtt_client_api_delete(client);
-    gsm_network_request_detach();
+terminate:
+    lwgsm_mqtt_client_api_delete(client);
+    lwgsm_network_request_detach();
     printf("MQTT client thread terminate\r\n");
-    gsm_sys_thread_terminate(NULL);
+    lwgsm_sys_thread_terminate(NULL);
 }

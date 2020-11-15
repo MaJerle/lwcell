@@ -1,9 +1,11 @@
-#ifndef __NETWORK_APN_SETTINGS_H
-#define __NETWORK_APN_SETTINGS_H
+#ifndef SNIPPET_HDR_NETWORK_APN_SETTINGS_H
+#define SNIPPET_HDR_NETWORK_APN_SETTINGS_H
+
+#include "lwgsm/lwgsm_network_api.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 /* APN settings to attach to network */
 #define NETWORK_APN                 "internet"
@@ -12,6 +14,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_NETWORK_APN_SETTINGS_H */

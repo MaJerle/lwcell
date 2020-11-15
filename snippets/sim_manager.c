@@ -1,17 +1,17 @@
 #include "sim_manager.h"
-#include "gsm/gsm.h"
+#include "lwgsm/lwgsm.h"
 
 /**
  * \brief           SIM card pin code
  */
-static const char *
-pin_code = "7600";
+static const char*
+pin_code = "7958";
 
 /**
  * \brief           SIM card puk code
  */
-static const char *
-puk_code = "08475703";
+static const char*
+puk_code = "10663647";
 
 /**
  * \brief           Configure and enable SIM card
@@ -19,9 +19,9 @@ puk_code = "08475703";
  */
 uint8_t
 configure_sim_card(void) {
-    GSM_UNUSED(puk_code);
+    LWGSM_UNUSED(puk_code);
     if (pin_code != NULL && strlen(pin_code)) {
-        if (gsm_sim_pin_enter(pin_code, NULL, NULL, 1) == gsmOK) {
+        if (lwgsm_sim_pin_enter(pin_code, NULL, NULL, 1) == lwgsmOK) {
             return 1;
         }
         return 0;
