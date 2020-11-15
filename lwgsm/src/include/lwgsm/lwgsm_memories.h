@@ -29,7 +29,7 @@
  * This file is part of LwGSM - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         $_version_$
+ * Version:         v0.1.0
  */
 
 LWGSM_DEV_MEMORY_ENTRY(SM_P, "SM_P")
