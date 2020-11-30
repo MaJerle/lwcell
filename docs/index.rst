@@ -9,7 +9,7 @@ Its objective is to run on master system, while SIMCom device runs official AT c
 .. rst-class:: center
 .. rst-class:: index_links
 
-	:ref:`download_library` :ref:`getting_started` `Open Github <https://github.com/MaJerle/lwgsm>`_
+	:ref:`download_library` :ref:`getting_started` `Open Github <https://github.com/MaJerle/lwgsm>`_ `Donate <https://paypal.me/tilz0R>`_
 
 Features
 ^^^^^^^^
