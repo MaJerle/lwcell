@@ -34,6 +34,9 @@
 #ifndef LWGSM_HDR_OPT_H
 #define LWGSM_HDR_OPT_H
 
+/* Uncomment to ignore user options (or set macro in compiler flags) */
+/* #define LWGSM_IGNORE_USER_OPTS */
+
 /* Include application options */
 #ifndef LWGSM_IGNORE_USER_OPTS
 #include "lwgsm_opts.h"
