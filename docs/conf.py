@@ -99,7 +99,7 @@ html_theme_options = {
     'includehidden': True,
     'titles_only': False
 }
-html_logo = 'static/images/logo_tm.png'
+html_logo = 'static/images/logo.svg'
 github_url = 'https://github.com/MaJerle/gsm-at-lib'
 html_baseurl = 'https://docs.majerle.eu/projects/gsm-at-lib/'
 

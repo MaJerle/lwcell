@@ -6,6 +6,9 @@ Welcome to the documentation for version |version|.
 LwGSM is generic, platform independent, library to control *SIM800/SIM900* or *SIM7000/SIM7020 (NB-Iot LTE)* devices from *SIMCom*.
 Its objective is to run on master system, while SIMCom device runs official AT commands firmware developed and maintained by *SIMCom*.
 
+.. image:: static/images/logo.svg
+    :align: center
+
 .. rst-class:: center
 .. rst-class:: index_links
 
