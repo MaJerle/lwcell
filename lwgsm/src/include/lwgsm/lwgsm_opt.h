@@ -197,6 +197,13 @@
 #endif
 
 /**
+ * \brief           Default delay (milliseconds unit) after reset sequence
+ */
+#ifndef LWGSM_CFG_RESET_DELAY_AFTER
+#define LWGSM_CFG_RESET_DELAY_AFTER         5000
+#endif
+
+/**
  * \defgroup        LWGSM_OPT_DBG Debugging
  * \brief           Debugging configurations
  * \{
