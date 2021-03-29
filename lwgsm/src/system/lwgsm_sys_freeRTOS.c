@@ -36,6 +36,8 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 
+#if !__DOXYGEN__
+
 static SemaphoreHandle_t sys_mutex;
 
 /**
@@ -384,3 +386,5 @@ lwgsm_sys_thread_yield(void) {
     vTaskDelay(0);
     return 1;
 }
+
+#endif /* !__DOXYGEN__ */

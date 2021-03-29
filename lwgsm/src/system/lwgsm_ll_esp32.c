@@ -39,6 +39,8 @@
 #include "driver/uart.h"
 #include "esp_log.h"
 
+#if !__DOXYGEN__
+
 /* Define TAG for log messages */
 #define TAG "lwGSM"
 
@@ -186,3 +188,5 @@ lwgsm_ll_deinit(lwgsm_ll_t* ll) {
     initialized = 0;                            /* Clear initialized flag */
     return lwgsmOK;
 }
+
+#endif /* !__DOXYGEN__ */

@@ -48,7 +48,7 @@ extern "C" {
  * \{
  */
 
-#if LWGSM_CFG_OS || __DOXYGEN__
+#if LWGSM_CFG_OS && !__DOXYGEN__
 
 /* Include any OS specific features */
 #include "freertos/FreeRTOS.h"
@@ -134,7 +134,7 @@ typedef UBaseType_t               lwgsm_sys_thread_prio_t;
  */
 #define LWGSM_SYS_THREAD_SS           (1024)
 
-#endif /* LWGSM_CFG_OS || __DOXYGEN__ */
+#endif /* LWGSM_CFG_OS && !__DOXYGEN__ */
 
 /**
  * \}
