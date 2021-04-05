@@ -560,12 +560,16 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
  */
 uint8_t
 lwgsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
-    dt->date = lwgsmi_parse_number(src);
-    dt->month = lwgsmi_parse_number(src);
     dt->year = LWGSM_U16(2000) + lwgsmi_parse_number(src);
+    dt->month = lwgsmi_parse_number(src);
+    dt->date = lwgsmi_parse_number(src);
     dt->hours = lwgsmi_parse_number(src);
     dt->minutes = lwgsmi_parse_number(src);
     dt->seconds = lwgsmi_parse_number(src);
+    if (**src == '+')
+        dt->timezone = lwgsmi_parse_number(src);
+    else if (**src == '-')
+        dt->timezone = lwgsmi_parse_number(src) * -1;
 
     lwgsmi_check_and_trim(src);                 /* Trim text to the end */
     return 1;
@@ -602,6 +606,24 @@ lwgsmi_parse_clcc(const char* str, uint8_t send_evt) {
 }
 
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+
+#if LWGSM_CFG_CLOCK || __DOXYGEN__
+
+/**
+ * \brief           Parse received +CCLK with current timestamp
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_cclk(const char* str) {
+    if (*str == '+') {
+        str += 7;
+    }
+    lwgsmi_parse_datetime(&str, lwgsm.msg->msg.clock.datetime);
+    return 1;
+}
+
+#endif /* LWGSM_CFG_CLOCK || __DOXYGEN__ */
 
 #if LWGSM_CFG_SMS || __DOXYGEN__
 

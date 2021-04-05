@@ -68,6 +68,7 @@ uint8_t     lwgsmi_parse_cpbf(const char* str);
 uint8_t     lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan);
 
 uint8_t     lwgsmi_parse_ipd(const char* str);
+uint8_t     lwgsmi_parse_cclk(const char* str);
 
 #if defined(__cplusplus)
 }

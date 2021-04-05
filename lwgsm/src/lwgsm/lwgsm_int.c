@@ -770,9 +770,11 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
             lwgsmi_parse_cpbf(rcv->data);       /* Parse +CPBR statement */
 #endif /* LWGSM_CFG_PHONEBOOK */
-        }
-
-        /* Messages not starting with '+' sign */
+#if LWGSM_CFG_CLOCK
+        } else if (!strncmp(rcv->data, "+CCLK", 5)) {
+          lwgsmi_parse_cclk(rcv->data);    /* Parse +CLCC response with call info change */
+#endif /* LWGSM_CFG_CLOCK */
+        }        /* Messages not starting with '+' sign */
     } else {
         if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SHUT OK" CRLF, 7 + CRLF_LEN)) {
             is_ok = 1;
@@ -2248,6 +2250,21 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             break;
         }
 #endif /* LWGSM_CFG_USSD */
+#if LWGSM_CFG_CLOCK
+        case LWGSM_CMD_CCLK: {                   /* Request current time */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+CCLK?");
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_CLTS: {                   /* Set time sync with base station mode */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+CLTS=");
+            lwgsmi_send_number(msg->msg.clock.sync_mode, 0, 0);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+#endif
         default:
             return lwgsmERR;                    /* Invalid command */
     }

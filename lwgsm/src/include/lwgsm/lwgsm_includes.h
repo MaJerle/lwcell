@@ -66,6 +66,9 @@
 #if LWGSM_CFG_USSD || __DOXYGEN__
 #include "lwgsm/lwgsm_ussd.h"
 #endif /* LWGSM_CFG_USSD || __DOXYGEN__ */
+#if LWGSM_CFG_CLOCK || __DOXYGEN__
+#include "lwgsm/lwgsm_clock.h"
+#endif /* LWGSM_CFG_CLOCK || __DOXYGEN__ */
 
 #ifdef __cplusplus
 extern "C" {

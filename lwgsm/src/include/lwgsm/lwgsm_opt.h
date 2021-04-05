@@ -533,6 +533,15 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` clock functionality
+ *
+ * Enable or disable clock related commands
+ */
+#ifndef LWGSM_CFG_CLOCK
+#define LWGSM_CFG_CLOCK 0
+#endif
+
+/**
  * \brief           Enables `1` or disables `0` connection API.
  *
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature

@@ -142,6 +142,7 @@ typedef struct {
     uint8_t hours;                              /*!< Hours in a day, from `0` to `23` */
     uint8_t minutes;                            /*!< Minutes in a hour, from `0` to `59` */
     uint8_t seconds;                            /*!< Seconds in a minute, from `0` to `59` */
+    int8_t timezone;
 } lwgsm_datetime_t;
 
 /**
