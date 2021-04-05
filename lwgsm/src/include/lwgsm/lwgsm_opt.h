@@ -601,6 +601,14 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` SSL API.
+ *
+ */
+#ifndef LWGSM_CFG_SSL
+#define LWGSM_CFG_SSL                         0
+#endif
+
+/**
  * \brief           Enables `1` or disables `0` PING API.
  *
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature

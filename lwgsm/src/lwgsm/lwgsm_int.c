@@ -2286,6 +2286,24 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             break;
         }
 #endif /* LWGSM_CFG_FS */
+#if LWGSM_CFG_SSL
+        case LWGSM_CMD_SSL_OPT: {                   /* Set SSL options */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SSLOPT=");
+            lwgsmi_send_number(msg->msg.ssl.opt.param, 0, 0);
+            lwgsmi_send_number(msg->msg.ssl.opt.value, 0, 1);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_SSL_SETROOT: {                   /* Import CA file */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SSLSETROOT=");
+            lwgsmi_send_string(msg->msg.ssl.ca_path, 1, 1, 0);
+            lwgsmi_send_number(msg->msg.ssl.ca_length, 0, 1);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+#endif /* LWGSM_CFG_SSL */
 #if LWGSM_CFG_CLOCK
         case LWGSM_CMD_CCLK: {                   /* Request current time */
             AT_PORT_SEND_BEGIN_AT();

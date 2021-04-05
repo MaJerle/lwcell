@@ -256,6 +256,9 @@ typedef enum {
     LWGSM_CMD_FS_DELETE,
     LWGSM_CMD_FS_WRITE,
 
+    LWGSM_CMD_SSL_OPT,
+    LWGSM_CMD_SSL_SETROOT,
+
     LWGSM_CMD_END,                              /*!< Last CMD entry */
 } lwgsm_cmd_t;
 
@@ -522,6 +525,16 @@ typedef struct lwgsm_msg {
 #endif /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
 #if LWGSM_CFG_FS || __DOXYGEN__
     lwgsm_fs_file_t fs_file;
+#endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_FS || __DOXYGEN__
+        struct {
+            struct {
+                uint8_t param;
+                uint8_t value;
+            } opt;
+            char* ca_path;
+            uint16_t ca_length;
+        } ssl;
 #endif /* LWGSM_CFG_FS || __DOXYGEN__ */
 #if LWGSM_CFG_CLOCK || __DOXYGEN__
         struct {
