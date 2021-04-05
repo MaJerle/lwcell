@@ -538,7 +538,7 @@
  * Enable or disable clock related commands
  */
 #ifndef LWGSM_CFG_CLOCK
-#define LWGSM_CFG_CLOCK 0
+#define LWGSM_CFG_CLOCK                       0
 #endif
 
 /**

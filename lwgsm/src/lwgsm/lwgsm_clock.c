@@ -41,7 +41,7 @@
 
 /**
  * \brief           Get current time from modem
- * \param[out]       Output variable to save response from modem
+ * \param[out]      datetime: Output variable to save response from modem
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -61,7 +61,7 @@ lwgsm_clock_get(lwgsm_datetime_t* datetime, const lwgsm_api_cmd_evt_fn evt_fn, v
 
 /**
  * \brief           Set clock sync with base station
- * \param[in]       Value for parameter, `1` for enable, `0` for disable timesync with base station
+ * \param[in]       value: Value for parameter, `1` for enable, `0` for disable timesync with base station
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
