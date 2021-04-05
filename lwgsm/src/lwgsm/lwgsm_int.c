@@ -2304,6 +2304,16 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             break;
         }
 #endif /* LWGSM_CFG_SSL */
+#if LWGSM_CFG_IP_APP
+        case LWGSM_CMD_IP_APP_SAPBR: {                   /* Control IP Application connection */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SAPBR=");
+            lwgsmi_send_number(msg->msg.ip_app.sapbr.param, 0, 0);
+            lwgsmi_send_number(msg->msg.ip_app.sapbr.value, 0, 1);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+#endif /* LWGSM_CFG_IP_APP */
 #if LWGSM_CFG_CLOCK
         case LWGSM_CMD_CCLK: {                   /* Request current time */
             AT_PORT_SEND_BEGIN_AT();

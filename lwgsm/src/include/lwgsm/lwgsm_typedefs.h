@@ -348,6 +348,12 @@ typedef struct {
     uint8_t input_time;                         /*!< Input time */
 } lwgsm_fs_file_t;
 
+typedef struct {
+  uint8_t cid;                                  /*!< Connection ID */
+  uint8_t status;                               /*!< Status of connection */
+  lwgsm_ip_t ip;                                /*!< IP of connection */
+} ip_app_t;
+
 /* Forward declarations */
 struct lwgsm_evt;
 struct lwgsm_conn;
@@ -435,6 +441,9 @@ typedef enum lwgsm_cb_type_t {
     LWGSM_EVT_PB_LIST,                          /*!< Phonebook list event */
     LWGSM_EVT_PB_SEARCH,                        /*!< Phonebook search event */
 #endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+    LWGSM_EVT_IP_APP_CHANGED,                   /*!< IP Application connection changed */
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
 } lwgsm_evt_type_t;
 
 /**
@@ -549,7 +558,10 @@ typedef struct lwgsm_evt {
             lwgsmr_t res;                       /*!< Operation success */
         } pb_search;                            /*!< Phonebok search list. Use with \ref LWGSM_EVT_PB_SEARCH event */
 #endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
-    } evt;                                      /*!< Callback event union */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+        ip_app_t ip_app;
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
+  } evt;                                      /*!< Callback event union */
 } lwgsm_evt_t;
 
 #define LWGSM_SIZET_MAX                         ((size_t)(-1))  /*!< Maximal value of size_t variable type */

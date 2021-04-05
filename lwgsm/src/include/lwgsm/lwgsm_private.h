@@ -256,6 +256,8 @@ typedef enum {
     LWGSM_CMD_FS_DELETE,
     LWGSM_CMD_FS_WRITE,
 
+    LWGSM_CMD_IP_APP_SAPBR,
+
     LWGSM_CMD_SSL_OPT,
     LWGSM_CMD_SSL_SETROOT,
 
@@ -536,6 +538,15 @@ typedef struct lwgsm_msg {
             uint16_t ca_length;
         } ssl;
 #endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+        struct {
+            struct {
+                uint8_t param;
+                uint8_t value;
+            } sapbr;
+            ip_app_t* status;
+        } ip_app;
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
 #if LWGSM_CFG_CLOCK || __DOXYGEN__
         struct {
             uint8_t sync_mode;
@@ -671,6 +682,9 @@ typedef struct {
 #if LWGSM_CFG_CALL || __DOXYGEN__
     lwgsm_call_t          call;                 /*!< Call information */
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+    ip_app_t              ip_app[3];
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
 } lwgsm_modules_t;
 
 /**

@@ -72,6 +72,9 @@
 #if LWGSM_CFG_SSL || __DOXYGEN__
 #include "lwgsm/lwgsm_ssl.h"
 #endif /* LWGSM_CFG_SSL || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+#include "lwgsm/lwgsm_ip_app.h"
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
 #if LWGSM_CFG_CLOCK || __DOXYGEN__
 #include "lwgsm/lwgsm_clock.h"
 #endif /* LWGSM_CFG_CLOCK || __DOXYGEN__ */

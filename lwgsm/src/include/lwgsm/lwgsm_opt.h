@@ -609,6 +609,14 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` IP Application API.
+ *
+ */
+#ifndef LWGSM_CFG_IP_APP
+#define LWGSM_CFG_IP_APP                      0
+#endif
+
+/**
  * \brief           Enables `1` or disables `0` PING API.
  *
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature

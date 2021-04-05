@@ -607,6 +607,45 @@ lwgsmi_parse_clcc(const char* str, uint8_t send_evt) {
 
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
 
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+
+/**
+ * \brief           Parse received +SAPBR with connection information
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_sapbr(const char* str) {
+  if (*str == '+') {
+    str += 7;
+  }
+
+  uint8_t cid;
+
+  if (CMD_GET_CUR() == LWGSM_CMD_IP_APP_SAPBR) {
+    str++;
+    cid = lwgsmi_parse_number(&str);
+    lwgsm.m.ip_app[cid].cid = cid;
+    lwgsm.m.ip_app[cid].status = lwgsmi_parse_number(&str);
+    lwgsmi_parse_ip(&str, &lwgsm.m.ip_app[cid].ip);
+  } else if (!strncmp((str + 1), ": DEACT", 7)) {
+    cid = lwgsmi_parse_number(&str);
+    lwgsm.m.ip_app[cid].status = 3;
+    lwgsm.evt.evt.ip_app = lwgsm.m.ip_app[cid];
+    lwgsmi_send_cb(LWGSM_EVT_IP_APP_CHANGED);
+  } else {
+    cid = lwgsmi_parse_number(&str);
+  }
+
+  if (CMD_IS_DEF(LWGSM_CMD_IP_APP_SAPBR) &&
+      lwgsm.msg->msg.ip_app.status != NULL) { /* Check and copy to user variable */
+    LWGSM_MEMCPY(lwgsm.msg->msg.ip_app.status, &lwgsm.m.ip_app[cid], sizeof(*lwgsm.msg->msg.ip_app.status));
+  }
+  return 1;
+}
+
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
+
 #if LWGSM_CFG_CLOCK || __DOXYGEN__
 
 /**
