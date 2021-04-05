@@ -770,6 +770,12 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
             lwgsmi_parse_cpbf(rcv->data);       /* Parse +CPBR statement */
 #endif /* LWGSM_CFG_PHONEBOOK */
+#if LWGSM_CFG_MQTT
+        } else if (!strncmp(rcv->data, "+SMPUBLISH", 10)) {
+            lwgsmi_parse_smpublish(rcv->data, rcv->len);    /* Parse +SMPUBLISH response with MQTT Message */
+        } else if (!strncmp(rcv->data, "+SMSTATE", 8)) {
+            lwgsmi_parse_smstate(rcv->data);    /* Parse +SMSTATE response with MQTT Connection status */
+#endif /* LWGSM_CFG_MQTT */
 #if LWGSM_CFG_CLOCK
         } else if (!strncmp(rcv->data, "+CCLK", 5)) {
           lwgsmi_parse_cclk(rcv->data);    /* Parse +CLCC response with call info change */
@@ -1200,6 +1206,23 @@ lwgsmi_process(const void* data, size_t data_len) {
                 lwgsmi_parse_received(&recv_buff);
             }
 #endif /* LWGSM_CFG_USSD */
+#if LWGSM_CFG_MQTT
+        } else if (lwgsm.m.mqtt_message.read) { /* Read remain of mqtt message */
+            if (d_len + 1 >= lwgsm.m.mqtt_message.remaining_length) {
+                LWGSM_MEMCPY(lwgsm.m.mqtt_message.message_ptr, d-1, lwgsm.m.mqtt_message.remaining_length);
+                lwgsm.m.mqtt_message.remaining_length = 0;
+                lwgsm.m.mqtt_message.read = 0;
+                d_len -= lwgsm.m.mqtt_message.remaining_length - 1;
+                d += lwgsm.m.mqtt_message.remaining_length - 1;
+                lwgsm.evt.evt.mqtt_received.message = &lwgsm.m.mqtt_message;
+                lwgsmi_send_cb(LWGSM_EVT_MQTT_RECEIVED);
+            } else {
+                LWGSM_MEMCPY(lwgsm.m.mqtt_message.message_ptr, d-1, d_len + 1);
+                lwgsm.m.mqtt_message.message_ptr += d_len + 1;
+                lwgsm.m.mqtt_message.remaining_length -= d_len + 1;
+                d_len = 0;
+            }
+#endif /* LWGSM_CFG_MQTT */
             /*
              * We are in command mode where we have to process byte by byte
              * Simply check for ASCII and unicode format and process data accordingly
@@ -2286,6 +2309,66 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             break;
         }
 #endif /* LWGSM_CFG_FS */
+#if LWGSM_CFG_MQTT
+        case LWGSM_CMD_MQTT_CONF: {                   /* Configuration of MQTT Client */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMCONF=");
+            lwgsmi_send_string(msg->msg.mqtt.conf.param, 1, 1, 0);
+            lwgsmi_send_string(msg->msg.mqtt.conf.value, 1, 1, 1);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_MQTT_SSL: {                   /* SSL mode for MQTT Client*/
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMSSL=");
+            lwgsmi_send_number(msg->msg.mqtt.ssl, 0, 0);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_MQTT_CONNECT: {                   /* Connect to MQTT server */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMCONN");
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_MQTT_DISCONNECT: {                   /* Disconnect from MQTT server */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMDISC");
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_MQTT_SUBSCRIBE: {                   /* Subscribe to a topic */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMSUB=");
+            lwgsmi_send_string(msg->msg.mqtt.topic.topic, 1, 1, 0);
+            lwgsmi_send_number(msg->msg.mqtt.topic.qos, 0, 1);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_MQTT_UNSUBSCRIBE: {                   /* Unsubscribe from a topic */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMUNSUB=");
+            lwgsmi_send_string(msg->msg.mqtt.topic.topic, 1, 1, 0);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_MQTT_PUBLISH: {                   /* Publish message to a topic */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMPUB=");
+            lwgsmi_send_string(msg->msg.mqtt.topic.topic, 1, 1, 0);
+            lwgsmi_send_number(msg->msg.mqtt.topic.qos, 0, 1);
+            lwgsmi_send_number(msg->msg.mqtt.topic.retain, 0, 1);
+            lwgsmi_send_string(msg->msg.mqtt.message, 1, 1, 1);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_MQTT_STATE: {                   /* Get MQTT connection state */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+SMSTATE?");
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+#endif /* LWGSM_CFG_MQTT */
 #if LWGSM_CFG_SSL
         case LWGSM_CMD_SSL_OPT: {                   /* Set SSL options */
             AT_PORT_SEND_BEGIN_AT();

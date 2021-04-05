@@ -256,6 +256,15 @@ typedef enum {
     LWGSM_CMD_FS_DELETE,
     LWGSM_CMD_FS_WRITE,
 
+    LWGSM_CMD_MQTT_CONF,
+    LWGSM_CMD_MQTT_SSL,
+    LWGSM_CMD_MQTT_CONNECT,
+    LWGSM_CMD_MQTT_DISCONNECT,
+    LWGSM_CMD_MQTT_SUBSCRIBE,
+    LWGSM_CMD_MQTT_UNSUBSCRIBE,
+    LWGSM_CMD_MQTT_PUBLISH,
+    LWGSM_CMD_MQTT_STATE,
+
     LWGSM_CMD_IP_APP_SAPBR,
 
     LWGSM_CMD_SSL_OPT,
@@ -528,6 +537,22 @@ typedef struct lwgsm_msg {
 #if LWGSM_CFG_FS || __DOXYGEN__
     lwgsm_fs_file_t fs_file;
 #endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+        struct {
+            struct {
+                const char* param;
+                const char* value;
+            } conf;
+            uint8_t ssl;
+            uint8_t* state;
+            struct {
+                char* topic;
+                uint8_t qos;
+                uint8_t retain;
+            } topic;
+            char* message;
+        } mqtt;
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
 #if LWGSM_CFG_FS || __DOXYGEN__
         struct {
             struct {
@@ -682,6 +707,10 @@ typedef struct {
 #if LWGSM_CFG_CALL || __DOXYGEN__
     lwgsm_call_t          call;                 /*!< Call information */
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+    lwgsm_mqtt_message_t  mqtt_message;
+    uint8_t               mqtt_state;
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
 #if LWGSM_CFG_IP_APP || __DOXYGEN__
     ip_app_t              ip_app[3];
 #endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */

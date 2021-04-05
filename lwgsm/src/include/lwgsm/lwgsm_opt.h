@@ -609,6 +609,14 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` MQTT API.
+ *
+ */
+#ifndef LWGSM_CFG_MQTT
+#define LWGSM_CFG_MQTT                        0
+#endif
+
+/**
  * \brief           Enables `1` or disables `0` IP Application API.
  *
  */

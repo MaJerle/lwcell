@@ -607,6 +607,64 @@ lwgsmi_parse_clcc(const char* str, uint8_t send_evt) {
 
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
 
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+
+/**
+ * \brief           Parse received +SMPUBLISH with MQTT message
+ * \param[in]       str: Input string
+ * \param[in]       len: Length of message
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_smpublish(const char* str, size_t len) {
+    const char* orig_str = str;
+    if (*str == '+') {
+        str += 12;
+    }
+    lwgsm.m.mqtt_message.id = lwgsmi_parse_number(&str);
+    lwgsmi_parse_string(&str, lwgsm.m.mqtt_message.topic, sizeof(lwgsm.m.mqtt_message.topic), 1);
+    lwgsm.m.mqtt_message.length = lwgsmi_parse_number(&str);
+    str += 2;
+    size_t bytes_remain = len - (str - orig_str);
+    bzero(lwgsm.m.mqtt_message.message, sizeof(lwgsm.m.mqtt_message.message));
+    if (bytes_remain >= lwgsm.m.mqtt_message.length) { /* Check if we got full message */
+        LWGSM_MEMCPY(lwgsm.m.mqtt_message.message, str, lwgsm.m.mqtt_message.length);
+        lwgsm.evt.evt.mqtt_received.message = &lwgsm.m.mqtt_message;
+        lwgsmi_send_cb(LWGSM_EVT_MQTT_RECEIVED);
+    } else { /* Copying what we have and setup flag to read remain */
+        LWGSM_MEMCPY(lwgsm.m.mqtt_message.message, str, bytes_remain);
+        lwgsm.m.mqtt_message.remaining_length = lwgsm.m.mqtt_message.length - bytes_remain;
+        lwgsm.m.mqtt_message.message_ptr = lwgsm.m.mqtt_message.message + bytes_remain;
+        lwgsm.m.mqtt_message.read = 1;
+    }
+
+    return 1;
+}
+
+/**
+ * \brief           Parse received +SMSTATE with MQTT connection status
+ * \param[in]       str: Input string
+ * \param[in]       send_evt: Send event about new MQTT message
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_smstate(const char* str) {
+    if (*str == '+') {
+        str += 10;
+    }
+    lwgsm.m.mqtt_state = lwgsmi_parse_number(&str);
+    if (lwgsm.msg->msg.mqtt.state != NULL)
+        *lwgsm.msg->msg.mqtt.state = lwgsm.m.mqtt_state;
+
+    lwgsm.evt.evt.mqtt_state.mqtt_state = lwgsm.m.mqtt_state;
+    if (CMD_GET_CUR() != LWGSM_CMD_MQTT_STATE)
+        lwgsmi_send_cb(LWGSM_EVT_MQTT_STATE);
+
+    return 1;
+}
+
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
+
 #if LWGSM_CFG_IP_APP || __DOXYGEN__
 
 /**

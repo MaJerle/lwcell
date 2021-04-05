@@ -69,6 +69,9 @@
 #if LWGSM_CFG_FS || __DOXYGEN__
 #include "lwgsm/lwgsm_fs.h"
 #endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+#include "lwgsm/lwgsm_mqtt.h"
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__*/
 #if LWGSM_CFG_SSL || __DOXYGEN__
 #include "lwgsm/lwgsm_ssl.h"
 #endif /* LWGSM_CFG_SSL || __DOXYGEN__ */
