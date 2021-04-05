@@ -776,6 +776,10 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
         } else if (!strncmp(rcv->data, "+SMSTATE", 8)) {
             lwgsmi_parse_smstate(rcv->data);    /* Parse +SMSTATE response with MQTT Connection status */
 #endif /* LWGSM_CFG_MQTT */
+#if LWGSM_CFG_IP_APP
+        } else if (!strncmp(rcv->data, "+SAPBR", 6)) {
+            lwgsmi_parse_sapbr(rcv->data);    /* Parse +SAPBR response with IP Application connection details */
+#endif /* LWGSM_CFG_IP_APP */
 #if LWGSM_CFG_CLOCK
         } else if (!strncmp(rcv->data, "+CCLK", 5)) {
           lwgsmi_parse_cclk(rcv->data);    /* Parse +CLCC response with call info change */
