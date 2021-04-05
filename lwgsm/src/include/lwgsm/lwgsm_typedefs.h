@@ -340,6 +340,14 @@ typedef struct {
     char name[20];                              /*!< Phone book name if exists for current number */
 } lwgsm_call_t;
 
+typedef struct {
+    const char* path;                           /*!< Path to file */
+    uint8_t mode;                               /*!< Mode for file */
+    uint16_t size;                              /*!< Size of file */
+    const char* content;                        /*!< File content */
+    uint8_t input_time;                         /*!< Input time */
+} lwgsm_fs_file_t;
+
 /* Forward declarations */
 struct lwgsm_evt;
 struct lwgsm_conn;

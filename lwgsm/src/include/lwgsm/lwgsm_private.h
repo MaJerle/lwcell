@@ -252,6 +252,10 @@ typedef enum {
     LWGSM_CMD_CSMP,                             /*!< Set SMS Text Mode Parameters */
     LWGSM_CMD_CSMS,                             /*!< Select Message Service */
 
+    LWGSM_CMD_FS_CREATE,
+    LWGSM_CMD_FS_DELETE,
+    LWGSM_CMD_FS_WRITE,
+
     LWGSM_CMD_END,                              /*!< Last CMD entry */
 } lwgsm_cmd_t;
 
@@ -516,7 +520,10 @@ typedef struct lwgsm_msg {
             const char* pass;                   /*!< APN password */
         } network_attach;                       /*!< Settings for network attach */
 #endif /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
-#ifdef LWGSM_CFG_CLOCK || __DOXYGEN__
+#if LWGSM_CFG_FS || __DOXYGEN__
+    lwgsm_fs_file_t fs_file;
+#endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_CLOCK || __DOXYGEN__
         struct {
             uint8_t sync_mode;
             lwgsm_datetime_t* datetime;

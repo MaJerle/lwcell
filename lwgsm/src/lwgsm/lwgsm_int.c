@@ -873,6 +873,9 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGS) && is_ok) {
             /* At this point we have to wait for "> " to send data */
 #endif /* LWGSM_CFG_SMS */
+#if LWGSM_CFG_FS
+        } else if (CMD_IS_CUR(LWGSM_CMD_FS_WRITE) && is_ok) {
+#endif /* LWGSM_CFG_FS */
 #if LWGSM_CFG_CONN
         } else if (CMD_IS_CUR(LWGSM_CMD_CIPSTATUS)) {
             /* For CIPSTATUS, OK is returned before important data */
@@ -1264,6 +1267,13 @@ lwgsmi_process(const void* data, size_t data_len) {
                      *
                      * Check if any command active which may expect that kind of response
                      */
+#if LWGSM_CFG_FS
+                    if (ch_prev1 == '\n' && ch == '>') { /* Check if modem waiting for file content */
+                        if (CMD_IS_DEF(LWGSM_CMD_FS_WRITE)) {
+                            AT_PORT_SEND(lwgsm.msg->msg.fs_file.content, lwgsm.msg->msg.fs_file.size);
+                        }
+                    }
+#endif /* LWGSM_CFG_FS */
                     if (ch_prev2 == '\n' && ch_prev1 == '>' && ch == ' ') {
                         if (0) {
 #if LWGSM_CFG_CONN
@@ -2250,6 +2260,32 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             break;
         }
 #endif /* LWGSM_CFG_USSD */
+#if LWGSM_CFG_FS
+        case LWGSM_CMD_FS_CREATE: {                   /* Creates file on a filesystem */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+FSCREATE=");
+            lwgsmi_send_string(msg->msg.fs_file.path, 0, 0, 0);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_FS_DELETE: {                   /* Deletes file on a filesystem */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+FSDEL=");
+            lwgsmi_send_string(msg->msg.fs_file.path, 0, 0, 0);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWGSM_CMD_FS_WRITE: {                   /* Writes content to a file on a filesystem */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+FSWRITE=");
+            lwgsmi_send_string(msg->msg.fs_file.path, 0, 0, 0);
+            lwgsmi_send_number(msg->msg.fs_file.mode, 0, 1);
+            lwgsmi_send_number(msg->msg.fs_file.size, 0, 1);
+            lwgsmi_send_number(msg->msg.fs_file.input_time, 0, 1);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+#endif /* LWGSM_CFG_FS */
 #if LWGSM_CFG_CLOCK
         case LWGSM_CMD_CCLK: {                   /* Request current time */
             AT_PORT_SEND_BEGIN_AT();

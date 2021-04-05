@@ -593,6 +593,14 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` FS API.
+ *
+ */
+#ifndef LWGSM_CFG_FS
+#define LWGSM_CFG_FS                          0
+#endif
+
+/**
  * \brief           Enables `1` or disables `0` PING API.
  *
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
