@@ -157,5 +157,26 @@
     <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_utils.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_clock.c">
+      <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_fs.c">
+      <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_ftp.c">
+      <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_ip_app.c">
+      <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_mqtt.c">
+      <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_ping.c">
+      <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_ssl.c">
+      <Filter>Source Files\GSM CORE</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

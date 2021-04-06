@@ -28,12 +28,10 @@
  *
  * This file is part of LwGSM - Lightweight GSM-AT library.
  *
- * Authors:          Tilen MAJERLE <tilen@majerle.eu>,
- *                   Ilya Kargapolov <d3vil.st@gmail.com>
+ * Authors:         Tilen MAJERLE <tilen@majerle.eu>,
+ *                  Ilya Kargapolov <d3vil.st@gmail.com>
  * Version:         v0.1.0
  */
-
-
 #include <lwgsm/lwgsm_private.h>
 #include "lwgsm/lwgsm_mem.h"
 
@@ -201,7 +199,7 @@ lwgsm_mqtt_state(void* state, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_MQTT_STATE;
-    LWGSM_MSG_VAR_REF(msg).msg.mqtt.state = (uint8_t*) state;
+    LWGSM_MSG_VAR_REF(msg).msg.mqtt.state = state;
 
     return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
 }

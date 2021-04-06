@@ -73,8 +73,6 @@ typedef enum {
     LWGSM_CMD_CIPRXGET_SET,
     LWGSM_CMD_CSTT_SET,
 
-
-
     /* AT commands according to the V.25TER */
     LWGSM_CMD_CALL_ENABLE,
     LWGSM_CMD_A,                                /*!< Re-issues the Last Command Given */
@@ -277,15 +275,15 @@ typedef enum {
  * \brief           Connection structure
  */
 typedef struct lwgsm_conn {
-    lwgsm_conn_type_t type;                     /*!< Connection type */
-    uint8_t         num;                        /*!< Connection number */
-    lwgsm_ip_t        remote_ip;                /*!< Remote IP address */
-    lwgsm_port_t      remote_port;              /*!< Remote port number */
-    lwgsm_port_t      local_port;               /*!< Local IP address */
-    lwgsm_evt_fn      evt_func;                 /*!< Callback function for connection */
-    void*           arg;                        /*!< User custom argument */
+    lwgsm_conn_type_t   type;                     /*!< Connection type */
+    uint8_t             num;                        /*!< Connection number */
+    lwgsm_ip_t          remote_ip;                /*!< Remote IP address */
+    lwgsm_port_t        remote_port;              /*!< Remote port number */
+    lwgsm_port_t        local_port;               /*!< Local IP address */
+    lwgsm_evt_fn        evt_func;                 /*!< Callback function for connection */
+    void*               arg;                        /*!< User custom argument */
 
-    uint8_t         val_id;                     /*!< Validation ID number. It is increased each time a new connection is established.
+    uint8_t             val_id;                     /*!< Validation ID number. It is increased each time a new connection is established.
                                                      It protects sending data to wrong connection in case we have data in send queue,
                                                      and connection was closed and active again in between. */
 

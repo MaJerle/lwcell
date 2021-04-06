@@ -28,11 +28,10 @@
  *
  * This file is part of LwGSM - Lightweight GSM-AT library.
  *
- * Authors:          Tilen MAJERLE <tilen@majerle.eu>,
- *                   Ilya Kargapolov <d3vil.st@gmail.com>
+ * Authors:         Tilen MAJERLE <tilen@majerle.eu>,
+ *                  Ilya Kargapolov <d3vil.st@gmail.com>
  * Version:         v0.1.0
  */
-
 #include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_mem.h"
 
@@ -48,14 +47,14 @@
  */
 lwgsmr_t
 lwgsm_fs_create(const char* path, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
- LWGSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
- LWGSM_MSG_VAR_ALLOC(msg, blocking);
- LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
- LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_FS_CREATE;
- LWGSM_MSG_VAR_REF(msg).msg.fs_file.path = path;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_FS_CREATE;
+    LWGSM_MSG_VAR_REF(msg).msg.fs_file.path = path;
 
- return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -68,14 +67,14 @@ lwgsm_fs_create(const char* path, const lwgsm_api_cmd_evt_fn evt_fn, void* const
  */
 lwgsmr_t
 lwgsm_fs_delete(const char* path, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
- LWGSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
- LWGSM_MSG_VAR_ALLOC(msg, blocking);
- LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
- LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_FS_DELETE;
- LWGSM_MSG_VAR_REF(msg).msg.fs_file.path = path;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_FS_DELETE;
+    LWGSM_MSG_VAR_REF(msg).msg.fs_file.path = path;
 
- return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
 
 /**
@@ -92,18 +91,19 @@ lwgsm_fs_delete(const char* path, const lwgsm_api_cmd_evt_fn evt_fn, void* const
  */
 lwgsmr_t
 lwgsm_fs_write(const char* path, uint8_t mode, uint16_t size, const char* content, uint8_t input_time,
-    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-  LWGSM_MSG_VAR_DEFINE(msg);
+                const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-  LWGSM_MSG_VAR_ALLOC(msg, blocking);
-  LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-  LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_FS_WRITE;
-  LWGSM_MSG_VAR_REF(msg).msg.fs_file.path = path;
-  LWGSM_MSG_VAR_REF(msg).msg.fs_file.mode = mode;
-  LWGSM_MSG_VAR_REF(msg).msg.fs_file.size = size;
-  LWGSM_MSG_VAR_REF(msg).msg.fs_file.content = content;
-  LWGSM_MSG_VAR_REF(msg).msg.fs_file.input_time = input_time;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_FS_WRITE;
+    LWGSM_MSG_VAR_REF(msg).msg.fs_file.path = path;
+    LWGSM_MSG_VAR_REF(msg).msg.fs_file.mode = mode;
+    LWGSM_MSG_VAR_REF(msg).msg.fs_file.size = size;
+    LWGSM_MSG_VAR_REF(msg).msg.fs_file.content = content;
+    LWGSM_MSG_VAR_REF(msg).msg.fs_file.input_time = input_time;
 
-  return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
 }
+
 #endif /* LWGSM_CFG_FS || __DOXYGEN__ */

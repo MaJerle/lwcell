@@ -359,9 +359,9 @@ typedef struct {
 } lwgsm_mqtt_message_t;
 
 typedef struct {
-  uint8_t cid;                                  /*!< Connection ID */
-  uint8_t status;                               /*!< Status of connection */
-  lwgsm_ip_t ip;                                /*!< IP of connection */
+    uint8_t cid;                                /*!< Connection ID */
+    uint8_t status;                             /*!< Status of connection */
+    lwgsm_ip_t ip;                              /*!< IP of connection */
 } ip_app_t;
 
 /* Forward declarations */

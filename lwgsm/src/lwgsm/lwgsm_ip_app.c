@@ -28,12 +28,10 @@
  *
  * This file is part of LwGSM - Lightweight GSM-AT library.
  *
- * Authors:          Tilen MAJERLE <tilen@majerle.eu>,
- *                   Ilya Kargapolov <d3vil.st@gmail.com>
+ * Authors:         Tilen MAJERLE <tilen@majerle.eu>,
+ *                  Ilya Kargapolov <d3vil.st@gmail.com>
  * Version:         v0.1.0
  */
-
-
 #include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_mem.h"
 
@@ -51,16 +49,16 @@
  */
 lwgsmr_t
 lwgsm_ip_app_sapbr(uint8_t param, uint8_t value, void* status, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-  LWGSM_MSG_VAR_DEFINE(msg);
+    LWGSM_MSG_VAR_DEFINE(msg);
 
-  LWGSM_MSG_VAR_ALLOC(msg, blocking);
-  LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-  LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_IP_APP_SAPBR;
-  LWGSM_MSG_VAR_REF(msg).msg.ip_app.sapbr.param = param;
-  LWGSM_MSG_VAR_REF(msg).msg.ip_app.sapbr.value = value;
-  LWGSM_MSG_VAR_REF(msg).msg.ip_app.status = (ip_app_t*) status;
+    LWGSM_MSG_VAR_ALLOC(msg, blocking);
+    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_IP_APP_SAPBR;
+    LWGSM_MSG_VAR_REF(msg).msg.ip_app.sapbr.param = param;
+    LWGSM_MSG_VAR_REF(msg).msg.ip_app.sapbr.value = value;
+    LWGSM_MSG_VAR_REF(msg).msg.ip_app.status = status;
 
-  return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 85000);
+    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 85000);
 }
 
 #endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
