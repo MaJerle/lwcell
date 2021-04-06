@@ -533,6 +533,15 @@
 #endif
 
 /**
+ * \brief           Enables `1` or disables `0` clock functionality
+ *
+ * Enable or disable clock related commands
+ */
+#ifndef LWGSM_CFG_CLOCK
+#define LWGSM_CFG_CLOCK                       0
+#endif
+
+/**
  * \brief           Enables `1` or disables `0` connection API.
  *
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
@@ -581,6 +590,38 @@
  */
 #ifndef LWGSM_CFG_FTP
 #define LWGSM_CFG_FTP                         0
+#endif
+
+/**
+ * \brief           Enables `1` or disables `0` FS API.
+ *
+ */
+#ifndef LWGSM_CFG_FS
+#define LWGSM_CFG_FS                          0
+#endif
+
+/**
+ * \brief           Enables `1` or disables `0` SSL API.
+ *
+ */
+#ifndef LWGSM_CFG_SSL
+#define LWGSM_CFG_SSL                         0
+#endif
+
+/**
+ * \brief           Enables `1` or disables `0` MQTT API.
+ *
+ */
+#ifndef LWGSM_CFG_MQTT
+#define LWGSM_CFG_MQTT                        0
+#endif
+
+/**
+ * \brief           Enables `1` or disables `0` IP Application API.
+ *
+ */
+#ifndef LWGSM_CFG_IP_APP
+#define LWGSM_CFG_IP_APP                      0
 #endif
 
 /**

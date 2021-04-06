@@ -560,12 +560,16 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
  */
 uint8_t
 lwgsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
-    dt->date = lwgsmi_parse_number(src);
-    dt->month = lwgsmi_parse_number(src);
     dt->year = LWGSM_U16(2000) + lwgsmi_parse_number(src);
+    dt->month = lwgsmi_parse_number(src);
+    dt->date = lwgsmi_parse_number(src);
     dt->hours = lwgsmi_parse_number(src);
     dt->minutes = lwgsmi_parse_number(src);
     dt->seconds = lwgsmi_parse_number(src);
+    if (**src == '+')
+        dt->timezone = lwgsmi_parse_number(src);
+    else if (**src == '-')
+        dt->timezone = lwgsmi_parse_number(src) * -1;
 
     lwgsmi_check_and_trim(src);                 /* Trim text to the end */
     return 1;
@@ -602,6 +606,121 @@ lwgsmi_parse_clcc(const char* str, uint8_t send_evt) {
 }
 
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+
+/**
+ * \brief           Parse received +SMPUBLISH with MQTT message
+ * \param[in]       str: Input string
+ * \param[in]       len: Length of message
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_smpublish(const char* str, size_t len) {
+    const char* orig_str = str;
+    if (*str == '+') {
+        str += 12;
+    }
+    lwgsm.m.mqtt_message.id = lwgsmi_parse_number(&str);
+    lwgsmi_parse_string(&str, lwgsm.m.mqtt_message.topic, sizeof(lwgsm.m.mqtt_message.topic), 1);
+    lwgsm.m.mqtt_message.length = lwgsmi_parse_number(&str);
+    str += 2;
+    size_t bytes_remain = len - (str - orig_str);
+    bzero(lwgsm.m.mqtt_message.message, sizeof(lwgsm.m.mqtt_message.message));
+    if (bytes_remain >= lwgsm.m.mqtt_message.length) { /* Check if we got full message */
+        LWGSM_MEMCPY(lwgsm.m.mqtt_message.message, str, lwgsm.m.mqtt_message.length);
+        lwgsm.evt.evt.mqtt_received.message = &lwgsm.m.mqtt_message;
+        lwgsmi_send_cb(LWGSM_EVT_MQTT_RECEIVED);
+    } else { /* Copying what we have and setup flag to read remain */
+        LWGSM_MEMCPY(lwgsm.m.mqtt_message.message, str, bytes_remain);
+        lwgsm.m.mqtt_message.remaining_length = lwgsm.m.mqtt_message.length - bytes_remain;
+        lwgsm.m.mqtt_message.message_ptr = lwgsm.m.mqtt_message.message + bytes_remain;
+        lwgsm.m.mqtt_message.read = 1;
+    }
+
+    return 1;
+}
+
+/**
+ * \brief           Parse received +SMSTATE with MQTT connection status
+ * \param[in]       str: Input string
+ * \param[in]       send_evt: Send event about new MQTT message
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_smstate(const char* str) {
+    if (*str == '+') {
+        str += 10;
+    }
+    lwgsm.m.mqtt_state = lwgsmi_parse_number(&str);
+    if (lwgsm.msg->msg.mqtt.state != NULL)
+        *lwgsm.msg->msg.mqtt.state = lwgsm.m.mqtt_state;
+
+    lwgsm.evt.evt.mqtt_state.mqtt_state = lwgsm.m.mqtt_state;
+    if (CMD_GET_CUR() != LWGSM_CMD_MQTT_STATE)
+        lwgsmi_send_cb(LWGSM_EVT_MQTT_STATE);
+
+    return 1;
+}
+
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
+
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+
+/**
+ * \brief           Parse received +SAPBR with connection information
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_sapbr(const char* str) {
+  if (*str == '+') {
+    str += 7;
+  }
+
+  uint8_t cid;
+
+  if (CMD_GET_CUR() == LWGSM_CMD_IP_APP_SAPBR) {
+    str++;
+    cid = lwgsmi_parse_number(&str);
+    lwgsm.m.ip_app[cid].cid = cid;
+    lwgsm.m.ip_app[cid].status = lwgsmi_parse_number(&str);
+    lwgsmi_parse_ip(&str, &lwgsm.m.ip_app[cid].ip);
+  } else if (!strncmp((str + 1), ": DEACT", 7)) {
+    cid = lwgsmi_parse_number(&str);
+    lwgsm.m.ip_app[cid].status = 3;
+    lwgsm.evt.evt.ip_app = lwgsm.m.ip_app[cid];
+    lwgsmi_send_cb(LWGSM_EVT_IP_APP_CHANGED);
+  } else {
+    cid = lwgsmi_parse_number(&str);
+  }
+
+  if (CMD_IS_DEF(LWGSM_CMD_IP_APP_SAPBR) &&
+      lwgsm.msg->msg.ip_app.status != NULL) { /* Check and copy to user variable */
+    LWGSM_MEMCPY(lwgsm.msg->msg.ip_app.status, &lwgsm.m.ip_app[cid], sizeof(*lwgsm.msg->msg.ip_app.status));
+  }
+  return 1;
+}
+
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
+
+#if LWGSM_CFG_CLOCK || __DOXYGEN__
+
+/**
+ * \brief           Parse received +CCLK with current timestamp
+ * \param[in]       str: Input string
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwgsmi_parse_cclk(const char* str) {
+    if (*str == '+') {
+        str += 7;
+    }
+    lwgsmi_parse_datetime(&str, lwgsm.msg->msg.clock.datetime);
+    return 1;
+}
+
+#endif /* LWGSM_CFG_CLOCK || __DOXYGEN__ */
 
 #if LWGSM_CFG_SMS || __DOXYGEN__
 

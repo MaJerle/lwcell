@@ -142,6 +142,7 @@ typedef struct {
     uint8_t hours;                              /*!< Hours in a day, from `0` to `23` */
     uint8_t minutes;                            /*!< Minutes in a hour, from `0` to `59` */
     uint8_t seconds;                            /*!< Seconds in a minute, from `0` to `59` */
+    int8_t timezone;
 } lwgsm_datetime_t;
 
 /**
@@ -339,6 +340,30 @@ typedef struct {
     char name[20];                              /*!< Phone book name if exists for current number */
 } lwgsm_call_t;
 
+typedef struct {
+    const char* path;                           /*!< Path to file */
+    uint8_t mode;                               /*!< Mode for file */
+    uint16_t size;                              /*!< Size of file */
+    const char* content;                        /*!< File content */
+    uint8_t input_time;                         /*!< Input time */
+} lwgsm_fs_file_t;
+
+typedef struct {
+    uint16_t id;                                /*!< ID of message */
+    char topic[256];                            /*!< Topic name */
+    size_t length;                              /*!< Length of message */
+    char message[1024];                         /*!< Message content */
+    uint8_t read;                               /*!< Indicator for parsing if received not full at once */
+    char* message_ptr;                          /*!< Pointer to last position parsed */
+    size_t remaining_length;                    /*!< Remained length message to parse */
+} lwgsm_mqtt_message_t;
+
+typedef struct {
+  uint8_t cid;                                  /*!< Connection ID */
+  uint8_t status;                               /*!< Status of connection */
+  lwgsm_ip_t ip;                                /*!< IP of connection */
+} ip_app_t;
+
 /* Forward declarations */
 struct lwgsm_evt;
 struct lwgsm_conn;
@@ -426,6 +451,13 @@ typedef enum lwgsm_cb_type_t {
     LWGSM_EVT_PB_LIST,                          /*!< Phonebook list event */
     LWGSM_EVT_PB_SEARCH,                        /*!< Phonebook search event */
 #endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+    LWGSM_EVT_MQTT_RECEIVED,                    /*!< MQTT Message Received */
+    LWGSM_EVT_MQTT_STATE,                       /*!< State of MQTT connection changed */
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+    LWGSM_EVT_IP_APP_CHANGED,                   /*!< IP Application connection changed */
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
 } lwgsm_evt_type_t;
 
 /**
@@ -540,7 +572,20 @@ typedef struct lwgsm_evt {
             lwgsmr_t res;                       /*!< Operation success */
         } pb_search;                            /*!< Phonebok search list. Use with \ref LWGSM_EVT_PB_SEARCH event */
 #endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
-    } evt;                                      /*!< Callback event union */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+        struct {
+            lwgsm_mqtt_message_t* message;      /*!< MQTT Message entry */
+            lwgsmr_t res;                       /*!< Result of command */
+        } mqtt_received;                        /*!< MQTT received. Use with \ref LWGSM_EVT_MQTT_RECEIVED event */
+        struct {
+            uint8_t mqtt_state;                 /*!< MQTT State */
+            lwgsmr_t res;                       /*!< Result of command */
+        } mqtt_state;                           /*!< MQTT State changed. Use with \ref LWGSM_EVT_MQTT_STATE event */
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+        ip_app_t ip_app;
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
+  } evt;                                      /*!< Callback event union */
 } lwgsm_evt_t;
 
 #define LWGSM_SIZET_MAX                         ((size_t)(-1))  /*!< Maximal value of size_t variable type */

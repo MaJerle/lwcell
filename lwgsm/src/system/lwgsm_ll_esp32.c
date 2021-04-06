@@ -48,11 +48,11 @@
 #define GSM_UART_NUM UART_NUM_1
 
 #if !defined(LWGSM_USART_DMA_RX_BUFF_SIZE)
-#define LWGSM_USART_DMA_RX_BUFF_SIZE      0x1000
+#define LWGSM_USART_DMA_RX_BUFF_SIZE      0x500
 #endif /* !defined(LWGSM_USART_DMA_RX_BUFF_SIZE) */
 
 #if !defined(LWGSM_MEM_SIZE)
-#define LWGSM_MEM_SIZE                    0x1000
+#define LWGSM_MEM_SIZE                    0x500
 #endif /* !defined(LWGSM_MEM_SIZE) */
 
 static QueueHandle_t gsm_uart_queue;
@@ -129,8 +129,8 @@ configure_uart(uint32_t baudrate) {
     .source_clk = UART_SCLK_REF_TICK,
     .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
   };
-  ESP_ERROR_CHECK(uart_driver_install(GSM_UART_NUM, LWGSM_USART_DMA_RX_BUFF_SIZE * 2,
-                                      LWGSM_USART_DMA_RX_BUFF_SIZE * 2, 20, &gsm_uart_queue, 0));
+  ESP_ERROR_CHECK(uart_driver_install(GSM_UART_NUM, LWGSM_USART_DMA_RX_BUFF_SIZE,
+                                      LWGSM_USART_DMA_RX_BUFF_SIZE, 20, &gsm_uart_queue, 0));
   ESP_ERROR_CHECK(uart_param_config(GSM_UART_NUM, &uart_config));
   ESP_ERROR_CHECK(uart_set_pin(GSM_UART_NUM, CONFIG_LWGSM_TX, CONFIG_LWGSM_RX, 0, 0));
 }
@@ -150,7 +150,7 @@ lwgsmr_t
 lwgsm_ll_init(lwgsm_ll_t* ll) {
 #if !LWGSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
-    static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
+    static uint8_t memory[LWGSM_MEM_SIZE];             /* Create memory for dynamic allocations with specific size */
 
     /*
      * Create region(s) of memory.

@@ -185,6 +185,7 @@ typedef enum {
     LWGSM_CMD_CPOL,                             /*!< Preferred Operator List */
     LWGSM_CMD_COPN,                             /*!< Read Operator Names */
     LWGSM_CMD_CCLK,                             /*!< Clock */
+    LWGSM_CMD_CLTS,                             /*!< Set sync clock with base station */
     LWGSM_CMD_CSIM,                             /*!< Generic SIM Access */
     LWGSM_CMD_CALM,                             /*!< Alert Sound Mode */
     LWGSM_CMD_CALS,                             /*!< Alert Sound Select */
@@ -250,6 +251,24 @@ typedef enum {
     LWGSM_CMD_CSDH,                             /*!< Show SMS Text Mode Parameters */
     LWGSM_CMD_CSMP,                             /*!< Set SMS Text Mode Parameters */
     LWGSM_CMD_CSMS,                             /*!< Select Message Service */
+
+    LWGSM_CMD_FS_CREATE,
+    LWGSM_CMD_FS_DELETE,
+    LWGSM_CMD_FS_WRITE,
+
+    LWGSM_CMD_MQTT_CONF,
+    LWGSM_CMD_MQTT_SSL,
+    LWGSM_CMD_MQTT_CONNECT,
+    LWGSM_CMD_MQTT_DISCONNECT,
+    LWGSM_CMD_MQTT_SUBSCRIBE,
+    LWGSM_CMD_MQTT_UNSUBSCRIBE,
+    LWGSM_CMD_MQTT_PUBLISH,
+    LWGSM_CMD_MQTT_STATE,
+
+    LWGSM_CMD_IP_APP_SAPBR,
+
+    LWGSM_CMD_SSL_OPT,
+    LWGSM_CMD_SSL_SETROOT,
 
     LWGSM_CMD_END,                              /*!< Last CMD entry */
 } lwgsm_cmd_t;
@@ -515,6 +534,50 @@ typedef struct lwgsm_msg {
             const char* pass;                   /*!< APN password */
         } network_attach;                       /*!< Settings for network attach */
 #endif /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
+#if LWGSM_CFG_FS || __DOXYGEN__
+    lwgsm_fs_file_t fs_file;
+#endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+        struct {
+            struct {
+                const char* param;
+                const char* value;
+            } conf;
+            uint8_t ssl;
+            uint8_t* state;
+            struct {
+                char* topic;
+                uint8_t qos;
+                uint8_t retain;
+            } topic;
+            char* message;
+        } mqtt;
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
+#if LWGSM_CFG_FS || __DOXYGEN__
+        struct {
+            struct {
+                uint8_t param;
+                uint8_t value;
+            } opt;
+            char* ca_path;
+            uint16_t ca_length;
+        } ssl;
+#endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+        struct {
+            struct {
+                uint8_t param;
+                uint8_t value;
+            } sapbr;
+            ip_app_t* status;
+        } ip_app;
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
+#if LWGSM_CFG_CLOCK || __DOXYGEN__
+        struct {
+            uint8_t sync_mode;
+            lwgsm_datetime_t* datetime;
+        } clock;
+#endif /* LWGSM_CFG_CLOCK || __DOXYGEN__ */
     } msg;                                      /*!< Group of different possible message contents */
 } lwgsm_msg_t;
 
@@ -644,6 +707,13 @@ typedef struct {
 #if LWGSM_CFG_CALL || __DOXYGEN__
     lwgsm_call_t          call;                 /*!< Call information */
 #endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+    lwgsm_mqtt_message_t  mqtt_message;
+    uint8_t               mqtt_state;
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+    ip_app_t              ip_app[3];
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
 } lwgsm_modules_t;
 
 /**

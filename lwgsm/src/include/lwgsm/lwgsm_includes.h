@@ -66,6 +66,21 @@
 #if LWGSM_CFG_USSD || __DOXYGEN__
 #include "lwgsm/lwgsm_ussd.h"
 #endif /* LWGSM_CFG_USSD || __DOXYGEN__ */
+#if LWGSM_CFG_FS || __DOXYGEN__
+#include "lwgsm/lwgsm_fs.h"
+#endif /* LWGSM_CFG_FS || __DOXYGEN__ */
+#if LWGSM_CFG_MQTT || __DOXYGEN__
+#include "lwgsm/lwgsm_mqtt.h"
+#endif /* LWGSM_CFG_MQTT || __DOXYGEN__*/
+#if LWGSM_CFG_SSL || __DOXYGEN__
+#include "lwgsm/lwgsm_ssl.h"
+#endif /* LWGSM_CFG_SSL || __DOXYGEN__ */
+#if LWGSM_CFG_IP_APP || __DOXYGEN__
+#include "lwgsm/lwgsm_ip_app.h"
+#endif /* LWGSM_CFG_IP_APP || __DOXYGEN__ */
+#if LWGSM_CFG_CLOCK || __DOXYGEN__
+#include "lwgsm/lwgsm_clock.h"
+#endif /* LWGSM_CFG_CLOCK || __DOXYGEN__ */
 
 #ifdef __cplusplus
 extern "C" {
