@@ -824,9 +824,9 @@ lwgsmi_parse_cpbr(const char* str) {
 
     e = &lwgsm.msg->msg.pb_list.entries[lwgsm.msg->msg.pb_list.ei];
     e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));
-    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    e->type = (lwgsm_number_type_t)lwgsmi_parse_number(&str);
     lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    e->type = (lwgsm_number_type_t)lwgsmi_parse_number(&str);
+    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
 
     ++lwgsm.msg->msg.pb_list.ei;
     if (lwgsm.msg->msg.pb_list.er != NULL) {
