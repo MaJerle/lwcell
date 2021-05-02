@@ -18,7 +18,7 @@ When API function returns, application has valid response data and can react imm
 
 .. warning::
 	Due to internal architecture, it is not allowed to call API functions in *blocking mode* from events or callbacks.
-	Any attempt to do so will result in function returning error.
+	Any attempt not to do so will result in function returning error.
 
 Example code:
 
@@ -45,7 +45,7 @@ Example code:
     :caption: Non-blocking command example
 
 .. warning::
-	When using non-blocking API calls, do not use local variables as parameter. 
+	When using non-blocking API calls, do not use local variables as parameter.
 	This may introduce *undefined behavior* and *memory corruption* if application function returns before command is executed.
 
 Example of a bad code:
