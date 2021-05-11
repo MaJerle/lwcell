@@ -1342,7 +1342,7 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             case LWGSM_CMD_RESET: {
                 lwgsmi_reset_everything(1);     /* Reset everything */
                 SET_NEW_CMD(LWGSM_CFG_AT_ECHO ? LWGSM_CMD_ATE1 : LWGSM_CMD_ATE0);   /* Set ECHO mode */
-                lwgsm_delay(LWGSM_CFG_RESET_DELAY_AFTER);    /* Delay for some time before we can continue after reset */
+                lwgsm_delay(LWGSM_CFG_RESET_DELAY_AFTER);   /* Delay for some time before we can continue after reset */
                 break;
             }
             case LWGSM_CMD_ATE0:
