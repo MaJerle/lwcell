@@ -64,10 +64,10 @@ lwgsm_sys_unprotect(void) {
 uint8_t
 lwgsm_sys_mutex_create(lwgsm_sys_mutex_t* p) {
     const osMutexAttr_t attr = {
-        .attr_bits = osMutexRecursive
+        .attr_bits = osMutexRecursive,
+        .name = "lwgsm_mutex",
     };
-    *p = osMutexNew(&attr);
-    return *p != NULL;
+    return (*p = osMutexNew(&attr)) != NULL;
 }
 
 uint8_t
@@ -98,7 +98,10 @@ lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p) {
 
 uint8_t
 lwgsm_sys_sem_create(lwgsm_sys_sem_t* p, uint8_t cnt) {
-    return (*p = osSemaphoreNew(1, cnt > 0 ? 1 : 0, NULL)) != NULL;
+    const osSemaphoreAttr_t attr = {
+        .name = "lwgsm_sem",
+    };
+    return (*p = osSemaphoreNew(1, cnt > 0 ? 1 : 0, &attr)) != NULL;
 }
 
 uint8_t
@@ -130,7 +133,10 @@ lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p) {
 
 uint8_t
 lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size) {
-    return (*b = osMessageQueueNew(size, sizeof(void*), NULL)) != NULL;
+    const osMessageQueueAttr_t attr = {
+        .name = "lwgsm_mbox",
+    };
+    return (*b = osMessageQueueNew(size, sizeof(void*), &attr)) != NULL;
 }
 
 uint8_t
