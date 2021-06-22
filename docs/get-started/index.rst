@@ -62,8 +62,8 @@ Next step is to add the library to the project, by means of source files to comp
 
 * Copy ``lwgsm`` folder to your project, it contains library files
 * Add ``lwgsm/src/include`` folder to `include path` of your toolchain. This is where `C/C++` compiler can find the files during compilation process. Usually using ``-I`` flag
-* Add source files from ``lwesp/src/`` folder to toolchain build. These files are built by `C/C++` compiler
-* Copy ``lwesp/src/include/lwesp/lwesp_opts_template.h`` to project folder and rename it to ``lwesp_opts.h``
+* Add source files from ``lwgsm/src/`` folder to toolchain build. These files are built by `C/C++` compiler
+* Copy ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``lwgsm_opts.h``
 * Build the project
 
 Configuration file
@@ -74,7 +74,7 @@ Library comes with template config file, which can be modified according to need
 and it should be copied (or simply renamed in-place) and named ``lwgsm_opts.h``
 
 .. note::
-    Default configuration template file location: ``lwesp/src/include/lwgsm/lwgsm_opts_template.h``.
+    Default configuration template file location: ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h``.
     File must be renamed to ``lwesp_opts.h`` first and then copied to the project directory where compiler
     include paths have access to it by using ``#include "lwgsm_opts.h"``.
 
