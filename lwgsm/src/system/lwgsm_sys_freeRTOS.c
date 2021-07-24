@@ -26,8 +26,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * Authors:          Tilen MAJERLE <tilen@majerle.eu>,
- *                   Ilya Kargapolov <d3vil.st@gmail.com>
+ * Authors:         Tilen MAJERLE <tilen@majerle.eu>,
+ *                  Ilya Kargapolov <d3vil.st@gmail.com>
  * Version:         v0.1.0
  */
 #include "system/lwgsm_sys.h"
@@ -51,7 +51,7 @@ static SemaphoreHandle_t sys_mutex;
 uint8_t
 lwgsm_sys_init(void) {
     sys_mutex = xSemaphoreCreateRecursiveMutex();
-    xSemaphoreGive(sys_mutex);
+    xSemaphoreGiveRecursive(sys_mutex);
     return 1;
 }
 
@@ -90,7 +90,7 @@ lwgsm_sys_protect(void) {
  */
 uint8_t
 lwgsm_sys_unprotect(void) {
-    xSemaphoreGive(sys_mutex);
+    xSemaphoreGiveRecursive(sys_mutex);
     return 1;
 }
 
