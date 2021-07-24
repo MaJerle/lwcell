@@ -61,7 +61,7 @@ lwgsm_sys_init(void) {
  */
 uint32_t
 lwgsm_sys_now(void) {
-    return xTaskGetTickCount()/portTICK_PERIOD_MS;
+    return xTaskGetTickCount() * portTICK_PERIOD_MS;
 }
 
 /**
