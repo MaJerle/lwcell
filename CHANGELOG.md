@@ -2,7 +2,10 @@
 
 ## Develop
 
+## v0.1.1
+
 - Update CMSIS OS driver to support FreeRTOS aware kernel
+- Update to support library.json for Platform.IO
 
 ## v0.1.0
 

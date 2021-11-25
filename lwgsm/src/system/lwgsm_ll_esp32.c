@@ -30,7 +30,7 @@
  *
  * Authors:          Tilen MAJERLE <tilen@majerle.eu>,
  *                   Ilya Kargapolov <d3vil.st@gmail.com>
- * Version:         v0.1.0
+ * Version:         v0.1.1
  */
 #include "system/lwgsm_ll.h"
 #include "lwgsm/lwgsm.h"

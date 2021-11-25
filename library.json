@@ -1,6 +1,6 @@
 {
 	"name": "LwGSM",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Lightweight GSM AT commands parser for embedded systems and SimCOM modules",
 	"keywords": "lwgsm, simcom, quectel, lightweiight, AT, AT Commands",
 	"repository": {
@@ -20,5 +20,13 @@
 
 	},
 	"frameworks": "*",
-	"platforms": "*"
+	"platforms": "*",
+	"export": {
+		"exclude": [
+			"docs",
+			"**/.vs",
+			"**/Debug",
+			"third_party/embedded-libs/st_hal/CMSIS/Lib/ARM"
+		]
+	}
 }
