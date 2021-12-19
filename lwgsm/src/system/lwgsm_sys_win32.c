@@ -333,14 +333,12 @@ lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_threa
 
 uint8_t
 lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
-    HANDLE h = NULL;
-
     if (t == NULL) {                            /* Shall we terminate ourself? */
-        h = GetCurrentThread();                 /* Get current thread handle */
-    } else {                                    /* We have known thread, find handle by looking at ID */
-        h = *t;
+        ExitThread(0);
+    } else {
+        /* We have known thread, find handle by looking at ID */
+        TerminateThread(*t, 0);
     }
-    TerminateThread(h, 0);
     return 1;
 }
 

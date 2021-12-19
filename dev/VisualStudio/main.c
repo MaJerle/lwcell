@@ -49,7 +49,8 @@ my_sim_t sim = {
 
 uint8_t lwmem_region_1[0x4000];
 lwmem_region_t lwmem_regions[] = {
-    {lwmem_region_1, sizeof(lwmem_region_1)}
+    {lwmem_region_1, sizeof(lwmem_region_1)},
+    {NULL, 0},
 };
 
 /**
@@ -59,7 +60,7 @@ int
 main() {
     printf("App start!\r\n");
 
-    if (!lwmem_assignmem(lwmem_regions, sizeof(lwmem_regions) / sizeof(lwmem_regions[0]))) {
+    if (!lwmem_assignmem(lwmem_regions)) {
         printf("Could not assign memory for LwMEM!\r\n");
         return -1;
     }
