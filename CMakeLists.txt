@@ -1,73 +1,59 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(LwLibPROJECT VERSION 0.1.0)
 
-include(CTest)
-enable_testing()
+# Setup project
+project(LwLibPROJECT)
 
-add_executable(${PROJECT_NAME}
-    lwgsm/src/api/lwgsm_netconn.c
-    lwgsm/src/api/lwgsm_network_api.c
-    lwgsm/src/apps/mqtt/lwgsm_mqtt_client.c
-    lwgsm/src/apps/mqtt/lwgsm_mqtt_client_api.c
-    lwgsm/src/apps/mqtt/lwgsm_mqtt_client_evt.c
-    lwgsm/src/lwgsm/lwgsm.c
-    lwgsm/src/lwgsm/lwgsm_buff.c
-    lwgsm/src/lwgsm/lwgsm_call.c
-    lwgsm/src/lwgsm/lwgsm_conn.c
-    lwgsm/src/lwgsm/lwgsm_debug.c
-    lwgsm/src/lwgsm/lwgsm_device_info.c
-    lwgsm/src/lwgsm/lwgsm_evt.c
-    lwgsm/src/lwgsm/lwgsm_http.c
-    lwgsm/src/lwgsm/lwgsm_input.c
-    lwgsm/src/lwgsm/lwgsm_int.c
-    lwgsm/src/lwgsm/lwgsm_mem.c
-    lwgsm/src/lwgsm/lwgsm_network.c
-    lwgsm/src/lwgsm/lwgsm_operator.c
-    lwgsm/src/lwgsm/lwgsm_parser.c
-    lwgsm/src/lwgsm/lwgsm_pbuf.c
-    lwgsm/src/lwgsm/lwgsm_phonebook.c
-    lwgsm/src/lwgsm/lwgsm_sim.c
-    lwgsm/src/lwgsm/lwgsm_sms.c
-    lwgsm/src/lwgsm/lwgsm_threads.c
-    lwgsm/src/lwgsm/lwgsm_timeout.c
-    lwgsm/src/lwgsm/lwgsm_unicode.c
-    lwgsm/src/lwgsm/lwgsm_ussd.c
-    lwgsm/src/lwgsm/lwgsm_utils.c
-    lwgsm/src/system/lwgsm_ll_win32.c
-    lwgsm/src/system/lwgsm_mem_lwmem.c
-    lwgsm/src/system/lwgsm_sys_win32.c
-    snippets/call.c
-    snippets/call_sms.c
-    snippets/client.c
-    snippets/device_info.c
-    snippets/mqtt_client_api.c
-    snippets/netconn_client.c
-    snippets/network_utils.c
-    snippets/sim_manager.c
-    snippets/sms_send_receive.c
-    snippets/sms_send_receive_thread.c
+# -------------------------------------------------
+# This CMakeLists.txt is used only if it is a top-level file.
+# Purpose of it is to be able to compile project in standalone way only
+#
+# When library sources are to be included in another project
+# user shall use /lwgsm/CMakeLists.txt instead
+if (NOT PROJECT_IS_TOP_LEVEL)
+    message(FATAL_ERROR "This CMakeLists.txt can only be used as top-level. Use /lwgsm/CMakeLists.txt for library include purpose")
+endif()
 
-    ../lwmem/lwmem/src/lwmem/lwmem.c
-    ../lwmem/lwmem/src/system/lwmem_sys_win32.c
+# Set as executable
+add_executable(${PROJECT_NAME})
 
-    dev/VisualStudio/main.c
+# Add key executable block
+target_sources(${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/dev/VisualStudio/main.c
+
+    # Snippets
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/call.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/call_sms.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/client.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/device_info.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/mqtt_client_api.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/netconn_client.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/network_utils.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/sim_manager.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/sms_send_receive.c
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/sms_send_receive_thread.c
+
+    # Development additional files
+    ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_mem_lwmem.c
+    ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/lwmem/lwmem.c
+    ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/system/lwmem_sys_win32.c
     )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-    dev/VisualStudio
-    lwgsm/src/include
-    lwgsm/src/include/system/port/win32
-    snippets/include
-    ../lwmem/lwmem/src/include
+# Add key include paths
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/dev/VisualStudio
+    ${CMAKE_CURRENT_LIST_DIR}/snippets/include
+    ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/include
     )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE
+# Compilation definition information
+target_compile_definitions(${PROJECT_NAME} PUBLIC
     WIN32
     _DEBUG
     CONSOLE
     LWGSM_DEV
     )
 
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+# Add subdir with lwgsm and link to the project
+add_subdirectory("lwgsm")
+target_link_libraries(${PROJECT_NAME} lwgsm)
