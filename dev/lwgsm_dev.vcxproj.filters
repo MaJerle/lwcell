@@ -28,133 +28,133 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\mqtt_client_api.c">
+    <ClCompile Include="..\snippets\mqtt_client_api.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\netconn_client.c">
+    <ClCompile Include="..\snippets\netconn_client.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\network_utils.c">
+    <ClCompile Include="..\snippets\network_utils.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\sim_manager.c">
+    <ClCompile Include="..\snippets\sim_manager.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\sms_send_receive.c">
+    <ClCompile Include="..\snippets\sms_send_receive.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\lwmem\lwmem\src\lwmem\lwmem.c">
+    <ClCompile Include="..\..\lwmem\lwmem\src\lwmem\lwmem.c">
       <Filter>Source Files\LWMEM</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\lwmem\lwmem\src\system\lwmem_sys_win32.c">
+    <ClCompile Include="..\..\lwmem\lwmem\src\system\lwmem_sys_win32.c">
       <Filter>Source Files\LWMEM</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\call.c">
+    <ClCompile Include="..\snippets\call.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\call_sms.c">
+    <ClCompile Include="..\snippets\call_sms.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\device_info.c">
+    <ClCompile Include="..\snippets\device_info.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\sms_send_receive_thread.c">
+    <ClCompile Include="..\snippets\sms_send_receive_thread.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\client.c">
+    <ClCompile Include="..\snippets\client.c">
       <Filter>Source Files\GSM SNIPPETS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_buff.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_buff.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_call.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_call.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_conn.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_conn.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_debug.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_debug.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_device_info.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_device_info.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_evt.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_evt.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_http.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_http.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_input.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_input.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_int.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_int.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_ll_win32.c">
+    <ClCompile Include="..\lwgsm\src\system\lwgsm_ll_win32.c">
       <Filter>Source Files\GSM LL</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_mem_lwmem.c">
+    <ClCompile Include="..\lwgsm\src\system\lwgsm_mem_lwmem.c">
       <Filter>Source Files\LWMEM</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_mem.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_mem.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client.c">
+    <ClCompile Include="..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client.c">
       <Filter>Source Files\GSM APP MQTT</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_api.c">
+    <ClCompile Include="..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_api.c">
       <Filter>Source Files\GSM APP MQTT</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_evt.c">
+    <ClCompile Include="..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_evt.c">
       <Filter>Source Files\GSM APP MQTT</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\api\lwgsm_netconn.c">
+    <ClCompile Include="..\lwgsm\src\api\lwgsm_netconn.c">
       <Filter>Source Files\GSM API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_network.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_network.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\api\lwgsm_network_api.c">
+    <ClCompile Include="..\lwgsm\src\api\lwgsm_network_api.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_operator.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_operator.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_parser.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_parser.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_pbuf.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_pbuf.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_phonebook.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_phonebook.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_sim.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_sim.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_sms.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_sms.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_sys_win32.c">
+    <ClCompile Include="..\lwgsm\src\system\lwgsm_sys_win32.c">
       <Filter>Source Files\GSM LL</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_threads.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_threads.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_timeout.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_timeout.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_unicode.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_unicode.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_ussd.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_ussd.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_utils.c">
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_utils.c">
       <Filter>Source Files\GSM CORE</Filter>
     </ClCompile>
   </ItemGroup>

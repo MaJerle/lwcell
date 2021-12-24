@@ -72,19 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>.;..\..\lwgsm\src\include;..\..\lwgsm\src\include\system\port\win32;..\..\snippets\include;..\..\..\lwmem\lwmem\src\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\lwgsm\src\include;..\lwgsm\src\include\system\port\win32;..\snippets\include;..\..\lwmem\lwmem\src\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>.;..\..\lwgsm\src\include;..\..\lwgsm\src\include\system\port\win32;..\..\snippets\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\lwgsm\src\include;..\lwgsm\src\include\system\port\win32;..\snippets\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>.;..\..\lwgsm\src\include;..\..\lwgsm\src\include\system\port\win32;..\..\snippets\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\lwgsm\src\include;..\lwgsm\src\include\system\port\win32;..\snippets\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>.;..\..\lwgsm\src\include;..\..\lwgsm\src\include\system\port\win32;..\..\snippets\include;$(IncludePath)</IncludePath>
+    <IncludePath>.;..\lwgsm\src\include;..\lwgsm\src\include\system\port\win32;..\snippets\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -142,49 +142,49 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\lwmem\lwmem\src\lwmem\lwmem.c" />
-    <ClCompile Include="..\..\..\lwmem\lwmem\src\system\lwmem_sys_win32.c" />
-    <ClCompile Include="..\..\lwgsm\src\api\lwgsm_netconn.c" />
-    <ClCompile Include="..\..\lwgsm\src\api\lwgsm_network_api.c" />
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client.c" />
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_api.c" />
-    <ClCompile Include="..\..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_evt.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_buff.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_call.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_conn.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_debug.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_device_info.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_evt.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_http.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_input.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_int.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_mem.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_network.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_operator.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_parser.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_pbuf.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_phonebook.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_sim.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_sms.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_threads.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_timeout.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_unicode.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_ussd.c" />
-    <ClCompile Include="..\..\lwgsm\src\lwgsm\lwgsm_utils.c" />
-    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_ll_win32.c" />
-    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_mem_lwmem.c" />
-    <ClCompile Include="..\..\lwgsm\src\system\lwgsm_sys_win32.c" />
-    <ClCompile Include="..\..\snippets\call.c" />
-    <ClCompile Include="..\..\snippets\call_sms.c" />
-    <ClCompile Include="..\..\snippets\client.c" />
-    <ClCompile Include="..\..\snippets\device_info.c" />
-    <ClCompile Include="..\..\snippets\mqtt_client_api.c" />
-    <ClCompile Include="..\..\snippets\netconn_client.c" />
-    <ClCompile Include="..\..\snippets\network_utils.c" />
-    <ClCompile Include="..\..\snippets\sim_manager.c" />
-    <ClCompile Include="..\..\snippets\sms_send_receive.c" />
-    <ClCompile Include="..\..\snippets\sms_send_receive_thread.c" />
+    <ClCompile Include="..\..\lwmem\lwmem\src\lwmem\lwmem.c" />
+    <ClCompile Include="..\..\lwmem\lwmem\src\system\lwmem_sys_win32.c" />
+    <ClCompile Include="..\lwgsm\src\api\lwgsm_netconn.c" />
+    <ClCompile Include="..\lwgsm\src\api\lwgsm_network_api.c" />
+    <ClCompile Include="..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client.c" />
+    <ClCompile Include="..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_api.c" />
+    <ClCompile Include="..\lwgsm\src\apps\mqtt\lwgsm_mqtt_client_evt.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_buff.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_call.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_conn.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_debug.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_device_info.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_evt.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_http.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_input.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_int.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_mem.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_network.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_operator.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_parser.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_pbuf.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_phonebook.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_sim.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_sms.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_threads.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_timeout.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_unicode.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_ussd.c" />
+    <ClCompile Include="..\lwgsm\src\lwgsm\lwgsm_utils.c" />
+    <ClCompile Include="..\lwgsm\src\system\lwgsm_ll_win32.c" />
+    <ClCompile Include="..\lwgsm\src\system\lwgsm_mem_lwmem.c" />
+    <ClCompile Include="..\lwgsm\src\system\lwgsm_sys_win32.c" />
+    <ClCompile Include="..\snippets\call.c" />
+    <ClCompile Include="..\snippets\call_sms.c" />
+    <ClCompile Include="..\snippets\client.c" />
+    <ClCompile Include="..\snippets\device_info.c" />
+    <ClCompile Include="..\snippets\mqtt_client_api.c" />
+    <ClCompile Include="..\snippets\netconn_client.c" />
+    <ClCompile Include="..\snippets\network_utils.c" />
+    <ClCompile Include="..\snippets\sim_manager.c" />
+    <ClCompile Include="..\snippets\sms_send_receive.c" />
+    <ClCompile Include="..\snippets\sms_send_receive_thread.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
