@@ -2,6 +2,8 @@
 
 ## Develop
 
+- Split CMakeLists.txt files between library and executable
+
 ## v0.1.1
 
 - Update CMSIS OS driver to support FreeRTOS aware kernel
