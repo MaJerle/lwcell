@@ -1,27 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
 
-# Debug message
-message("LWGSM: Entering lib source CMakeLists.txt")
+#Debug message
+message("Entering ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
 
-# Set library name
-set(LWGSM_LIB_NAME "lwgsm")
-
-# Check definitions of some key things
-if(NOT DEFINED LWGSM_SYS_ARCH)
-    message("LWGSM: LWGSM_SYS_ARCH not defined. Using default one: \"win32\"")
-    set(LWGSM_SYS_ARCH "win32")
-endif()
-if(NOT DEFINED LWGSM_LL_ARCH)
-    message("LWGSM: LWGSM_LL_ARCH not defined. Using default one: \"win32\"")
-    set(LWGSM_LL_ARCH "win32")
-endif()
-
-# Register library to the system
-add_library(${LWGSM_LIB_NAME} INTERFACE)
-
-# Setup generic source files
-target_sources(${LWGSM_LIB_NAME} PUBLIC
-    # Core libraries
+# Library core sources
+set(lwgsm_core_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_buff.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_call.c
@@ -45,23 +28,45 @@ target_sources(${LWGSM_LIB_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_unicode.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_ussd.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_utils.c
+    )
     
-    # API part
+# API sources
+set(lwgsm_api_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/api/lwgsm_netconn.c
     ${CMAKE_CURRENT_LIST_DIR}/src/api/lwgsm_network_api.c
+    )
 
-    # Applications
+# MQTT
+set(lwgsm_mqtt_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwgsm_mqtt_client.c
     ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwgsm_mqtt_client_api.c
     ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwgsm_mqtt_client_evt.c
+    )
 
-    # Port files
-    ${CMAKE_CURRENT_LIST_DIR}/src/system/lwgsm_sys_${LWGSM_SYS_ARCH}.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/system/lwgsm_ll_${LWGSM_LL_ARCH}.c
+# All apps source files
+set(lwgsm_allapps_SRCS
+    ${lwgsm_mqtt_SRCS}
     )
 
 # Setup include directories
-target_include_directories(${LWGSM_LIB_NAME} INTERFACE
+set(lwgsm_include_DIRS
     ${CMAKE_CURRENT_LIST_DIR}/src/include
-    ${CMAKE_CURRENT_LIST_DIR}/src/include/system/port/${LWGSM_SYS_ARCH}
     )
+
+# Register core library to the system
+add_library(lwgsm INTERFACE)
+target_sources(lwgsm PUBLIC ${lwgsm_core_SRCS})
+target_include_directories(lwgsm INTERFACE ${lwgsm_include_DIRS})
+
+# Register API to the system
+add_library(lwgsm_api INTERFACE)
+target_sources(lwgsm_api PUBLIC ${lwgsm_api_SRCS})
+target_include_directories(lwgsm_api INTERFACE ${lwgsm_include_DIRS})
+
+# Register apps to the system
+add_library(lwgsm_apps INTERFACE)
+target_sources(lwgsm_apps PUBLIC ${lwgsm_allapps_SRCS})
+target_include_directories(lwgsm_apps INTERFACE ${lwgsm_include_DIRS})
+
+#Debug message
+message("Exiting ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")

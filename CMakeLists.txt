@@ -20,30 +20,24 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/dev/main.c
 
-    # Snippets
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/call.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/call_sms.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/client.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/device_info.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/mqtt_client_api.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/netconn_client.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/network_utils.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/sim_manager.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/sms_send_receive.c
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/sms_send_receive_thread.c
-
     # Development additional files
     ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_mem_lwmem.c
     ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/lwmem/lwmem.c
     ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/system/lwmem_sys_win32.c
+    
+    # Port specif
+    ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_sys_win32.c
+    ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_ll_win32.c
     )
 
 # Add key include paths
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/dev
-    ${CMAKE_CURRENT_LIST_DIR}/snippets/include
     ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/include
+
+    # Port specifics
+    ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/include/system/port/win32
     )
 
 # Compilation definition information
@@ -57,3 +51,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
 # Add subdir with lwgsm and link to the project
 add_subdirectory("lwgsm")
 target_link_libraries(${PROJECT_NAME} lwgsm)
+target_link_libraries(${PROJECT_NAME} lwgsm_api)
+target_link_libraries(${PROJECT_NAME} lwgsm_apps)
+add_subdirectory("snippets")
+target_link_libraries(${PROJECT_NAME} lwgsm_snippets)
