@@ -25,7 +25,7 @@ target_sources(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/lwmem/lwmem.c
     ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/system/lwmem_sys_win32.c
     
-    # Port specif
+    # Port specific
     ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_sys_win32.c
     ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_ll_win32.c
     )
@@ -36,7 +36,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/dev
     ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/include
 
-    # Port specifics
+    # Port specific
     ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/include/system/port/win32
     )
 
