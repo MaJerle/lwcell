@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2020 Tilen MAJERLE
+ * Copyright (c) 2022 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -89,15 +89,15 @@ configure_uart(uint32_t baudrate) {
      * as generic read and write
      */
     if (!initialized) {
-        static const LPCWSTR com_ports[] = {
-            L"\\\\.\\COM23",
-            L"\\\\.\\COM12",
-            L"\\\\.\\COM9",
-            L"\\\\.\\COM8",
-            L"\\\\.\\COM4"
+        static const char com_ports[] = {
+            "\\\\.\\COM23",
+            "\\\\.\\COM12",
+            "\\\\.\\COM9",
+            "\\\\.\\COM8",
+            "\\\\.\\COM4"
         };
         for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); ++i) {
-            com_port = CreateFile(com_ports[i],
+            com_port = CreateFileMappingNuma(com_ports[i],
                                   GENERIC_READ | GENERIC_WRITE,
                                   0,
                                   0,
