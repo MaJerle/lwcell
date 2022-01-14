@@ -490,6 +490,14 @@
 #endif
 
 /**
+ * \brief           Size of MQTT API message queue for received messages
+ *
+ */
+#ifndef LWGSM_CFG_MQTT_API_MBOX_SIZE
+#define LWGSM_CFG_MQTT_API_MBOX_SIZE            8
+#endif
+
+/**
  * \brief           Set debug level for MQTT client module
  *
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF

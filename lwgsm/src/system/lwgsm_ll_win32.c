@@ -89,7 +89,7 @@ configure_uart(uint32_t baudrate) {
      * as generic read and write
      */
     if (!initialized) {
-        static const char com_ports[] = {
+        static const char* com_ports[] = {
             "\\\\.\\COM23",
             "\\\\.\\COM12",
             "\\\\.\\COM9",
@@ -97,14 +97,7 @@ configure_uart(uint32_t baudrate) {
             "\\\\.\\COM4"
         };
         for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); ++i) {
-            com_port = CreateFileMappingNuma(com_ports[i],
-                                  GENERIC_READ | GENERIC_WRITE,
-                                  0,
-                                  0,
-                                  OPEN_EXISTING,
-                                  0,
-                                  NULL
-                                 );
+            com_port = CreateFileA(com_ports[i], GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
             if (GetCommState(com_port, &dcb)) {
                 printf("COM PORT %s opened!\r\n", (const char*)com_ports[i]);
                 break;
