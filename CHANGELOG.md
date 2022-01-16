@@ -4,6 +4,8 @@
 
 - Split CMakeLists.txt files between library and executable
 - Change license year to 2022
+- Timeout module returns ERRMEM if no memory to allocate block
+- Update MQTT client to be consistent with client from LwESP library
 
 ## v0.1.1
 

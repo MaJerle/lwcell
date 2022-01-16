@@ -495,8 +495,8 @@ prv_sub_unsub(lwgsm_mqtt_client_p client, const char* topic, lwgsm_mqtt_qos_t qo
     if (client->conn_state == LWGSM_MQTT_CONNECTED
         && prv_output_check_enough_memory(client, rem_len)) {   /* Check if enough memory to write packet data */
         pkt_id = prv_create_packet_id(client);  /* Create new packet ID */
-        request = prv_request_create(client, pkt_id, arg);  /* Create request for packet */
-        if (request != NULL) {                  /* Do we have a request */
+        /* Create request for packet */
+        if ((request = prv_request_create(client, pkt_id, arg)) != NULL) {                  /* Do we have a request */
             prv_write_fixed_header(client, sub ? MQTT_MSG_TYPE_SUBSCRIBE : MQTT_MSG_TYPE_UNSUBSCRIBE, 0, (lwgsm_mqtt_qos_t)1, 0, rem_len);
             prv_write_u16(client, pkt_id);      /* Write packet ID */
             prv_write_string(client, topic, len_topic); /* Write topic string to packet */
