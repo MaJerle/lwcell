@@ -46,8 +46,7 @@ network_utils_process_reg_change(lwgsm_evt_t* evt) {
 void
 network_utils_process_curr_operator(lwgsm_evt_t* evt) {
     const lwgsm_operator_curr_t* o;
-    o = lwgsm_evt_network_operator_get_current(evt);
-    if (o != NULL) {
+    if ((o = lwgsm_evt_network_operator_get_current(evt)) != NULL) {
         switch (o->format) {
             case LWGSM_OPERATOR_FORMAT_LONG_NAME:
                 printf("Operator long name: %s\r\n", o->data.long_name);

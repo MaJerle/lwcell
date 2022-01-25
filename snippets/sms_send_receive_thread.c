@@ -24,14 +24,12 @@ typedef struct {
 /**
  * \brief           SMS message box
  */
-static lwgsm_sys_mbox_t
-sms_mbox;
+static lwgsm_sys_mbox_t sms_mbox;
 
 /**
  * \brief           SMS read entry
  */
-static lwgsm_sms_entry_t
-sms_entry;
+static lwgsm_sms_entry_t sms_entry;
 
 /**
  * \brief           SMS Receive Send thread function
@@ -147,6 +145,5 @@ sms_evt_func(lwgsm_evt_t* evt) {
         default:
             break;
     }
-
     return lwgsmOK;
 }

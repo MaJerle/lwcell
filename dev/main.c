@@ -47,8 +47,9 @@ my_sim_t sim = {
     .puk = "10663647",
 };
 
-uint8_t lwmem_region_1[0x4000];
-lwmem_region_t lwmem_regions[] = {
+/* Custom memory allocation */
+static uint8_t lwmem_region_1[0x4000];
+static lwmem_region_t lwmem_regions[] = {
     {lwmem_region_1, sizeof(lwmem_region_1)},
     {NULL, 0},
 };
@@ -60,6 +61,7 @@ int
 main() {
     printf("App start!\r\n");
 
+    /* First step is to setup memory */
     if (!lwmem_assignmem(lwmem_regions)) {
         printf("Could not assign memory for LwMEM!\r\n");
         return -1;

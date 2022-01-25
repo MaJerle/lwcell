@@ -41,19 +41,18 @@ netconn_client_thread(void const* arg) {
      * connection and initialize system message boxes
      * to accept received packet buffers
      */
-    client = lwgsm_netconn_new(LWGSM_NETCONN_TYPE_TCP);
-    if (client != NULL) {
+    if ((client = lwgsm_netconn_new(LWGSM_NETCONN_TYPE_TCP)) != NULL) {
         /*
          * Connect to external server as client
          * with custom NETCONN_CONN_HOST and CONN_PORT values
          *
          * Function will block thread until we are successfully connected (or not) to server
          */
-        res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT);
-        if (res == lwgsmOK) {                     /* Are we successfully connected? */
+        if ((res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT)) == lwgsmOK) {
             printf("Connected to " NETCONN_HOST "\r\n");
-            res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1);    /* Send data to server */
-            if (res == lwgsmOK) {
+            
+            /* Send data to server */
+            if ((res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1)) == lwgsmOK) {
                 res = lwgsm_netconn_flush(client);/* Flush data to output */
             }
             if (res == lwgsmOK) {                 /* Were data sent? */

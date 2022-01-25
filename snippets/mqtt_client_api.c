@@ -64,8 +64,7 @@ mqtt_client_api_thread(void const* arg) {
     }
 
     /* Create new MQTT API */
-    client = lwgsm_mqtt_client_api_new(256, 128);
-    if (client == NULL) {
+    if ((client = lwgsm_mqtt_client_api_new(256, 128)) == NULL) {
         goto terminate;
     }
 
@@ -93,9 +92,8 @@ mqtt_client_api_thread(void const* arg) {
         }
 
         while (1) {
-            /* Receive MQTT packet with 1000ms timeout */
-            res = lwgsm_mqtt_client_api_receive(client, &buf, 5000);
-            if (res == lwgsmOK) {
+            /* Receive MQTT packet with timeout */
+            if ((res = lwgsm_mqtt_client_api_receive(client, &buf, 5000)) == lwgsmOK) {
                 if (buf != NULL) {
                     printf("Publish received!\r\n");
                     printf("Topic: %s, payload: %s\r\n", buf->topic, buf->payload);

@@ -15,8 +15,7 @@ static lwgsmr_t sms_evt_func(lwgsm_evt_t* evt);
 /**
  * \brief           SMS entry
  */
-static lwgsm_sms_entry_t
-sms_entry;
+static lwgsm_sms_entry_t sms_entry;
 
 /**
  * \brief           Start SMS send receive procedure
@@ -45,11 +44,11 @@ sms_send_receive_start(void) {
 static lwgsmr_t
 sms_evt_func(lwgsm_evt_t* evt) {
     switch (lwgsm_evt_get_type(evt)) {
-        case LWGSM_EVT_SMS_READY: {               /* SMS is ready notification from device */
+        case LWGSM_EVT_SMS_READY: {             /* SMS is ready notification from device */
             printf("SIM device SMS service is ready!\r\n");
             break;
         }
-        case LWGSM_EVT_SMS_RECV: {                /* New SMS received indicator */
+        case LWGSM_EVT_SMS_RECV: {              /* New SMS received indicator */
             lwgsmr_t res;
 
             printf("New SMS received!\r\n");    /* Notify user */
@@ -63,13 +62,12 @@ sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case LWGSM_EVT_SMS_READ: {                /* SMS read event */
+        case LWGSM_EVT_SMS_READ: {              /* SMS read event */
             lwgsm_sms_entry_t* entry = lwgsm_evt_sms_read_get_entry(evt);
             if (lwgsm_evt_sms_read_get_result(evt) == lwgsmOK && entry != NULL) {
                 /* Print SMS data */
                 printf("SMS read. From: %s, content: %s\r\n",
-                       entry->number, entry->data
-                      );
+                       entry->number, entry->data);
 
                 /* Try to send SMS back */
                 if (lwgsm_sms_send(entry->number, entry->data, NULL, NULL, 0) == lwgsmOK) {
@@ -83,7 +81,7 @@ sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case LWGSM_EVT_SMS_SEND: {                /* SMS send event */
+        case LWGSM_EVT_SMS_SEND: {              /* SMS send event */
             if (lwgsm_evt_sms_send_get_result(evt) == lwgsmOK) {
                 printf("SMS has been successfully sent!\r\n");
             } else {
@@ -91,7 +89,7 @@ sms_evt_func(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case LWGSM_EVT_SMS_DELETE: {              /* SMS delete event */
+        case LWGSM_EVT_SMS_DELETE: {            /* SMS delete event */
             if (lwgsm_evt_sms_delete_get_result(evt) == lwgsmOK) {
                 printf("SMS deleted, memory position: %d\r\n", (int)lwgsm_evt_sms_delete_get_pos(evt));
             } else {
