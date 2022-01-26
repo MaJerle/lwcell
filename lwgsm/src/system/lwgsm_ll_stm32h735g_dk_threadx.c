@@ -106,24 +106,26 @@
 #define LWGSM_USART_RX_PIN_AF                       LL_GPIO_AF_7
 
 /* TX data buffers, must be 32-bytes aligned (cache) and in dma buffer section to make sure DMA has access to the memory region */
-ALIGN_32BYTES(static uint8_t __attribute__((section(".dma_buffer"))) lwgsm_tx_rb_data[4096]);
+ALIGN_32BYTES(static uint8_t __attribute__((section(".dma_buffer"))) lwgsm_tx_rb_data[2048]);
 static lwrb_t       lwgsm_tx_rb;
 volatile size_t     lwgsm_tx_len;
 
-/* USART thread */
+/* Raw DMA memory for UART received data */
+ALIGN_32BYTES(static uint8_t __attribute__((section(".dma_buffer"))) lwgsm_usart_rx_dma_buffer[256]);
+
+/* USART thread for read and data processing */
 static void prv_lwgsm_read_thread_entry(ULONG arg);
-static TX_THREAD    lwgsm_read_thread;
-static UCHAR        lwgsm_read_thread_stack[4 * LWGSM_SYS_THREAD_SS];
-static size_t       lwgsm_read_old_pos = 0;
+static TX_THREAD        lwgsm_read_thread;
+static UCHAR            lwgsm_read_thread_stack[4 * LWGSM_SYS_THREAD_SS];
+static volatile size_t  lwgsm_read_old_pos = 0;
+static TX_EVENT_FLAGS_GROUP lwgsm_ll_event_group;
 
-/* Message queue */
-#define LL_QUEUE_NUM_OF_ENTRY               10
-static UCHAR        lwgsm_usart_ll_mbox_mem[LL_QUEUE_NUM_OF_ENTRY * sizeof(ULONG)];
-static TX_QUEUE     lwgsm_usart_ll_mbox;
+/* List of flags for read */
+#define LWGSM_LL_FLAG_DATA                  ((ULONG)0x000000001)
 
-/* USART memory */
-ALIGN_32BYTES(static uint8_t __attribute__((section(".dma_buffer"))) lwgsm_usart_rx_dma_buffer[0x100]);
-static uint8_t      lwgsm_is_running, lwgsm_initialized = 0;
+/* Status variables */
+static uint8_t          lwgsm_is_running = 0;
+static uint8_t          lwgsm_initialized = 0;
 
 /**
  * \brief           USART data processing thread
@@ -137,9 +139,10 @@ prv_lwgsm_read_thread_entry(ULONG arg) {
     LWGSM_UNUSED(arg);
 
     while (1) {
-        void* d;
-        /* Wait for the event message from DMA or USART */
-        tx_queue_receive(&lwgsm_usart_ll_mbox, &d, TX_WAIT_FOREVER);
+        ULONG flags;
+
+        /* Wait for any flag from either DMA or UART interrupts */
+        tx_event_flags_get(&lwgsm_ll_event_group, (ULONG)-1, TX_OR_CLEAR, &flags, TX_WAIT_FOREVER);
 
         /* Read data */
         pos = sizeof(lwgsm_usart_rx_dma_buffer) - LL_DMA_GetDataLength(LWGSM_USART_DMA_RX, LWGSM_USART_DMA_RX_STREAM);
@@ -312,6 +315,13 @@ prv_configure_uart(uint32_t baudrate) {
         LL_DMA_EnableStream(LWGSM_USART_DMA_RX, LWGSM_USART_DMA_RX_STREAM);
         LL_USART_Enable(LWGSM_USART);
 
+        /* Create mbox and read threads */
+        tx_event_flags_create(&lwgsm_ll_event_group, "lwgsm_ll_group");
+        tx_thread_create(&lwgsm_read_thread, "lwgsm_read_thread", prv_lwgsm_read_thread_entry, 0,
+                        lwgsm_read_thread_stack, sizeof(lwgsm_read_thread_stack),
+                        TX_MAX_PRIORITIES / 2 - 1, TX_MAX_PRIORITIES / 2 - 1,
+                        TX_NO_TIME_SLICE, TX_AUTO_START);
+
         lwgsm_is_running = 1;
     } else {
         //tx_thread_sleep(10);
@@ -319,17 +329,6 @@ prv_configure_uart(uint32_t baudrate) {
         //usart_init.BaudRate = baudrate;
         //LL_USART_Init(LWGSM_USART, &usart_init);
         //LL_USART_Enable(LWGSM_USART);
-    }
-
-    /* Create mbox and threads */
-    if (lwgsm_usart_ll_mbox.tx_queue_id == TX_CLEAR_ID) {
-        tx_queue_create(&lwgsm_usart_ll_mbox, "lwgsm_ll_queue", sizeof(void *) / sizeof(ULONG), lwgsm_usart_ll_mbox_mem, sizeof(lwgsm_usart_ll_mbox_mem));
-    }
-    if (lwgsm_read_thread.tx_thread_id == TX_CLEAR_ID) {
-        tx_thread_create(&lwgsm_read_thread, "lwgsm_lwgsm_read_thread", prv_lwgsm_read_thread_entry, 0,
-                lwgsm_read_thread_stack, sizeof(lwgsm_read_thread_stack),
-                TX_MAX_PRIORITIES / 2 - 1, TX_MAX_PRIORITIES / 2 - 1,
-                TX_NO_TIME_SLICE, TX_AUTO_START);
     }
 }
 
@@ -425,7 +424,7 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
 lwgsmr_t
 lwgsm_ll_deinit(lwgsm_ll_t* ll) {
     LL_USART_Disable(LWGSM_USART);
-    tx_queue_delete(&lwgsm_usart_ll_mbox);
+    tx_event_flags_delete(&lwgsm_ll_event_group);
     tx_thread_delete(&lwgsm_read_thread);
 
     lwgsm_initialized = 0;
@@ -445,10 +444,9 @@ LWGSM_USART_IRQ_HANDLER(void) {
     LL_USART_ClearFlag_ORE(LWGSM_USART);
     LL_USART_ClearFlag_NE(LWGSM_USART);
 
-    /* Write message to thread to wake-it up */
-    if (lwgsm_usart_ll_mbox.tx_queue_id != TX_CLEAR_ID) {
-        void* d = (void*)1;
-        tx_queue_send(&lwgsm_usart_ll_mbox, &d, TX_NO_WAIT);
+    /* Set flag to wakeup thread */
+    if (lwgsm_ll_event_group.tx_event_flags_group_id != TX_CLEAR_ID) {
+        tx_event_flags_set(&lwgsm_ll_event_group, LWGSM_LL_FLAG_DATA, TX_OR);
     }
 }
 
@@ -461,10 +459,9 @@ LWGSM_USART_DMA_RX_IRQ_HANDLER(void) {
     LWGSM_USART_DMA_RX_CLEAR_HT;
     LWGSM_USART_DMA_RX_CLEAR_TE;
 
-    /* Write message to thread to wake-it up */
-    if (lwgsm_usart_ll_mbox.tx_queue_id != TX_CLEAR_ID) {
-        void* d = (void*)1;
-        tx_queue_send(&lwgsm_usart_ll_mbox, &d, TX_NO_WAIT);
+    /* Set flag to wakeup thread */
+    if (lwgsm_ll_event_group.tx_event_flags_group_id != TX_CLEAR_ID) {
+        tx_event_flags_set(&lwgsm_ll_event_group, LWGSM_LL_FLAG_DATA, TX_OR);
     }
 }
 
