@@ -4,14 +4,12 @@
 /**
  * \brief           SIM card pin code
  */
-static const char*
-pin_code = "7958";
+static const char* pin_code = "7958";
 
 /**
  * \brief           SIM card puk code
  */
-static const char*
-puk_code = "10663647";
+static const char* puk_code = "10663647";
 
 /**
  * \brief           Configure and enable SIM card
