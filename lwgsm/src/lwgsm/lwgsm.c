@@ -34,13 +34,14 @@
 #include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_threads.h"
+#include "lwgsm/lwgsm_timeout.h"
 #include "system/lwgsm_ll.h"
 
 #if LWGSM_CFG_OS != 1
 #error LWGSM_CFG_OS must be set to 1!
 #endif
 
-static lwgsmr_t   def_callback(lwgsm_evt_t* cb);
+static lwgsmr_t   prv_def_callback(lwgsm_evt_t* cb);
 static lwgsm_evt_func_t def_evt_link;
 
 lwgsm_t lwgsm;
@@ -51,10 +52,27 @@ lwgsm_t lwgsm;
  * \return          Member of \ref lwgsmr_t enumeration
  */
 static lwgsmr_t
-def_callback(lwgsm_evt_t* evt) {
+prv_def_callback(lwgsm_evt_t* evt) {
     LWGSM_UNUSED(evt);
     return lwgsmOK;
 }
+
+#if LWGSM_CFG_KEEP_ALIVE
+
+/**
+ * \brief           Keep-alive timeout callback function
+ * \param[in]       arg: Custom user argument 
+ */
+static void
+prv_keep_alive_timeout_fn(void* arg) {
+    /* Dispatch keep-alive events */
+    lwgsmi_send_cb(LWGSM_EVT_KEEP_ALIVE);
+
+    /* Start new timeout */
+    lwgsm_timeout_add(LWGSM_CFG_KEEP_ALIVE_TIMEOUT, prv_keep_alive_timeout_fn, arg);
+}
+
+#endif /* LWGSM_CFG_KEEP_ALIVE */
 
 /**
  * \brief           Init and prepare GSM stack for device operation
@@ -74,7 +92,7 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
 
     lwgsm.status.f.initialized = 0;             /* Clear possible init flag */
 
-    def_evt_link.fn = evt_func != NULL ? evt_func : def_callback;
+    def_evt_link.fn = evt_func != NULL ? evt_func : prv_def_callback;
     lwgsm.evt_func = &def_evt_link;             /* Set callback function */
 
     if (!lwgsm_sys_init()) {                    /* Init low-level system */
@@ -130,6 +148,11 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     lwgsm.status.f.dev_present = 1;             /* We assume device is present at this point */
 
     lwgsmi_send_cb(LWGSM_EVT_INIT_FINISH);      /* Call user callback function */
+
+#if LWGSM_CFG_KEEP_ALIVE
+    /* Register keep-alive events */
+    lwgsm_timeout_add(LWGSM_CFG_KEEP_ALIVE_TIMEOUT, prv_keep_alive_timeout_fn, NULL);
+#endif /* LWGSM_CFG_KEEP_ALIVE */
 
     /*
      * Call reset command and call default

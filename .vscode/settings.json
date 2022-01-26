@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "lwgsm_network_api.h": "c",
+        "lwgsm_mem.h": "c",
+        "lwgsm.h": "c",
+        "lwgsm_includes.h": "c",
+        "lwgsm_input.h": "c",
+        "lwgsm_opt.h": "c"
+    }
+}

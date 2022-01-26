@@ -4,8 +4,10 @@
 
 - Split CMakeLists.txt files between library and executable
 - Change license year to 2022
-- Timeout module returns ERRMEM if no memory to allocate block
-- Update MQTT client to be consistent with client from LwESP library
+- Timeout: Module returns ERRMEM if no memory to allocate block
+- MQTT: update client to be consistent with client from LwESP library
+- Port: Add ThreadX port aligned with LwESP library
+- Add optional keep-alive system period event
 
 ## v0.1.1
 

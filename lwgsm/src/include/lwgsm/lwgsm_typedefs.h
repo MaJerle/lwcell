@@ -380,6 +380,9 @@ typedef enum lwgsm_cb_type_t {
 
     LWGSM_EVT_DEVICE_PRESENT,                   /*!< Notification when device present status changes */
     LWGSM_EVT_DEVICE_IDENTIFIED,                /*!< Device identified event */
+    
+    LWGSM_EVT_KEEP_ALIVE,                       /*!< Generic keep-alive event type, used as periodic timeout.
+                                                    Optionally enabled with \ref LWGSM_CFG_KEEP_ALIVE */
 
     LWGSM_EVT_SIGNAL_STRENGTH,                  /*!< Signal strength event */
 

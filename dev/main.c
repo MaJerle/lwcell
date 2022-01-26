@@ -1,6 +1,3 @@
-// lwgsm_dev_os.cpp : Defines the entry point for the console application.
-//
-
 #include "windows.h"
 #include "lwgsm/lwgsm.h"
 
