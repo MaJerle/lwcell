@@ -110,6 +110,14 @@ ALIGN_32BYTES(static uint8_t __attribute__((section(".dma_buffer"))) lwgsm_tx_rb
 static lwrb_t       lwgsm_tx_rb;
 volatile size_t     lwgsm_tx_len;
 
+/*
+ * Max number of bytes to transmit in one DMA transfer
+ *
+ * See https://github.com/MaJerle/stm32-usart-uart-dma-rx-tx
+ * for detailed explanation about impact of this number
+ */
+#define LWGSM_LL_MAX_TX_LEN             64
+
 /* Raw DMA memory for UART received data */
 ALIGN_32BYTES(static uint8_t __attribute__((section(".dma_buffer"))) lwgsm_usart_rx_dma_buffer[256]);
 
@@ -172,16 +180,13 @@ prv_start_tx_transfer(void) {
         && (lwgsm_tx_len = lwrb_get_linear_block_read_length(&lwgsm_tx_rb)) > 0) {
         const void* d = lwrb_get_linear_block_read_address(&lwgsm_tx_rb);
 
-        /* Limit tx len up to some size to optimize buffer reading process */
-        lwgsm_tx_len = LWGSM_MIN(lwgsm_tx_len, 64);
+        /* Limit tx len up to some size to optimize buffer read/write process */
+        lwgsm_tx_len = LWGSM_MIN(lwgsm_tx_len, LWGSM_LL_MAX_TX_LEN);
 
-        /* Cleanup cache first to make sure we have latest data in memory */
+        /* Cleanup cache to make sure we have latest data in memory visible by DMA */
         SCB_CleanDCache_by_Addr((void *)d, lwgsm_tx_len);
 
-        /* Disable channel if enabled */
-        LL_DMA_DisableStream(LWGSM_USART_DMA_TX, LWGSM_USART_DMA_TX_STREAM);
-
-        /* Clean flags */
+        /* Clear all DMA flags prior transfer */
         LWGSM_USART_DMA_TX_CLEAR_TC;
         LWGSM_USART_DMA_TX_CLEAR_HT;
         LWGSM_USART_DMA_TX_CLEAR_TE;
@@ -198,6 +203,7 @@ prv_start_tx_transfer(void) {
 
 /**
  * \brief           Configure UART using DMA for receive in double buffer mode and IDLE line detection
+ * \param[in]       baudrate: Baudrate for UART communication
  */
 static void
 prv_configure_uart(uint32_t baudrate) {
