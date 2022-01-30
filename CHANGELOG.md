@@ -9,6 +9,7 @@
 - Port: Add ThreadX port aligned with LwESP library
 - Add optional keep-alive system period event
 - Add `LWGSM ` prefix for debug messages
+- Update code style with astyle
 
 ## v0.1.1
 
