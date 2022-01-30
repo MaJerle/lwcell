@@ -59,7 +59,7 @@ lwgsm_sim_get_current_state(void) {
  */
 lwgsmr_t
 lwgsm_sim_pin_enter(const char* pin,
-                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -85,7 +85,7 @@ lwgsm_sim_pin_enter(const char* pin,
  */
 lwgsmr_t
 lwgsm_sim_pin_add(const char* pin,
-                const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -109,7 +109,7 @@ lwgsm_sim_pin_add(const char* pin,
  */
 lwgsmr_t
 lwgsm_sim_pin_change(const char* pin, const char* new_pin,
-                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                     const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -134,7 +134,7 @@ lwgsm_sim_pin_change(const char* pin, const char* new_pin,
  */
 lwgsmr_t
 lwgsm_sim_pin_remove(const char* pin,
-                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                     const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -158,7 +158,7 @@ lwgsm_sim_pin_remove(const char* pin,
  */
 lwgsmr_t
 lwgsm_sim_puk_enter(const char* puk, const char* new_pin,
-                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("puk != NULL", puk != NULL);

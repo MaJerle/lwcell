@@ -122,7 +122,7 @@ lwgsm_pb_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
  */
 lwgsmr_t
 lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_type_t type,
-           const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+             const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("name != NULL", name != NULL);
@@ -160,7 +160,7 @@ lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_ty
  */
 lwgsmr_t
 lwgsm_pb_read(lwgsm_mem_t mem, size_t pos, lwgsm_pb_entry_t* entry,
-            const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     return lwgsm_pb_list(mem, pos, entry, 1, NULL, evt_fn, evt_arg, blocking);
 }
 
@@ -178,7 +178,7 @@ lwgsm_pb_read(lwgsm_mem_t mem, size_t pos, lwgsm_pb_entry_t* entry,
  */
 lwgsmr_t
 lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lwgsm_number_type_t type,
-            const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("name != NULL", name != NULL);
@@ -215,7 +215,7 @@ lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lw
  */
 lwgsmr_t
 lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos,
-              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pos > 0", pos > 0);
@@ -252,7 +252,7 @@ lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos,
  */
 lwgsmr_t
 lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, size_t etr, size_t* er,
-            const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("start_index", start_index);
@@ -299,7 +299,7 @@ lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, si
  */
 lwgsmr_t
 lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* entries, size_t etr, size_t* er,
-              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("search != NULL", search != NULL);

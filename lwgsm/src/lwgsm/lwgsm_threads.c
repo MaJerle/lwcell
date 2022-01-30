@@ -117,11 +117,11 @@ lwgsm_thread_produce(void* const arg) {
             }
 
             LWGSM_DEBUGW(LWGSM_CFG_DBG_THREAD | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_SEVERE,
-                       res == lwgsmTIMEOUT,
-                       "[THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
+                         res == lwgsmTIMEOUT,
+                         "[THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
             LWGSM_DEBUGW(LWGSM_CFG_DBG_THREAD | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_SEVERE,
-                       res != lwgsmOK && res != lwgsmTIMEOUT,
-                       "[THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
+                         res != lwgsmOK && res != lwgsmTIMEOUT,
+                         "[THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
 
             /*
              * Manually release semaphore in all cases:

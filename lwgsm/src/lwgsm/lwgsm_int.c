@@ -118,7 +118,7 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
             (m)->msg.conn_send.fau = 0;                 \
             if ((m)->msg.conn_send.data != NULL) {      \
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,   \
-                           "[CONN] Free write buffer fau: %p\r\n", (void *)(m)->msg.conn_send.data);   \
+                             "[CONN] Free write buffer fau: %p\r\n", (void *)(m)->msg.conn_send.data);   \
                 lwgsm_mem_free_s((void **)&((m)->msg.conn_send.data)); \
             }                                           \
         }                                               \
@@ -663,7 +663,7 @@ lwgsmi_conn_closed_process(uint8_t conn_num, uint8_t forced) {
     /* Check if write buffer is set */
     if (conn->buff.buff != NULL) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                   "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
+                     "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
         lwgsm_mem_free_s((void**)&conn->buff.buff);
     }
 
@@ -1062,15 +1062,15 @@ lwgsmi_process(const void* data, size_t data_len) {
             /* Try to read more data directly from buffer */
             len = LWGSM_MIN(d_len, LWGSM_MIN(lwgsm.m.ipd.rem_len, lwgsm.m.ipd.buff != NULL ? (lwgsm.m.ipd.buff->len - lwgsm.m.ipd.buff_ptr) : lwgsm.m.ipd.rem_len));
             LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                       "[IPD] New length to read: %d bytes\r\n", (int)len);
+                         "[IPD] New length to read: %d bytes\r\n", (int)len);
             if (len > 0) {
                 if (lwgsm.m.ipd.buff != NULL) { /* Is buffer valid? */
                     LWGSM_MEMCPY(&lwgsm.m.ipd.buff->payload[lwgsm.m.ipd.buff_ptr], d, len);
                     LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                               "[IPD] Bytes read: %d\r\n", (int)len);
+                                 "[IPD] Bytes read: %d\r\n", (int)len);
                 } else {                        /* Simply skip the data in buffer */
                     LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                               "[IPD] Bytes skipped: %d\r\n", (int)len);
+                                 "[IPD] Bytes skipped: %d\r\n", (int)len);
                 }
                 d_len -= len;                   /* Decrease effective length */
                 d += len;                       /* Skip remaining length */
@@ -1099,10 +1099,10 @@ lwgsmi_process(const void* data, size_t data_len) {
 
                     lwgsm_pbuf_free(lwgsm.m.ipd.buff);  /* Free packet buffer at this point */
                     LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                               "[IPD] Free packet buffer\r\n");
+                                 "[IPD] Free packet buffer\r\n");
                     if (res == lwgsmOKIGNOREMORE) { /* We should ignore more data */
                         LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                                   "[IPD] Ignoring more data from this IPD if available\r\n");
+                                     "[IPD] Ignoring more data from this IPD if available\r\n");
                         lwgsm.m.ipd.buff = NULL;/* Set to NULL to ignore more data if possibly available */
                     }
 
@@ -1116,11 +1116,11 @@ lwgsmi_process(const void* data, size_t data_len) {
                         size_t new_len = LWGSM_MIN(lwgsm.m.ipd.rem_len, LWGSM_CFG_IPD_MAX_BUFF_SIZE);   /* Calculate new buffer length */
 
                         LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                                   "[IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
+                                     "[IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
                         lwgsm.m.ipd.buff = lwgsm_pbuf_new(new_len); /* Allocate new packet buffer */
 
                         LWGSM_DEBUGW(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING,
-                                   lwgsm.m.ipd.buff == NULL, "[IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
+                                     lwgsm.m.ipd.buff == NULL, "[IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
                     } else {
                         lwgsm.m.ipd.buff = NULL;/* Reset it */
                     }
@@ -1230,8 +1230,8 @@ lwgsmi_process(const void* data, size_t data_len) {
                     if (ch == '\n' && lwgsm.m.ipd.read) {
                         size_t len;
                         LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                                   "[IPD] Data on connection %d with total size %d byte(s)\r\n",
-                                   (int)lwgsm.m.ipd.conn->num, (int)lwgsm.m.ipd.tot_len);
+                                     "[IPD] Data on connection %d with total size %d byte(s)\r\n",
+                                     (int)lwgsm.m.ipd.conn->num, (int)lwgsm.m.ipd.tot_len);
 
                         len = LWGSM_MIN(lwgsm.m.ipd.rem_len, LWGSM_CFG_IPD_MAX_BUFF_SIZE);
 
@@ -1244,12 +1244,12 @@ lwgsmi_process(const void* data, size_t data_len) {
                         if (lwgsm.m.ipd.conn->status.f.active && !lwgsm.m.ipd.conn->status.f.in_closing) {
                             lwgsm.m.ipd.buff = lwgsm_pbuf_new(len); /* Allocate new packet buffer */
                             LWGSM_DEBUGW(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING, lwgsm.m.ipd.buff == NULL,
-                                       "[IPD] Buffer allocation failed for %d byte(s)\r\n", (int)len);
+                                         "[IPD] Buffer allocation failed for %d byte(s)\r\n", (int)len);
                         } else {
                             lwgsm.m.ipd.buff = NULL;/* Ignore reading on closed connection */
                             LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                                       "[IPD] Connection %d closed or in closing, skipping %d byte(s)\r\n",
-                                       (int)lwgsm.m.ipd.conn->num, (int)len);
+                                         "[IPD] Connection %d closed or in closing, skipping %d byte(s)\r\n",
+                                         (int)lwgsm.m.ipd.conn->num, (int)len);
                         }
                         lwgsm.m.ipd.conn->status.f.data_received = 1;   /* We have first received data */
 

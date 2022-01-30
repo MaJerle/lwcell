@@ -114,7 +114,7 @@ lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const
  */
 lwgsmr_t
 lwgsm_call_start(const char* number,
-               const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("number != NULL", number != NULL);

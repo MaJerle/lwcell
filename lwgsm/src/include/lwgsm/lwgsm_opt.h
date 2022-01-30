@@ -205,7 +205,7 @@
 
 /**
  * \brief           Enables `1` or disables `0` periodic keep-alive events to registered callbacks
- * 
+ *
  */
 #ifndef LWGSM_CFG_KEEP_ALIVE
 #define LWGSM_CFG_KEEP_ALIVE                    1
@@ -213,7 +213,7 @@
 
 /**
  * \brief           Timeout periodic time to trigger keep alive events to registered callbacks
- * 
+ *
  * Feature must be enabled with \ref LWGSM_CFG_KEEP_ALIVE
  */
 #ifndef LWGSM_CFG_KEEP_ALIVE_TIMEOUT
@@ -445,10 +445,10 @@
  * When enabled, user must manually configure idle thread and setup additional thread handle extension fields.
  * By default ThreadX doesn't support self-thread cleanup when thread memory is dynamically allocated & thread terminated,
  * hence another thread is mandatory to do the cleanup process instead.
- * 
+ *
  * This configuration does not create idle-thread, rather only sets additional TX_THREAD fields,
  * indicating thread handle and thread stack are dynamically allocated.
- * 
+ *
  * Have a look at System-ThreadX port for implementation
  */
 #ifndef LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION

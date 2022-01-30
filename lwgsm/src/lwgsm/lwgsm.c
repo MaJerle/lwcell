@@ -61,7 +61,7 @@ prv_def_callback(lwgsm_evt_t* evt) {
 
 /**
  * \brief           Keep-alive timeout callback function
- * \param[in]       arg: Custom user argument 
+ * \param[in]       arg: Custom user argument
  */
 static void
 prv_keep_alive_timeout_fn(void* arg) {
@@ -101,19 +101,19 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
 
     if (!lwgsm_sys_sem_create(&lwgsm.sem_sync, 1)) {/* Create sync semaphore between threads */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                   "[CORE] Cannot allocate sync semaphore!\r\n");
+                     "[CORE] Cannot allocate sync semaphore!\r\n");
         goto cleanup;
     }
 
     /* Create message queues */
     if (!lwgsm_sys_mbox_create(&lwgsm.mbox_producer, LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                   "[CORE] Cannot allocate producer mbox queue!\r\n");
+                     "[CORE] Cannot allocate producer mbox queue!\r\n");
         goto cleanup;
     }
     if (!lwgsm_sys_mbox_create(&lwgsm.mbox_process, LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                   "[CORE] Cannot allocate process mbox queue!\r\n");
+                     "[CORE] Cannot allocate process mbox queue!\r\n");
         goto cleanup;
     }
 
@@ -121,14 +121,14 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);
     if (!lwgsm_sys_thread_create(&lwgsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &lwgsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                   "[CORE] Cannot create producing thread!\r\n");
+                     "[CORE] Cannot create producing thread!\r\n");
         lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore and return */
         goto cleanup;
     }
     lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);     /* Wait semaphore, should be unlocked in produce thread */
     if (!lwgsm_sys_thread_create(&lwgsm.thread_process, "lwgsm_process", lwgsm_thread_process, &lwgsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                   "[CORE] Cannot create processing thread!\r\n");
+                     "[CORE] Cannot create processing thread!\r\n");
         lwgsm_sys_thread_terminate(&lwgsm.thread_produce);  /* Delete produce thread */
         lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore and return */
         goto cleanup;
@@ -209,7 +209,7 @@ lwgsm_reset(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32
  */
 lwgsmr_t
 lwgsm_reset_with_delay(uint32_t delay,
-                     const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                       const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
@@ -290,7 +290,7 @@ lwgsm_delay(uint32_t ms) {
  */
 lwgsmr_t
 lwgsm_set_func_mode(uint8_t mode,
-                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
@@ -315,7 +315,7 @@ lwgsm_set_func_mode(uint8_t mode,
  */
 lwgsmr_t
 lwgsm_device_set_present(uint8_t present,
-                       const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                         const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     lwgsmr_t res = lwgsmOK;
     lwgsm_core_lock();
     present = present ? 1 : 0;

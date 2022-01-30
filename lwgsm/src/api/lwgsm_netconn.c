@@ -127,7 +127,7 @@ netconn_evt(lwgsm_evt_t* evt) {
                 }
             } else {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING,
-                           "[NETCONN] Closing connection, it is not in client mode!\r\n");
+                             "[NETCONN] Closing connection, it is not in client mode!\r\n");
                 close = 1;                      /* Close the connection at this point */
             }
 
@@ -159,14 +159,14 @@ netconn_evt(lwgsm_evt_t* evt) {
             if (nc == NULL || !lwgsm_sys_mbox_isvalid(&nc->mbox_receive)
                 || !lwgsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN,
-                           "[NETCONN] Ignoring more data for receive!\r\n");
+                             "[NETCONN] Ignoring more data for receive!\r\n");
                 lwgsm_pbuf_free(pbuf);          /* Free pbuf */
                 return lwgsmOKIGNOREMORE;       /* Return OK to free the memory and ignore further data */
             }
             ++nc->rcv_packets;                  /* Increase number of received packets */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE,
-                       "[NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
-                       (int)lwgsm_pbuf_length(pbuf, 0));
+                         "[NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
+                         (int)lwgsm_pbuf_length(pbuf, 0));
             break;
         }
 
@@ -227,7 +227,7 @@ lwgsm_netconn_new(lwgsm_netconn_type_t type) {
         a->conn_timeout = 0;                    /* Default connection timeout */
         if (!lwgsm_sys_mbox_create(&a->mbox_receive, LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN)) {/* Allocate memory for receiving message box */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_DANGER,
-                       "[NETCONN] Cannot create receive MBOX\r\n");
+                         "[NETCONN] Cannot create receive MBOX\r\n");
             goto free_ret;
         }
         lwgsm_core_lock();

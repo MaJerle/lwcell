@@ -59,10 +59,10 @@
 #error "LWGSM_CFG_MEM_CUSTOM must be used instead. This driver does not set memory regions for LwESP."
 #endif /* !LWGSM_CFG_MEM_CUSTOM */
 
-/* 
+/*
  * USART setup
  *
- * PF6 and PF7 are used together with external STMOD+ extension board 
+ * PF6 and PF7 are used together with external STMOD+ extension board
  */
 #define LWGSM_USART                                 UART7
 #define LWGSM_USART_CLK_EN                          LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_UART7)
@@ -150,7 +150,7 @@ prv_lwgsm_read_thread_entry(ULONG arg) {
         ULONG flags;
 
         /* Wait for any flag from either DMA or UART interrupts */
-        tx_event_flags_get(&lwgsm_ll_event_group, (ULONG)-1, TX_OR_CLEAR, &flags, TX_WAIT_FOREVER);
+        tx_event_flags_get(&lwgsm_ll_event_group, (ULONG) - 1, TX_OR_CLEAR, &flags, TX_WAIT_FOREVER);
 
         /* Read data */
         pos = sizeof(lwgsm_usart_rx_dma_buffer) - LL_DMA_GetDataLength(LWGSM_USART_DMA_RX, LWGSM_USART_DMA_RX_STREAM);
@@ -184,7 +184,7 @@ prv_start_tx_transfer(void) {
         lwgsm_tx_len = LWGSM_MIN(lwgsm_tx_len, LWGSM_LL_MAX_TX_LEN);
 
         /* Cleanup cache to make sure we have latest data in memory visible by DMA */
-        SCB_CleanDCache_by_Addr((void *)d, lwgsm_tx_len);
+        SCB_CleanDCache_by_Addr((void*)d, lwgsm_tx_len);
 
         /* Clear all DMA flags prior transfer */
         LWGSM_USART_DMA_TX_CLEAR_TC;
@@ -324,9 +324,9 @@ prv_configure_uart(uint32_t baudrate) {
         /* Create mbox and read threads */
         tx_event_flags_create(&lwgsm_ll_event_group, "lwgsm_ll_group");
         tx_thread_create(&lwgsm_read_thread, "lwgsm_read_thread", prv_lwgsm_read_thread_entry, 0,
-                        lwgsm_read_thread_stack, sizeof(lwgsm_read_thread_stack),
-                        TX_MAX_PRIORITIES / 2 - 1, TX_MAX_PRIORITIES / 2 - 1,
-                        TX_NO_TIME_SLICE, TX_AUTO_START);
+                         lwgsm_read_thread_stack, sizeof(lwgsm_read_thread_stack),
+                         TX_MAX_PRIORITIES / 2 - 1, TX_MAX_PRIORITIES / 2 - 1,
+                         TX_NO_TIME_SLICE, TX_AUTO_START);
 
         lwgsm_is_running = 1;
     } else {
@@ -368,21 +368,21 @@ prv_send_data(const void* data, size_t len) {
     uint8_t use_dma = 1;
 
     /*
-     * When in DMA TX mode, application writes 
+     * When in DMA TX mode, application writes
      * TX data to ring buffer for which DMA certainly has access to.
-     * 
+     *
      * As it is a non-blocking TX (we don't wait for finish),
      * writing to buffer is faster than writing over UART hence
      * we need to find a mechanism to be able to still write as much as fast,
      * if such event happens.
-     * 
+     *
      * Writes to buffer are checked, and when no memory is available to write full data:
      * - Try to force transfer (if not already on-going)
      * - Yield thread and wait for next-time run
-     * 
+     *
      * In the meantime, DMA will trigger TC complete interrupt
      * and clean-up used memory, ready for next transfers.
-     * 
+     *
      * To avoid such complications, allocate > 1kB memory for buffer
      */
     if (use_dma) {
@@ -395,7 +395,7 @@ prv_send_data(const void* data, size_t len) {
             }
         } while (written < len);
         prv_start_tx_transfer();
-    } else {   
+    } else {
         for (size_t i = 0; i < len; ++i, ++d) {
             LL_USART_TransmitData8(LWGSM_USART, *d);
             while (!LL_USART_IsActiveFlag_TXE(LWGSM_USART)) {}

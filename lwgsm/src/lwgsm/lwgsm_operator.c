@@ -45,7 +45,7 @@
  */
 lwgsmr_t
 lwgsm_operator_get(lwgsm_operator_curr_t* curr,
-                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
@@ -69,7 +69,7 @@ lwgsm_operator_get(lwgsm_operator_curr_t* curr,
  */
 lwgsmr_t
 lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, const char* name, uint32_t num,
-                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     if (mode != LWGSM_OPERATOR_MODE_AUTO) {     /* Check parameters only if non-auto mode */
@@ -103,7 +103,7 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
  */
 lwgsmr_t
 lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf,
-                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     if (opf != NULL) {

@@ -49,7 +49,7 @@
  */
 lwgsmr_t
 lwgsm_network_attach(const char* apn, const char* user, const char* pass,
-                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                     const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
@@ -145,7 +145,7 @@ lwgsm_network_is_attached(void) {
  */
 lwgsmr_t
 lwgsm_network_rssi(int16_t* rssi,
-                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
