@@ -8,6 +8,7 @@
 - MQTT: update client to be consistent with client from LwESP library
 - Port: Add ThreadX port aligned with LwESP library
 - Add optional keep-alive system period event
+- Add `LWGSM ` prefix for debug messages
 
 ## v0.1.1
 

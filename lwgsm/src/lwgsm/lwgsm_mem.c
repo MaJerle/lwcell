@@ -362,9 +362,9 @@ lwgsm_mem_malloc(size_t size) {
     ptr = mem_calloc(1, size);                  /* Allocate memory and return pointer */
     lwgsm_core_unlock();
     LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL,
-                 "[MEM] Allocation failed: %d bytes\r\n", (int)size);
+                 "[LWGSM MEM] Allocation failed: %d bytes\r\n", (int)size);
     LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
-                 "[MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+                 "[LWGSM MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
@@ -383,9 +383,9 @@ lwgsm_mem_realloc(void* ptr, size_t size) {
     ptr = mem_realloc(ptr, size);               /* Reallocate and return pointer */
     lwgsm_core_unlock();
     LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL,
-                 "[MEM] Reallocation failed: %d bytes\r\n", (int)size);
+                 "[LWGSM MEM] Reallocation failed: %d bytes\r\n", (int)size);
     LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
-                 "[MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+                 "[LWGSM MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
@@ -403,9 +403,9 @@ lwgsm_mem_calloc(size_t num, size_t size) {
     ptr = mem_calloc(num, size);                /* Allocate memory and clear it to 0. Then return pointer */
     lwgsm_core_unlock();
     LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL,
-                 "[MEM] Callocation failed: %d bytes\r\n", (int)size * (int)num);
+                 "[LWGSM MEM] Callocation failed: %d bytes\r\n", (int)size * (int)num);
     LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
-                 "[MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
+                 "[LWGSM MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
     return ptr;
 }
 
@@ -421,7 +421,7 @@ lwgsm_mem_free(void* ptr) {
         return;
     }
     LWGSM_DEBUGF(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE,
-                 "[MEM] Free size: %d, address: %p\r\n",
+                 "[LWGSM MEM] Free size: %d, address: %p\r\n",
                  (int)MEM_BLOCK_USER_SIZE(ptr), ptr);
     lwgsm_core_lock();
     mem_free(ptr);

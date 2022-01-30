@@ -304,7 +304,7 @@ prv_write_fixed_header(lwgsm_mqtt_client_p client, mqtt_msg_type_t type, uint8_t
     lwgsm_buff_write(&client->tx_buff, &b, 1);  /* Write start of packet parameters */
 
     LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                 "[MQTT] Writing packet type %s to output buffer\r\n", prv_mqtt_msg_type_to_str(type));
+                 "[LWGSM MQTT] Writing packet type %s to output buffer\r\n", prv_mqtt_msg_type_to_str(type));
 
     do {                                        /* Encode length, we must write a len byte even if 0 */
         /*
@@ -386,11 +386,11 @@ prv_write_ack_rec_rel_resp(lwgsm_mqtt_client_p client, mqtt_msg_type_t msg_type,
         prv_write_u16(client, pkt_id);          /* Write packet ID */
         prv_send_data(client);                  /* Flush data to output */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                     "[MQTT] Response %s written to output memory\r\n", prv_mqtt_msg_type_to_str(msg_type));
+                     "[LWGSM MQTT] Response %s written to output memory\r\n", prv_mqtt_msg_type_to_str(msg_type));
         return 1;
     } else {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                     "[MQTT] No memory to write %s packet\r\n", prv_mqtt_msg_type_to_str(msg_type));
+                     "[LWGSM MQTT] No memory to write %s packet\r\n", prv_mqtt_msg_type_to_str(msg_type));
     }
     return 0;
 }
@@ -429,7 +429,7 @@ prv_send_data(lwgsm_mqtt_client_p client) {
             client->is_sending = 1;             /* Remember active sending flag */
         } else {
             LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING,
-                         "[MQTT] Cannot send data with error: %d\r\n", (int)res);
+                         "[LWGSM MQTT] Cannot send data with error: %d\r\n", (int)res);
         }
     } else {
         /*
@@ -529,7 +529,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
 
     /* Debug message */
     LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
-                 "[MQTT] Processing packet type %s\r\n", prv_mqtt_msg_type_to_str(msg_type));
+                 "[LWGSM MQTT] Processing packet type %s\r\n", prv_mqtt_msg_type_to_str(msg_type));
 
     /* Check received packet type */
     switch (msg_type) {
@@ -540,7 +540,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
                     client->conn_state = LWGSM_MQTT_CONNECTED;
                 }
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                             "[MQTT] CONNACK received with result: %d\r\n", (int)err);
+                             "[LWGSM MQTT] CONNACK received with result: %d\r\n", (int)err);
 
                 /* Notify user layer */
                 client->evt.type = LWGSM_MQTT_EVT_CONNECT;
@@ -549,7 +549,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
             } else {
                 /* Protocol violation here */
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                             "[MQTT] Protocol violation. CONNACK received when already connected!\r\n");
+                             "[LWGSM MQTT] Protocol violation. CONNACK received when already connected!\r\n");
             }
             break;
         }
@@ -575,7 +575,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
             data_len = client->msg_rem_len - (data - client->rx_buff);  /* Calculate length of remaining data */
 
             LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                         "[MQTT] Publish packet received on topic %.*s; QoS: %d; pkt_id: %d; data_len: %d\r\n",
+                         "[LWGSM MQTT] Publish packet received on topic %.*s; QoS: %d; pkt_id: %d; data_len: %d\r\n",
                          (int)topic_len, (const char*)topic, (int)qos, (int)pkt_id, (int)data_len);
 
             /*
@@ -587,7 +587,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
              */
             if (qos > 0) {                      /* We have to reply on QoS > 0 */
                 mqtt_msg_type_t rlwgsm_msg_type = qos == 1 ? MQTT_MSG_TYPE_PUBACK : MQTT_MSG_TYPE_PUBREC;
-                LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending publish resp: %s on pkt_id: %d\r\n",
+                LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[LWGSM MQTT] Sending publish resp: %s on pkt_id: %d\r\n",
                              prv_mqtt_msg_type_to_str(rlwgsm_msg_type), (int)pkt_id);
                 prv_write_ack_rec_rel_resp(client, rlwgsm_msg_type, pkt_id, qos);
             }
@@ -604,7 +604,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
             break;
         }
         case MQTT_MSG_TYPE_PINGRESP: {          /* Respond to PINGREQ received */
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Ping response received\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[LWGSM MQTT] Ping response received\r\n");
 
             client->evt.type = LWGSM_MQTT_EVT_KEEP_ALIVE;
             client->evt_fn(client, &client->evt);
@@ -658,7 +658,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
                 } else {
                     /* Protocol violation at this point! */
                     LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                                 "[MQTT] Protocol violation. Received ACK without sent packet\r\n");
+                                 "[LWGSM MQTT] Protocol violation. Received ACK without sent packet\r\n");
                 }
             }
             break;
@@ -691,7 +691,7 @@ prv_mqtt_parse_incoming(lwgsm_mqtt_client_p client, lwgsm_pbuf_p pbuf) {
             switch (client->parser_state) {     /* Check parser state */
                 case MQTT_PARSER_STATE_INIT: {  /* We are waiting for start byte and packet type */
                     LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
-                                 "[MQTT] Parser init state, received first byte of packet 0x%02X\r\n", (unsigned)ch);
+                                 "[LWGSM MQTT] Parser init state, received first byte of packet 0x%02X\r\n", (unsigned)ch);
 
                     /* Save other info about message */
                     client->msg_hdr_byte = ch;  /* Save first entry */
@@ -709,7 +709,7 @@ prv_mqtt_parse_incoming(lwgsm_mqtt_client_p client, lwgsm_pbuf_p pbuf) {
 
                     if (!(ch & 0x80)) {         /* Is this last entry? */
                         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
-                                     "[MQTT] Remaining length received: %d bytes\r\n", (int)client->msg_rem_len);
+                                     "[LWGSM MQTT] Remaining length received: %d bytes\r\n", (int)client->msg_rem_len);
 
                         if (client->msg_rem_len > 0) {
                             /*
@@ -754,12 +754,12 @@ prv_mqtt_parse_incoming(lwgsm_mqtt_client_p client, lwgsm_pbuf_p pbuf) {
                     if (client->msg_curr_pos == client->msg_rem_len) {
                         if (client->msg_curr_pos <= client->rx_buff_len) {  /* Check if it was possible to write all data to rx buffer */
                             LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_STATE,
-                                         "[MQTT] Packet parsed and ready for processing\r\n");
+                                         "[LWGSM MQTT] Packet parsed and ready for processing\r\n");
 
                             prv_mqtt_process_incoming_message(client);  /* Process incoming packet */
                         } else {
                             LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING,
-                                         "[MQTT] Packet too big for rx buffer. Packet discarded\r\n");
+                                         "[LWGSM MQTT] Packet too big for rx buffer. Packet discarded\r\n");
                         }
                         client->parser_state = MQTT_PARSER_STATE_INIT;  /* Go to initial state and listen for next received packet */
                     }
@@ -893,7 +893,7 @@ prv_mqtt_data_sent_cb(lwgsm_mqtt_client_p client, size_t sent_len, uint8_t succe
     if (!successful) {
         prv_mqtt_close(client);
         LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING,
-                     "[MQTT] Failed to send %d bytes. Manually closing down..\r\n", (int)sent_len);
+                     "[LWGSM MQTT] Failed to send %d bytes. Manually closing down..\r\n", (int)sent_len);
         return 0;
     }
     lwgsm_buff_skip(&client->tx_buff, sent_len);/* Skip buffer for actual sent data */
@@ -949,9 +949,9 @@ prv_mqtt_poll_cb(lwgsm_mqtt_client_p client) {
             prv_send_data(client);              /* Force send data */
             client->poll_time = 0;              /* Reset polling time */
 
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Sending PINGREQ packet\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[LWGSM MQTT] Sending PINGREQ packet\r\n");
         } else {
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING, "[MQTT] No memory to send PINGREQ packet\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE_WARNING, "[LWGSM MQTT] No memory to send PINGREQ packet\r\n");
         }
     }
 
@@ -1257,13 +1257,13 @@ lwgsm_mqtt_client_publish(lwgsm_mqtt_client_p client, const char* topic, const v
             prv_request_set_pending(client, request);   /* Set request as pending waiting for server reply */
             prv_send_data(client);              /* Try to send data */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE,
-                         "[MQTT] Pkt publish start. QoS: %d, pkt_id: %d\r\n", (int)qos_u8, (int)pkt_id);
+                         "[LWGSM MQTT] Pkt publish start. QoS: %d, pkt_id: %d\r\n", (int)qos_u8, (int)pkt_id);
         } else {
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] No free request available to publish message\r\n");
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[LWGSM MQTT] No free request available to publish message\r\n");
             res = lwgsmERRMEM;
         }
     } else {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[MQTT] Not enough memory to publish message\r\n");
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_MQTT_TRACE, "[LWGSM MQTT] Not enough memory to publish message\r\n");
         res = lwgsmERRMEM;
     }
     lwgsm_core_unlock();

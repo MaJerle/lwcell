@@ -101,19 +101,19 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
 
     if (!lwgsm_sys_sem_create(&lwgsm.sem_sync, 1)) {/* Create sync semaphore between threads */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[CORE] Cannot allocate sync semaphore!\r\n");
+                     "[LWGSM CORE] Cannot allocate sync semaphore!\r\n");
         goto cleanup;
     }
 
     /* Create message queues */
     if (!lwgsm_sys_mbox_create(&lwgsm.mbox_producer, LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[CORE] Cannot allocate producer mbox queue!\r\n");
+                     "[LWGSM CORE] Cannot allocate producer mbox queue!\r\n");
         goto cleanup;
     }
     if (!lwgsm_sys_mbox_create(&lwgsm.mbox_process, LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[CORE] Cannot allocate process mbox queue!\r\n");
+                     "[LWGSM CORE] Cannot allocate process mbox queue!\r\n");
         goto cleanup;
     }
 
@@ -121,14 +121,14 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);
     if (!lwgsm_sys_thread_create(&lwgsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &lwgsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[CORE] Cannot create producing thread!\r\n");
+                     "[LWGSM CORE] Cannot create producing thread!\r\n");
         lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore and return */
         goto cleanup;
     }
     lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);     /* Wait semaphore, should be unlocked in produce thread */
     if (!lwgsm_sys_thread_create(&lwgsm.thread_process, "lwgsm_process", lwgsm_thread_process, &lwgsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[CORE] Cannot create processing thread!\r\n");
+                     "[LWGSM CORE] Cannot create processing thread!\r\n");
         lwgsm_sys_thread_terminate(&lwgsm.thread_produce);  /* Delete produce thread */
         lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore and return */
         goto cleanup;

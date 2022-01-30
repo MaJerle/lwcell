@@ -69,7 +69,7 @@ conn_timeout_cb(void* arg) {
 
         lwgsmi_conn_start_timeout(conn);        /* Schedule new timeout */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                     "[CONN] Poll event: %p\r\n", conn);
+                     "[LWGSM CONN] Poll event: %p\r\n", conn);
     }
 }
 
@@ -161,7 +161,7 @@ flush_buff(lwgsm_conn_p conn) {
         }
         if (res != lwgsmOK) {
             LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                         "[CONN] Free write buffer: %p\r\n", (void*)conn->buff.buff);
+                         "[LWGSM CONN] Free write buffer: %p\r\n", (void*)conn->buff.buff);
             lwgsm_mem_free_s((void**)&conn->buff.buff);
         }
         conn->buff.buff = NULL;
@@ -238,7 +238,7 @@ lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
     if (res == lwgsmOK && !blocking) {          /* Function succedded in non-blocking mode */
         lwgsm_core_lock();
         LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                     "[CONN] Connection %d set to closing state\r\n", (int)conn->num);
+                     "[LWGSM CONN] Connection %d set to closing state\r\n", (int)conn->num);
         conn->status.f.in_closing = 1;          /* Connection is in closing mode but not yet closed */
         lwgsm_core_unlock();
     }
@@ -516,7 +516,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
             /* Try to send to processing queue in non-blocking way */
             if (conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0) != lwgsmOK) {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                             "[CONN] Free write buffer: %p\r\n", conn->buff.buff);
+                             "[LWGSM CONN] Free write buffer: %p\r\n", conn->buff.buff);
                 lwgsm_mem_free_s((void**)&conn->buff.buff);
             }
             conn->buff.buff = NULL;
@@ -531,7 +531,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
             LWGSM_MEMCPY(buff, d, LWGSM_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
             if (conn_send(conn, NULL, 0, buff, LWGSM_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != lwgsmOK) {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                             "[CONN] Free write buffer: %p\r\n", (void*)buff);
+                             "[LWGSM CONN] Free write buffer: %p\r\n", (void*)buff);
                 lwgsm_mem_free_s((void**)&buff);
                 return lwgsmERRMEM;
             }
@@ -550,9 +550,9 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
         conn->buff.ptr = 0;
 
         LWGSM_DEBUGW(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, conn->buff.buff != NULL,
-                     "[CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
+                     "[LWGSM CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
         LWGSM_DEBUGW(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, conn->buff.buff == NULL,
-                     "[CONN] Cannot allocate new write buffer\r\n");
+                     "[LWGSM CONN] Cannot allocate new write buffer\r\n");
     }
     if (btw > 0) {
         if (conn->buff.buff != NULL) {

@@ -73,9 +73,9 @@ lwgsm_pbuf_new(size_t len) {
 
     p = lwgsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
     LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p == NULL,
-                 "[PBUF] Failed to allocate %d bytes\r\n", (int)len);
+                 "[LWGSM PBUF] Failed to allocate %d bytes\r\n", (int)len);
     LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p != NULL,
-                 "[PBUF] Allocated %d bytes on %p\r\n", (int)len, p);
+                 "[LWGSM PBUF] Allocated %d bytes on %p\r\n", (int)len, p);
     if (p != NULL) {
         p->next = NULL;                         /* No next element in chain */
         p->tot_len = len;                       /* Set total length of pbuf chain */
@@ -109,7 +109,7 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
         lwgsm_core_unlock();
         if (ref == 0) {                         /* Did we reach 0 and are ready to free it? */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
+                         "[LWGSM PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", p, (int)p->len, (int)p->tot_len);
             pn = p->next;                       /* Save next entry */
             lwgsm_mem_free_s((void**)&p);       /* Free memory for pbuf */
             p = pn;                             /* Restore with next entry */
@@ -540,16 +540,16 @@ void
 lwgsm_pbuf_dump(lwgsm_pbuf_p p, uint8_t seq) {
     if (p != NULL) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                     "[PBUF] Dump start: %p\r\n", p);
+                     "[LWGSM PBUF] Dump start: %p\r\n", p);
         for (; p != NULL; p = p->next) {
             LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[PBUF] Dump %p; ref: %d; len: %d; tot_len: %d, next: %p\r\n",
+                         "[LWGSM PBUF] Dump %p; ref: %d; len: %d; tot_len: %d, next: %p\r\n",
                          p, (int)p->ref, (int)p->len, (int)p->tot_len, p->next);
             if (!seq) {
                 break;
             }
         }
         LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                     "[PBUF] Dump end\r\n");
+                     "[LWGSM PBUF] Dump end\r\n");
     }
 }
