@@ -106,6 +106,12 @@
 #endif
 
 /**
+ * \defgroup        LWGSM_OPT_CONN Connection settings
+ * \brief           Connection settings
+ * \{
+ */
+
+/**
  * \brief           Maximal number of connections AT software can support on GSM device
  *
  */
@@ -143,6 +149,10 @@
 #ifndef LWGSM_CFG_IPD_MAX_BUFF_SIZE
 #define LWGSM_CFG_IPD_MAX_BUFF_SIZE             1460
 #endif
+
+/**
+ * \}
+ */
 
 /**
  * \brief           Default baudrate used for AT port
@@ -187,7 +197,6 @@
 #ifndef LWGSM_CFG_RESET_ON_DEVICE_PRESENT
 #define LWGSM_CFG_RESET_ON_DEVICE_PRESENT       1
 #endif
-
 
 /**
  * \brief           Default delay (milliseconds unit) before sending first AT command on reset sequence
