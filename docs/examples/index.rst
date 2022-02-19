@@ -6,10 +6,10 @@ Examples and demos
 Various examples are provided for fast library evaluation on embedded systems. These are prepared and maintained for ``2`` platforms, but could be easily extended to more platforms:
 
 * WIN32 examples, prepared as `Visual Studio Community <https://visualstudio.microsoft.com/vs/community/>`_ projects
-* ARM Cortex-M examples for STM32, prepared as `STM32CubeIDE <https://www.st.com/en/development-tools/stm32cubeide.html>`_ GCC projects
+* ARM Cortex-M examples for STM32, prepared as `STM32CubeIDE <https://www.st.com/en/development-tools/stm32cubeide.html>`_ GCC projects. These are also supported in *Visual Studio Code* through *CMake* and *ninja* build system. `Dedicated tutorial <https://github.com/MaJerle/stm32-cube-cmake-vscode>`_ is available to get started in *VSCode*.
 
-.. warning::
-	Library is platform independent and can be used on any platform.
+.. note::
+	Library is platform agnostic and can be used on many different products
 
 Example architectures
 ^^^^^^^^^^^^^^^^^^^^^
