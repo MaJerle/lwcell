@@ -46,7 +46,7 @@ lwgsm_sys_init(void) {
 
 uint32_t
 lwgsm_sys_now(void) {
-    return osKernelSysTick();
+    return osKernelGetTickCount();
 }
 
 uint8_t
