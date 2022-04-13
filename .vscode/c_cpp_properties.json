@@ -3,21 +3,6 @@
     "configurations": [
         {
             "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}\\dev\\",
-                "${workspaceFolder}\\lwgsm\\src\\include\\",
-                "${workspaceFolder}\\lwgsm\\src\\include\\system\\port\\win32",
-                "${workspaceFolder}\\snippets\\include",
-                "${workspaceFolder}\\..\\lwmem\\lwmem\\src\\include",
-                "${workspaceFolder}\\"    
-            ],
-            "defines": [
-                "WIN32",
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE",
-                "LWGSM_DEV"
-            ],
             "compilerPath": "c:\\msys64\\mingw64\\bin\\gcc.exe",
             "cStandard": "gnu17",
             "cppStandard": "gnu++14",
