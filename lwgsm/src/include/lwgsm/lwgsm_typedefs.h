@@ -171,8 +171,10 @@ typedef enum {
  * \brief           GSM number type
  */
 typedef enum {
-    LWGSM_NUMBER_TYPE_NATIONAL = 129,           /*!< Number is national */
+    LWGSM_NUMBER_TYPE_UNKNOWN = 129,           /*!< Number is unknown */
     LWGSM_NUMBER_TYPE_INTERNATIONAL = 145,      /*!< Number is international */
+    LWGSM_NUMBER_TYPE_NATIONAL = 161,           /*!< Number is national */
+    LWGSM_NUMBER_TYPE_NETWORK = 177,           /*!< Number is network specific */
 } lwgsm_number_type_t;
 
 /**
