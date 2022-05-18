@@ -26,8 +26,8 @@ set(CPU_PARAMETERS
     # Other parameters
     # -mcpu, -mfloat, -mfloat-abi, ...
     -mcpu=cortex-m4
-	-mfpu=fpv4-sp-d16
-	-mfloat-abi=hard
+    -mfpu=fpv4-sp-d16
+    -mfloat-abi=hard
 )
 
 # Set linker script
@@ -38,92 +38,92 @@ set(EXECUTABLE                      ${CMAKE_PROJECT_NAME})
 # Source files
 #
 set(src_freertos_SRCS 
-	${PROJ_PATH}/../../lib/FreeRTOS/CMSIS_RTOS_V2/cmsis_os2.c
-	${PROJ_PATH}/../../lib/FreeRTOS/croutine.c
-	${PROJ_PATH}/../../lib/FreeRTOS/event_groups.c
-	${PROJ_PATH}/../../lib/FreeRTOS/portable/MemMang/heap_4.c
-	${PROJ_PATH}/../../lib/FreeRTOS/list.c
-	${PROJ_PATH}/../../lib/FreeRTOS/portable/GCC/ARM_CM4F/port.c
-	${PROJ_PATH}/../../lib/FreeRTOS/queue.c
-	${PROJ_PATH}/../../lib/FreeRTOS/tasks.c
-	${PROJ_PATH}/../../lib/FreeRTOS/timers.c)
+    ${PROJ_PATH}/../../lib/FreeRTOS/CMSIS_RTOS_V2/cmsis_os2.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/croutine.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/event_groups.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/portable/MemMang/heap_4.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/list.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/portable/GCC/ARM_CM4F/port.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/queue.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/tasks.c
+    ${PROJ_PATH}/../../lib/FreeRTOS/timers.c)
 
 set(src_lwgsm_api_SRCS 
-	${PROJ_PATH}/../../../lwgsm/src/api/lwgsm_netconn.c
-	${PROJ_PATH}/../../../lwgsm/src/api/lwgsm_network_api.c)
+    ${PROJ_PATH}/../../../lwgsm/src/api/lwgsm_netconn.c
+    ${PROJ_PATH}/../../../lwgsm/src/api/lwgsm_network_api.c)
 
 set(src_lwgsm_SRCS 
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_buff.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_call.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_conn.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_debug.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_device_info.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_evt.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_ftp.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_http.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_input.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_int.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_mem.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_network.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_operator.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_parser.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_pbuf.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_phonebook.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_ping.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_sim.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_sms.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_threads.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_timeout.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_unicode.c
-	${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_utils.c)
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_buff.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_call.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_conn.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_debug.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_device_info.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_evt.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_ftp.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_http.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_input.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_int.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_mem.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_network.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_operator.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_parser.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_pbuf.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_phonebook.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_ping.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_sim.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_sms.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_threads.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_timeout.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_unicode.c
+    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_utils.c)
 
 set(src_lwgsm_ll_SRCS 
-	${PROJ_PATH}/../../../lwgsm/src/system/lwgsm_ll_stm32f429zi_nucleo.c
-	${PROJ_PATH}/../../../lwgsm/src/system/lwgsm_sys_cmsis_os.c)
+    ${PROJ_PATH}/../../../lwgsm/src/system/lwgsm_ll_stm32f429zi_nucleo.c
+    ${PROJ_PATH}/../../../lwgsm/src/system/lwgsm_sys_cmsis_os.c)
 
 set(src_lwgsm_apps_SRCS 
-	${PROJ_PATH}/../../../lwgsm/src/apps/mqtt/lwgsm_mqtt_client.c
-	${PROJ_PATH}/../../../lwgsm/src/apps/mqtt/lwgsm_mqtt_client_api.c
-	${PROJ_PATH}/../../../lwgsm/src/apps/mqtt/lwgsm_mqtt_client_evt.c)
+    ${PROJ_PATH}/../../../lwgsm/src/apps/mqtt/lwgsm_mqtt_client.c
+    ${PROJ_PATH}/../../../lwgsm/src/apps/mqtt/lwgsm_mqtt_client_api.c
+    ${PROJ_PATH}/../../../lwgsm/src/apps/mqtt/lwgsm_mqtt_client_evt.c)
 
 set(src_lwgsm_snippets_SRCS 
-	${PROJ_PATH}/../../../snippets/mqtt_client_api.c
-	${PROJ_PATH}/../../../snippets/network_utils.c
-	${PROJ_PATH}/../../../snippets/sim_manager.c)
+    ${PROJ_PATH}/../../../snippets/mqtt_client_api.c
+    ${PROJ_PATH}/../../../snippets/network_utils.c
+    ${PROJ_PATH}/../../../snippets/sim_manager.c)
 
 set(src_stm32f4xx_hal_driver_SRCS 
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_pwr.c
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usart.c
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c)
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_pwr.c
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usart.c
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c)
 
 set(src_user_SRCS 
-	${PROJ_PATH}/src/main.c
-	${PROJ_PATH}/src/stm32f4xx_it.c
-	${PROJ_PATH}/src/syscalls.c
-	${PROJ_PATH}/src/system_stm32f4xx.c)
+    ${PROJ_PATH}/src/main.c
+    ${PROJ_PATH}/src/stm32f4xx_it.c
+    ${PROJ_PATH}/src/syscalls.c
+    ${PROJ_PATH}/src/system_stm32f4xx.c)
 
 set(src_startup_SRCS 
-	${PROJ_PATH}/STM32CubeIDE/startup/startup_stm32f429xx.s)
+    ${PROJ_PATH}/STM32CubeIDE/startup/startup_stm32f429xx.s)
 
 #
 # Include directories
 #
 set(include_c_DIRS
     ${PROJ_PATH}/inc
-	${PROJ_PATH}/../../../snippets/include
-	${PROJ_PATH}/../../../lwgsm/src/include
-	${PROJ_PATH}/../../../lwgsm/src/include/system/port/cmsis_os
-	${PROJ_PATH}/../../lib/st/CMSIS/Device/ST/STM32F4xx/Include
-	${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Inc
-	${PROJ_PATH}/../../lib/st/CMSIS/Include
-	${PROJ_PATH}/../../lib/FreeRTOS/include
-	${PROJ_PATH}/../../lib/FreeRTOS/CMSIS_RTOS_V2
-	${PROJ_PATH}/../../lib/FreeRTOS/portable/GCC/ARM_CM4F
+    ${PROJ_PATH}/../../../snippets/include
+    ${PROJ_PATH}/../../../lwgsm/src/include
+    ${PROJ_PATH}/../../../lwgsm/src/include/system/port/cmsis_os
+    ${PROJ_PATH}/../../lib/st/CMSIS/Device/ST/STM32F4xx/Include
+    ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Inc
+    ${PROJ_PATH}/../../lib/st/CMSIS/Include
+    ${PROJ_PATH}/../../lib/FreeRTOS/include
+    ${PROJ_PATH}/../../lib/FreeRTOS/CMSIS_RTOS_V2
+    ${PROJ_PATH}/../../lib/FreeRTOS/portable/GCC/ARM_CM4F
 )
 set(include_cxx_DIRS
     
@@ -137,14 +137,14 @@ set(include_asm_DIRS
 #
 set(symbols_c_SYMB
     "__weak=__attribute__((weak))"
-	"HSE_VALUE=8000000"
-	"__packed=__attribute__((__packed__))"
-	"STM32F429xx"
-	"USE_FULL_LL_DRIVER"
+    "HSE_VALUE=8000000"
+    "__packed=__attribute__((__packed__))"
+    "STM32F429xx"
+    "USE_FULL_LL_DRIVER"
 )
 set(symbols_cxx_SYMB
     "STM32F10X_MD"
-	"USE_STDPERIPH_DRIVER"
+    "USE_STDPERIPH_DRIVER"
 )
 set(symbols_asm_SYMB
     
@@ -163,15 +163,15 @@ link_directories(${EXECUTABLE} ${link_DIRS})
 # Executable files
 #
 add_executable(${EXECUTABLE} 
-	${src_freertos_SRCS}
-	${src_lwgsm_api_SRCS}
-	${src_lwgsm_SRCS}
-	${src_lwgsm_ll_SRCS}
-	${src_lwgsm_apps_SRCS}
-	${src_lwgsm_snippets_SRCS}
-	${src_stm32f4xx_hal_driver_SRCS}
-	${src_user_SRCS}
-	${src_startup_SRCS})
+    ${src_freertos_SRCS}
+    ${src_lwgsm_api_SRCS}
+    ${src_lwgsm_SRCS}
+    ${src_lwgsm_ll_SRCS}
+    ${src_lwgsm_apps_SRCS}
+    ${src_lwgsm_snippets_SRCS}
+    ${src_stm32f4xx_hal_driver_SRCS}
+    ${src_user_SRCS}
+    ${src_startup_SRCS})
 
 #
 # Add linked libraries for linker
@@ -242,7 +242,7 @@ target_compile_options(${EXECUTABLE} PRIVATE
 
 # Setup linker parameters
 target_link_options(${EXECUTABLE} PRIVATE
-    -T${MCU_LINKER_SCRIPT}${linker_script_SRC}
+    -T${linker_script_SRC}
     ${CPU_PARAMETERS}
     -Wl,-Map=${CMAKE_PROJECT_NAME}.map
     -u _printf_float              # STDIO float formatting support (remove if not used)
