@@ -58,6 +58,8 @@ mqtt_client_api_thread(void const* arg) {
     lwgsmr_t res;
     char random_str[10];
 
+    LWGSM_UNUSED(arg);
+
     /* Request network attach */
     while (lwgsm_network_request_attach() != lwgsmOK) {
         lwgsm_delay(1000);

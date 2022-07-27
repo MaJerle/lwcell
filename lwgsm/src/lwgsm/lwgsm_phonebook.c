@@ -106,6 +106,7 @@ lwgsm_pb_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const u
         evt_fn(lwgsmOK, evt_arg);
     }
     lwgsm_core_unlock();
+    LWGSM_UNUSED(blocking);
     return lwgsmOK;
 }
 

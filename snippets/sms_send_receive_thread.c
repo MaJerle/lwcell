@@ -38,6 +38,8 @@ void
 sms_send_receive_thread(void const* arg) {
     sms_receive_t* sms;
 
+    LWGSM_UNUSED(arg);
+
     /* Create message box */
     if (!lwgsm_sys_mbox_create(&sms_mbox, 5)) {
         goto terminate;

@@ -974,6 +974,9 @@ prv_mqtt_closed_cb(lwgsm_mqtt_client_p client, lwgsmr_t res, uint8_t forced) {
     lwgsm_mqtt_state_t state = client->conn_state;
     lwgsm_mqtt_request_t* request;
 
+    LWGSM_UNUSED(res);
+    LWGSM_UNUSED(forced);
+
     /*
      * Call user function only if connection was closed
      * when we are connected or in disconnecting mode

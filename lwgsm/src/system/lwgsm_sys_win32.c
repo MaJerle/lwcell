@@ -34,6 +34,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "system/lwgsm_sys.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if !__DOXYGEN__
 
@@ -157,7 +158,6 @@ lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
 uint32_t
 lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
     DWORD ret;
-    uint32_t tick = osKernelSysTick();
 
     if (timeout == 0) {
         ret = WaitForSingleObject(*p, INFINITE);
@@ -324,6 +324,11 @@ uint8_t
 lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio) {
     HANDLE h;
     DWORD id;
+
+    LWGSM_UNUSED(name);
+    LWGSM_UNUSED(stack_size);
+    LWGSM_UNUSED(prio);
+
     h = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)thread_func, arg, 0, &id);
     if (t != NULL) {
         *t = h;

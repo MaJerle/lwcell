@@ -28,7 +28,7 @@ target_sources(${PROJECT_NAME} PUBLIC
     # Port specific
     ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_sys_win32.c
     ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_ll_win32.c
-    )
+)
 
 # Add key include paths
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -38,7 +38,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
     # Port specific
     ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/include/system/port/win32
-    )
+)
 
 # Compilation definition information
 target_compile_definitions(${PROJECT_NAME} PUBLIC
@@ -46,7 +46,14 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     _DEBUG
     CONSOLE
     LWGSM_DEV
-    )
+)
+
+# Compiler options
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
 
 # Add subdir with lwgsm and link to the project
 add_subdirectory("lwgsm")

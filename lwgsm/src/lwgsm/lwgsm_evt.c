@@ -459,6 +459,7 @@ lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc) {
  */
 const lwgsm_call_t*
 lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc) {
+    LWGSM_UNUSED(cc);
     return lwgsm.evt.evt.call_changed.call;
 }
 

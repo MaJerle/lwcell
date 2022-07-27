@@ -151,6 +151,8 @@ uart_thread(void* param) {
     DWORD bytes_read;
     lwgsm_sys_sem_t sem;
     FILE* file = NULL;
+    
+    LWGSM_UNUSED(param);
 
     lwgsm_sys_sem_create(&sem, 0);              /* Create semaphore for delay functions */
 

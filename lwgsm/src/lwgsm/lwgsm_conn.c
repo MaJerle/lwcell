@@ -69,7 +69,7 @@ conn_timeout_cb(void* arg) {
 
         lwgsmi_conn_start_timeout(conn);        /* Schedule new timeout */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM CONN] Poll event: %p\r\n", conn);
+                     "[LWGSM CONN] Poll event: %p\r\n", (void *)conn);
     }
 }
 

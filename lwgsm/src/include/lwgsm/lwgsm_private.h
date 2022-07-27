@@ -738,8 +738,8 @@ extern const size_t         lwgsm_dev_model_map_size;
 #define LWGSM_MSG_VAR_DEFINE(name)                lwgsm_msg_t* name
 #define LWGSM_MSG_VAR_ALLOC(name, blocking)           do {\
         (name) = lwgsm_mem_malloc(sizeof(*(name)));       \
-        LWGSM_DEBUGW(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", sizeof(*(name)), (name)); \
-        LWGSM_DEBUGW(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", sizeof(*(name))); \
+        LWGSM_DEBUGW(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, (name) != NULL, "[MSG VAR] Allocated %d bytes at %p\r\n", (int)sizeof(*(name)), (void *)(name)); \
+        LWGSM_DEBUGW(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, (name) == NULL, "[MSG VAR] Error allocating %d bytes\r\n", (int)sizeof(*(name))); \
         if ((name) == NULL) {                           \
             return lwgsmERRMEM;                           \
         }                                               \
@@ -748,7 +748,7 @@ extern const size_t         lwgsm_dev_model_map_size;
     } while (0)
 #define LWGSM_MSG_VAR_REF(name)                   (*(name))
 #define LWGSM_MSG_VAR_FREE(name)                  do {\
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (name)); \
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_VAR | LWGSM_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (void *)(name)); \
         if (lwgsm_sys_sem_isvalid(&((name)->sem))) {      \
             lwgsm_sys_sem_delete(&((name)->sem));         \
             lwgsm_sys_sem_invalid(&((name)->sem));        \

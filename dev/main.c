@@ -17,7 +17,6 @@ static void main_thread(void* arg);
 DWORD main_thread_id;
 
 static lwgsmr_t lwgsm_evt(lwgsm_evt_t* evt);
-static lwgsmr_t lwgsm_conn_evt(lwgsm_evt_t* evt);
 
 lwgsm_operator_t operators[10];
 size_t operators_len;
@@ -73,32 +72,31 @@ main() {
     }
 }
 
-/* COnnection request data */
-static const
-uint8_t request_data[] = ""
-"GET / HTTP/1.1\r\n"
-"Host: example.com\r\n"
-"Connection: Close\r\n"
-"\r\n";
-
 void
 pin_evt(lwgsmr_t res, void* arg) {
+    LWGSM_UNUSED(res);
+    LWGSM_UNUSED(arg);
     printf("PIN EVT function!\r\n");
 }
 
 void
 puk_evt(lwgsmr_t res, void* arg) {
+    LWGSM_UNUSED(res);
+    LWGSM_UNUSED(arg);
     printf("PUK EVT function!\r\n");
 }
 
 /**
  * \brief           Console input thread
+ * \param[in]       arg: Thread parameter
  */
 static void
 input_thread(void* arg) {
     char buff[128];
 
 #define IS_LINE(s)      (strncmp(buff, (s), sizeof(s) - 1) == 0)
+
+    LWGSM_UNUSED(arg);
 
     /* Notify user */
     printf("Start by writing commands..\r\n");
@@ -211,6 +209,8 @@ static void
 main_thread(void* arg) {
     lwgsm_sim_state_t sim_state;
 
+    LWGSM_UNUSED(arg);
+
     /* Init GSM library */
     lwgsm_init(lwgsm_evt, 1);
 
@@ -243,46 +243,6 @@ main_thread(void* arg) {
 
     /* Terminate thread */
     lwgsm_sys_thread_terminate(NULL);
-}
-
-static lwgsmr_t
-lwgsm_conn_evt(lwgsm_evt_t* evt) {
-    lwgsm_conn_p c;
-    c = lwgsm_conn_get_from_evt(evt);
-    switch (lwgsm_evt_get_type(evt)) {
-#if LWGSM_CFG_CONN
-        case LWGSM_EVT_CONN_ACTIVE: {
-            printf("Connection active\r\n");
-            //lwgsm_conn_send(c, request_data, sizeof(request_data) - 1, NULL, 0);
-            break;
-        }
-        case LWGSM_EVT_CONN_ERROR: {
-            printf("Connection error\r\n");
-            break;
-        }
-        case LWGSM_EVT_CONN_CLOSE: {
-            printf("Connection closed\r\n");
-            break;
-        }
-        case LWGSM_EVT_CONN_SEND: {
-            lwgsmr_t res = lwgsm_evt_conn_send_get_result(evt);
-            if (res == lwgsmOK) {
-                printf("Data sent!\r\n");
-            } else {
-                printf("Data send error!\r\n");
-            }
-            break;
-        }
-        case LWGSM_EVT_CONN_RECV: {
-            lwgsm_pbuf_p p = lwgsm_evt_conn_recv_get_buff(evt);
-            printf("DATA RECEIVED: %d\r\n", (int)lwgsm_pbuf_length(p, 1));
-            lwgsm_conn_recved(c, p);
-            break;
-        }
-#endif /* LWGSM_CFG_CONN */
-        default: break;
-    }
-    return lwgsmOK;
 }
 
 /**
