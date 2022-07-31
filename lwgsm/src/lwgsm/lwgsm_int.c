@@ -429,6 +429,8 @@ reset_connections(uint8_t forced) {
  */
 void
 lwgsmi_reset_everything(uint8_t forced) {
+    LWGSM_UNUSED(forced);
+    
     /**
      * \todo: Put stack to default state:
      *          - Close all the connection in memory

@@ -35,8 +35,7 @@
 #include "sim_manager.h"
 #include "network_utils.h"
 #include "sms_send_receive.h"
-
-static lwgsmr_t lwgsm_callback_func(lwgsm_evt_t* evt);
+#include "examples_common_lwgsm_callback_func.h"
 
 /**
  * \brief           Program entry point
@@ -46,7 +45,7 @@ main(void) {
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
-    if (lwgsm_init(lwgsm_callback_func, 1) != lwgsmOK) {
+    if (lwgsm_init(examples_common_lwgsm_callback_func, 1) != lwgsmOK) {
         printf("Cannot initialize LwGSM\r\n");
     }
 
@@ -71,27 +70,4 @@ main(void) {
     }
 
     return 0;
-}
-
-/**
- * \brief           Event callback function for GSM stack
- * \param[in]       evt: Event information with data
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
- */
-static lwgsmr_t
-lwgsm_callback_func(lwgsm_evt_t* evt) {
-    switch (lwgsm_evt_get_type(evt)) {
-        case LWGSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
-        /* Process and print registration change */
-        case LWGSM_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;
-        /* Process current network operator */
-        case LWGSM_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
-        /* Process signal strength */
-        case LWGSM_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
-
-        /* Other user events here... */
-
-        default: break;
-    }
-    return lwgsmOK;
 }
