@@ -1,0 +1,84 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "default",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "toolchainFile": "${sourceDir}/../../cmake/i686-w64-mingw32-gcc.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "call_rtos",
+            "inherits": "default",
+            "cacheVariables": {
+                "PROJECT_NAME": "call_rtos"
+            }
+        },
+        {
+            "name": "call_sms_rtos",
+            "inherits": "default",
+            "cacheVariables": {
+                "PROJECT_NAME": "call_sms_rtos"
+            }
+        },
+        {
+            "name": "device_info_rtos",
+            "inherits": "default",
+            "cacheVariables": {
+                "PROJECT_NAME": "device_info_rtos"
+            }
+        },
+        {
+            "name": "mqtt_client_api_rtos",
+            "inherits": "default",
+            "cacheVariables": {
+                "PROJECT_NAME": "mqtt_client_api_rtos"
+            }
+        },
+        {
+            "name": "netconn_client_rtos",
+            "inherits": "default",
+            "cacheVariables": {
+                "PROJECT_NAME": "netconn_client_rtos"
+            }
+        },
+        {
+            "name": "sms_send_receive_rtos",
+            "inherits": "default",
+            "cacheVariables": {
+                "PROJECT_NAME": "sms_send_receive_rtos"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "call_rtos",
+            "configurePreset": "call_rtos"
+        },
+        {
+            "name": "call_sms_rtos",
+            "configurePreset": "call_sms_rtos"
+        },
+        {
+            "name": "device_info_rtos",
+            "configurePreset": "device_info_rtos"
+        },
+        {
+            "name": "mqtt_client_api_rtos",
+            "configurePreset": "mqtt_client_api_rtos"
+        },
+        {
+            "name": "netconn_client_rtos",
+            "configurePreset": "netconn_client_rtos"
+        },
+        {
+            "name": "sms_send_receive_rtos",
+            "configurePreset": "sms_send_receive_rtos"
+        }
+    ]
+}
