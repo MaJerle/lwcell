@@ -321,19 +321,8 @@ lwgsm_conn_send(lwgsm_conn_p conn, const void* data, size_t btw, size_t* const b
  */
 lwgsmr_t
 lwgsm_conn_recved(lwgsm_conn_p conn, lwgsm_pbuf_p pbuf) {
-#if LWGSM_CFG_CONN_MANUAL_TCP_RECEIVE
-    size_t len;
-    len = lwgsm_pbuf_length(pbuf, 1);           /* Get length of pbuf */
-    if (conn->tcp_available_data > len) {
-        conn->tcp_available_data -= len;        /* Decrease for available length */
-        if (conn->tcp_available_data > 0) {
-            /* Start new manual receive here... */
-        }
-    }
-#else /* LWGSM_CFG_CONN_MANUAL_TCP_RECEIVE */
     LWGSM_UNUSED(conn);
     LWGSM_UNUSED(pbuf);
-#endif /* !LWGSM_CFG_CONN_MANUAL_TCP_RECEIVE */
     return lwgsmOK;
 }
 

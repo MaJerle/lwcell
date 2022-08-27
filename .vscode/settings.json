@@ -4,7 +4,11 @@
         "lwevt_type.h": "c",
         "lwevt.h": "c",
         "string.h": "c",
-        "lwevt_opt.h": "c"
+        "lwevt_opt.h": "c",
+        "lwgsm_private.h": "c",
+        "lwgsm.h": "c",
+        "lwgsm_includes.h": "c",
+        "lwgsm_opt.h": "c"
     },
     "esbonio.sphinx.confDir": ""
 }
