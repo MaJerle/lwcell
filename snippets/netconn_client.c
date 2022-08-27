@@ -49,7 +49,7 @@ netconn_client_thread(void const* arg) {
          * Function will block thread until we are successfully connected (or not) to server
          */
         if ((res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT)) == lwgsmOK) {
-            printf("Connected to " NETCONN_HOST "\r\n");
+            printf("Connected to %s\r\n", NETCONN_HOST);
             
             /* Send data to server */
             if ((res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1)) == lwgsmOK) {

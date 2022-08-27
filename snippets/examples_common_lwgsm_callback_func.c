@@ -38,7 +38,6 @@ examples_common_lwgsm_callback_func(lwgsm_evt_t* evt) {
         }
 
         /* Other user events here... */
-
         default: break;
     }
     return lwgsmOK;

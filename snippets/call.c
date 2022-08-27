@@ -56,6 +56,5 @@ call_evt_func(lwgsm_evt_t* evt) {
         default:
             break;
     }
-
     return lwgsmOK;
 }
