@@ -10,6 +10,7 @@
 - Add optional keep-alive system period event
 - Add `LWGSM ` prefix for debug messages
 - Update code style with astyle
+- Add `.clang-format` draft
 
 ## v0.1.1
 
