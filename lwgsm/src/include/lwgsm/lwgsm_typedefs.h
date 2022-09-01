@@ -653,6 +653,17 @@ typedef struct {
  */
 typedef void (*lwgsm_api_cmd_evt_fn)(lwgsmr_t res, void* arg);
 
+/**
+ * \ingroup         LWGSM_UNICODE
+ * \brief           Unicode support structure
+ */
+typedef struct {
+    uint8_t ch[4]; /*!< UTF-8 max characters */
+    uint8_t t;     /*!< Total expected length in UTF-8 sequence */
+    uint8_t r;     /*!< Remaining bytes in UTF-8 sequence */
+    lwgsmr_t res;  /*!< Current result of processing */
+} lwgsm_unicode_t;
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
