@@ -47,12 +47,13 @@ extern "C" {
  * \{
  */
 
-lwgsmr_t      lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t      lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-lwgsmr_t      lwgsm_call_start(const char* number, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t      lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t      lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t lwgsm_call_start(const char* number, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                          const uint32_t blocking);
+lwgsmr_t lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwgsmr_t lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

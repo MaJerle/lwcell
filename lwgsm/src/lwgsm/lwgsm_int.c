@@ -31,11 +31,11 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
-#include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_int.h"
+#include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_parser.h"
+#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_unicode.h"
 #include "system/lwgsm_ll.h"
 
@@ -44,36 +44,72 @@
  * \brief           Receive character structure to handle full line terminated with `\n` character
  */
 typedef struct {
-    char data[128];                             /*!< Received characters */
-    size_t len;                                 /*!< Length of valid characters */
+    char data[128]; /*!< Received characters */
+    size_t len;     /*!< Length of valid characters */
 } lwgsm_recv_t;
 
 /* Receive character macros */
-#define RECV_ADD(ch)                        do { if (recv_buff.len < (sizeof(recv_buff.data)) - 1) { recv_buff.data[recv_buff.len++] = ch; recv_buff.data[recv_buff.len] = 0; } } while (0)
-#define RECV_RESET()                        do { recv_buff.len = 0; recv_buff.data[0] = 0; } while (0)
-#define RECV_LEN()                          ((size_t)recv_buff.len)
-#define RECV_IDX(index)                     recv_buff.data[index]
+#define RECV_ADD(ch)                                                                                                   \
+    do {                                                                                                               \
+        if (recv_buff.len < (sizeof(recv_buff.data)) - 1) {                                                            \
+            recv_buff.data[recv_buff.len++] = ch;                                                                      \
+            recv_buff.data[recv_buff.len] = 0;                                                                         \
+        }                                                                                                              \
+    } while (0)
+#define RECV_RESET()                                                                                                   \
+    do {                                                                                                               \
+        recv_buff.len = 0;                                                                                             \
+        recv_buff.data[0] = 0;                                                                                         \
+    } while (0)
+#define RECV_LEN()                  ((size_t)recv_buff.len)
+#define RECV_IDX(index)             recv_buff.data[index]
 
 /* Send data over AT port */
-#define AT_PORT_SEND_STR(str)               lwgsm.ll.send_fn((const void *)(str), (size_t)strlen(str))
-#define AT_PORT_SEND_CONST_STR(str)         lwgsm.ll.send_fn((const void *)(str), (size_t)(sizeof(str) - 1))
-#define AT_PORT_SEND_CHR(ch)                lwgsm.ll.send_fn((const void *)(ch), (size_t)1)
-#define AT_PORT_SEND_FLUSH()                lwgsm.ll.send_fn(NULL, 0)
-#define AT_PORT_SEND(d, l)                  lwgsm.ll.send_fn((const void *)(d), (size_t)(l))
-#define AT_PORT_SEND_WITH_FLUSH(d, l)       do { AT_PORT_SEND((d), (l)); AT_PORT_SEND_FLUSH(); } while (0)
+#define AT_PORT_SEND_STR(str)       lwgsm.ll.send_fn((const void*)(str), (size_t)strlen(str))
+#define AT_PORT_SEND_CONST_STR(str) lwgsm.ll.send_fn((const void*)(str), (size_t)(sizeof(str) - 1))
+#define AT_PORT_SEND_CHR(ch)        lwgsm.ll.send_fn((const void*)(ch), (size_t)1)
+#define AT_PORT_SEND_FLUSH()        lwgsm.ll.send_fn(NULL, 0)
+#define AT_PORT_SEND(d, l)          lwgsm.ll.send_fn((const void*)(d), (size_t)(l))
+#define AT_PORT_SEND_WITH_FLUSH(d, l)                                                                                  \
+    do {                                                                                                               \
+        AT_PORT_SEND((d), (l));                                                                                        \
+        AT_PORT_SEND_FLUSH();                                                                                          \
+    } while (0)
 
 /* Beginning and end of every AT command */
-#define AT_PORT_SEND_BEGIN_AT()             do { AT_PORT_SEND_CONST_STR("AT"); } while (0)
-#define AT_PORT_SEND_END_AT()               do { AT_PORT_SEND(CRLF, CRLF_LEN); AT_PORT_SEND(NULL, 0); } while (0)
+#define AT_PORT_SEND_BEGIN_AT()                                                                                        \
+    do {                                                                                                               \
+        AT_PORT_SEND_CONST_STR("AT");                                                                                  \
+    } while (0)
+#define AT_PORT_SEND_END_AT()                                                                                          \
+    do {                                                                                                               \
+        AT_PORT_SEND(CRLF, CRLF_LEN);                                                                                  \
+        AT_PORT_SEND(NULL, 0);                                                                                         \
+    } while (0)
 
 /* Send special characters over AT port with condition */
-#define AT_PORT_SEND_QUOTE_COND(q)          do { if ((q)) { AT_PORT_SEND_CONST_STR("\""); } } while (0)
-#define AT_PORT_SEND_COMMA_COND(c)          do { if ((c)) { AT_PORT_SEND_CONST_STR(","); } } while (0)
-#define AT_PORT_SEND_EQUAL_COND(e)          do { if ((e)) { AT_PORT_SEND_CONST_STR("="); } } while (0)
+#define AT_PORT_SEND_QUOTE_COND(q)                                                                                     \
+    do {                                                                                                               \
+        if ((q)) {                                                                                                     \
+            AT_PORT_SEND_CONST_STR("\"");                                                                              \
+        }                                                                                                              \
+    } while (0)
+#define AT_PORT_SEND_COMMA_COND(c)                                                                                     \
+    do {                                                                                                               \
+        if ((c)) {                                                                                                     \
+            AT_PORT_SEND_CONST_STR(",");                                                                               \
+        }                                                                                                              \
+    } while (0)
+#define AT_PORT_SEND_EQUAL_COND(e)                                                                                     \
+    do {                                                                                                               \
+        if ((e)) {                                                                                                     \
+            AT_PORT_SEND_CONST_STR("=");                                                                               \
+        }                                                                                                              \
+    } while (0)
 
 /* Send special characters */
-#define AT_PORT_SEND_CTRL_Z()               AT_PORT_SEND_STR("\x1A")
-#define AT_PORT_SEND_ESC()                  AT_PORT_SEND_STR("\x1B")
+#define AT_PORT_SEND_CTRL_Z() AT_PORT_SEND_STR("\x1A")
+#define AT_PORT_SEND_ESC()    AT_PORT_SEND_STR("\x1B")
 #endif /* !__DOXYGEN__ */
 
 static lwgsm_recv_t recv_buff;
@@ -82,46 +118,43 @@ static lwgsmr_t lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_
 /**
  * \brief           Memory mapping
  */
-const lwgsm_dev_mem_map_t
-lwgsm_dev_mem_map[] = {
-#define LWGSM_DEV_MEMORY_ENTRY(name, str_code)    { LWGSM_MEM_ ## name, str_code },
+const lwgsm_dev_mem_map_t lwgsm_dev_mem_map[] = {
+#define LWGSM_DEV_MEMORY_ENTRY(name, str_code) {LWGSM_MEM_##name, str_code},
 #include "lwgsm/lwgsm_memories.h"
 };
 
 /**
  * \brief           Size of device memory mapping array
  */
-const size_t
-lwgsm_dev_mem_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_mem_map);
+const size_t lwgsm_dev_mem_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_mem_map);
 
 /**
  * \brief           List of supported devices
  */
-const lwgsm_dev_model_map_t
-lwgsm_dev_model_map[] = {
-#define LWGSM_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte)     { LWGSM_DEVICE_MODEL_ ## name, str_id, is_2g, is_lte },
+const lwgsm_dev_model_map_t lwgsm_dev_model_map[] = {
+#define LWGSM_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte) {LWGSM_DEVICE_MODEL_##name, str_id, is_2g, is_lte},
 #include "lwgsm/lwgsm_models.h"
 };
 
 /**
  * \brief           Size of device models mapping array
  */
-const size_t
-lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
+const size_t lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
 
 /**
  * \brief           Free connection send data memory
  * \param[in]       m: Send data message type
  */
-#define CONN_SEND_DATA_FREE(m)      do {            \
-        if ((m) != NULL && (m)->msg.conn_send.fau) {    \
-            (m)->msg.conn_send.fau = 0;                 \
-            if ((m)->msg.conn_send.data != NULL) {      \
-                LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,   \
-                             "[LWGSM CONN] Free write buffer fau: %p\r\n", (void *)(m)->msg.conn_send.data);   \
-                lwgsm_mem_free_s((void **)&((m)->msg.conn_send.data)); \
-            }                                           \
-        }                                               \
+#define CONN_SEND_DATA_FREE(m)                                                                                         \
+    do {                                                                                                               \
+        if ((m) != NULL && (m)->msg.conn_send.fau) {                                                                   \
+            (m)->msg.conn_send.fau = 0;                                                                                \
+            if ((m)->msg.conn_send.data != NULL) {                                                                     \
+                LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Free write buffer fau: %p\r\n",  \
+                             (void*)(m)->msg.conn_send.data);                                                          \
+                lwgsm_mem_free_s((void**)&((m)->msg.conn_send.data));                                                  \
+            }                                                                                                          \
+        }                                                                                                              \
     } while (0)
 
 /**
@@ -129,13 +162,14 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
  * \param[in]       m: Command message
  * \param[in]       err: Error of type \ref lwgsmr_t
  */
-#define CONN_SEND_DATA_SEND_EVT(m, err)  do { \
-        CONN_SEND_DATA_FREE(m);                         \
-        lwgsm.evt.type = LWGSM_EVT_CONN_SEND;               \
-        lwgsm.evt.evt.conn_data_send.res = err;           \
-        lwgsm.evt.evt.conn_data_send.conn = (m)->msg.conn_send.conn;  \
-        lwgsm.evt.evt.conn_data_send.sent = (m)->msg.conn_send.sent_all;  \
-        lwgsmi_send_conn_cb((m)->msg.conn_send.conn, NULL);   \
+#define CONN_SEND_DATA_SEND_EVT(m, err)                                                                                \
+    do {                                                                                                               \
+        CONN_SEND_DATA_FREE(m);                                                                                        \
+        lwgsm.evt.type = LWGSM_EVT_CONN_SEND;                                                                          \
+        lwgsm.evt.evt.conn_data_send.res = err;                                                                        \
+        lwgsm.evt.evt.conn_data_send.conn = (m)->msg.conn_send.conn;                                                   \
+        lwgsm.evt.evt.conn_data_send.sent = (m)->msg.conn_send.sent_all;                                               \
+        lwgsmi_send_conn_cb((m)->msg.conn_send.conn, NULL);                                                            \
     } while (0)
 
 /**
@@ -143,9 +177,10 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
  * \param[in]       m: Command message
  * \param[in]       err: Error of type \ref lwgsmr_t
  */
-#define RESET_SEND_EVT(m, err)  do {                \
-        lwgsm.evt.evt.reset.res = err;                    \
-        lwgsmi_send_cb(LWGSM_EVT_RESET);                    \
+#define RESET_SEND_EVT(m, err)                                                                                         \
+    do {                                                                                                               \
+        lwgsm.evt.evt.reset.res = err;                                                                                 \
+        lwgsmi_send_cb(LWGSM_EVT_RESET);                                                                               \
     } while (0)
 
 /**
@@ -153,9 +188,10 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
  * \param[in]       m: Connection send message
  * \param[in]       err: Error of type \ref lwgsmr_t
  */
-#define RESTORE_SEND_EVT(m, err)  do {              \
-        lwgsm.evt.evt.restore.res = err;                  \
-        lwgsmi_send_cb(LWGSM_EVT_RESTORE);                  \
+#define RESTORE_SEND_EVT(m, err)                                                                                       \
+    do {                                                                                                               \
+        lwgsm.evt.evt.restore.res = err;                                                                               \
+        lwgsmi_send_cb(LWGSM_EVT_RESTORE);                                                                             \
     } while (0)
 
 /**
@@ -163,11 +199,12 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
  * \param[in]       m: Command message
  * \param[in]       err: Error of type \ref lwgsmr_t
  */
-#define OPERATOR_SCAN_SEND_EVT(m, err)  do {        \
-        lwgsm.evt.evt.operator_scan.res = err;            \
-        lwgsm.evt.evt.operator_scan.ops = (m)->msg.cops_scan.ops; \
-        lwgsm.evt.evt.operator_scan.opf = *(m)->msg.cops_scan.opf;\
-        lwgsmi_send_cb(LWGSM_EVT_OPERATOR_SCAN);            \
+#define OPERATOR_SCAN_SEND_EVT(m, err)                                                                                 \
+    do {                                                                                                               \
+        lwgsm.evt.evt.operator_scan.res = err;                                                                         \
+        lwgsm.evt.evt.operator_scan.ops = (m)->msg.cops_scan.ops;                                                      \
+        lwgsm.evt.evt.operator_scan.opf = *(m)->msg.cops_scan.opf;                                                     \
+        lwgsmi_send_cb(LWGSM_EVT_OPERATOR_SCAN);                                                                       \
     } while (0)
 
 /**
@@ -175,11 +212,12 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
 * \param[in]       m: SMS delete message
 * \param[in]       err: Error of type \ref lwgsmr_t
 */
-#define SMS_SEND_DELETE_EVT(m, err)     do {        \
-        lwgsm.evt.evt.sms_delete.res = err;               \
-        lwgsm.evt.evt.sms_delete.mem = (m)->msg.sms_delete.mem;   \
-        lwgsm.evt.evt.sms_delete.pos = (m)->msg.sms_delete.pos;   \
-        lwgsmi_send_cb(LWGSM_EVT_SMS_DELETE);               \
+#define SMS_SEND_DELETE_EVT(m, err)                                                                                    \
+    do {                                                                                                               \
+        lwgsm.evt.evt.sms_delete.res = err;                                                                            \
+        lwgsm.evt.evt.sms_delete.mem = (m)->msg.sms_delete.mem;                                                        \
+        lwgsm.evt.evt.sms_delete.pos = (m)->msg.sms_delete.pos;                                                        \
+        lwgsmi_send_cb(LWGSM_EVT_SMS_DELETE);                                                                          \
     } while (0)
 
 /**
@@ -187,10 +225,11 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
  * \param[in]       m: SMS read message
  * \param[in]       err: Error of type \ref lwgsmr_t
  */
-#define SMS_SEND_READ_EVT(m, err)     do {          \
-        lwgsm.evt.evt.sms_read.res = err;                 \
-        lwgsm.evt.evt.sms_read.entry = (m)->msg.sms_read.entry;   \
-        lwgsmi_send_cb(LWGSM_EVT_SMS_READ);                 \
+#define SMS_SEND_READ_EVT(m, err)                                                                                      \
+    do {                                                                                                               \
+        lwgsm.evt.evt.sms_read.res = err;                                                                              \
+        lwgsm.evt.evt.sms_read.entry = (m)->msg.sms_read.entry;                                                        \
+        lwgsmi_send_cb(LWGSM_EVT_SMS_READ);                                                                            \
     } while (0)
 
 /**
@@ -198,12 +237,13 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
  * \param[in]       mm: SMS list message
  * \param[in]       err: Error of type \ref lwgsmr_t
  */
-#define SMS_SEND_LIST_EVT(mm, err)     do {        \
-        lwgsm.evt.evt.sms_list.mem = lwgsm.m.sms.mem[0].current;\
-        lwgsm.evt.evt.sms_list.entries = (mm)->msg.sms_list.entries;  \
-        lwgsm.evt.evt.sms_list.size = (mm)->msg.sms_list.ei;  \
-        lwgsm.evt.evt.sms_list.res = err;                 \
-        lwgsmi_send_cb(LWGSM_EVT_SMS_LIST);                 \
+#define SMS_SEND_LIST_EVT(mm, err)                                                                                     \
+    do {                                                                                                               \
+        lwgsm.evt.evt.sms_list.mem = lwgsm.m.sms.mem[0].current;                                                       \
+        lwgsm.evt.evt.sms_list.entries = (mm)->msg.sms_list.entries;                                                   \
+        lwgsm.evt.evt.sms_list.size = (mm)->msg.sms_list.ei;                                                           \
+        lwgsm.evt.evt.sms_list.res = err;                                                                              \
+        lwgsmi_send_cb(LWGSM_EVT_SMS_LIST);                                                                            \
     } while (0)
 
 /**
@@ -211,10 +251,11 @@ lwgsm_dev_model_map_size = LWGSM_ARRAYSIZE(lwgsm_dev_model_map);
  * \param[in]       m: SMS send message
  * \param[in]       err: Error of type \ref lwgsmr_t
  */
-#define SMS_SEND_SEND_EVT(m, err)     do {          \
-        lwgsm.evt.evt.sms_send.pos = (m)->msg.sms_send.pos;   \
-        lwgsm.evt.evt.sms_send.res = err;                 \
-        lwgsmi_send_cb(LWGSM_EVT_SMS_SEND);                 \
+#define SMS_SEND_SEND_EVT(m, err)                                                                                      \
+    do {                                                                                                               \
+        lwgsm.evt.evt.sms_send.pos = (m)->msg.sms_send.pos;                                                            \
+        lwgsm.evt.evt.sms_send.res = err;                                                                              \
+        lwgsmi_send_cb(LWGSM_EVT_SMS_SEND);                                                                            \
     } while (0)
 
 /**
@@ -247,24 +288,24 @@ lwgsmi_send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     const lwgsm_mac_t* mac = d;
     const lwgsm_ip_t* ip = d;
 
-    AT_PORT_SEND_COMMA_COND(c);                 /* Send comma */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
     if (d == NULL) {
         return;
     }
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
-    ch = is_ip ? '.' : ':';                     /* Get delimiter character */
-    for (uint8_t i = 0; i < (is_ip ? 4 : 6); ++i) { /* Process byte by byte */
-        if (is_ip) {                            /* In case of IP ... */
-            lwgsm_u8_to_str(ip->ip[i], str);    /* ... go to decimal format ... */
-        } else {                                /* ... in case of MAC ... */
-            lwgsm_u8_to_hex_str(mac->mac[i], str, 2);   /* ... go to HEX format */
+    AT_PORT_SEND_QUOTE_COND(q);                       /* Send quote */
+    ch = is_ip ? '.' : ':';                           /* Get delimiter character */
+    for (uint8_t i = 0; i < (is_ip ? 4 : 6); ++i) {   /* Process byte by byte */
+        if (is_ip) {                                  /* In case of IP ... */
+            lwgsm_u8_to_str(ip->ip[i], str);          /* ... go to decimal format ... */
+        } else {                                      /* ... in case of MAC ... */
+            lwgsm_u8_to_hex_str(mac->mac[i], str, 2); /* ... go to HEX format */
         }
-        AT_PORT_SEND_STR(str);                  /* Send str */
-        if (i < (is_ip ? 4 : 6) - 1) {          /* Check end if characters */
-            AT_PORT_SEND_CHR(&ch);              /* Send character */
+        AT_PORT_SEND_STR(str);         /* Send str */
+        if (i < (is_ip ? 4 : 6) - 1) { /* Check end if characters */
+            AT_PORT_SEND_CHR(&ch);     /* Send character */
         }
     }
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -278,22 +319,22 @@ void
 lwgsmi_send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
     char special = '\\';
 
-    AT_PORT_SEND_COMMA_COND(c);                 /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
     if (str != NULL) {
-        if (e) {                                /* Do we have to escape string? */
-            while (*str) {                      /* Go through string */
-                if (*str == ',' || *str == '"' || *str == '\\') {   /* Check for special character */
-                    AT_PORT_SEND_CHR(&special); /* Send special character */
+        if (e) {                                                  /* Do we have to escape string? */
+            while (*str) {                                        /* Go through string */
+                if (*str == ',' || *str == '"' || *str == '\\') { /* Check for special character */
+                    AT_PORT_SEND_CHR(&special);                   /* Send special character */
                 }
-                AT_PORT_SEND_CHR(str);          /* Send character */
+                AT_PORT_SEND_CHR(str); /* Send character */
                 ++str;
             }
         } else {
-            AT_PORT_SEND_STR(str);              /* Send plain string */
+            AT_PORT_SEND_STR(str); /* Send plain string */
         }
     }
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -306,12 +347,12 @@ void
 lwgsmi_send_number(uint32_t num, uint8_t q, uint8_t c) {
     char str[11];
 
-    lwgsm_u32_to_str(num, str);                 /* Convert digit to decimal string */
+    lwgsm_u32_to_str(num, str); /* Convert digit to decimal string */
 
-    AT_PORT_SEND_COMMA_COND(c);                 /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
-    AT_PORT_SEND_STR(str);                      /* Send string with number */
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
+    AT_PORT_SEND_STR(str);      /* Send string with number */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -324,12 +365,12 @@ void
 lwgsmi_send_port(lwgsm_port_t port, uint8_t q, uint8_t c) {
     char str[6];
 
-    lwgsm_u16_to_str(LWGSM_PORT2NUM(port), str);/* Convert digit to decimal string */
+    lwgsm_u16_to_str(LWGSM_PORT2NUM(port), str); /* Convert digit to decimal string */
 
-    AT_PORT_SEND_COMMA_COND(c);                 /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
-    AT_PORT_SEND_STR(str);                      /* Send string with number */
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
+    AT_PORT_SEND_STR(str);      /* Send string with number */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -342,12 +383,12 @@ void
 lwgsmi_send_signed_number(int32_t num, uint8_t q, uint8_t c) {
     char str[11];
 
-    lwgsm_i32_to_str(num, str);                 /* Convert digit to decimal string */
+    lwgsm_i32_to_str(num, str); /* Convert digit to decimal string */
 
-    AT_PORT_SEND_COMMA_COND(c);                 /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
-    AT_PORT_SEND_STR(str);                      /* Send string with number */
-    AT_PORT_SEND_QUOTE_COND(q);                 /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
+    AT_PORT_SEND_STR(str);      /* Send string with number */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -358,7 +399,7 @@ lwgsmi_send_signed_number(int32_t num, uint8_t q, uint8_t c) {
  */
 void
 lwgsmi_send_dev_memory(lwgsm_mem_t mem, uint8_t q, uint8_t c) {
-    if (mem < LWGSM_MEM_END) {                  /* Check valid range */
+    if (mem < LWGSM_MEM_END) { /* Check valid range */
         lwgsmi_send_string(lwgsm_dev_mem_map[LWGSM_SZ(mem)].mem_str, 0, q, c);
     }
 }
@@ -410,13 +451,13 @@ reset_connections(uint8_t forced) {
     lwgsm.evt.evt.conn_active_close.forced = forced;
     lwgsm.evt.evt.conn_active_close.res = lwgsmOK;
 
-    for (size_t i = 0; i < LWGSM_CFG_MAX_CONNS; ++i) {  /* Check all connections */
+    for (size_t i = 0; i < LWGSM_CFG_MAX_CONNS; ++i) { /* Check all connections */
         if (lwgsm.m.conns[i].status.f.active) {
             lwgsm.m.conns[i].status.f.active = 0;
 
             lwgsm.evt.evt.conn_active_close.conn = &lwgsm.m.conns[i];
             lwgsm.evt.evt.conn_active_close.client = lwgsm.m.conns[i].status.f.client;
-            lwgsmi_send_conn_cb(&lwgsm.m.conns[i], NULL);   /* Send callback function */
+            lwgsmi_send_conn_cb(&lwgsm.m.conns[i], NULL); /* Send callback function */
         }
     }
 }
@@ -430,7 +471,7 @@ reset_connections(uint8_t forced) {
 void
 lwgsmi_reset_everything(uint8_t forced) {
     LWGSM_UNUSED(forced);
-    
+
     /**
      * \todo: Put stack to default state:
      *          - Close all the connection in memory
@@ -461,7 +502,7 @@ lwgsmi_reset_everything(uint8_t forced) {
     LWGSM_MEMSET(&lwgsm.m, 0x00, sizeof(lwgsm.m));
 
     /* Manually set states */
-    lwgsm.m.sim.state = (lwgsm_sim_state_t) -1;
+    lwgsm.m.sim.state = (lwgsm_sim_state_t)-1;
     lwgsm.m.model = LWGSM_DEVICE_MODEL_UNKNOWN;
 }
 
@@ -472,7 +513,7 @@ lwgsmi_reset_everything(uint8_t forced) {
  */
 lwgsmr_t
 lwgsmi_send_cb(lwgsm_evt_type_t type) {
-    lwgsm.evt.type = type;                      /* Set callback type to process */
+    lwgsm.evt.type = type; /* Set callback type to process */
 
     /* Call callback function for all registered functions */
     for (lwgsm_evt_func_t* link = lwgsm.evt_func; link != NULL; link = link->next) {
@@ -492,14 +533,14 @@ lwgsmi_send_cb(lwgsm_evt_type_t type) {
  */
 lwgsmr_t
 lwgsmi_send_conn_cb(lwgsm_conn_t* conn, lwgsm_evt_fn evt) {
-    if (conn->status.f.in_closing && lwgsm.evt.type != LWGSM_EVT_CONN_CLOSE) {  /* Do not continue if in closing mode */
+    if (conn->status.f.in_closing && lwgsm.evt.type != LWGSM_EVT_CONN_CLOSE) { /* Do not continue if in closing mode */
         /* return lwgsmOK; */
     }
 
-    if (evt != NULL) {                          /* Try with user connection */
-        return evt(&lwgsm.evt);                 /* Call temporary function */
-    } else if (conn != NULL && conn->evt_func != NULL) {/* Connection custom callback? */
-        return conn->evt_func(&lwgsm.evt);      /* Process callback function */
+    if (evt != NULL) {                                   /* Try with user connection */
+        return evt(&lwgsm.evt);                          /* Call temporary function */
+    } else if (conn != NULL && conn->evt_func != NULL) { /* Connection custom callback? */
+        return conn->evt_func(&lwgsm.evt);               /* Process callback function */
     } else if (conn == NULL) {
         return lwgsmOK;
     }
@@ -527,9 +568,9 @@ lwgsmi_send_conn_cb(lwgsm_conn_t* conn, lwgsm_evt_fn evt) {
 static lwgsmr_t
 lwgsmi_tcpip_process_send_data(void) {
     lwgsm_conn_t* c = lwgsm.msg->msg.conn_send.conn;
-    if (!lwgsm_conn_is_active(c) ||             /* Is the connection already closed? */
-        lwgsm.msg->msg.conn_send.val_id != c->val_id/* Did validation ID change after we set parameter? */
-       ) {
+    if (!lwgsm_conn_is_active(c) ||                  /* Is the connection already closed? */
+        lwgsm.msg->msg.conn_send.val_id != c->val_id /* Did validation ID change after we set parameter? */
+    ) {
         /* Send event to user about failed send event */
         CONN_SEND_DATA_SEND_EVT(lwgsm.msg, lwgsmCLOSED);
         return lwgsmERR;
@@ -538,14 +579,14 @@ lwgsmi_tcpip_process_send_data(void) {
 
     AT_PORT_SEND_BEGIN_AT();
     AT_PORT_SEND_CONST_STR("+CIPSEND=");
-    lwgsmi_send_number(LWGSM_U32(c->num), 0, 0);/* Send connection number */
+    lwgsmi_send_number(LWGSM_U32(c->num), 0, 0);                        /* Send connection number */
     lwgsmi_send_number(LWGSM_U32(lwgsm.msg->msg.conn_send.sent), 0, 1); /* Send length number */
 
     /* On UDP connections, IP address and port may be selected */
     if (c->type == LWGSM_CONN_TYPE_UDP) {
         if (lwgsm.msg->msg.conn_send.remote_ip != NULL && lwgsm.msg->msg.conn_send.remote_port) {
-            lwgsmi_send_ip_mac(lwgsm.msg->msg.conn_send.remote_ip, 1, 1, 1);/* Send IP address including quotes */
-            lwgsmi_send_port(lwgsm.msg->msg.conn_send.remote_port, 0, 1);   /* Send length number */
+            lwgsmi_send_ip_mac(lwgsm.msg->msg.conn_send.remote_ip, 1, 1, 1); /* Send IP address including quotes */
+            lwgsmi_send_port(lwgsm.msg->msg.conn_send.remote_port, 0, 1);    /* Send length number */
         }
     }
     AT_PORT_SEND_END_AT();
@@ -560,7 +601,7 @@ lwgsmi_tcpip_process_send_data(void) {
  */
 static uint8_t
 lwgsmi_tcpip_process_data_sent(uint8_t sent) {
-    if (sent) {                                 /* Data were successfully sent */
+    if (sent) { /* Data were successfully sent */
         lwgsm.msg->msg.conn_send.sent_all += lwgsm.msg->msg.conn_send.sent;
         lwgsm.msg->msg.conn_send.btw -= lwgsm.msg->msg.conn_send.sent;
         lwgsm.msg->msg.conn_send.ptr += lwgsm.msg->msg.conn_send.sent;
@@ -568,19 +609,20 @@ lwgsmi_tcpip_process_data_sent(uint8_t sent) {
             *lwgsm.msg->msg.conn_send.bw += lwgsm.msg->msg.conn_send.sent;
         }
         lwgsm.msg->msg.conn_send.tries = 0;
-    } else {                                    /* We were not successful */
-        ++lwgsm.msg->msg.conn_send.tries;       /* Increase number of tries */
-        if (lwgsm.msg->msg.conn_send.tries == LWGSM_CFG_MAX_SEND_RETRIES) { /* In case we reached max number of retransmissions */
-            return 1;                           /* Return 1 and indicate error */
+    } else {                              /* We were not successful */
+        ++lwgsm.msg->msg.conn_send.tries; /* Increase number of tries */
+        if (lwgsm.msg->msg.conn_send.tries
+            == LWGSM_CFG_MAX_SEND_RETRIES) { /* In case we reached max number of retransmissions */
+            return 1;                        /* Return 1 and indicate error */
         }
     }
-    if (lwgsm.msg->msg.conn_send.btw > 0) {     /* Do we still have data to send? */
-        if (lwgsmi_tcpip_process_send_data() != lwgsmOK) {  /* Check if we can continue */
-            return 1;                           /* Finish at this point */
+    if (lwgsm.msg->msg.conn_send.btw > 0) {                /* Do we still have data to send? */
+        if (lwgsmi_tcpip_process_send_data() != lwgsmOK) { /* Check if we can continue */
+            return 1;                                      /* Finish at this point */
         }
-        return 0;                               /* We still have data to send */
+        return 0; /* We still have data to send */
     }
-    return 1;                                   /* Everything was sent, we can stop execution */
+    return 1; /* Everything was sent, we can stop execution */
 }
 
 /**
@@ -602,7 +644,8 @@ lwgsmi_process_cipsend_response(lwgsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_
                 }
             } else if (!strncmp(&rcv->data[3], "SEND FAIL" CRLF, 9 + CRLF_LEN)) {
                 lwgsm.msg->msg.conn_send.wait_send_ok_err = 0;
-                *is_error = lwgsmi_tcpip_process_data_sent(0);  /* Data were not sent due to SEND FAIL or command didn't even start */
+                *is_error = lwgsmi_tcpip_process_data_sent(
+                    0); /* Data were not sent due to SEND FAIL or command didn't even start */
                 if (*is_error && lwgsm.msg->msg.conn_send.conn->status.f.active) {
                     CONN_SEND_DATA_SEND_EVT(lwgsm.msg, lwgsmERR);
                 }
@@ -622,7 +665,7 @@ lwgsmi_process_cipsend_response(lwgsm_recv_t* rcv, uint8_t* is_ok, uint16_t* is_
  */
 static void
 lwgsmi_send_conn_error_cb(lwgsm_msg_t* msg, lwgsmr_t error) {
-    lwgsm.evt.type = LWGSM_EVT_CONN_ERROR;      /* Connection error */
+    lwgsm.evt.type = LWGSM_EVT_CONN_ERROR; /* Connection error */
     lwgsm.evt.evt.conn_error.host = lwgsm.msg->msg.conn_start.host;
     lwgsm.evt.evt.conn_error.port = lwgsm.msg->msg.conn_start.port;
     lwgsm.evt.evt.conn_error.type = lwgsm.msg->msg.conn_start.type;
@@ -664,8 +707,8 @@ lwgsmi_conn_closed_process(uint8_t conn_num, uint8_t forced) {
 
     /* Check if write buffer is set */
     if (conn->buff.buff != NULL) {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM CONN] Free write buffer: %p\r\n", conn->buff.buff);
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Free write buffer: %p\r\n",
+                     conn->buff.buff);
         lwgsm_mem_free_s((void**)&conn->buff.buff);
     }
 
@@ -697,16 +740,16 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
     }
 
     /* Check OK response */
-    is_ok = rcv->len == (2 + CRLF_LEN) && !strcmp(rcv->data, "OK" CRLF);/* Check if received string is OK */
-    if (!is_ok) {                               /* Check for SHUT OK string */
+    is_ok = rcv->len == (2 + CRLF_LEN) && !strcmp(rcv->data, "OK" CRLF); /* Check if received string is OK */
+    if (!is_ok) {                                                        /* Check for SHUT OK string */
         is_ok = rcv->len == (7 + CRLF_LEN) && !strcmp(rcv->data, "SEND OK" CRLF);
     }
 
     /* Check error response */
-    if (!is_ok) {                               /* If still not ok, check if error? */
-        is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10);/* First check +CME coded errors */
-        if (!is_error) {                        /* Check basic error aswell */
-            is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CMS ERROR", 10);/* First check +CME coded errors */
+    if (!is_ok) {                                                                /* If still not ok, check if error? */
+        is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10); /* First check +CME coded errors */
+        if (!is_error) {                                                         /* Check basic error aswell */
+            is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CMS ERROR", 10); /* First check +CME coded errors */
             if (!is_error) {
                 is_error = !strcmp(rcv->data, "ERROR" CRLF) || !strcmp(rcv->data, "FAIL" CRLF);
             }
@@ -716,62 +759,62 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
     /* Scan received strings which start with '+' */
     if (rcv->data[0] == '+') {
         if (!strncmp(rcv->data, "+CSQ", 4)) {
-            lwgsmi_parse_csq(rcv->data);        /* Parse +CSQ response */
+            lwgsmi_parse_csq(rcv->data); /* Parse +CSQ response */
 #if LWGSM_CFG_NETWORK
         } else if (!strncmp(rcv->data, "+PDP: DEACT", 11)) {
             /* PDP has been deactivated */
-            lwgsm_network_check_status(NULL, NULL, 0);  /* Update status */
-#endif /* LWGSM_CFG_NETWORK */
+            lwgsm_network_check_status(NULL, NULL, 0); /* Update status */
+#endif                                                 /* LWGSM_CFG_NETWORK */
 #if LWGSM_CFG_CONN
         } else if (!strncmp(rcv->data, "+RECEIVE", 8)) {
-            lwgsmi_parse_ipd(rcv->data);        /* Parse IPD */
-#endif /* LWGSM_CFG_CONN */
-        } else if (!strncmp(rcv->data, "+CREG", 5)) {   /* Check for +CREG indication */
+            lwgsmi_parse_ipd(rcv->data);                                            /* Parse IPD */
+#endif                                                                              /* LWGSM_CFG_CONN */
+        } else if (!strncmp(rcv->data, "+CREG", 5)) {                               /* Check for +CREG indication */
             lwgsmi_parse_creg(rcv->data, LWGSM_U8(CMD_IS_CUR(LWGSM_CMD_CREG_GET))); /* Parse +CREG response */
-        } else if (!strncmp(rcv->data, "+CPIN", 5)) {   /* Check for +CPIN indication for SIM */
-            lwgsmi_parse_cpin(rcv->data, 1 /* !CMD_IS_DEF(LWGSM_CMD_CPIN_SET) */);  /* Parse +CPIN response */
+        } else if (!strncmp(rcv->data, "+CPIN", 5)) { /* Check for +CPIN indication for SIM */
+            lwgsmi_parse_cpin(rcv->data, 1 /* !CMD_IS_DEF(LWGSM_CMD_CPIN_SET) */); /* Parse +CPIN response */
         } else if (CMD_IS_CUR(LWGSM_CMD_COPS_GET) && !strncmp(rcv->data, "+COPS", 5)) {
-            lwgsmi_parse_cops(rcv->data);       /* Parse current +COPS */
+            lwgsmi_parse_cops(rcv->data); /* Parse current +COPS */
 #if LWGSM_CFG_SMS
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGS) && !strncmp(rcv->data, "+CMGS", 5)) {
             lwgsmi_parse_cmgs(rcv->data, &lwgsm.msg->msg.sms_send.pos); /* Parse +CMGS response */
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGR) && !strncmp(rcv->data, "+CMGR", 5)) {
-            if (lwgsmi_parse_cmgr(rcv->data)) { /* Parse +CMGR response */
-                lwgsm.msg->msg.sms_read.read = 2;   /* Set read flag and process the data */
+            if (lwgsmi_parse_cmgr(rcv->data)) {   /* Parse +CMGR response */
+                lwgsm.msg->msg.sms_read.read = 2; /* Set read flag and process the data */
             } else {
-                lwgsm.msg->msg.sms_read.read = 1;   /* Read but ignore data */
+                lwgsm.msg->msg.sms_read.read = 1; /* Read but ignore data */
             }
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGL) && !strncmp(rcv->data, "+CMGL", 5)) {
-            if (lwgsmi_parse_cmgl(rcv->data)) { /* Parse +CMGL response */
-                lwgsm.msg->msg.sms_list.read = 2;   /* Set read flag and process the data */
+            if (lwgsmi_parse_cmgl(rcv->data)) {   /* Parse +CMGL response */
+                lwgsm.msg->msg.sms_list.read = 2; /* Set read flag and process the data */
             } else {
-                lwgsm.msg->msg.sms_list.read = 1;   /* Read but ignore data */
+                lwgsm.msg->msg.sms_list.read = 1; /* Read but ignore data */
             }
         } else if (!strncmp(rcv->data, "+CMTI", 5)) {
-            lwgsmi_parse_cmti(rcv->data, 1);    /* Parse +CMTI response with received SMS */
+            lwgsmi_parse_cmti(rcv->data, 1); /* Parse +CMTI response with received SMS */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPMS_GET_OPT) && !strncmp(rcv->data, "+CPMS", 5)) {
-            lwgsmi_parse_cpms(rcv->data, 0);    /* Parse +CPMS with SMS memories info */
+            lwgsmi_parse_cpms(rcv->data, 0); /* Parse +CPMS with SMS memories info */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPMS_GET) && !strncmp(rcv->data, "+CPMS", 5)) {
-            lwgsmi_parse_cpms(rcv->data, 1);    /* Parse +CPMS with SMS memories info */
+            lwgsmi_parse_cpms(rcv->data, 1); /* Parse +CPMS with SMS memories info */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPMS_SET) && !strncmp(rcv->data, "+CPMS", 5)) {
-            lwgsmi_parse_cpms(rcv->data, 2);    /* Parse +CPMS with SMS memories info */
-#endif /* LWGSM_CFG_SMS */
+            lwgsmi_parse_cpms(rcv->data, 2); /* Parse +CPMS with SMS memories info */
+#endif                                       /* LWGSM_CFG_SMS */
 #if LWGSM_CFG_CALL
         } else if (!strncmp(rcv->data, "+CLCC", 5)) {
-            lwgsmi_parse_clcc(rcv->data, 1);    /* Parse +CLCC response with call info change */
-#endif /* LWGSM_CFG_CALL */
+            lwgsmi_parse_clcc(rcv->data, 1); /* Parse +CLCC response with call info change */
+#endif                                       /* LWGSM_CFG_CALL */
 #if LWGSM_CFG_PHONEBOOK
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBS_GET_OPT) && !strncmp(rcv->data, "+CPBS", 5)) {
-            lwgsmi_parse_cpbs(rcv->data, 0);    /* Parse +CPBS response */
+            lwgsmi_parse_cpbs(rcv->data, 0); /* Parse +CPBS response */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBS_GET) && !strncmp(rcv->data, "+CPBS", 5)) {
-            lwgsmi_parse_cpbs(rcv->data, 1);    /* Parse +CPBS response */
+            lwgsmi_parse_cpbs(rcv->data, 1); /* Parse +CPBS response */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBS_SET) && !strncmp(rcv->data, "+CPBS", 5)) {
-            lwgsmi_parse_cpbs(rcv->data, 2);    /* Parse +CPBS response */
+            lwgsmi_parse_cpbs(rcv->data, 2); /* Parse +CPBS response */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBR) && !strncmp(rcv->data, "+CPBR", 5)) {
-            lwgsmi_parse_cpbr(rcv->data);       /* Parse +CPBR statement */
+            lwgsmi_parse_cpbr(rcv->data); /* Parse +CPBR statement */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
-            lwgsmi_parse_cpbf(rcv->data);       /* Parse +CPBR statement */
-#endif /* LWGSM_CFG_PHONEBOOK */
+            lwgsmi_parse_cpbf(rcv->data); /* Parse +CPBR statement */
+#endif                                    /* LWGSM_CFG_PHONEBOOK */
         }
 
         /* Messages not starting with '+' sign */
@@ -780,13 +823,14 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
             is_ok = 1;
 #if LWGSM_CFG_CONN
         } else if (LWGSM_CHARISNUM(rcv->data[0]) && rcv->data[1] == ',' && rcv->data[2] == ' '
-                   && (!strncmp(&rcv->data[3], "CLOSE OK" CRLF, 8 + CRLF_LEN) || !strncmp(&rcv->data[3], "CLOSED" CRLF, 6 + CRLF_LEN))) {
+                   && (!strncmp(&rcv->data[3], "CLOSE OK" CRLF, 8 + CRLF_LEN)
+                       || !strncmp(&rcv->data[3], "CLOSED" CRLF, 6 + CRLF_LEN))) {
             uint8_t forced = 0, num;
 
-            num = LWGSM_CHARTONUM(rcv->data[0]);/* Get connection number */
+            num = LWGSM_CHARTONUM(rcv->data[0]); /* Get connection number */
             if (CMD_IS_CUR(LWGSM_CMD_CIPCLOSE) && lwgsm.msg->msg.conn_close.conn->num == num) {
                 forced = 1;
-                is_ok = 1;                      /* If forced and connection is closed, command is OK */
+                is_ok = 1; /* If forced and connection is closed, command is OK */
             }
 
             /* Manually stop send command? */
@@ -795,39 +839,40 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
                  * If active command is CIPSEND and CLOSED event received,
                  * manually set error and process usual "ERROR" event on senddata
                  */
-                is_error = 1;                   /* This is an error in response */
+                is_error = 1; /* This is an error in response */
                 lwgsmi_process_cipsend_response(rcv, &is_ok, &is_error);
             }
-            lwgsmi_conn_closed_process(num, forced);/* Connection closed, process */
-#endif /* LWGSM_CFG_CONN */
+            lwgsmi_conn_closed_process(num, forced); /* Connection closed, process */
+#endif                                               /* LWGSM_CFG_CONN */
 #if LWGSM_CFG_CALL
         } else if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
             lwgsm.m.call.ready = 1;
-            lwgsmi_send_cb(LWGSM_EVT_CALL_READY);   /* Send CALL ready event */
+            lwgsmi_send_cb(LWGSM_EVT_CALL_READY); /* Send CALL ready event */
         } else if (rcv->data[0] == 'R' && !strncmp(rcv->data, "RING" CRLF, 4 + CRLF_LEN)) {
-            lwgsmi_send_cb(LWGSM_EVT_CALL_RING);/* Send call ring */
+            lwgsmi_send_cb(LWGSM_EVT_CALL_RING); /* Send call ring */
         } else if (rcv->data[0] == 'N' && !strncmp(rcv->data, "NO CARRIER" CRLF, 10 + CRLF_LEN)) {
-            lwgsmi_send_cb(LWGSM_EVT_CALL_NO_CARRIER);  /* Send call no carrier event */
+            lwgsmi_send_cb(LWGSM_EVT_CALL_NO_CARRIER); /* Send call no carrier event */
         } else if (rcv->data[0] == 'B' && !strncmp(rcv->data, "BUSY" CRLF, 4 + CRLF_LEN)) {
-            lwgsmi_send_cb(LWGSM_EVT_CALL_BUSY);/* Send call busy message */
-#endif /* LWGSM_CFG_CALL */
+            lwgsmi_send_cb(LWGSM_EVT_CALL_BUSY); /* Send call busy message */
+#endif                                           /* LWGSM_CFG_CALL */
 #if LWGSM_CFG_SMS
         } else if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready" CRLF, 9 + CRLF_LEN)) {
-            lwgsm.m.sms.ready = 1;              /* SMS ready flag */
-            lwgsmi_send_cb(LWGSM_EVT_SMS_READY);/* Send SMS ready event */
-#endif /* LWGSM_CFG_SMS */
-        } else if ((CMD_IS_CUR(LWGSM_CMD_CGMI_GET) || CMD_IS_CUR(LWGSM_CMD_CGMM_GET) || CMD_IS_CUR(LWGSM_CMD_CGSN_GET) || CMD_IS_CUR(LWGSM_CMD_CGMR_GET))
+            lwgsm.m.sms.ready = 1;               /* SMS ready flag */
+            lwgsmi_send_cb(LWGSM_EVT_SMS_READY); /* Send SMS ready event */
+#endif                                           /* LWGSM_CFG_SMS */
+        } else if ((CMD_IS_CUR(LWGSM_CMD_CGMI_GET) || CMD_IS_CUR(LWGSM_CMD_CGMM_GET) || CMD_IS_CUR(LWGSM_CMD_CGSN_GET)
+                    || CMD_IS_CUR(LWGSM_CMD_CGMR_GET))
                    && !is_ok && !is_error && strncmp(rcv->data, "AT+", 3)) {
             const char* tmp = rcv->data;
             size_t tocopy;
-            if (CMD_IS_CUR(LWGSM_CMD_CGMI_GET)) {   /* Check device manufacturer */
+            if (CMD_IS_CUR(LWGSM_CMD_CGMI_GET)) { /* Check device manufacturer */
                 lwgsmi_parse_string(&tmp, lwgsm.m.model_manufacturer, sizeof(lwgsm.m.model_manufacturer), 1);
                 if (CMD_IS_DEF(LWGSM_CMD_CGMI_GET)) {
                     tocopy = LWGSM_MIN(sizeof(lwgsm.m.model_manufacturer), lwgsm.msg->msg.device_info.len);
                     LWGSM_MEMCPY(lwgsm.msg->msg.device_info.str, lwgsm.m.model_manufacturer, tocopy);
                     lwgsm.msg->msg.device_info.str[tocopy - 1] = 0;
                 }
-            } else if (CMD_IS_CUR(LWGSM_CMD_CGMM_GET)) {/* Check device model number */
+            } else if (CMD_IS_CUR(LWGSM_CMD_CGMM_GET)) { /* Check device model number */
                 lwgsmi_parse_string(&tmp, lwgsm.m.model_number, sizeof(lwgsm.m.model_number), 1);
                 if (CMD_IS_DEF(LWGSM_CMD_CGMM_GET)) {
                     tocopy = LWGSM_MIN(sizeof(lwgsm.m.model_number), lwgsm.msg->msg.device_info.len);
@@ -840,14 +885,14 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
                         break;
                     }
                 }
-            } else if (CMD_IS_CUR(LWGSM_CMD_CGSN_GET)) {/* Check device serial number */
+            } else if (CMD_IS_CUR(LWGSM_CMD_CGSN_GET)) { /* Check device serial number */
                 lwgsmi_parse_string(&tmp, lwgsm.m.model_serial_number, sizeof(lwgsm.m.model_serial_number), 1);
                 if (CMD_IS_DEF(LWGSM_CMD_CGSN_GET)) {
                     tocopy = LWGSM_MIN(sizeof(lwgsm.m.model_serial_number), lwgsm.msg->msg.device_info.len);
                     LWGSM_MEMCPY(lwgsm.msg->msg.device_info.str, lwgsm.m.model_serial_number, tocopy);
                     lwgsm.msg->msg.device_info.str[tocopy - 1] = 0;
                 }
-            } else if (CMD_IS_CUR(LWGSM_CMD_CGMR_GET)) {/* Check device revision */
+            } else if (CMD_IS_CUR(LWGSM_CMD_CGMR_GET)) { /* Check device revision */
                 if (!strncmp(tmp, "Revision:", 9)) {
                     tmp += 9;
                 }
@@ -860,9 +905,9 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
             }
         } else if (CMD_IS_CUR(LWGSM_CMD_CIFSR) && LWGSM_CHARISNUM(rcv->data[0])) {
             const char* tmp = rcv->data;
-            lwgsmi_parse_ip(&tmp, &lwgsm.m.network.ip_addr);/* Parse IP address */
+            lwgsmi_parse_ip(&tmp, &lwgsm.m.network.ip_addr); /* Parse IP address */
 
-            is_ok = 1;                          /* Manually set OK flag as we don't expect OK in CIFSR command */
+            is_ok = 1; /* Manually set OK flag as we don't expect OK in CIFSR command */
         }
     }
 
@@ -906,19 +951,18 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
             }
 
             /* Wait here for CONNECT status before we cancel connection */
-            if (LWGSM_CHARISNUM(rcv->data[0])
-                && rcv->data[1] == ',' && rcv->data[2] == ' ') {
+            if (LWGSM_CHARISNUM(rcv->data[0]) && rcv->data[1] == ',' && rcv->data[2] == ' ') {
                 uint8_t num = LWGSM_CHARTONUM(rcv->data[0]);
                 if (num < LWGSM_CFG_MAX_CONNS) {
                     uint8_t id;
-                    lwgsm_conn_t* conn = &lwgsm.m.conns[num];   /* Get connection handle */
+                    lwgsm_conn_t* conn = &lwgsm.m.conns[num]; /* Get connection handle */
 
                     if (!strncmp(&rcv->data[3], "CONNECT OK" CRLF, 10 + CRLF_LEN)) {
                         id = conn->val_id;
-                        LWGSM_MEMSET(conn, 0x00, sizeof(*conn));/* Reset connection parameters */
+                        LWGSM_MEMSET(conn, 0x00, sizeof(*conn)); /* Reset connection parameters */
                         conn->num = num;
                         conn->status.f.active = 1;
-                        conn->val_id = ++id;    /* Set new validation ID */
+                        conn->val_id = ++id; /* Set new validation ID */
 
                         /* Set connection parameters */
                         conn->status.f.client = 1;
@@ -965,16 +1009,16 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
      */
     if (is_ok || is_error) {
         lwgsmr_t res = lwgsmOK;
-        if (lwgsm.msg != NULL) {                /* Do we have active message? */
+        if (lwgsm.msg != NULL) { /* Do we have active message? */
             res = lwgsmi_process_sub_cmd(lwgsm.msg, &is_ok, &is_error);
-            if (res != lwgsmCONT) {             /* Shall we continue with next subcommand under this one? */
-                if (is_ok) {                    /* Check OK status */
+            if (res != lwgsmCONT) { /* Shall we continue with next subcommand under this one? */
+                if (is_ok) {        /* Check OK status */
                     res = lwgsm.msg->res = lwgsmOK;
                 } else {                        /* Or error status */
                     res = lwgsm.msg->res = res; /* Set the error status */
                 }
             } else {
-                ++lwgsm.msg->i;                 /* Number of continue calls */
+                ++lwgsm.msg->i; /* Number of continue calls */
             }
 
             /*
@@ -982,7 +1026,7 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
              * release synchronization semaphore
              * from user thread and start with next command
              */
-            if (res != lwgsmCONT) {             /* Do we have to continue to wait for command? */
+            if (res != lwgsmCONT) {                     /* Do we have to continue to wait for command? */
                 lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore */
             }
         }
@@ -1045,48 +1089,50 @@ lwgsmi_process(const void* data, size_t data_len) {
         return lwgsmERRNODEVICE;
     }
 
-    while (d_len > 0) {                         /* Read entire set of characters from buffer */
-        ch = *d;                                /* Get next character */
-        ++d;                                    /* Go to next character, must be here as it is used later on */
-        --d_len;                                /* Decrease remaining length, must be here as it is decreased later too */
+    while (d_len > 0) { /* Read entire set of characters from buffer */
+        ch = *d;        /* Get next character */
+        ++d;            /* Go to next character, must be here as it is used later on */
+        --d_len;        /* Decrease remaining length, must be here as it is decreased later too */
 
         if (0) {
 #if LWGSM_CFG_CONN
-        } else if (lwgsm.m.ipd.read) {          /* Read connection data */
+        } else if (lwgsm.m.ipd.read) { /* Read connection data */
             size_t len;
 
-            if (lwgsm.m.ipd.buff != NULL) {     /* Do we have active buffer? */
-                lwgsm.m.ipd.buff->payload[lwgsm.m.ipd.buff_ptr] = ch;   /* Save data character */
+            if (lwgsm.m.ipd.buff != NULL) {                           /* Do we have active buffer? */
+                lwgsm.m.ipd.buff->payload[lwgsm.m.ipd.buff_ptr] = ch; /* Save data character */
             }
             ++lwgsm.m.ipd.buff_ptr;
             --lwgsm.m.ipd.rem_len;
 
             /* Try to read more data directly from buffer */
-            len = LWGSM_MIN(d_len, LWGSM_MIN(lwgsm.m.ipd.rem_len, lwgsm.m.ipd.buff != NULL ? (lwgsm.m.ipd.buff->len - lwgsm.m.ipd.buff_ptr) : lwgsm.m.ipd.rem_len));
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM IPD] New length to read: %d bytes\r\n", (int)len);
+            len = LWGSM_MIN(d_len, LWGSM_MIN(lwgsm.m.ipd.rem_len, lwgsm.m.ipd.buff != NULL
+                                                                      ? (lwgsm.m.ipd.buff->len - lwgsm.m.ipd.buff_ptr)
+                                                                      : lwgsm.m.ipd.rem_len));
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE, "[LWGSM IPD] New length to read: %d bytes\r\n",
+                         (int)len);
             if (len > 0) {
                 if (lwgsm.m.ipd.buff != NULL) { /* Is buffer valid? */
                     LWGSM_MEMCPY(&lwgsm.m.ipd.buff->payload[lwgsm.m.ipd.buff_ptr], d, len);
-                    LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                                 "[LWGSM IPD] Bytes read: %d\r\n", (int)len);
-                } else {                        /* Simply skip the data in buffer */
-                    LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                                 "[LWGSM IPD] Bytes skipped: %d\r\n", (int)len);
+                    LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE, "[LWGSM IPD] Bytes read: %d\r\n", (int)len);
+                } else { /* Simply skip the data in buffer */
+                    LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE, "[LWGSM IPD] Bytes skipped: %d\r\n",
+                                 (int)len);
                 }
-                d_len -= len;                   /* Decrease effective length */
-                d += len;                       /* Skip remaining length */
-                lwgsm.m.ipd.buff_ptr += len;    /* Forward buffer pointer */
-                lwgsm.m.ipd.rem_len -= len;     /* Decrease remaining length */
+                d_len -= len;                /* Decrease effective length */
+                d += len;                    /* Skip remaining length */
+                lwgsm.m.ipd.buff_ptr += len; /* Forward buffer pointer */
+                lwgsm.m.ipd.rem_len -= len;  /* Decrease remaining length */
             }
 
             /* Did we reach end of buffer or no more data? */
-            if (lwgsm.m.ipd.rem_len == 0 || (lwgsm.m.ipd.buff != NULL && lwgsm.m.ipd.buff_ptr == lwgsm.m.ipd.buff->len)) {
+            if (lwgsm.m.ipd.rem_len == 0
+                || (lwgsm.m.ipd.buff != NULL && lwgsm.m.ipd.buff_ptr == lwgsm.m.ipd.buff->len)) {
                 lwgsmr_t res = lwgsmOK;
 
                 /* Call user callback function with received data */
-                if (lwgsm.m.ipd.buff != NULL) { /* Do we have valid buffer? */
-                    lwgsm.m.ipd.conn->total_recved += lwgsm.m.ipd.buff->tot_len;/* Increase number of bytes received */
+                if (lwgsm.m.ipd.buff != NULL) {                                  /* Do we have valid buffer? */
+                    lwgsm.m.ipd.conn->total_recved += lwgsm.m.ipd.buff->tot_len; /* Increase number of bytes received */
 
                     /*
                      * Send data buffer to upper layer
@@ -1099,13 +1145,12 @@ lwgsmi_process(const void* data, size_t data_len) {
                     lwgsm.evt.evt.conn_data_recv.conn = lwgsm.m.ipd.conn;
                     res = lwgsmi_send_conn_cb(lwgsm.m.ipd.conn, NULL);
 
-                    lwgsm_pbuf_free(lwgsm.m.ipd.buff);  /* Free packet buffer at this point */
-                    LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
-                                 "[LWGSM IPD] Free packet buffer\r\n");
+                    lwgsm_pbuf_free(lwgsm.m.ipd.buff); /* Free packet buffer at this point */
+                    LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE, "[LWGSM IPD] Free packet buffer\r\n");
                     if (res == lwgsmOKIGNOREMORE) { /* We should ignore more data */
                         LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
                                      "[LWGSM IPD] Ignoring more data from this IPD if available\r\n");
-                        lwgsm.m.ipd.buff = NULL;/* Set to NULL to ignore more data if possibly available */
+                        lwgsm.m.ipd.buff = NULL; /* Set to NULL to ignore more data if possibly available */
                     }
 
                     /*
@@ -1115,23 +1160,25 @@ lwgsmi_process(const void* data, size_t data_len) {
                      *  - Connection is not in closing state
                      */
                     if (lwgsm.m.ipd.buff != NULL && lwgsm.m.ipd.rem_len > 0 && !lwgsm.m.ipd.conn->status.f.in_closing) {
-                        size_t new_len = LWGSM_MIN(lwgsm.m.ipd.rem_len, LWGSM_CFG_IPD_MAX_BUFF_SIZE);   /* Calculate new buffer length */
+                        size_t new_len = LWGSM_MIN(lwgsm.m.ipd.rem_len,
+                                                   LWGSM_CFG_IPD_MAX_BUFF_SIZE); /* Calculate new buffer length */
 
                         LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
                                      "[LWGSM IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
                         lwgsm.m.ipd.buff = lwgsm_pbuf_new(new_len); /* Allocate new packet buffer */
 
                         LWGSM_DEBUGW(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING,
-                                     lwgsm.m.ipd.buff == NULL, "[LWGSM IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
+                                     lwgsm.m.ipd.buff == NULL, "[LWGSM IPD] Buffer allocation failed for %d bytes\r\n",
+                                     (int)new_len);
                     } else {
-                        lwgsm.m.ipd.buff = NULL;/* Reset it */
+                        lwgsm.m.ipd.buff = NULL; /* Reset it */
                     }
                 }
                 if (lwgsm.m.ipd.rem_len == 0) { /* Check if we read everything */
                     lwgsm.m.ipd.buff = NULL;    /* Reset buffer pointer */
                     lwgsm.m.ipd.read = 0;       /* Stop reading data */
                 }
-                lwgsm.m.ipd.buff_ptr = 0;       /* Reset input buffer pointer */
+                lwgsm.m.ipd.buff_ptr = 0; /* Reset input buffer pointer */
             }
 #endif /* LWGSM_CFG_CONN */
             /*
@@ -1142,24 +1189,22 @@ lwgsmi_process(const void* data, size_t data_len) {
             if (ch == '\n') {
                 lwgsm.msg->msg.cops_scan.read = 0;
             } else {
-                lwgsmi_parse_cops_scan(ch, 0);  /* Parse character by character */
+                lwgsmi_parse_cops_scan(ch, 0); /* Parse character by character */
             }
 #if LWGSM_CFG_SMS
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGR) && lwgsm.msg->msg.sms_read.read) {
             lwgsm_sms_entry_t* e = lwgsm.msg->msg.sms_read.entry;
-            if (lwgsm.msg->msg.sms_read.read == 2) {/* Read only if set to 2 */
-                if (e != NULL) {                /* Check if valid entry */
+            if (lwgsm.msg->msg.sms_read.read == 2) { /* Read only if set to 2 */
+                if (e != NULL) {                     /* Check if valid entry */
                     if (e->length < (sizeof(e->data) - 1)) {
                         e->data[e->length++] = ch;
                     }
                 } else {
-                    lwgsm.msg->msg.sms_read.read = 1;   /* Read but ignore data */
+                    lwgsm.msg->msg.sms_read.read = 1; /* Read but ignore data */
                 }
             }
             if (ch == '\n' && ch_prev1 == '\r') {
-                if (lwgsm.msg->msg.sms_read.read == 2) {
-
-                }
+                if (lwgsm.msg->msg.sms_read.read == 2) {}
                 lwgsm.msg->msg.sms_read.read = 0;
             }
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGL) && lwgsm.msg->msg.sms_list.read) {
@@ -1171,8 +1216,8 @@ lwgsmi_process(const void* data, size_t data_len) {
             }
             if (ch == '\n' && ch_prev1 == '\r') {
                 if (lwgsm.msg->msg.sms_list.read == 2) {
-                    ++lwgsm.msg->msg.sms_list.ei;   /* Go to next entry */
-                    if (lwgsm.msg->msg.sms_list.er != NULL) {   /* Check and update user variable */
+                    ++lwgsm.msg->msg.sms_list.ei;             /* Go to next entry */
+                    if (lwgsm.msg->msg.sms_list.er != NULL) { /* Check and update user variable */
                         *lwgsm.msg->msg.sms_list.er = lwgsm.msg->msg.sms_list.ei;
                     }
                 }
@@ -1203,27 +1248,27 @@ lwgsmi_process(const void* data, size_t data_len) {
              */
         } else {
             lwgsmr_t res = lwgsmERR;
-            if (LWGSM_ISVALIDASCII(ch)) {       /* Manually check if valid ASCII character */
+            if (LWGSM_ISVALIDASCII(ch)) { /* Manually check if valid ASCII character */
                 res = lwgsmOK;
-                unicode.t = 1;                  /* Manually set total to 1 */
-                unicode.r = 0;                  /* Reset remaining bytes */
-            } else if (ch >= 0x80) {            /* Process only if more than ASCII can hold */
-                res = lwgsmi_unicode_decode(&unicode, ch);  /* Try to decode unicode format */
+                unicode.t = 1;                             /* Manually set total to 1 */
+                unicode.r = 0;                             /* Reset remaining bytes */
+            } else if (ch >= 0x80) {                       /* Process only if more than ASCII can hold */
+                res = lwgsmi_unicode_decode(&unicode, ch); /* Try to decode unicode format */
             }
 
-            if (res == lwgsmERR) {              /* In case of an ERROR */
+            if (res == lwgsmERR) { /* In case of an ERROR */
                 unicode.r = 0;
             }
-            if (res == lwgsmOK) {               /* Can we process the character(s) */
-                if (unicode.t == 1) {           /* Totally 1 character? */
+            if (res == lwgsmOK) {     /* Can we process the character(s) */
+                if (unicode.t == 1) { /* Totally 1 character? */
                     switch (ch) {
                         case '\n':
-                            RECV_ADD(ch);       /* Add character to input buffer */
-                            lwgsmi_parse_received(&recv_buff);  /* Parse received string */
-                            RECV_RESET();       /* Reset received string */
+                            RECV_ADD(ch);                      /* Add character to input buffer */
+                            lwgsmi_parse_received(&recv_buff); /* Parse received string */
+                            RECV_RESET();                      /* Reset received string */
                             break;
                         default:
-                            RECV_ADD(ch);       /* Any ASCII valid character */
+                            RECV_ADD(ch); /* Any ASCII valid character */
                             break;
                     }
 
@@ -1245,17 +1290,18 @@ lwgsmi_process(const void* data, size_t data_len) {
                          */
                         if (lwgsm.m.ipd.conn->status.f.active && !lwgsm.m.ipd.conn->status.f.in_closing) {
                             lwgsm.m.ipd.buff = lwgsm_pbuf_new(len); /* Allocate new packet buffer */
-                            LWGSM_DEBUGW(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING, lwgsm.m.ipd.buff == NULL,
+                            LWGSM_DEBUGW(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING,
+                                         lwgsm.m.ipd.buff == NULL,
                                          "[LWGSM IPD] Buffer allocation failed for %d byte(s)\r\n", (int)len);
                         } else {
-                            lwgsm.m.ipd.buff = NULL;/* Ignore reading on closed connection */
+                            lwgsm.m.ipd.buff = NULL; /* Ignore reading on closed connection */
                             LWGSM_DEBUGF(LWGSM_CFG_DBG_IPD | LWGSM_DBG_TYPE_TRACE,
                                          "[LWGSM IPD] Connection %d closed or in closing, skipping %d byte(s)\r\n",
                                          (int)lwgsm.m.ipd.conn->num, (int)len);
                         }
-                        lwgsm.m.ipd.conn->status.f.data_received = 1;   /* We have first received data */
+                        lwgsm.m.ipd.conn->status.f.data_received = 1; /* We have first received data */
 
-                        lwgsm.m.ipd.buff_ptr = 0;   /* Reset buffer write pointer */
+                        lwgsm.m.ipd.buff_ptr = 0; /* Reset buffer write pointer */
                     }
 #endif /* LWGSM_CFG_CONN */
 
@@ -1268,14 +1314,16 @@ lwgsmi_process(const void* data, size_t data_len) {
                         if (0) {
 #if LWGSM_CFG_CONN
                         } else if (CMD_IS_CUR(LWGSM_CMD_CIPSEND)) {
-                            RECV_RESET();       /* Reset received object */
+                            RECV_RESET(); /* Reset received object */
 
                             /* Now actually send the data prepared before */
-                            AT_PORT_SEND_WITH_FLUSH(&lwgsm.msg->msg.conn_send.data[lwgsm.msg->msg.conn_send.ptr], lwgsm.msg->msg.conn_send.sent);
-                            lwgsm.msg->msg.conn_send.wait_send_ok_err = 1;  /* Now we are waiting for "SEND OK" or "SEND ERROR" */
-#endif /* LWGSM_CFG_CONN */
+                            AT_PORT_SEND_WITH_FLUSH(&lwgsm.msg->msg.conn_send.data[lwgsm.msg->msg.conn_send.ptr],
+                                                    lwgsm.msg->msg.conn_send.sent);
+                            lwgsm.msg->msg.conn_send.wait_send_ok_err =
+                                1; /* Now we are waiting for "SEND OK" or "SEND ERROR" */
+#endif                             /* LWGSM_CFG_CONN */
 #if LWGSM_CFG_SMS
-                        } else if (CMD_IS_CUR(LWGSM_CMD_CMGS)) {/* Send SMS? */
+                        } else if (CMD_IS_CUR(LWGSM_CMD_CMGS)) { /* Send SMS? */
                             AT_PORT_SEND(lwgsm.msg->msg.sms_send.text, strlen(lwgsm.msg->msg.sms_send.text));
                             AT_PORT_SEND_CTRL_Z();
                             AT_PORT_SEND_FLUSH();
@@ -1283,50 +1331,52 @@ lwgsmi_process(const void* data, size_t data_len) {
                         }
                     } else if (CMD_IS_CUR(LWGSM_CMD_COPS_GET_OPT)) {
                         if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+COPS:", 6)) {
-                            RECV_RESET();       /* Reset incoming buffer */
-                            lwgsmi_parse_cops_scan(0, 1);   /* Reset parser state */
-                            lwgsm.msg->msg.cops_scan.read = 1;  /* Start reading incoming bytes */
+                            RECV_RESET();                      /* Reset incoming buffer */
+                            lwgsmi_parse_cops_scan(0, 1);      /* Reset parser state */
+                            lwgsm.msg->msg.cops_scan.read = 1; /* Start reading incoming bytes */
                         }
 #if LWGSM_CFG_USSD
                     } else if (CMD_IS_CUR(LWGSM_CMD_CUSD)) {
                         if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+CUSD:", 6)) {
-                            RECV_RESET();       /* Reset incoming buffer */
-                            lwgsm.msg->msg.ussd.read = 1;   /* Start reading incoming bytes */
+                            RECV_RESET();                 /* Reset incoming buffer */
+                            lwgsm.msg->msg.ussd.read = 1; /* Start reading incoming bytes */
                         }
 #endif /* LWGSM_CFG_USSD */
                     }
-                } else {                        /* We have sequence of unicode characters */
+                } else { /* We have sequence of unicode characters */
                     /*
                      * Unicode sequence characters are not "meta" characters
                      * so it is safe to just add them to receive array without checking
                      * what are the actual values
                      */
                     for (uint8_t i = 0; i < unicode.t; ++i) {
-                        RECV_ADD(unicode.ch[i]);/* Add character to receive array */
+                        RECV_ADD(unicode.ch[i]); /* Add character to receive array */
                     }
                 }
-            } else if (res != lwgsmINPROG) {    /* Not in progress? */
-                RECV_RESET();                   /* Invalid character in sequence */
+            } else if (res != lwgsmINPROG) { /* Not in progress? */
+                RECV_RESET();                /* Invalid character in sequence */
             }
         }
 
-        ch_prev2 = ch_prev1;                    /* Save previous character as previous previous */
-        ch_prev1 = ch;                          /* Set current as previous */
+        ch_prev2 = ch_prev1; /* Save previous character as previous previous */
+        ch_prev1 = ch;       /* Set current as previous */
     }
     return lwgsmOK;
 }
 
 /* Temporary macros, only available for inside lwgsmi_process_sub_cmd function */
 /* Set new command, but first check for error on previous */
-#define SET_NEW_CMD_CHECK_ERROR(new_cmd) do {   \
-        if (!*(is_error)) {                         \
-            n_cmd = (new_cmd);                      \
-        }                                           \
+#define SET_NEW_CMD_CHECK_ERROR(new_cmd)                                                                               \
+    do {                                                                                                               \
+        if (!*(is_error)) {                                                                                            \
+            n_cmd = (new_cmd);                                                                                         \
+        }                                                                                                              \
     } while (0)
 
 /* Set new command, ignore result of previous */
-#define SET_NEW_CMD(new_cmd) do {               \
-        n_cmd = (new_cmd);                          \
+#define SET_NEW_CMD(new_cmd)                                                                                           \
+    do {                                                                                                               \
+        n_cmd = (new_cmd);                                                                                             \
     } while (0)
 
 /**
@@ -1340,32 +1390,32 @@ static lwgsmr_t
 lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     lwgsm_cmd_t n_cmd = LWGSM_CMD_IDLE;
     if (CMD_IS_DEF(LWGSM_CMD_RESET)) {
-        switch (CMD_GET_CUR()) {                /* Check current command */
+        switch (CMD_GET_CUR()) { /* Check current command */
             case LWGSM_CMD_RESET: {
-                lwgsmi_reset_everything(1);     /* Reset everything */
-                SET_NEW_CMD(LWGSM_CFG_AT_ECHO ? LWGSM_CMD_ATE1 : LWGSM_CMD_ATE0);   /* Set ECHO mode */
-                lwgsm_delay(LWGSM_CFG_RESET_DELAY_AFTER);   /* Delay for some time before we can continue after reset */
+                lwgsmi_reset_everything(1);                                       /* Reset everything */
+                SET_NEW_CMD(LWGSM_CFG_AT_ECHO ? LWGSM_CMD_ATE1 : LWGSM_CMD_ATE0); /* Set ECHO mode */
+                lwgsm_delay(LWGSM_CFG_RESET_DELAY_AFTER); /* Delay for some time before we can continue after reset */
                 break;
             }
             case LWGSM_CMD_ATE0:
             case LWGSM_CMD_ATE1:
                 SET_NEW_CMD(LWGSM_CMD_CFUN_SET);
-                break;                          /* Set full functionality */
+                break; /* Set full functionality */
             case LWGSM_CMD_CFUN_SET:
                 SET_NEW_CMD(LWGSM_CMD_CMEE_SET);
-                break;                          /* Set detailed error reporting */
+                break; /* Set detailed error reporting */
             case LWGSM_CMD_CMEE_SET:
                 SET_NEW_CMD(LWGSM_CMD_CGMI_GET);
-                break;                          /* Get manufacturer */
+                break; /* Get manufacturer */
             case LWGSM_CMD_CGMI_GET:
                 SET_NEW_CMD(LWGSM_CMD_CGMM_GET);
-                break;                          /* Get model */
+                break; /* Get model */
             case LWGSM_CMD_CGMM_GET:
                 SET_NEW_CMD(LWGSM_CMD_CGSN_GET);
-                break;                          /* Get product serial number */
+                break; /* Get product serial number */
             case LWGSM_CMD_CGSN_GET:
                 SET_NEW_CMD(LWGSM_CMD_CGMR_GET);
-                break;                          /* Get product revision */
+                break; /* Get product revision */
             case LWGSM_CMD_CGMR_GET: {
                 /*
                  * At this point we have modem info.
@@ -1374,15 +1424,15 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                  */
                 lwgsmi_send_cb(LWGSM_EVT_DEVICE_IDENTIFIED);
 
-                SET_NEW_CMD(LWGSM_CMD_CREG_SET);/* Enable unsolicited code for CREG */
+                SET_NEW_CMD(LWGSM_CMD_CREG_SET); /* Enable unsolicited code for CREG */
                 break;
             }
             case LWGSM_CMD_CREG_SET:
                 SET_NEW_CMD(LWGSM_CMD_CLCC_SET);
-                break;                          /* Set call state */
+                break; /* Set call state */
             case LWGSM_CMD_CLCC_SET:
                 SET_NEW_CMD(LWGSM_CMD_CPIN_GET);
-                break;                          /* Get SIM state */
+                break; /* Get SIM state */
             case LWGSM_CMD_CPIN_GET:
                 break;
             default:
@@ -1414,20 +1464,20 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                 }
             }
         }
-    } else if (CMD_IS_DEF(LWGSM_CMD_CPIN_SET)) {/* Set PIN code */
+    } else if (CMD_IS_DEF(LWGSM_CMD_CPIN_SET)) { /* Set PIN code */
         switch (CMD_GET_CUR()) {
-            case LWGSM_CMD_CPIN_GET: {          /* Get own phone number */
+            case LWGSM_CMD_CPIN_GET: { /* Get own phone number */
                 if (*is_ok && lwgsm.m.sim.state == LWGSM_SIM_STATE_PIN) {
-                    SET_NEW_CMD(LWGSM_CMD_CPIN_SET);/* Set command to write PIN */
+                    SET_NEW_CMD(LWGSM_CMD_CPIN_SET); /* Set command to write PIN */
                 } else if (lwgsm.m.sim.state != LWGSM_SIM_STATE_READY) {
                     *is_ok = 0;
                     *is_error = 1;
                 }
                 break;
             }
-            case LWGSM_CMD_CPIN_SET: {          /* Set CPIN */
+            case LWGSM_CMD_CPIN_SET: { /* Set CPIN */
                 if (*is_ok) {
-                    lwgsm_delay(5000);          /* Make delay to make sure SIM is ready */
+                    lwgsm_delay(5000); /* Make delay to make sure SIM is ready */
                 }
                 break;
             }
@@ -1445,28 +1495,28 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             default:
                 break;
         }
-        if (!*is_ok || n_cmd == LWGSM_CMD_IDLE) {   /* Stop execution on any command */
+        if (!*is_ok || n_cmd == LWGSM_CMD_IDLE) { /* Stop execution on any command */
             SET_NEW_CMD(LWGSM_CMD_IDLE);
-            lwgsm.m.sms.enabled = n_cmd == LWGSM_CMD_IDLE;  /* Set enabled status */
+            lwgsm.m.sms.enabled = n_cmd == LWGSM_CMD_IDLE; /* Set enabled status */
             lwgsm.evt.evt.sms_enable.status = lwgsm.m.sms.enabled ? lwgsmOK : lwgsmERR;
-            lwgsmi_send_cb(LWGSM_EVT_SMS_ENABLE);   /* Send to user */
+            lwgsmi_send_cb(LWGSM_EVT_SMS_ENABLE); /* Send to user */
         }
-    } else if (CMD_IS_DEF(LWGSM_CMD_CMGS)) {    /* Send SMS default command */
+    } else if (CMD_IS_DEF(LWGSM_CMD_CMGS)) {        /* Send SMS default command */
         if (CMD_IS_CUR(LWGSM_CMD_CMGF) && *is_ok) { /* Set message format current command */
-            SET_NEW_CMD(LWGSM_CMD_CMGS);        /* Now send actual message */
+            SET_NEW_CMD(LWGSM_CMD_CMGS);            /* Now send actual message */
         }
 
         /* Send event on finish */
         if (n_cmd == LWGSM_CMD_IDLE) {
             SMS_SEND_SEND_EVT(lwgsm.msg, *is_ok ? lwgsmOK : lwgsmERR);
         }
-    } else if (CMD_IS_DEF(LWGSM_CMD_CMGR)) {    /* Read SMS message */
+    } else if (CMD_IS_DEF(LWGSM_CMD_CMGR)) { /* Read SMS message */
         if (CMD_IS_CUR(LWGSM_CMD_CPMS_GET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CPMS_SET);    /* Set memory */
+            SET_NEW_CMD(LWGSM_CMD_CPMS_SET); /* Set memory */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPMS_SET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CMGF);        /* Set text mode */
-        } else if (CMD_IS_CUR(LWGSM_CMD_CMGF) && *is_ok) {  /* Set message format current command*/
-            SET_NEW_CMD(LWGSM_CMD_CMGR);        /* Start message read */
+            SET_NEW_CMD(LWGSM_CMD_CMGF);                   /* Set text mode */
+        } else if (CMD_IS_CUR(LWGSM_CMD_CMGF) && *is_ok) { /* Set message format current command*/
+            SET_NEW_CMD(LWGSM_CMD_CMGR);                   /* Start message read */
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGR) && *is_ok) {
             msg->msg.sms_read.mem = lwgsm.m.sms.mem[0].current; /* Set current memory */
         }
@@ -1475,11 +1525,11 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         if (n_cmd == LWGSM_CMD_IDLE) {
             SMS_SEND_READ_EVT(lwgsm.msg, *is_ok ? lwgsmOK : lwgsmERR);
         }
-    } else if (CMD_IS_DEF(LWGSM_CMD_CMGD)) {    /* Delete SMS message*/
+    } else if (CMD_IS_DEF(LWGSM_CMD_CMGD)) { /* Delete SMS message*/
         if (CMD_IS_CUR(LWGSM_CMD_CPMS_GET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CPMS_SET);    /* Set memory */
+            SET_NEW_CMD(LWGSM_CMD_CPMS_SET); /* Set memory */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPMS_SET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CMGD);        /* Delete message */
+            SET_NEW_CMD(LWGSM_CMD_CMGD); /* Delete message */
         }
 
         /* Send event on finish */
@@ -1488,48 +1538,48 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         }
     } else if (CMD_IS_DEF(LWGSM_CMD_CMGDA)) {
         if (CMD_IS_CUR(LWGSM_CMD_CMGF) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CMGDA);       /* Mass storage */
+            SET_NEW_CMD(LWGSM_CMD_CMGDA); /* Mass storage */
         }
-    } else if (CMD_IS_DEF(LWGSM_CMD_CMGL)) {    /* List SMS messages */
+    } else if (CMD_IS_DEF(LWGSM_CMD_CMGL)) { /* List SMS messages */
         if (CMD_IS_CUR(LWGSM_CMD_CPMS_GET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CPMS_SET);    /* Set memory */
+            SET_NEW_CMD(LWGSM_CMD_CPMS_SET); /* Set memory */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPMS_SET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CMGF);        /* Set text format */
+            SET_NEW_CMD(LWGSM_CMD_CMGF); /* Set text format */
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGF) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CMGL);        /* List messages */
+            SET_NEW_CMD(LWGSM_CMD_CMGL); /* List messages */
         }
 
         /* Send event on finish */
         if (n_cmd == LWGSM_CMD_IDLE) {
             SMS_SEND_LIST_EVT(msg, *is_ok ? lwgsmOK : lwgsmERR);
         }
-    } else if (CMD_IS_DEF(LWGSM_CMD_CPMS_SET)) {/* Set preferred memory */
+    } else if (CMD_IS_DEF(LWGSM_CMD_CPMS_SET)) { /* Set preferred memory */
         if (CMD_IS_CUR(LWGSM_CMD_CPMS_GET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CPMS_SET);    /* Now set the command */
+            SET_NEW_CMD(LWGSM_CMD_CPMS_SET); /* Now set the command */
         }
 #endif /* LWGSM_CFG_SMS */
 #if LWGSM_CFG_CALL
     } else if (CMD_IS_DEF(LWGSM_CMD_CALL_ENABLE)) {
-        lwgsm.m.call.enabled = *is_ok;          /* Set enabled status */
+        lwgsm.m.call.enabled = *is_ok; /* Set enabled status */
         lwgsm.evt.evt.call_enable.res = lwgsm.m.call.enabled ? lwgsmOK : lwgsmERR;
-        lwgsmi_send_cb(LWGSM_EVT_CALL_ENABLE);  /* Send to user */
-#endif /* LWGSM_CFG_CALL */
+        lwgsmi_send_cb(LWGSM_EVT_CALL_ENABLE); /* Send to user */
+#endif                                         /* LWGSM_CFG_CALL */
 #if LWGSM_CFG_PHONEBOOK
     } else if (CMD_IS_DEF(LWGSM_CMD_PHONEBOOK_ENABLE)) {
-        lwgsm.m.pb.enabled = *is_ok;            /* Set enabled status */
+        lwgsm.m.pb.enabled = *is_ok; /* Set enabled status */
         lwgsm.evt.evt.pb_enable.res = lwgsm.m.pb.enabled ? lwgsmOK : lwgsmERR;
-        lwgsmi_send_cb(LWGSM_EVT_PB_ENABLE);    /* Send to user */
-    } else if (CMD_IS_DEF(LWGSM_CMD_CPBW_SET)) {/* Write phonebook entry */
+        lwgsmi_send_cb(LWGSM_EVT_PB_ENABLE);            /* Send to user */
+    } else if (CMD_IS_DEF(LWGSM_CMD_CPBW_SET)) {        /* Write phonebook entry */
         if (CMD_IS_CUR(LWGSM_CMD_CPBS_GET) && *is_ok) { /* Get current memory */
-            SET_NEW_CMD(LWGSM_CMD_CPBS_SET);    /* Set current memory */
+            SET_NEW_CMD(LWGSM_CMD_CPBS_SET);            /* Set current memory */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBS_SET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CPBW_SET);    /* Write entry to phonebook */
+            SET_NEW_CMD(LWGSM_CMD_CPBW_SET); /* Write entry to phonebook */
         }
     } else if (CMD_IS_DEF(LWGSM_CMD_CPBR)) {
         if (CMD_IS_CUR(LWGSM_CMD_CPBS_GET) && *is_ok) { /* Get current memory */
-            SET_NEW_CMD(LWGSM_CMD_CPBS_SET);    /* Set current memory */
+            SET_NEW_CMD(LWGSM_CMD_CPBS_SET);            /* Set current memory */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBS_SET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CPBR);        /* Read entries */
+            SET_NEW_CMD(LWGSM_CMD_CPBR); /* Read entries */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBR)) {
             lwgsm.evt.evt.pb_list.mem = lwgsm.m.pb.mem.current;
             lwgsm.evt.evt.pb_list.entries = lwgsm.msg->msg.pb_list.entries;
@@ -1539,9 +1589,9 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         }
     } else if (CMD_IS_DEF(LWGSM_CMD_CPBF)) {
         if (CMD_IS_CUR(LWGSM_CMD_CPBS_GET) && *is_ok) { /* Get current memory */
-            SET_NEW_CMD(LWGSM_CMD_CPBS_SET);    /* Set current memory */
+            SET_NEW_CMD(LWGSM_CMD_CPBS_SET);            /* Set current memory */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBS_SET) && *is_ok) {
-            SET_NEW_CMD(LWGSM_CMD_CPBF);        /* Read entries */
+            SET_NEW_CMD(LWGSM_CMD_CPBF); /* Read entries */
         } else if (CMD_IS_CUR(LWGSM_CMD_CPBF)) {
             lwgsm.evt.evt.pb_search.mem = lwgsm.m.pb.mem.current;
             lwgsm.evt.evt.pb_search.search = lwgsm.msg->msg.pb_search.search;
@@ -1565,7 +1615,7 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             case 2:
                 SET_NEW_CMD(LWGSM_CMD_CGATT_SET_0);
                 break;
-#else /* LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT */
+#else  /* LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT */
             case 2:
                 SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CGATT_SET_0);
                 break;
@@ -1619,35 +1669,35 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 #endif /* LWGSM_CFG_NETWORK */
 #if LWGSM_CFG_CONN
     } else if (CMD_IS_DEF(LWGSM_CMD_CIPSTART)) {
-        if (!msg->i && CMD_IS_CUR(LWGSM_CMD_CIPSTATUS)) {   /* Was the current command status info? */
+        if (!msg->i && CMD_IS_CUR(LWGSM_CMD_CIPSTATUS)) { /* Was the current command status info? */
             if (*is_ok) {
-                SET_NEW_CMD(LWGSM_CMD_CIPSSL);  /* Set SSL */
+                SET_NEW_CMD(LWGSM_CMD_CIPSSL); /* Set SSL */
             }
         } else if (msg->i == 1 && CMD_IS_CUR(LWGSM_CMD_CIPSSL)) {
-            SET_NEW_CMD(LWGSM_CMD_CIPSTART);    /* Now actually start connection */
+            SET_NEW_CMD(LWGSM_CMD_CIPSTART); /* Now actually start connection */
         } else if (msg->i == 2 && CMD_IS_CUR(LWGSM_CMD_CIPSTART)) {
-            SET_NEW_CMD(LWGSM_CMD_CIPSTATUS);   /* Go to status mode */
+            SET_NEW_CMD(LWGSM_CMD_CIPSTATUS); /* Go to status mode */
             if (*is_error) {
                 msg->msg.conn_start.conn_res = LWGSM_CONN_CONNECT_ERROR;
             }
         } else if (msg->i == 3 && CMD_IS_CUR(LWGSM_CMD_CIPSTATUS)) {
             /* After second CIP status, define what to do next */
             switch (msg->msg.conn_start.conn_res) {
-                case LWGSM_CONN_CONNECT_OK: {   /* Successfully connected */
-                    lwgsm_conn_t* conn = &lwgsm.m.conns[msg->msg.conn_start.num];   /* Get connection number */
+                case LWGSM_CONN_CONNECT_OK: {                                     /* Successfully connected */
+                    lwgsm_conn_t* conn = &lwgsm.m.conns[msg->msg.conn_start.num]; /* Get connection number */
 
                     lwgsm.evt.type = LWGSM_EVT_CONN_ACTIVE; /* Connection just active */
                     lwgsm.evt.evt.conn_active_close.client = 1;
                     lwgsm.evt.evt.conn_active_close.conn = conn;
                     lwgsm.evt.evt.conn_active_close.forced = 1;
                     lwgsmi_send_conn_cb(conn, NULL);
-                    lwgsmi_conn_start_timeout(conn);/* Start connection timeout timer */
+                    lwgsmi_conn_start_timeout(conn); /* Start connection timeout timer */
                     break;
                 }
-                case LWGSM_CONN_CONNECT_ERROR: {/* Connection error */
+                case LWGSM_CONN_CONNECT_ERROR: { /* Connection error */
                     lwgsmi_send_conn_error_cb(msg, lwgsmERRCONNFAIL);
-                    *is_error = 1;              /* Manually set error */
-                    *is_ok = 0;                 /* Reset success */
+                    *is_error = 1; /* Manually set error */
+                    *is_ok = 0;    /* Reset success */
                     break;
                 }
                 default: {
@@ -1671,7 +1721,8 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
             lwgsm.evt.evt.conn_active_close.conn = msg->msg.conn_close.conn;
             lwgsm.evt.evt.conn_active_close.forced = 1;
             lwgsm.evt.evt.conn_active_close.res = lwgsmERR;
-            lwgsm.evt.evt.conn_active_close.client = msg->msg.conn_close.conn->status.f.active && msg->msg.conn_close.conn->status.f.client;
+            lwgsm.evt.evt.conn_active_close.client =
+                msg->msg.conn_close.conn->status.f.active && msg->msg.conn_close.conn->status.f.client;
             lwgsmi_send_conn_cb(msg->msg.conn_close.conn, NULL);
         }
 #endif /* LWGSM_CFG_CONN */
@@ -1679,7 +1730,7 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     } else if (CMD_IS_DEF(LWGSM_CMD_CUSD)) {
         if (CMD_IS_CUR(LWGSM_CMD_CUSD_GET)) {
             if (*is_ok) {
-                SET_NEW_CMD(LWGSM_CMD_CUSD);    /* Run next command */
+                SET_NEW_CMD(LWGSM_CMD_CUSD); /* Run next command */
             }
         }
         /* The rest is handled in one layer above */
@@ -1711,8 +1762,8 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
  */
 lwgsmr_t
 lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
-    switch (CMD_GET_CUR()) {                    /* Check current message we want to send over AT */
-        case LWGSM_CMD_RESET: {                 /* Reset modem with AT commands */
+    switch (CMD_GET_CUR()) {    /* Check current message we want to send over AT */
+        case LWGSM_CMD_RESET: { /* Reset modem with AT commands */
             /* Try with hardware reset */
             if (lwgsm.ll.reset_fn != NULL && lwgsm.ll.reset_fn(1)) {
                 lwgsm_delay(2);
@@ -1726,7 +1777,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_RESET_DEVICE_FIRST_CMD: {/* First command for device driver specific reset */
+        case LWGSM_CMD_RESET_DEVICE_FIRST_CMD: { /* First command for device driver specific reset */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_END_AT();
             break;
@@ -1742,49 +1793,49 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CMEE_SET: {              /* Enable detailed error messages */
+        case LWGSM_CMD_CMEE_SET: { /* Enable detailed error messages */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMEE=1");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CLCC_SET: {              /* Enable detailed call info */
+        case LWGSM_CMD_CLCC_SET: { /* Enable detailed call info */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CLCC=1");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CGMI_GET: {              /* Get manufacturer */
+        case LWGSM_CMD_CGMI_GET: { /* Get manufacturer */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CGMI");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CGMM_GET: {              /* Get model */
+        case LWGSM_CMD_CGMM_GET: { /* Get model */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CGMM");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CGSN_GET: {              /* Get serial number */
+        case LWGSM_CMD_CGSN_GET: { /* Get serial number */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CGSN");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CGMR_GET: {              /* Get revision */
+        case LWGSM_CMD_CGMR_GET: { /* Get revision */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CGMR");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CREG_SET: {              /* Enable +CREG message */
+        case LWGSM_CMD_CREG_SET: { /* Enable +CREG message */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CREG=1");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CREG_GET: {              /* Get network registration status */
+        case LWGSM_CMD_CREG_GET: { /* Get network registration status */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CREG?");
             AT_PORT_SEND_END_AT();
@@ -1796,8 +1847,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             /**
              * \todo: If CFUN command forced, check value
              */
-            if (CMD_IS_DEF(LWGSM_CMD_RESET)
-                || (CMD_IS_DEF(LWGSM_CMD_CFUN_SET) && msg->msg.cfun.mode)) {
+            if (CMD_IS_DEF(LWGSM_CMD_RESET) || (CMD_IS_DEF(LWGSM_CMD_CFUN_SET) && msg->msg.cfun.mode)) {
                 AT_PORT_SEND_CONST_STR("1");
             } else {
                 AT_PORT_SEND_CONST_STR("0");
@@ -1805,27 +1855,27 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPIN_GET: {              /* Read current SIM status */
+        case LWGSM_CMD_CPIN_GET: { /* Read current SIM status */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPIN?");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPIN_SET: {              /* Set SIM pin code */
+        case LWGSM_CMD_CPIN_SET: { /* Set SIM pin code */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPIN=");
             lwgsmi_send_string(msg->msg.cpin_enter.pin, 0, 1, 0);
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPIN_ADD: {              /* Add new pin code */
+        case LWGSM_CMD_CPIN_ADD: { /* Add new pin code */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CLCK=\"SC\",1,");
             lwgsmi_send_string(msg->msg.cpin_add.pin, 0, 1, 0);
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPIN_CHANGE: {           /* Change already active SIM */
+        case LWGSM_CMD_CPIN_CHANGE: { /* Change already active SIM */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPWD=\"SC\"");
             lwgsmi_send_string(msg->msg.cpin_change.current_pin, 0, 1, 1);
@@ -1833,14 +1883,14 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPIN_REMOVE: {           /* Remove current PIN */
+        case LWGSM_CMD_CPIN_REMOVE: { /* Remove current PIN */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CLCK=\"SC\",0,");
             lwgsmi_send_string(msg->msg.cpin_remove.pin, 0, 1, 0);
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPUK_SET: {              /* Enter PUK and set new PIN */
+        case LWGSM_CMD_CPUK_SET: { /* Enter PUK and set new PIN */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPIN=");
             lwgsmi_send_string(msg->msg.cpuk_enter.puk, 0, 1, 0);
@@ -1848,7 +1898,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_COPS_SET: {              /* Set current operator */
+        case LWGSM_CMD_COPS_SET: { /* Set current operator */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+COPS=");
             lwgsmi_send_number(LWGSM_U32(msg->msg.cops_set.mode), 0, 0);
@@ -1866,44 +1916,44 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_COPS_GET: {              /* Get current operator */
+        case LWGSM_CMD_COPS_GET: { /* Get current operator */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+COPS?");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_COPS_GET_OPT: {          /* Get list of available operators */
+        case LWGSM_CMD_COPS_GET_OPT: { /* Get list of available operators */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+COPS=?");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CSQ_GET: {               /* Get signal strength */
+        case LWGSM_CMD_CSQ_GET: { /* Get signal strength */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CSQ");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CNUM: {                  /* Get SIM number */
+        case LWGSM_CMD_CNUM: { /* Get SIM number */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CNUM");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CIPSHUT: {               /* Shut down network connection and put to reset state */
+        case LWGSM_CMD_CIPSHUT: { /* Shut down network connection and put to reset state */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CIPSHUT");
             AT_PORT_SEND_END_AT();
             break;
         }
 #if LWGSM_CFG_CONN
-        case LWGSM_CMD_CIPMUX: {                /* Enable multiple connections */
+        case LWGSM_CMD_CIPMUX: { /* Enable multiple connections */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CIPMUX=1");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CIPHEAD: {               /* Enable information on receive data about connection and length */
+        case LWGSM_CMD_CIPHEAD: { /* Enable information on receive data about connection and length */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CIPHEAD=1");
             AT_PORT_SEND_END_AT();
@@ -1915,35 +1965,35 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CIPSSL: {                /* Set SSL configuration */
+        case LWGSM_CMD_CIPSSL: { /* Set SSL configuration */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CIPSSL=");
             lwgsmi_send_number((msg->msg.conn_start.type == LWGSM_CONN_TYPE_SSL) ? 1 : 0, 0, 0);
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CIPSTART: {              /* Start a new connection */
+        case LWGSM_CMD_CIPSTART: { /* Start a new connection */
             lwgsm_conn_t* c = NULL;
 
             /* Do we have network connection? */
             /* Check if we are connected to network */
 
-            msg->msg.conn_start.num = 0;        /* Start with max value = invalidated */
-            for (int16_t i = LWGSM_CFG_MAX_CONNS - 1; i >= 0; --i) {/* Find available connection */
+            msg->msg.conn_start.num = 0;                             /* Start with max value = invalidated */
+            for (int16_t i = LWGSM_CFG_MAX_CONNS - 1; i >= 0; --i) { /* Find available connection */
                 if (!lwgsm.m.conns[i].status.f.active) {
                     c = &lwgsm.m.conns[i];
                     c->num = LWGSM_U8(i);
-                    msg->msg.conn_start.num = LWGSM_U8(i);  /* Set connection number for message structure */
+                    msg->msg.conn_start.num = LWGSM_U8(i); /* Set connection number for message structure */
                     break;
                 }
             }
             if (c == NULL) {
                 lwgsmi_send_conn_error_cb(msg, lwgsmERRNOFREECONN);
-                return lwgsmERRNOFREECONN;      /* We don't have available connection */
+                return lwgsmERRNOFREECONN; /* We don't have available connection */
             }
 
             if (msg->msg.conn_start.conn != NULL) { /* Is user interested about connection info? */
-                *msg->msg.conn_start.conn = c;  /* Save connection for user */
+                *msg->msg.conn_start.conn = c;      /* Save connection for user */
             }
 
             AT_PORT_SEND_BEGIN_AT();
@@ -1959,7 +2009,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CIPCLOSE: {              /* Close the connection */
+        case LWGSM_CMD_CIPCLOSE: { /* Close the connection */
             lwgsm_conn_p c = msg->msg.conn_close.conn;
             if (c != NULL &&
                 /* Is connection already closed or command for this connection is not valid anymore? */
@@ -1968,14 +2018,15 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             }
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CIPCLOSE=");
-            lwgsmi_send_number(LWGSM_U32(msg->msg.conn_close.conn ? msg->msg.conn_close.conn->num : LWGSM_CFG_MAX_CONNS), 0, 0);
+            lwgsmi_send_number(
+                LWGSM_U32(msg->msg.conn_close.conn ? msg->msg.conn_close.conn->num : LWGSM_CFG_MAX_CONNS), 0, 0);
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CIPSEND: {               /* Send data to connection */
-            return lwgsmi_tcpip_process_send_data();/* Process send data */
+        case LWGSM_CMD_CIPSEND: {                    /* Send data to connection */
+            return lwgsmi_tcpip_process_send_data(); /* Process send data */
         }
-        case LWGSM_CMD_CIPSTATUS: {             /* Get status of device and all connections */
+        case LWGSM_CMD_CIPSTATUS: { /* Get status of device and all connections */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CIPSTATUS");
             AT_PORT_SEND_END_AT();
@@ -1983,7 +2034,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
         }
 #endif /* LWGSM_CFG_CONN */
 #if LWGSM_CFG_SMS
-        case LWGSM_CMD_CMGF: {                  /* Select SMS message format */
+        case LWGSM_CMD_CMGF: { /* Select SMS message format */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGF=");
             if (CMD_IS_DEF(LWGSM_CMD_CMGS)) {
@@ -1999,14 +2050,14 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CMGS: {                  /* Send SMS */
+        case LWGSM_CMD_CMGS: { /* Send SMS */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGS=");
             lwgsmi_send_string(msg->msg.sms_send.num, 0, 1, 0);
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CMGR: {                  /* Read message */
+        case LWGSM_CMD_CMGR: { /* Read message */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGR=");
             lwgsmi_send_number(LWGSM_U32(msg->msg.sms_read.pos), 0, 0);
@@ -2014,14 +2065,14 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CMGD: {                  /* Delete SMS message */
+        case LWGSM_CMD_CMGD: { /* Delete SMS message */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGD=");
             lwgsmi_send_number(LWGSM_U32(msg->msg.sms_delete.pos), 0, 0);
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CMGDA: {                 /* Mass delete SMS messages */
+        case LWGSM_CMD_CMGDA: { /* Mass delete SMS messages */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGDA=");
             switch (msg->msg.sms_delete_all.status) {
@@ -2050,7 +2101,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             break;
         }
 
-        case LWGSM_CMD_CMGL: {                  /* Delete SMS message */
+        case LWGSM_CMD_CMGL: { /* Delete SMS message */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGL=");
             lwgsmi_send_sms_stat(msg->msg.sms_list.status, 1, 0);
@@ -2058,30 +2109,39 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPMS_GET_OPT: {          /* Get available SMS storages */
+        case LWGSM_CMD_CPMS_GET_OPT: { /* Get available SMS storages */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPMS=?");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPMS_GET: {              /* Get current SMS storage info */
+        case LWGSM_CMD_CPMS_GET: { /* Get current SMS storage info */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPMS?");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPMS_SET: {              /* Set active SMS storage(s) */
+        case LWGSM_CMD_CPMS_SET: { /* Set active SMS storage(s) */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPMS=");
-            if (CMD_IS_DEF(LWGSM_CMD_CMGR)) {   /* Read SMS original command? */
-                lwgsmi_send_dev_memory(msg->msg.sms_read.mem == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[0].current : msg->msg.sms_read.mem, 1, 0);
-            } else if (CMD_IS_DEF(LWGSM_CMD_CMGD)) {/* Delete SMS original command? */
-                lwgsmi_send_dev_memory(msg->msg.sms_delete.mem == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[0].current : msg->msg.sms_delete.mem, 1, 0);
-            } else if (CMD_IS_DEF(LWGSM_CMD_CMGL)) {/* List SMS original command? */
-                lwgsmi_send_dev_memory(msg->msg.sms_list.mem == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[0].current : msg->msg.sms_list.mem, 1, 0);
-            } else if (CMD_IS_DEF(LWGSM_CMD_CPMS_SET)) {/* Do we want to set memory for read/delete,sent/write,receive? */
-                for (size_t i = 0; i < 3; ++i) {/* Write 3 memories */
-                    lwgsmi_send_dev_memory(msg->msg.sms_memory.mem[i] == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[i].current : msg->msg.sms_memory.mem[i], 1, !!i);
+            if (CMD_IS_DEF(LWGSM_CMD_CMGR)) { /* Read SMS original command? */
+                lwgsmi_send_dev_memory(msg->msg.sms_read.mem == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[0].current
+                                                                                  : msg->msg.sms_read.mem,
+                                       1, 0);
+            } else if (CMD_IS_DEF(LWGSM_CMD_CMGD)) { /* Delete SMS original command? */
+                lwgsmi_send_dev_memory(msg->msg.sms_delete.mem == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[0].current
+                                                                                    : msg->msg.sms_delete.mem,
+                                       1, 0);
+            } else if (CMD_IS_DEF(LWGSM_CMD_CMGL)) { /* List SMS original command? */
+                lwgsmi_send_dev_memory(msg->msg.sms_list.mem == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[0].current
+                                                                                  : msg->msg.sms_list.mem,
+                                       1, 0);
+            } else if (CMD_IS_DEF(
+                           LWGSM_CMD_CPMS_SET)) { /* Do we want to set memory for read/delete,sent/write,receive? */
+                for (size_t i = 0; i < 3; ++i) {  /* Write 3 memories */
+                    lwgsmi_send_dev_memory(msg->msg.sms_memory.mem[i] == LWGSM_MEM_CURRENT ? lwgsm.m.sms.mem[i].current
+                                                                                           : msg->msg.sms_memory.mem[i],
+                                           1, !!i);
                 }
             }
             AT_PORT_SEND_END_AT();
@@ -2089,7 +2149,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
         }
 #endif /* LWGSM_CFG_SMS */
 #if LWGSM_CFG_CALL
-        case LWGSM_CMD_ATD: {                   /* Start new call */
+        case LWGSM_CMD_ATD: { /* Start new call */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("D");
             lwgsmi_send_string(msg->msg.call_start.number, 0, 0, 0);
@@ -2097,13 +2157,13 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_ATA: {                   /* Answer phone call */
+        case LWGSM_CMD_ATA: { /* Answer phone call */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("A");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_ATH: {                   /* Disconnect existing connection (hang-up phone call) */
+        case LWGSM_CMD_ATH: { /* Disconnect existing connection (hang-up phone call) */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("H");
             AT_PORT_SEND_END_AT();
@@ -2111,19 +2171,19 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
         }
 #endif /* LWGSM_CFG_CALL */
 #if LWGSM_CFG_PHONEBOOK
-        case LWGSM_CMD_CPBS_GET_OPT: {          /* Get available phonebook storages */
+        case LWGSM_CMD_CPBS_GET_OPT: { /* Get available phonebook storages */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBS=?");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPBS_GET: {              /* Get current memory info */
+        case LWGSM_CMD_CPBS_GET: { /* Get current memory info */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBS?");
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPBS_SET: {              /* Get current memory info */
+        case LWGSM_CMD_CPBS_SET: { /* Get current memory info */
             lwgsm_mem_t mem;
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBS=");
@@ -2144,10 +2204,10 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPBW_SET: {              /* Write/Delete new/old entry */
+        case LWGSM_CMD_CPBW_SET: { /* Write/Delete new/old entry */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBW=");
-            if (msg->msg.pb_write.pos > 0) {    /* Write number if more than 0 */
+            if (msg->msg.pb_write.pos > 0) { /* Write number if more than 0 */
                 lwgsmi_send_number(LWGSM_U32(msg->msg.pb_write.pos), 0, 0);
             }
             if (!msg->msg.pb_write.del) {
@@ -2158,7 +2218,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPBR: {                  /* Read entires */
+        case LWGSM_CMD_CPBR: { /* Read entires */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBR=");
             lwgsmi_send_number(LWGSM_U32(msg->msg.pb_list.start_index), 0, 0);
@@ -2166,7 +2226,7 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-        case LWGSM_CMD_CPBF: {                  /* Find entires */
+        case LWGSM_CMD_CPBF: { /* Find entires */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBF=");
             lwgsmi_send_string(msg->msg.pb_search.search, 1, 1, 0);
@@ -2251,9 +2311,9 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
         }
 #endif /* LWGSM_CFG_USSD */
         default:
-            return lwgsmERR;                    /* Invalid command */
+            return lwgsmERR; /* Invalid command */
     }
-    return lwgsmOK;                             /* Valid command */
+    return lwgsmOK; /* Valid command */
 }
 
 /**
@@ -2271,46 +2331,46 @@ lwgsmi_send_msg_to_producer_mbox(lwgsm_msg_t* msg, lwgsmr_t (*process_fn)(lwgsm_
     lwgsm_core_lock();
     /* If locked more than 1 time, means we were called from callback or internally */
     if (lwgsm.locked_cnt > 1 && msg->is_blocking) {
-        res = lwgsmERRBLOCKING;                 /* Blocking mode not allowed */
+        res = lwgsmERRBLOCKING; /* Blocking mode not allowed */
     }
     /* Check if device present */
     if (res == lwgsmOK && !lwgsm.status.f.dev_present) {
-        res = lwgsmERRNODEVICE;                 /* No device connected */
+        res = lwgsmERRNODEVICE; /* No device connected */
     }
     lwgsm_core_unlock();
     if (res != lwgsmOK) {
-        LWGSM_MSG_VAR_FREE(msg);                /* Free memory and return */
+        LWGSM_MSG_VAR_FREE(msg); /* Free memory and return */
         return res;
     }
 
-    if (msg->is_blocking) {                     /* In case message is blocking */
-        if (!lwgsm_sys_sem_create(&msg->sem, 0)) {  /* Create semaphore and lock it immediately */
-            LWGSM_MSG_VAR_FREE(msg);            /* Release memory and return */
+    if (msg->is_blocking) {                        /* In case message is blocking */
+        if (!lwgsm_sys_sem_create(&msg->sem, 0)) { /* Create semaphore and lock it immediately */
+            LWGSM_MSG_VAR_FREE(msg);               /* Release memory and return */
             return lwgsmERRMEM;
         }
     }
-    if (!msg->cmd) {                            /* Set start command if not set by user */
-        msg->cmd = msg->cmd_def;                /* Set it as default */
+    if (!msg->cmd) {             /* Set start command if not set by user */
+        msg->cmd = msg->cmd_def; /* Set it as default */
     }
-    msg->block_time = max_block_time;           /* Set blocking status if necessary */
-    msg->fn = process_fn;                       /* Save processing function to be called as callback */
+    msg->block_time = max_block_time; /* Set blocking status if necessary */
+    msg->fn = process_fn;             /* Save processing function to be called as callback */
     if (msg->is_blocking) {
-        lwgsm_sys_mbox_put(&lwgsm.mbox_producer, msg);  /* Write message to producer queue and wait forever */
+        lwgsm_sys_mbox_put(&lwgsm.mbox_producer, msg); /* Write message to producer queue and wait forever */
     } else {
-        if (!lwgsm_sys_mbox_putnow(&lwgsm.mbox_producer, msg)) {/* Write message to producer queue immediately */
-            LWGSM_MSG_VAR_FREE(msg);            /* Release message */
+        if (!lwgsm_sys_mbox_putnow(&lwgsm.mbox_producer, msg)) { /* Write message to producer queue immediately */
+            LWGSM_MSG_VAR_FREE(msg);                             /* Release message */
             return lwgsmERRMEM;
         }
     }
-    if (res == lwgsmOK && msg->is_blocking) {   /* In case we have blocking request */
+    if (res == lwgsmOK && msg->is_blocking) { /* In case we have blocking request */
         uint32_t time;
-        time = lwgsm_sys_sem_wait(&msg->sem, 0);/* Wait forever for semaphore */
-        if (time == LWGSM_SYS_TIMEOUT) {        /* If semaphore was not accessed within given time */
-            res = lwgsmTIMEOUT;                 /* Semaphore not released in time */
+        time = lwgsm_sys_sem_wait(&msg->sem, 0); /* Wait forever for semaphore */
+        if (time == LWGSM_SYS_TIMEOUT) {         /* If semaphore was not accessed within given time */
+            res = lwgsmTIMEOUT;                  /* Semaphore not released in time */
         } else {
-            res = msg->res;                     /* Set response status from message response */
+            res = msg->res; /* Set response status from message response */
         }
-        LWGSM_MSG_VAR_FREE(msg);                /* Release message */
+        LWGSM_MSG_VAR_FREE(msg); /* Release message */
     }
     return res;
 }

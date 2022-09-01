@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "system/lwgsm_sys.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "system/lwgsm_sys.h"
 #include "tx_api.h"
 
 /* Custom memory ThreadX implementation must be done to use this feature */
@@ -43,16 +43,16 @@
 #if !__DOXYGEN__
 
 /* Main LwGSM byte pool handle */
-TX_BYTE_POOL*       lwgsm_threadx_byte_pool;
+TX_BYTE_POOL* lwgsm_threadx_byte_pool;
 
 /* If user will not provide its own byte pool from app, create one here */
 #if !LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
 
 /* ThreadX memory pool definition */
 #if !defined(LWGSM_MEM_SIZE)
-#define LWGSM_MEM_SIZE                    0x2000
+#define LWGSM_MEM_SIZE 0x2000
 #endif
-static UCHAR        byte_pool_mem[LWGSM_MEM_SIZE];
+static UCHAR byte_pool_mem[LWGSM_MEM_SIZE];
 static TX_BYTE_POOL byte_pool;
 
 #else
@@ -76,8 +76,8 @@ lwgsm_sys_preinit_threadx_set_bytepool_handle(TX_BYTE_POOL* bp) {
 static TX_MUTEX sys_mutex;
 
 /* Macros to convert from milliseconds to ticks and opposite */
-#define TICKS_TO_MS(ticks)              ((ticks) * (1000 / TX_TIMER_TICKS_PER_SECOND))
-#define MS_TO_TICKS(ms)                 ((ms) * TX_TIMER_TICKS_PER_SECOND / 1000)
+#define TICKS_TO_MS(ticks) ((ticks) * (1000 / TX_TIMER_TICKS_PER_SECOND))
+#define MS_TO_TICKS(ms)    ((ms)*TX_TIMER_TICKS_PER_SECOND / 1000)
 
 uint8_t
 lwgsm_sys_init(void) {
@@ -89,7 +89,7 @@ lwgsm_sys_init(void) {
         status = lwgsm_sys_mutex_create(&sys_mutex) ? TX_SUCCESS : TX_NO_MEMORY;
     }
     lwgsm_threadx_byte_pool = &byte_pool;
-#else /* LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL */
+#else  /* LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL */
     lwgsm_sys_mutex_create(&sys_mutex);
 #endif /* !LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL */
     return status == TX_SUCCESS ? 1 : 0;
@@ -154,7 +154,9 @@ lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
 uint32_t
 lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
     ULONG start = tx_time_get();
-    return tx_semaphore_get(p, !timeout ? TX_WAIT_FOREVER : MS_TO_TICKS(timeout)) == TX_SUCCESS ? TICKS_TO_MS(tx_time_get() - start) : LWGSM_SYS_TIMEOUT;
+    return tx_semaphore_get(p, !timeout ? TX_WAIT_FOREVER : MS_TO_TICKS(timeout)) == TX_SUCCESS
+               ? TICKS_TO_MS(tx_time_get() - start)
+               : LWGSM_SYS_TIMEOUT;
 }
 
 uint8_t
@@ -190,7 +192,7 @@ lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size) {
 
 uint8_t
 lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
-    (VOID)tx_queue_delete(b);
+    (VOID) tx_queue_delete(b);
     lwgsm_mem_free(b->tx_queue_start);
     return 1;
 }
@@ -198,14 +200,16 @@ lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
 uint32_t
 lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
     ULONG start = tx_time_get();
-    (VOID)tx_queue_send(b, &m, TX_WAIT_FOREVER);
+    (VOID) tx_queue_send(b, &m, TX_WAIT_FOREVER);
     return tx_time_get() - start;
 }
 
 uint32_t
 lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
     ULONG start = tx_time_get();
-    return tx_queue_receive(b, m, !timeout ? TX_WAIT_FOREVER : MS_TO_TICKS(timeout)) == TX_SUCCESS ? TICKS_TO_MS(tx_time_get() - start) : LWGSM_SYS_TIMEOUT;
+    return tx_queue_receive(b, m, !timeout ? TX_WAIT_FOREVER : MS_TO_TICKS(timeout)) == TX_SUCCESS
+               ? TICKS_TO_MS(tx_time_get() - start)
+               : LWGSM_SYS_TIMEOUT;
 }
 
 uint8_t
@@ -232,16 +236,18 @@ lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
 #if LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION
 
 uint8_t
-lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio) {
+lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg,
+                        size_t stack_size, lwgsm_sys_thread_prio_t prio) {
     void* stack_ptr = NULL;
     lwgsm_sys_thread_t* t_handle;
     uint8_t t_handle_dynamic = 0;
 
     /* First process thread object */
     if (t != NULL) {
-        t_handle = t;                           /* Use static handle from parameter */
-    } else if (tx_byte_allocate(lwgsm_threadx_byte_pool, (void*)&t_handle, sizeof(*t_handle), TX_NO_WAIT) == TX_SUCCESS) {
-        t_handle_dynamic = 1;                   /* Handle has been dynamically allocated */
+        t_handle = t; /* Use static handle from parameter */
+    } else if (tx_byte_allocate(lwgsm_threadx_byte_pool, (void*)&t_handle, sizeof(*t_handle), TX_NO_WAIT)
+               == TX_SUCCESS) {
+        t_handle_dynamic = 1; /* Handle has been dynamically allocated */
     } else {
         goto cleanup;
     }
@@ -252,8 +258,9 @@ lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_threa
     }
 
     /* Allocate thread stack */
-    if (tx_thread_create(t_handle, (CHAR*)name, (VOID (*)(ULONG))(thread_func), (ULONG)arg,
-                         stack_ptr, stack_size, prio, 0, TX_NO_TIME_SLICE, TX_AUTO_START) != TX_SUCCESS) {
+    if (tx_thread_create(t_handle, (CHAR*)name, (VOID(*)(ULONG))(thread_func), (ULONG)arg, stack_ptr, stack_size, prio,
+                         0, TX_NO_TIME_SLICE, TX_AUTO_START)
+        != TX_SUCCESS) {
         goto cleanup;
     }
 
@@ -305,14 +312,17 @@ lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
 #else /* LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION */
 
 uint8_t
-lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio) {
+lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg,
+                        size_t stack_size, lwgsm_sys_thread_prio_t prio) {
 
     typedef VOID (*threadx_entry_t)(ULONG);
     uint8_t rt = 0;
 
     void* stack_mem = lwgsm_mem_malloc(stack_size);
     if (stack_mem != NULL) {
-        if (tx_thread_create(t, (CHAR*)name, (VOID (*)(ULONG))(thread_func), (ULONG)arg, stack_mem, stack_size, prio, prio, TX_NO_TIME_SLICE, TX_AUTO_START) == TX_SUCCESS) {
+        if (tx_thread_create(t, (CHAR*)name, (VOID(*)(ULONG))(thread_func), (ULONG)arg, stack_mem, stack_size, prio,
+                             prio, TX_NO_TIME_SLICE, TX_AUTO_START)
+            == TX_SUCCESS) {
             rt = 1;
         } else {
             lwgsm_mem_free(stack_mem);

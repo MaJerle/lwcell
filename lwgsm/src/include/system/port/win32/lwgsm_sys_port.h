@@ -45,18 +45,18 @@ extern "C" {
 
 #if LWGSM_CFG_OS && !__DOXYGEN__
 
-typedef HANDLE                      lwgsm_sys_mutex_t;
-typedef HANDLE                      lwgsm_sys_sem_t;
-typedef HANDLE                      lwgsm_sys_mbox_t;
-typedef HANDLE                      lwgsm_sys_thread_t;
-typedef int                         lwgsm_sys_thread_prio_t;
+typedef HANDLE lwgsm_sys_mutex_t;
+typedef HANDLE lwgsm_sys_sem_t;
+typedef HANDLE lwgsm_sys_mbox_t;
+typedef HANDLE lwgsm_sys_thread_t;
+typedef int lwgsm_sys_thread_prio_t;
 
-#define LWGSM_SYS_MUTEX_NULL          ((HANDLE)0)
-#define LWGSM_SYS_SEM_NULL            ((HANDLE)0)
-#define LWGSM_SYS_MBOX_NULL           ((HANDLE)0)
-#define LWGSM_SYS_TIMEOUT             (INFINITE)
-#define LWGSM_SYS_THREAD_PRIO         (0)
-#define LWGSM_SYS_THREAD_SS           (4096)
+#define LWGSM_SYS_MUTEX_NULL  ((HANDLE)0)
+#define LWGSM_SYS_SEM_NULL    ((HANDLE)0)
+#define LWGSM_SYS_MBOX_NULL   ((HANDLE)0)
+#define LWGSM_SYS_TIMEOUT     (INFINITE)
+#define LWGSM_SYS_THREAD_PRIO (0)
+#define LWGSM_SYS_THREAD_SS   (4096)
 
 #endif /* LWGSM_CFG_OS && !__DOXYGEN__ */
 

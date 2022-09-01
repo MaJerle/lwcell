@@ -44,8 +44,8 @@
  * \ref LWGSM_CFG_INPUT_USE_PROCESS must be enabled in `lwgsm_config.h` to use this driver.
  */
 #include "lwgsm/lwgsm.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_input.h"
+#include "lwgsm/lwgsm_mem.h"
 #include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__
@@ -55,21 +55,21 @@
 #endif /* LWGSM_CFG_INPUT_USE_PROCESS */
 
 #if !defined(LWGSM_USART_DMA_RX_BUFF_SIZE)
-#define LWGSM_USART_DMA_RX_BUFF_SIZE      0x1000
+#define LWGSM_USART_DMA_RX_BUFF_SIZE 0x1000
 #endif /* !defined(LWGSM_USART_DMA_RX_BUFF_SIZE) */
 
 #if !defined(LWGSM_MEM_SIZE)
-#define LWGSM_MEM_SIZE                    0x1000
+#define LWGSM_MEM_SIZE 0x1000
 #endif /* !defined(LWGSM_MEM_SIZE) */
 
 #if !defined(LWGSM_USART_RDR_NAME)
-#define LWGSM_USART_RDR_NAME              RDR
+#define LWGSM_USART_RDR_NAME RDR
 #endif /* !defined(LWGSM_USART_RDR_NAME) */
 
 /* USART memory */
-static uint8_t      usart_mem[LWGSM_USART_DMA_RX_BUFF_SIZE];
-static uint8_t      is_running, initialized;
-static size_t       old_pos;
+static uint8_t usart_mem[LWGSM_USART_DMA_RX_BUFF_SIZE];
+static uint8_t is_running, initialized;
+static size_t old_pos;
 
 /* USART thread */
 static void usart_ll_thread(void* arg);
@@ -248,9 +248,7 @@ configure_uart(uint32_t baudrate) {
         usart_ll_mbox_id = osMessageQueueNew(10, sizeof(void*), NULL);
     }
     if (usart_ll_thread_id == NULL) {
-        const osThreadAttr_t attr = {
-            .stack_size = 1024
-        };
+        const osThreadAttr_t attr = {.stack_size = 1024};
         usart_ll_thread_id = osThreadNew(usart_ll_thread, usart_ll_mbox_id, &attr);
     }
 }
@@ -261,7 +259,7 @@ configure_uart(uint32_t baudrate) {
  */
 static uint8_t
 reset_device(uint8_t state) {
-    if (state) {                                /* Activate reset line */
+    if (state) { /* Activate reset line */
         LL_GPIO_ResetOutputPin(LWGSM_RESET_PORT, LWGSM_RESET_PIN);
     } else {
         LL_GPIO_SetOutputPin(LWGSM_RESET_PORT, LWGSM_RESET_PIN);
@@ -298,23 +296,21 @@ lwgsmr_t
 lwgsm_ll_init(lwgsm_ll_t* ll) {
 #if !LWGSM_CFG_MEM_CUSTOM
     static uint8_t memory[LWGSM_MEM_SIZE];
-    lwgsm_mem_region_t mem_regions[] = {
-        { memory, sizeof(memory) }
-    };
+    lwgsm_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
 
     if (!initialized) {
-        lwgsm_mem_assignmemory(mem_regions, LWGSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations */
+        lwgsm_mem_assignmemory(mem_regions, LWGSM_ARRAYSIZE(mem_regions)); /* Assign memory for allocations */
     }
 #endif /* !LWGSM_CFG_MEM_CUSTOM */
 
     if (!initialized) {
-        ll->send_fn = send_data;                /* Set callback function to send data */
+        ll->send_fn = send_data; /* Set callback function to send data */
 #if defined(LWGSM_RESET_PIN)
-        ll->reset_fn = reset_device;            /* Set callback for hardware reset */
-#endif /* defined(LWGSM_RESET_PIN) */
+        ll->reset_fn = reset_device; /* Set callback for hardware reset */
+#endif                               /* defined(LWGSM_RESET_PIN) */
     }
 
-    configure_uart(ll->uart.baudrate);          /* Initialize UART for communication */
+    configure_uart(ll->uart.baudrate); /* Initialize UART for communication */
     initialized = 1;
     return lwgsmOK;
 }

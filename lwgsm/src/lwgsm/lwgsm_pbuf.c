@@ -31,13 +31,18 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_pbuf.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 /* Set size of pbuf structure */
-#define SIZEOF_PBUF_STRUCT          LWGSM_MEM_ALIGN(sizeof(lwgsm_pbuf_t))
-#define SET_NEW_LEN(v, len)         do { if ((v) != NULL) { *(v) = (len); } } while (0)
+#define SIZEOF_PBUF_STRUCT LWGSM_MEM_ALIGN(sizeof(lwgsm_pbuf_t))
+#define SET_NEW_LEN(v, len)                                                                                            \
+    do {                                                                                                               \
+        if ((v) != NULL) {                                                                                             \
+            *(v) = (len);                                                                                              \
+        }                                                                                                              \
+    } while (0)
 
 /**
  * \brief           Skip pbufs for desired offset
@@ -48,17 +53,17 @@
  */
 static lwgsm_pbuf_p
 pbuf_skip(lwgsm_pbuf_p p, size_t off, size_t* new_off) {
-    if (p == NULL || p->tot_len < off) {        /* Check valid parameters */
-        SET_NEW_LEN(new_off, 0);                /* Set output value */
+    if (p == NULL || p->tot_len < off) { /* Check valid parameters */
+        SET_NEW_LEN(new_off, 0);         /* Set output value */
         return NULL;
     }
 
     /* Skip pbufs until we reach offset */
     for (; p != NULL && p->len <= off; p = p->next) {
-        off -= p->len;                          /* Decrease offset by current pbuf length */
+        off -= p->len; /* Decrease offset by current pbuf length */
     }
 
-    SET_NEW_LEN(new_off, off);                  /* Set output value */
+    SET_NEW_LEN(new_off, off); /* Set output value */
     return p;
 }
 
@@ -72,16 +77,16 @@ lwgsm_pbuf_new(size_t len) {
     lwgsm_pbuf_p p;
 
     p = lwgsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p == NULL,
-                 "[LWGSM PBUF] Failed to allocate %d bytes\r\n", (int)len);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p != NULL,
-                 "[LWGSM PBUF] Allocated %d bytes on %p\r\n", (int)len, (void *)p);
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p == NULL, "[LWGSM PBUF] Failed to allocate %d bytes\r\n",
+                 (int)len);
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p != NULL, "[LWGSM PBUF] Allocated %d bytes on %p\r\n",
+                 (int)len, (void*)p);
     if (p != NULL) {
-        p->next = NULL;                         /* No next element in chain */
-        p->tot_len = len;                       /* Set total length of pbuf chain */
-        p->len = len;                           /* Set payload length */
-        p->payload = (void*)(((char*)p) + SIZEOF_PBUF_STRUCT);  /* Set pointer to payload data */
-        p->ref = 1;                             /* Single reference is used on this pbuf */
+        p->next = NULL;                                        /* No next element in chain */
+        p->tot_len = len;                                      /* Set total length of pbuf chain */
+        p->len = len;                                          /* Set payload length */
+        p->payload = (void*)(((char*)p) + SIZEOF_PBUF_STRUCT); /* Set pointer to payload data */
+        p->ref = 1;                                            /* Single reference is used on this pbuf */
     }
     return p;
 }
@@ -105,16 +110,16 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
     cnt = 0;
     for (p = pbuf; p != NULL;) {
         lwgsm_core_lock();
-        ref = --p->ref;                         /* Decrease current value and save it */
+        ref = --p->ref; /* Decrease current value and save it */
         lwgsm_core_unlock();
-        if (ref == 0) {                         /* Did we reach 0 and are ready to free it? */
+        if (ref == 0) { /* Did we reach 0 and are ready to free it? */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM PBUF] Deallocating %p with len/tot_len: %d/%d\r\n",
-                         (void *)p, (int)p->len, (int)p->tot_len);
-            pn = p->next;                       /* Save next entry */
-            lwgsm_mem_free_s((void**)&p);       /* Free memory for pbuf */
-            p = pn;                             /* Restore with next entry */
-            ++cnt;                              /* Increase number of freed pbufs */
+                         "[LWGSM PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", (void*)p, (int)p->len,
+                         (int)p->tot_len);
+            pn = p->next;                 /* Save next entry */
+            lwgsm_mem_free_s((void**)&p); /* Free memory for pbuf */
+            p = pn;                       /* Restore with next entry */
+            ++cnt;                        /* Increase number of freed pbufs */
         } else {
             break;
         }
@@ -143,10 +148,10 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
      * increase total length parameter of all next entries
      */
     for (; head->next != NULL; head = head->next) {
-        head->tot_len += tail->tot_len;         /* Increase total length of packet */
+        head->tot_len += tail->tot_len; /* Increase total length of packet */
     }
-    head->tot_len += tail->tot_len;             /* Increase total length of last packet in chain */
-    head->next = tail;                          /* Set next packet buffer as next one */
+    head->tot_len += tail->tot_len; /* Increase total length of last packet in chain */
+    head->next = tail;              /* Set next packet buffer as next one */
 
     return lwgsmOK;
 }
@@ -169,9 +174,9 @@ lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
      * To prevent issues with multi-thread access,
      * first reference pbuf and increase counter
      */
-    lwgsm_pbuf_ref(tail);                       /* Reference tail pbuf by head pbuf now */
-    if ((res = lwgsm_pbuf_cat(head, tail)) != lwgsmOK) {/* Did we concatenate them together successfully? */
-        lwgsm_pbuf_free(tail);                  /* Call free to decrease reference counter */
+    lwgsm_pbuf_ref(tail);                                /* Reference tail pbuf by head pbuf now */
+    if ((res = lwgsm_pbuf_cat(head, tail)) != lwgsmOK) { /* Did we concatenate them together successfully? */
+        lwgsm_pbuf_free(tail);                           /* Call free to decrease reference counter */
     }
     return res;
 }
@@ -188,11 +193,11 @@ lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
 lwgsm_pbuf_p
 lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
     lwgsm_pbuf_p r = NULL;
-    if (head != NULL && head->next != NULL) {   /* Check for valid pbuf */
-        r = head->next;                         /* Set return value as next pbuf */
+    if (head != NULL && head->next != NULL) { /* Check for valid pbuf */
+        r = head->next;                       /* Set return value as next pbuf */
 
-        head->next = NULL;                      /* Clear next pbuf */
-        head->tot_len = head->len;              /* Set new length of head pbuf */
+        head->next = NULL;         /* Clear next pbuf */
+        head->tot_len = head->len; /* Set new length of head pbuf */
     }
     return r;
 }
@@ -206,7 +211,7 @@ lwgsmr_t
 lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
     LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
 
-    ++pbuf->ref;                                /* Increase reference count for pbuf */
+    ++pbuf->ref; /* Increase reference count for pbuf */
     return lwgsmOK;
 }
 
@@ -230,7 +235,7 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
 
     /* Skip if necessary and check if we are in valid range */
     if (offset > 0) {
-        pbuf = pbuf_skip(pbuf, offset, &offset);/* Offset and check for new length */
+        pbuf = pbuf_skip(pbuf, offset, &offset); /* Offset and check for new length */
         if (pbuf == NULL) {
             return lwgsmERR;
         }
@@ -242,19 +247,19 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
 
     /* First only copy in case we have some offset from first pbuf */
     if (offset > 0) {
-        copy_len = LWGSM_MIN(pbuf->len - offset, len);  /* Get length to copy to current pbuf */
-        LWGSM_MEMCPY(pbuf->payload + offset, d, copy_len);  /* Copy to memory with offset */
-        len -= copy_len;                        /* Decrease remaining bytes to copy */
-        d += copy_len;                          /* Increase data pointer */
-        pbuf = pbuf->next;                      /* Go to next pbuf */
+        copy_len = LWGSM_MIN(pbuf->len - offset, len);     /* Get length to copy to current pbuf */
+        LWGSM_MEMCPY(pbuf->payload + offset, d, copy_len); /* Copy to memory with offset */
+        len -= copy_len;                                   /* Decrease remaining bytes to copy */
+        d += copy_len;                                     /* Increase data pointer */
+        pbuf = pbuf->next;                                 /* Go to next pbuf */
     }
 
     /* Copy user memory to sequence of pbufs */
     for (; len; pbuf = pbuf->next) {
-        copy_len = LWGSM_MIN(len, pbuf->len);   /* Get copy length */
-        LWGSM_MEMCPY(pbuf->payload, d, copy_len);   /* Copy memory to pbuf payload */
-        len -= copy_len;                        /* Decrease number of remaining bytes to send */
-        d += copy_len;                          /* Increase data pointer */
+        copy_len = LWGSM_MIN(len, pbuf->len);     /* Get copy length */
+        LWGSM_MEMCPY(pbuf->payload, d, copy_len); /* Copy memory to pbuf payload */
+        len -= copy_len;                          /* Decrease number of remaining bytes to send */
+        d += copy_len;                            /* Increase data pointer */
     }
     return lwgsmOK;
 }
@@ -281,7 +286,7 @@ lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
      * skip to necessary pbuf
      */
     if (offset > 0) {
-        pbuf = pbuf_skip(pbuf, offset, &offset);/* Skip offset if necessary */
+        pbuf = pbuf_skip(pbuf, offset, &offset); /* Skip offset if necessary */
         if (pbuf == NULL) {
             return 0;
         }
@@ -293,12 +298,12 @@ lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
      */
     tot = 0;
     for (; pbuf != NULL && len; pbuf = pbuf->next) {
-        tc = LWGSM_MIN(pbuf->len - offset, len);/* Get length of data to copy */
-        LWGSM_MEMCPY(d, pbuf->payload + offset, tc);/* Copy data from pbuf */
+        tc = LWGSM_MIN(pbuf->len - offset, len);     /* Get length of data to copy */
+        LWGSM_MEMCPY(d, pbuf->payload + offset, tc); /* Copy data from pbuf */
         d += tc;
         len -= tc;
         tot += tc;
-        offset = 0;                             /* No more offset in this case */
+        offset = 0; /* No more offset in this case */
     }
     return tot;
 }
@@ -315,13 +320,13 @@ lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
     lwgsm_pbuf_p p;
 
     if (pbuf != NULL) {
-        p = pbuf_skip(pbuf, pos, &pos);         /* Skip pbufs to desired position and get new offset from new pbuf */
-        if (p != NULL) {                        /* Do we have new pbuf? */
-            *el = p->payload[pos];              /* Return memory at desired new offset from latest pbuf */
+        p = pbuf_skip(pbuf, pos, &pos); /* Skip pbufs to desired position and get new offset from new pbuf */
+        if (p != NULL) {                /* Do we have new pbuf? */
+            *el = p->payload[pos];      /* Return memory at desired new offset from latest pbuf */
             return 1;
         }
     }
-    return 0;                                   /* Invalid character */
+    return 0; /* Invalid character */
 }
 
 /**
@@ -335,18 +340,18 @@ lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
  */
 size_t
 lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* needle, size_t len, size_t off) {
-    if (pbuf != NULL && needle != NULL && pbuf->tot_len >= (len + off)) {   /* Check if valid entries */
+    if (pbuf != NULL && needle != NULL && pbuf->tot_len >= (len + off)) { /* Check if valid entries */
         /*
          * Try entire buffer element by element
          * and in case we have a match, report it
          */
         for (size_t i = off; i <= pbuf->tot_len - len; ++i) {
             if (!lwgsm_pbuf_memcmp(pbuf, needle, len, i)) { /* Check if identical */
-                return i;                       /* We have a match! */
+                return i;                                   /* We have a match! */
             }
         }
     }
-    return LWGSM_SIZET_MAX;                     /* Return maximal value of size_t variable to indicate error */
+    return LWGSM_SIZET_MAX; /* Return maximal value of size_t variable to indicate error */
 }
 
 /**
@@ -378,9 +383,9 @@ lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t 
     uint8_t el;
     const uint8_t* d = data;
 
-    if (pbuf == NULL || data == NULL || len == 0/* Input parameters check */
-        || pbuf->tot_len < (offset + len)) {    /* Check of valid ranges */
-        return LWGSM_SIZET_MAX;                 /* Invalid check here */
+    if (pbuf == NULL || data == NULL || len == 0 /* Input parameters check */
+        || pbuf->tot_len < (offset + len)) {     /* Check of valid ranges */
+        return LWGSM_SIZET_MAX;                  /* Invalid check here */
     }
 
     /*
@@ -388,7 +393,7 @@ lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t 
      * Since we had a check on beginning, we must pass this for loop without any problems
      */
     for (p = pbuf; p != NULL && p->len <= offset; p = p->next) {
-        offset -= p->len;                       /* Decrease offset by length of pbuf */
+        offset -= p->len; /* Decrease offset by length of pbuf */
     }
 
     /*
@@ -399,10 +404,10 @@ lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t 
      */
     for (size_t i = 0; i < len; ++i) {
         if (!lwgsm_pbuf_get_at(p, offset + i, &el) || el != d[i]) { /* Get value from pbuf at specific offset */
-            return offset + 1;                  /* Return value from offset where it failed */
+            return offset + 1;                                      /* Return value from offset where it failed */
         }
     }
-    return 0;                                   /* Memory matches at this point */
+    return 0; /* Memory matches at this point */
 }
 
 /**
@@ -432,12 +437,12 @@ void*
 lwgsm_pbuf_get_linear_addr(const lwgsm_pbuf_p pbuf, size_t offset, size_t* new_len) {
     lwgsm_pbuf_p p = pbuf;
 
-    if (pbuf == NULL || pbuf->tot_len < offset) {   /* Check input parameters */
+    if (pbuf == NULL || pbuf->tot_len < offset) { /* Check input parameters */
         SET_NEW_LEN(new_len, 0);
         return NULL;
     }
-    if (offset > 0) {                           /* Is there any offset? */
-        p = pbuf_skip(pbuf, offset, &offset);   /* Skip pbuf to desired length */
+    if (offset > 0) {                         /* Is there any offset? */
+        p = pbuf_skip(pbuf, offset, &offset); /* Skip pbuf to desired length */
         if (p == NULL) {
             SET_NEW_LEN(new_len, 0);
             return NULL;
@@ -445,7 +450,7 @@ lwgsm_pbuf_get_linear_addr(const lwgsm_pbuf_p pbuf, size_t offset, size_t* new_l
     }
 
     SET_NEW_LEN(new_len, p->len - offset);
-    return &p->payload[offset];                 /* Return memory at desired offset */
+    return &p->payload[offset]; /* Return memory at desired offset */
 }
 
 /**
@@ -501,8 +506,8 @@ lwgsm_pbuf_advance(lwgsm_pbuf_p pbuf, int len) {
     if (pbuf == NULL || len == 0) {
         return 0;
     }
-    if (len > 0) {                              /* When we want to decrease size */
-        if ((size_t)len <= pbuf->len) {         /* Is there space to decrease? */
+    if (len > 0) {                      /* When we want to decrease size */
+        if ((size_t)len <= pbuf->len) { /* Is there space to decrease? */
             process = 1;
         }
     } else {
@@ -512,9 +517,9 @@ lwgsm_pbuf_advance(lwgsm_pbuf_p pbuf, int len) {
         }
     }
     if (process) {
-        pbuf->payload += len;                   /* Increase payload pointer */
-        pbuf->tot_len -= len;                   /* Decrease length of pbuf chain */
-        pbuf->len -= len;                       /* Decrease length of current pbuf */
+        pbuf->payload += len; /* Increase payload pointer */
+        pbuf->tot_len -= len; /* Decrease length of pbuf chain */
+        pbuf->len -= len;     /* Decrease length of current pbuf */
     }
     return process;
 }
@@ -540,17 +545,15 @@ lwgsm_pbuf_skip(lwgsm_pbuf_p pbuf, size_t offset, size_t* new_offset) {
 void
 lwgsm_pbuf_dump(lwgsm_pbuf_p p, uint8_t seq) {
     if (p != NULL) {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM PBUF] Dump start: %p\r\n", (void *)p);
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, "[LWGSM PBUF] Dump start: %p\r\n", (void*)p);
         for (; p != NULL; p = p->next) {
             LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM PBUF] Dump %p; ref: %d; len: %d; tot_len: %d, next: %p\r\n",
-                         (void *)p, (int)p->ref, (int)p->len, (int)p->tot_len, (void *)p->next);
+                         "[LWGSM PBUF] Dump %p; ref: %d; len: %d; tot_len: %d, next: %p\r\n", (void*)p, (int)p->ref,
+                         (int)p->len, (int)p->tot_len, (void*)p->next);
             if (!seq) {
                 break;
             }
         }
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM PBUF] Dump end\r\n");
+        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, "[LWGSM PBUF] Dump end\r\n");
     }
 }

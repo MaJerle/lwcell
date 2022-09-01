@@ -58,27 +58,28 @@ typedef struct lwgsm_netconn* lwgsm_netconn_p;
  * \brief           Netconn connection type
  */
 typedef enum {
-    LWGSM_NETCONN_TYPE_TCP = LWGSM_CONN_TYPE_TCP,   /*!< TCP connection */
-    LWGSM_NETCONN_TYPE_UDP = LWGSM_CONN_TYPE_UDP,   /*!< UDP connection */
-    LWGSM_NETCONN_TYPE_SSL = LWGSM_CONN_TYPE_SSL,   /*!< TCP connection over SSL */
+    LWGSM_NETCONN_TYPE_TCP = LWGSM_CONN_TYPE_TCP, /*!< TCP connection */
+    LWGSM_NETCONN_TYPE_UDP = LWGSM_CONN_TYPE_UDP, /*!< UDP connection */
+    LWGSM_NETCONN_TYPE_SSL = LWGSM_CONN_TYPE_SSL, /*!< TCP connection over SSL */
 } lwgsm_netconn_type_t;
 
-lwgsm_netconn_p   lwgsm_netconn_new(lwgsm_netconn_type_t type);
-lwgsmr_t          lwgsm_netconn_delete(lwgsm_netconn_p nc);
-lwgsmr_t          lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port);
-lwgsmr_t          lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf);
-lwgsmr_t          lwgsm_netconn_close(lwgsm_netconn_p nc);
-int8_t          lwgsm_netconn_getconnnum(lwgsm_netconn_p nc);
-void            lwgsm_netconn_set_receive_timeout(lwgsm_netconn_p nc, uint32_t timeout);
-uint32_t        lwgsm_netconn_get_receive_timeout(lwgsm_netconn_p nc);
+lwgsm_netconn_p lwgsm_netconn_new(lwgsm_netconn_type_t type);
+lwgsmr_t lwgsm_netconn_delete(lwgsm_netconn_p nc);
+lwgsmr_t lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port);
+lwgsmr_t lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf);
+lwgsmr_t lwgsm_netconn_close(lwgsm_netconn_p nc);
+int8_t lwgsm_netconn_getconnnum(lwgsm_netconn_p nc);
+void lwgsm_netconn_set_receive_timeout(lwgsm_netconn_p nc, uint32_t timeout);
+uint32_t lwgsm_netconn_get_receive_timeout(lwgsm_netconn_p nc);
 
 /* TCP only */
-lwgsmr_t          lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw);
-lwgsmr_t          lwgsm_netconn_flush(lwgsm_netconn_p nc);
+lwgsmr_t lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw);
+lwgsmr_t lwgsm_netconn_flush(lwgsm_netconn_p nc);
 
 /* UDP only */
-lwgsmr_t          lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw);
-lwgsmr_t          lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port, const void* data, size_t btw);
+lwgsmr_t lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw);
+lwgsmr_t lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port, const void* data,
+                              size_t btw);
 
 /**
  * \}

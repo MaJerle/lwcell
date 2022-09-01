@@ -53,11 +53,13 @@ extern "C" {
  * \param[in]       msg: message to print to debug if test fails
  * \param[in]       c: Condition to test
  */
-#define LWGSM_ASSERT(msg, c)   do {   \
-        if (!(c)) {                     \
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_ASSERT, "Wrong parameters on file %s and line %d: %p\r\n", __FILE__, (int)__LINE__, (void *)(msg));\
-            return lwgsmPARERR;         \
-        }                               \
+#define LWGSM_ASSERT(msg, c)                                                                                           \
+    do {                                                                                                               \
+        if (!(c)) {                                                                                                    \
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_ASSERT, "Wrong parameters on file %s and line %d: %p\r\n", __FILE__,            \
+                         (int)__LINE__, (void*)(msg));                                                                 \
+            return lwgsmPARERR;                                                                                        \
+        }                                                                                                              \
     } while (0)
 
 /**
@@ -66,7 +68,7 @@ extern "C" {
  * \return          Input value aligned to specific number of bytes
  * \hideinitializer
  */
-#define LWGSM_MEM_ALIGN(x)                    ((x + (LWGSM_CFG_MEM_ALIGNMENT - 1)) & ~(LWGSM_CFG_MEM_ALIGNMENT - 1))
+#define LWGSM_MEM_ALIGN(x)                ((x + (LWGSM_CFG_MEM_ALIGNMENT - 1)) & ~(LWGSM_CFG_MEM_ALIGNMENT - 1))
 
 /**
  * \brief           Get minimal value between `x` and `y` inputs
@@ -75,7 +77,7 @@ extern "C" {
  * \return          Minimal value between `x` and `y` parameters
  * \hideinitializer
  */
-#define LWGSM_MIN(x, y)                       ((x) < (y) ? (x) : (y))
+#define LWGSM_MIN(x, y)                   ((x) < (y) ? (x) : (y))
 
 /**
  * \brief           Get maximal value between `x` and `y` inputs
@@ -84,7 +86,7 @@ extern "C" {
  * \return          Maximal value between `x` and `y` parameters
  * \hideinitializer
  */
-#define LWGSM_MAX(x, y)                       ((x) > (y) ? (x) : (y))
+#define LWGSM_MAX(x, y)                   ((x) > (y) ? (x) : (y))
 
 /**
  * \brief           Get size of statically declared array
@@ -92,7 +94,7 @@ extern "C" {
  * \return          Number of array elements
  * \hideinitializer
  */
-#define LWGSM_ARRAYSIZE(x)                    (sizeof(x) / sizeof((x)[0]))
+#define LWGSM_ARRAYSIZE(x)                (sizeof(x) / sizeof((x)[0]))
 
 /**
  * \brief           Unused argument in a function call
@@ -101,56 +103,56 @@ extern "C" {
  * \param[in]       x: Variable which is not used
  * \hideinitializer
  */
-#define LWGSM_UNUSED(x)                       ((void)(x))
+#define LWGSM_UNUSED(x)                   ((void)(x))
 
 /**
  * \brief           Get input value casted to `unsigned 32-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
-#define LWGSM_U32(x)                          ((uint32_t)(x))
+#define LWGSM_U32(x)                      ((uint32_t)(x))
 
 /**
  * \brief           Get input value casted to `unsigned 16-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
-#define LWGSM_U16(x)                          ((uint16_t)(x))
+#define LWGSM_U16(x)                      ((uint16_t)(x))
 
 /**
  * \brief           Get input value casted to `unsigned 8-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
-#define LWGSM_U8(x)                           ((uint8_t)(x))
+#define LWGSM_U8(x)                       ((uint8_t)(x))
 
 /**
  * \brief           Get input value casted to `signed 32-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
-#define LWGSM_I32(x)                          ((int32_t)(x))
+#define LWGSM_I32(x)                      ((int32_t)(x))
 
 /**
  * \brief           Get input value casted to `signed 16-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
-#define LWGSM_I16(x)                          ((int16_t)(x))
+#define LWGSM_I16(x)                      ((int16_t)(x))
 
 /**
  * \brief           Get input value casted to `signed 8-bit` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
-#define LWGSM_I8(x)                           ((int8_t)(x))
+#define LWGSM_I8(x)                       ((int8_t)(x))
 
 /**
  * \brief           Get input value casted to `size_t` value
  * \param[in]       x: Input value
  * \hideinitializer
  */
-#define LWGSM_SZ(x)                           ((size_t)(x))
+#define LWGSM_SZ(x)                       ((size_t)(x))
 
 /**
  * \brief           Convert `unsigned 32-bit` number to string
@@ -159,7 +161,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_u32_to_str(num, out)            lwgsm_u32_to_gen_str(LWGSM_U32(num), (out), 0, 0)
+#define lwgsm_u32_to_str(num, out)        lwgsm_u32_to_gen_str(LWGSM_U32(num), (out), 0, 0)
 
 /**
  * \brief           Convert `unsigned 32-bit` number to HEX string
@@ -170,7 +172,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_u32_to_hex_str(num, out, w)     lwgsm_u32_to_gen_str(LWGSM_U32(num), (out), 1, (w))
+#define lwgsm_u32_to_hex_str(num, out, w) lwgsm_u32_to_gen_str(LWGSM_U32(num), (out), 1, (w))
 
 /**
  * \brief           Convert `signed 32-bit` number to string
@@ -179,7 +181,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_i32_to_str(num, out)            lwgsm_i32_to_gen_str(LWGSM_I32(num), (out))
+#define lwgsm_i32_to_str(num, out)        lwgsm_i32_to_gen_str(LWGSM_I32(num), (out))
 
 /**
  * \brief           Convert `unsigned 16-bit` number to string
@@ -188,7 +190,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_u16_to_str(num, out)            lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U16(num)), (out), 0, 0)
+#define lwgsm_u16_to_str(num, out)        lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U16(num)), (out), 0, 0)
 
 /**
  * \brief           Convert `unsigned 16-bit` number to HEX string
@@ -199,7 +201,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_u16_to_hex_str(num, out, w)     lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U16(num)), (out), 1, (w))
+#define lwgsm_u16_to_hex_str(num, out, w) lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U16(num)), (out), 1, (w))
 
 /**
  * \brief           Convert `signed 16-bit` number to string
@@ -208,7 +210,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_i16_to_str(num, out)            lwgsm_i32_to_gen_str(LWGSM_I32(LWGSM_I16(num)), (out))
+#define lwgsm_i16_to_str(num, out)        lwgsm_i32_to_gen_str(LWGSM_I32(LWGSM_I16(num)), (out))
 
 /**
  * \brief           Convert `unsigned 8-bit` number to string
@@ -217,7 +219,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_u8_to_str(num, out)             lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U8(num)), (out), 0, 0)
+#define lwgsm_u8_to_str(num, out)         lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U8(num)), (out), 0, 0)
 
 /**
  * \brief           Convert `unsigned 16-bit` number to HEX string
@@ -228,7 +230,7 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_u8_to_hex_str(num, out, w)      lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U8(num)), (out), 1, (w))
+#define lwgsm_u8_to_hex_str(num, out, w)  lwgsm_u32_to_gen_str(LWGSM_U32(LWGSM_U8(num)), (out), 1, (w))
 
 /**
  * \brief           Convert `signed 8-bit` number to string
@@ -237,10 +239,10 @@ extern "C" {
  * \return          Pointer to output variable
  * \hideinitializer
  */
-#define lwgsm_i8_to_str(num, out)             lwgsm_i32_to_gen_str(LWGSM_I32(LWGSM_I8(num)), (out))
+#define lwgsm_i8_to_str(num, out)         lwgsm_i32_to_gen_str(LWGSM_I32(LWGSM_I8(num)), (out))
 
-char*       lwgsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t padding);
-char*       lwgsm_i32_to_gen_str(int32_t num, char* out);
+char* lwgsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t padding);
+char* lwgsm_i32_to_gen_str(int32_t num, char* out);
 
 /**
  * \}

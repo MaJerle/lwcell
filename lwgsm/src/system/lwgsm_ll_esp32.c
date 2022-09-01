@@ -32,27 +32,27 @@
  *                   Ilya Kargapolov <d3vil.st@gmail.com>
  * Version:         v0.1.1
  */
-#include "system/lwgsm_ll.h"
-#include "lwgsm/lwgsm.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_input.h"
 #include "driver/uart.h"
 #include "esp_log.h"
+#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_input.h"
+#include "lwgsm/lwgsm_mem.h"
+#include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__
 
 /* Define TAG for log messages */
-#define TAG "lwGSM"
+#define TAG          "lwGSM"
 
 /* Defines ESP uart number to use */
 #define GSM_UART_NUM UART_NUM_1
 
 #if !defined(LWGSM_USART_DMA_RX_BUFF_SIZE)
-#define LWGSM_USART_DMA_RX_BUFF_SIZE      0x1000
+#define LWGSM_USART_DMA_RX_BUFF_SIZE 0x1000
 #endif /* !defined(LWGSM_USART_DMA_RX_BUFF_SIZE) */
 
 #if !defined(LWGSM_MEM_SIZE)
-#define LWGSM_MEM_SIZE                    0x1000
+#define LWGSM_MEM_SIZE 0x1000
 #endif /* !defined(LWGSM_MEM_SIZE) */
 
 static QueueHandle_t gsm_uart_queue;
@@ -71,11 +71,11 @@ static size_t
 send_data(const void* data, size_t len) {
     /* Implement send function here */
     if (len) {
-        len = uart_write_bytes(GSM_UART_NUM, (const char*) data, len);
+        len = uart_write_bytes(GSM_UART_NUM, (const char*)data, len);
         //uart_wait_tx_done(GSM_UART_NUM, portMAX_DELAY);
         ESP_LOG_BUFFER_HEXDUMP(">", data, len, ESP_LOG_DEBUG);
     }
-    return len;                                 /* Return number of bytes actually sent to AT port */
+    return len; /* Return number of bytes actually sent to AT port */
 }
 
 static void
@@ -85,11 +85,11 @@ uart_event_task(void* pvParameters) {
 
     for (;;) {
         //Waiting for UART event.
-        if (xQueueReceive(gsm_uart_queue, (void* )&event, (portTickType)portMAX_DELAY)) {
+        if (xQueueReceive(gsm_uart_queue, (void*)&event, (portTickType)portMAX_DELAY)) {
             switch (event.type) {
                 case UART_DATA:
                     uart_get_buffered_data_len(GSM_UART_NUM, &buffer_len);
-                    buffer_len = uart_read_bytes(GSM_UART_NUM, (void*) uart_buffer, buffer_len, portMAX_DELAY);
+                    buffer_len = uart_read_bytes(GSM_UART_NUM, (void*)uart_buffer, buffer_len, portMAX_DELAY);
                     ESP_LOG_BUFFER_HEXDUMP("<", uart_buffer, buffer_len, ESP_LOG_DEBUG);
                     if (buffer_len) {
 #if LWGSM_CFG_INPUT_USE_PROCESS
@@ -116,24 +116,24 @@ uart_event_task(void* pvParameters) {
     }
     vTaskDelete(NULL);
 }
+
 /**
  * \brief           Configure UART using DMA for receive in double buffer mode and IDLE line detection
  */
 static void
 configure_uart(uint32_t baudrate) {
-    uart_config_t uart_config = {
-        .baud_rate = baudrate,
-        .data_bits = UART_DATA_8_BITS,
-        .parity = UART_PARITY_DISABLE,
-        .stop_bits = UART_STOP_BITS_1,
-        .source_clk = UART_SCLK_REF_TICK,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
-    };
+    uart_config_t uart_config = {.baud_rate = baudrate,
+                                 .data_bits = UART_DATA_8_BITS,
+                                 .parity = UART_PARITY_DISABLE,
+                                 .stop_bits = UART_STOP_BITS_1,
+                                 .source_clk = UART_SCLK_REF_TICK,
+                                 .flow_ctrl = UART_HW_FLOWCTRL_DISABLE};
     ESP_ERROR_CHECK(uart_driver_install(GSM_UART_NUM, LWGSM_USART_DMA_RX_BUFF_SIZE * 2,
                                         LWGSM_USART_DMA_RX_BUFF_SIZE * 2, 20, &gsm_uart_queue, 0));
     ESP_ERROR_CHECK(uart_param_config(GSM_UART_NUM, &uart_config));
     ESP_ERROR_CHECK(uart_set_pin(GSM_UART_NUM, CONFIG_LWGSM_TX, CONFIG_LWGSM_RX, 0, 0));
 }
+
 /**
  * \brief           Callback function called from initialization process
  *
@@ -150,28 +150,27 @@ lwgsmr_t
 lwgsm_ll_init(lwgsm_ll_t* ll) {
 #if !LWGSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
-    static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
+    static uint8_t memory[0x10000]; /* Create memory for dynamic allocations with specific size */
 
     /*
      * Create region(s) of memory.
      * If device has internal/external memory available,
      * multiple memories may be used
      */
-    lwgsm_mem_region_t mem_regions[] = {
-        { memory, sizeof(memory) }
-    };
+    lwgsm_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
     if (!initialized) {
-        lwgsm_mem_assignmemory(mem_regions, LWGSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
+        lwgsm_mem_assignmemory(mem_regions,
+                               LWGSM_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
     }
 #endif /* !LWGSM_CFG_MEM_CUSTOM */
 
     /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {
-        ll->send_fn = send_data;                /* Set callback function to send data */
+        ll->send_fn = send_data; /* Set callback function to send data */
     }
 
     /* Step 3: Configure AT port to be able to send/receive data to/from GSM device */
-    configure_uart(ll->uart.baudrate);          /* Initialize UART for communication */
+    configure_uart(ll->uart.baudrate); /* Initialize UART for communication */
     xTaskCreate(uart_event_task, "uart_lwgsm_task0", 4096, NULL, 5, NULL);
     initialized = 1;
     return lwgsmOK;
@@ -185,7 +184,7 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
 lwgsmr_t
 lwgsm_ll_deinit(lwgsm_ll_t* ll) {
     ESP_ERROR_CHECK(uart_driver_delete(GSM_UART_NUM));
-    initialized = 0;                            /* Clear initialized flag */
+    initialized = 0; /* Clear initialized flag */
     return lwgsmOK;
 }
 

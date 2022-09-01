@@ -48,8 +48,8 @@ extern "C" {
  * \{
  */
 
-#define LWGSM_DBG_ON                  0x80      /*!< Indicates debug is enabled */
-#define LWGSM_DBG_OFF                 0         /*!< Indicates debug is disabled */
+#define LWGSM_DBG_ON          0x80 /*!< Indicates debug is enabled */
+#define LWGSM_DBG_OFF         0    /*!< Indicates debug is disabled */
 
 /**
  * \anchor          LWGSM_DBG_LVL
@@ -58,11 +58,11 @@ extern "C" {
  * \{
  */
 
-#define LWGSM_DBG_LVL_ALL             0x00      /*!< Print all messages of all types */
-#define LWGSM_DBG_LVL_WARNING         0x01      /*!< Print warning and upper messages */
-#define LWGSM_DBG_LVL_DANGER          0x02      /*!< Print danger errors */
-#define LWGSM_DBG_LVL_SEVERE          0x03      /*!< Print severe problems affecting program flow */
-#define LWGSM_DBG_LVL_MASK            0x03      /*!< Mask for getting debug level */
+#define LWGSM_DBG_LVL_ALL     0x00 /*!< Print all messages of all types */
+#define LWGSM_DBG_LVL_WARNING 0x01 /*!< Print warning and upper messages */
+#define LWGSM_DBG_LVL_DANGER  0x02 /*!< Print danger errors */
+#define LWGSM_DBG_LVL_SEVERE  0x03 /*!< Print severe problems affecting program flow */
+#define LWGSM_DBG_LVL_MASK    0x03 /*!< Mask for getting debug level */
 
 /**
  * \}
@@ -75,9 +75,9 @@ extern "C" {
  * \{
  */
 
-#define LWGSM_DBG_TYPE_TRACE          0x40      /*!< Debug trace messages for program flow */
-#define LWGSM_DBG_TYPE_STATE          0x20      /*!< Debug state messages (such as state machines) */
-#define LWGSM_DBG_TYPE_ALL            (LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_TYPE_STATE) /*!< All debug types */
+#define LWGSM_DBG_TYPE_TRACE  0x40 /*!< Debug trace messages for program flow */
+#define LWGSM_DBG_TYPE_STATE  0x20 /*!< Debug state messages (such as state machines) */
+#define LWGSM_DBG_TYPE_ALL    (LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_TYPE_STATE) /*!< All debug types */
 
 /**
  * \}
@@ -94,10 +94,12 @@ extern "C" {
  * \param[in]       fmt: Formatted string for debug
  * \param[in]       ...: Variable parameters for formatted string
  */
-#define LWGSM_DEBUGF(c, fmt, ...)         do {\
-        if (((c) & (LWGSM_DBG_ON)) && ((c) & (LWGSM_CFG_DBG_TYPES_ON)) && ((c) & LWGSM_DBG_LVL_MASK) >= (LWGSM_CFG_DBG_LVL_MIN)) {    \
-            LWGSM_CFG_DBG_OUT(fmt, ## __VA_ARGS__); \
-        }                                       \
+#define LWGSM_DEBUGF(c, fmt, ...)                                                                                      \
+    do {                                                                                                               \
+        if (((c) & (LWGSM_DBG_ON)) && ((c) & (LWGSM_CFG_DBG_TYPES_ON))                                                 \
+            && ((c)&LWGSM_DBG_LVL_MASK) >= (LWGSM_CFG_DBG_LVL_MIN)) {                                                  \
+            LWGSM_CFG_DBG_OUT(fmt, ##__VA_ARGS__);                                                                     \
+        }                                                                                                              \
     } while (0)
 
 /**
@@ -107,14 +109,15 @@ extern "C" {
  * \param[in]       fmt: Formatted string for debug
  * \param[in]       ...: Variable parameters for formatted string
  */
-#define LWGSM_DEBUGW(c, cond, fmt, ...)   do {\
-        if (cond) {                             \
-            LWGSM_DEBUGF(c, fmt, ## __VA_ARGS__); \
-        }                                       \
+#define LWGSM_DEBUGW(c, cond, fmt, ...)                                                                                \
+    do {                                                                                                               \
+        if (cond) {                                                                                                    \
+            LWGSM_DEBUGF(c, fmt, ##__VA_ARGS__);                                                                       \
+        }                                                                                                              \
     } while (0)
 #else
 #undef LWGSM_CFG_DBG
-#define LWGSM_CFG_DBG                 LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG LWGSM_DBG_OFF
 #define LWGSM_DEBUGF(c, fmt, ...)
 #define LWGSM_DEBUGW(c, cond, fmt, ...)
 #endif /* (LWGSM_CFG_DBG && defined(LWGSM_CFG_DBG_OUT)) || __DOXYGEN__ */

@@ -30,10 +30,10 @@
  *                  Ilya Kargapolov <d3vil.st@gmail.com>
  * Version:         v0.1.1
  */
-#include "system/lwgsm_sys.h"
 #include "FreeRTOS.h"
-#include "task.h"
 #include "semphr.h"
+#include "system/lwgsm_sys.h"
+#include "task.h"
 
 #if !__DOXYGEN__
 
@@ -119,7 +119,9 @@ lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
 uint32_t
 lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
     uint32_t t = xTaskGetTickCount();
-    return xSemaphoreTake(*p, !timeout ? portMAX_DELAY : pdMS_TO_TICKS(timeout)) == pdPASS ? ((xTaskGetTickCount() - t) * portTICK_PERIOD_MS) : LWGSM_SYS_TIMEOUT;
+    return xSemaphoreTake(*p, !timeout ? portMAX_DELAY : pdMS_TO_TICKS(timeout)) == pdPASS
+               ? ((xTaskGetTickCount() - t) * portTICK_PERIOD_MS)
+               : LWGSM_SYS_TIMEOUT;
 }
 
 uint8_t
@@ -206,7 +208,8 @@ lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
 }
 
 uint8_t
-lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio) {
+lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg,
+                        size_t stack_size, lwgsm_sys_thread_prio_t prio) {
     return xTaskCreate(thread_func, name, stack_size / sizeof(portSTACK_TYPE), arg, prio, t) == pdPASS ? 1 : 0;
 }
 

@@ -45,19 +45,19 @@ extern "C" {
 
 #if LWGSM_CFG_OS && !__DOXYGEN__
 
-typedef TX_MUTEX                    lwgsm_sys_mutex_t;
-typedef TX_SEMAPHORE                lwgsm_sys_sem_t;
-typedef TX_QUEUE                    lwgsm_sys_mbox_t;
-typedef TX_THREAD                   lwgsm_sys_thread_t;
-typedef UINT                        lwgsm_sys_thread_prio_t;
+typedef TX_MUTEX lwgsm_sys_mutex_t;
+typedef TX_SEMAPHORE lwgsm_sys_sem_t;
+typedef TX_QUEUE lwgsm_sys_mbox_t;
+typedef TX_THREAD lwgsm_sys_thread_t;
+typedef UINT lwgsm_sys_thread_prio_t;
 
-#define LWGSM_SYS_TIMEOUT           TX_WAIT_FOREVER
-#define LWGSM_SYS_THREAD_PRIO       (TX_MAX_PRIORITIES - 1)
-#define LWGSM_SYS_THREAD_SS         1024
+#define LWGSM_SYS_TIMEOUT     TX_WAIT_FOREVER
+#define LWGSM_SYS_THREAD_PRIO (TX_MAX_PRIORITIES - 1)
+#define LWGSM_SYS_THREAD_SS   1024
 
 #endif /* LWGSM_CFG_OS && !__DOXYGEN__ */
 
-void    lwgsm_sys_preinit_threadx_set_bytepool_handle(TX_BYTE_POOL* bp);
+void lwgsm_sys_preinit_threadx_set_bytepool_handle(TX_BYTE_POOL* bp);
 
 #ifdef __cplusplus
 }

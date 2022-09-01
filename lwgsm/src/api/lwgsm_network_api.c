@@ -32,8 +32,8 @@
  * Version:         v0.1.1
  */
 #include "lwgsm/lwgsm_network_api.h"
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_network.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_NETWORK || __DOXYGEN__
 

@@ -36,8 +36,8 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "lwgsm/lwgsm_opt.h"
 #include "cmsis_os.h"
+#include "lwgsm/lwgsm_opt.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,18 +45,18 @@ extern "C" {
 
 #if LWGSM_CFG_OS && !__DOXYGEN__
 
-typedef osMutexId_t                 lwgsm_sys_mutex_t;
-typedef osSemaphoreId_t             lwgsm_sys_sem_t;
-typedef osMessageQueueId_t          lwgsm_sys_mbox_t;
-typedef osThreadId_t                lwgsm_sys_thread_t;
-typedef osPriority_t                lwgsm_sys_thread_prio_t;
+typedef osMutexId_t lwgsm_sys_mutex_t;
+typedef osSemaphoreId_t lwgsm_sys_sem_t;
+typedef osMessageQueueId_t lwgsm_sys_mbox_t;
+typedef osThreadId_t lwgsm_sys_thread_t;
+typedef osPriority_t lwgsm_sys_thread_prio_t;
 
-#define LWGSM_SYS_MUTEX_NULL          ((lwgsm_sys_mutex_t)0)
-#define LWGSM_SYS_SEM_NULL            ((lwgsm_sys_sem_t)0)
-#define LWGSM_SYS_MBOX_NULL           ((lwgsm_sys_mbox_t)0)
-#define LWGSM_SYS_TIMEOUT             ((uint32_t)osWaitForever)
-#define LWGSM_SYS_THREAD_PRIO         (osPriorityNormal)
-#define LWGSM_SYS_THREAD_SS           (512)
+#define LWGSM_SYS_MUTEX_NULL  ((lwgsm_sys_mutex_t)0)
+#define LWGSM_SYS_SEM_NULL    ((lwgsm_sys_sem_t)0)
+#define LWGSM_SYS_MBOX_NULL   ((lwgsm_sys_mbox_t)0)
+#define LWGSM_SYS_TIMEOUT     ((uint32_t)osWaitForever)
+#define LWGSM_SYS_THREAD_PRIO (osPriorityNormal)
+#define LWGSM_SYS_THREAD_SS   (512)
 
 #endif /* LWGSM_CFG_OS && !__DOXYGEN__ */
 

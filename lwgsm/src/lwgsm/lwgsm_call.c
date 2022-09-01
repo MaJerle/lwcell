@@ -31,14 +31,17 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_call.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_CALL || __DOXYGEN__
 
 #if !__DOXYGEN__
-#define CHECK_ENABLED()                 if (!(check_enabled() == lwgsmOK)) { return lwgsmERRNOTENABLED; }
+#define CHECK_ENABLED()                                                                                                \
+    if (!(check_enabled() == lwgsmOK)) {                                                                               \
+        return lwgsmERRNOTENABLED;                                                                                     \
+    }
 #endif /* !__DOXYGEN__ */
 
 /**
@@ -114,12 +117,11 @@ lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_call_start(const char* number,
-                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_call_start(const char* number, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("number != NULL", number != NULL);
-    CHECK_ENABLED();                            /* Check if enabled */
+    CHECK_ENABLED(); /* Check if enabled */
     LWGSM_ASSERT("check_ready == lwgsmOK", check_ready() == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);

@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_operator.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Get current operator
@@ -44,8 +44,8 @@
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_operator_get(lwgsm_operator_curr_t* curr,
-                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_operator_get(lwgsm_operator_curr_t* curr, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                   const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
@@ -72,7 +72,7 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    if (mode != LWGSM_OPERATOR_MODE_AUTO) {     /* Check parameters only if non-auto mode */
+    if (mode != LWGSM_OPERATOR_MODE_AUTO) { /* Check parameters only if non-auto mode */
         LWGSM_ASSERT("format < LWGSM_OPERATOR_FORMAT_INVALID", format < LWGSM_OPERATOR_FORMAT_INVALID);
         if (format != LWGSM_OPERATOR_FORMAT_NUMBER) {
             LWGSM_ASSERT("name != NULL", name != NULL);
@@ -102,8 +102,8 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf,
-                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf, const lwgsm_api_cmd_evt_fn evt_fn,
+                    void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     if (opf != NULL) {

@@ -58,7 +58,7 @@
  *
  */
 #ifndef LWGSM_CFG_OS
-#define LWGSM_CFG_OS                            1
+#define LWGSM_CFG_OS 1
 #endif
 
 /**
@@ -76,7 +76,7 @@
  *                  to take care of multiple threads accessing same resource for custom allocator
  */
 #ifndef LWGSM_CFG_MEM_CUSTOM
-#define LWGSM_CFG_MEM_CUSTOM                    0
+#define LWGSM_CFG_MEM_CUSTOM 0
 #endif
 
 /**
@@ -92,7 +92,7 @@
  * \note            This value must be power of `2`
  */
 #ifndef LWGSM_CFG_MEM_ALIGNMENT
-#define LWGSM_CFG_MEM_ALIGNMENT                 4
+#define LWGSM_CFG_MEM_ALIGNMENT 4
 #endif
 
 /**
@@ -102,7 +102,7 @@
  * When command is executed, callback function with its parameter could be called when not set to `NULL`.
  */
 #ifndef LWGSM_CFG_USE_API_FUNC_EVT
-#define LWGSM_CFG_USE_API_FUNC_EVT              1
+#define LWGSM_CFG_USE_API_FUNC_EVT 1
 #endif
 
 /**
@@ -116,7 +116,7 @@
  *
  */
 #ifndef LWGSM_CFG_MAX_CONNS
-#define LWGSM_CFG_MAX_CONNS                     6
+#define LWGSM_CFG_MAX_CONNS 6
 #endif
 
 /**
@@ -128,7 +128,7 @@
  *                  to optimize data transfer speed performance
  */
 #ifndef LWGSM_CFG_CONN_MAX_DATA_LEN
-#define LWGSM_CFG_CONN_MAX_DATA_LEN             1460
+#define LWGSM_CFG_CONN_MAX_DATA_LEN 1460
 #endif
 
 /**
@@ -138,7 +138,7 @@
  * Trying to send the same data multiple times can raise chances we are successful.
  */
 #ifndef LWGSM_CFG_MAX_SEND_RETRIES
-#define LWGSM_CFG_MAX_SEND_RETRIES              3
+#define LWGSM_CFG_MAX_SEND_RETRIES 3
 #endif
 
 /**
@@ -147,7 +147,7 @@
  * \note            When GSM sends buffer buffer than maximal, multiple buffers are created
  */
 #ifndef LWGSM_CFG_IPD_MAX_BUFF_SIZE
-#define LWGSM_CFG_IPD_MAX_BUFF_SIZE             1460
+#define LWGSM_CFG_IPD_MAX_BUFF_SIZE 1460
 #endif
 
 /**
@@ -160,7 +160,7 @@
  * \note            Later, user may call API function to change to desired baudrate if necessary
  */
 #ifndef LWGSM_CFG_AT_PORT_BAUDRATE
-#define LWGSM_CFG_AT_PORT_BAUDRATE              115200
+#define LWGSM_CFG_AT_PORT_BAUDRATE 115200
 #endif
 
 /**
@@ -175,7 +175,7 @@
  * \note            This parameter has no meaning when \ref LWGSM_CFG_INPUT_USE_PROCESS is enabled
  */
 #ifndef LWGSM_CFG_RCV_BUFF_SIZE
-#define LWGSM_CFG_RCV_BUFF_SIZE                 0x400
+#define LWGSM_CFG_RCV_BUFF_SIZE 0x400
 #endif
 
 /**
@@ -185,7 +185,7 @@
  *                  reset sequence to GSM device.
  */
 #ifndef LWGSM_CFG_RESET_ON_INIT
-#define LWGSM_CFG_RESET_ON_INIT                 1
+#define LWGSM_CFG_RESET_ON_INIT 1
 #endif
 
 /**
@@ -195,21 +195,21 @@
  *                  reset sequence to GSM device.
  */
 #ifndef LWGSM_CFG_RESET_ON_DEVICE_PRESENT
-#define LWGSM_CFG_RESET_ON_DEVICE_PRESENT       1
+#define LWGSM_CFG_RESET_ON_DEVICE_PRESENT 1
 #endif
 
 /**
  * \brief           Default delay (milliseconds unit) before sending first AT command on reset sequence
  */
 #ifndef LWGSM_CFG_RESET_DELAY_DEFAULT
-#define LWGSM_CFG_RESET_DELAY_DEFAULT           1000
+#define LWGSM_CFG_RESET_DELAY_DEFAULT 1000
 #endif
 
 /**
  * \brief           Default delay (milliseconds unit) after reset sequence
  */
 #ifndef LWGSM_CFG_RESET_DELAY_AFTER
-#define LWGSM_CFG_RESET_DELAY_AFTER             5000
+#define LWGSM_CFG_RESET_DELAY_AFTER 5000
 #endif
 
 /**
@@ -217,7 +217,7 @@
  *
  */
 #ifndef LWGSM_CFG_KEEP_ALIVE
-#define LWGSM_CFG_KEEP_ALIVE                    1
+#define LWGSM_CFG_KEEP_ALIVE 1
 #endif
 
 /**
@@ -226,7 +226,7 @@
  * Feature must be enabled with \ref LWGSM_CFG_KEEP_ALIVE
  */
 #ifndef LWGSM_CFG_KEEP_ALIVE_TIMEOUT
-#define LWGSM_CFG_KEEP_ALIVE_TIMEOUT            1000
+#define LWGSM_CFG_KEEP_ALIVE_TIMEOUT 1000
 #endif
 
 /**
@@ -243,7 +243,7 @@
  * \note            Set to \ref LWGSM_DBG_OFF to globally disable all debugs
  */
 #ifndef LWGSM_CFG_DBG
-#define LWGSM_CFG_DBG                           LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG LWGSM_DBG_OFF
 #endif
 
 /**
@@ -252,7 +252,11 @@
  *                  Called with format and optional parameters for printf style debug
  */
 #ifndef LWGSM_CFG_DBG_OUT
-#define LWGSM_CFG_DBG_OUT(fmt, ...)           do { extern int printf( const char * format, ... ); printf(fmt, ## __VA_ARGS__); } while (0)
+#define LWGSM_CFG_DBG_OUT(fmt, ...)                                                                                    \
+    do {                                                                                                               \
+        extern int printf(const char* format, ...);                                                                    \
+        printf(fmt, ##__VA_ARGS__);                                                                                    \
+    } while (0)
 #endif
 
 /**
@@ -261,7 +265,7 @@
  *                  Check \ref LWGSM_DBG_LVL for possible values
  */
 #ifndef LWGSM_CFG_DBG_LVL_MIN
-#define LWGSM_CFG_DBG_LVL_MIN                 LWGSM_DBG_LVL_ALL
+#define LWGSM_CFG_DBG_LVL_MIN LWGSM_DBG_LVL_ALL
 #endif
 
 /**
@@ -273,7 +277,7 @@
  * Check \ref LWGSM_DBG_TYPE for possible options. Separate values with `bitwise OR` operator
  */
 #ifndef LWGSM_CFG_DBG_TYPES_ON
-#define LWGSM_CFG_DBG_TYPES_ON                0
+#define LWGSM_CFG_DBG_TYPES_ON 0
 #endif
 
 /**
@@ -282,7 +286,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_INIT
-#define LWGSM_CFG_DBG_INIT                      LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_INIT LWGSM_DBG_OFF
 #endif
 
 /**
@@ -291,7 +295,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_MEM
-#define LWGSM_CFG_DBG_MEM                       LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_MEM LWGSM_DBG_OFF
 #endif
 
 /**
@@ -300,7 +304,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_INPUT
-#define LWGSM_CFG_DBG_INPUT                     LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_INPUT LWGSM_DBG_OFF
 #endif
 
 /**
@@ -309,7 +313,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_THREAD
-#define LWGSM_CFG_DBG_THREAD                    LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_THREAD LWGSM_DBG_OFF
 #endif
 
 /**
@@ -318,7 +322,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_ASSERT
-#define LWGSM_CFG_DBG_ASSERT                    LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_ASSERT LWGSM_DBG_OFF
 #endif
 
 /**
@@ -327,7 +331,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_IPD
-#define LWGSM_CFG_DBG_IPD                       LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_IPD LWGSM_DBG_OFF
 #endif
 
 /**
@@ -336,7 +340,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_PBUF
-#define LWGSM_CFG_DBG_PBUF                      LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_PBUF LWGSM_DBG_OFF
 #endif
 
 /**
@@ -345,7 +349,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_CONN
-#define LWGSM_CFG_DBG_CONN                      LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_CONN LWGSM_DBG_OFF
 #endif
 
 /**
@@ -354,7 +358,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_VAR
-#define LWGSM_CFG_DBG_VAR                       LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_VAR LWGSM_DBG_OFF
 #endif
 
 /**
@@ -363,7 +367,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_NETCONN
-#define LWGSM_CFG_DBG_NETCONN                   LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_NETCONN LWGSM_DBG_OFF
 #endif
 
 /**
@@ -373,7 +377,7 @@
  * \note            This mode is useful when debugging GSM communication
  */
 #ifndef LWGSM_CFG_AT_ECHO
-#define LWGSM_CFG_AT_ECHO                       0
+#define LWGSM_CFG_AT_ECHO 0
 #endif
 
 /**
@@ -392,7 +396,7 @@
  * Message queue is used for storing memory address to command data
  */
 #ifndef LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE
-#define LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE     16
+#define LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE 16
 #endif
 
 /**
@@ -401,7 +405,7 @@
  * Message queue is used to notify processing thread about new received data on AT port
  */
 #ifndef LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE
-#define LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE      16
+#define LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE 16
 #endif
 
 /**
@@ -418,7 +422,7 @@
  * \note            Best case for using this mode is if DMA receive is supported by host device
  */
 #ifndef LWGSM_CFG_INPUT_USE_PROCESS
-#define LWGSM_CFG_INPUT_USE_PROCESS             0
+#define LWGSM_CFG_INPUT_USE_PROCESS 0
 #endif
 
 /**
@@ -445,7 +449,7 @@
  * When enabled, user must manually set byte pool at run-time, before \ref lwgsm_init is called
  */
 #ifndef LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
-#define LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL  0
+#define LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL 0
 #endif
 
 /**
@@ -487,7 +491,7 @@
  * \sa              LWGSM_CFG_OS
  */
 #ifndef LWGSM_CFG_NETCONN
-#define LWGSM_CFG_NETCONN                       0
+#define LWGSM_CFG_NETCONN 0
 #endif
 
 /**
@@ -501,7 +505,7 @@
  *                  by default time will be set to 0 which means no timeout.
  */
 #ifndef LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT
-#define LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT       1
+#define LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT 1
 #endif
 
 /**
@@ -510,7 +514,7 @@
  * Defines number of maximal clients waiting in accept queue of server connection
  */
 #ifndef LWGSM_CFG_NETCONN_ACCEPT_QUEUE_LEN
-#define LWGSM_CFG_NETCONN_ACCEPT_QUEUE_LEN      5
+#define LWGSM_CFG_NETCONN_ACCEPT_QUEUE_LEN 5
 #endif
 
 /**
@@ -519,7 +523,7 @@
  * Defines maximal number of pbuf data packet references for receive
  */
 #ifndef LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN
-#define LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN     8
+#define LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN 8
 #endif
 
 /**
@@ -537,7 +541,7 @@
  *
  */
 #ifndef LWGSM_CFG_MQTT_MAX_REQUESTS
-#define LWGSM_CFG_MQTT_MAX_REQUESTS             8
+#define LWGSM_CFG_MQTT_MAX_REQUESTS 8
 #endif
 
 /**
@@ -545,7 +549,7 @@
  *
  */
 #ifndef LWGSM_CFG_MQTT_API_MBOX_SIZE
-#define LWGSM_CFG_MQTT_API_MBOX_SIZE            8
+#define LWGSM_CFG_MQTT_API_MBOX_SIZE 8
 #endif
 
 /**
@@ -554,7 +558,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_MQTT
-#define LWGSM_CFG_DBG_MQTT                      LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_MQTT LWGSM_DBG_OFF
 #endif
 
 /**
@@ -563,7 +567,7 @@
  * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
  */
 #ifndef LWGSM_CFG_DBG_MQTT_API
-#define LWGSM_CFG_DBG_MQTT_API                  LWGSM_DBG_OFF
+#define LWGSM_CFG_DBG_MQTT_API LWGSM_DBG_OFF
 #endif
 
 /**
@@ -578,7 +582,7 @@
  * as connection API, FTP, HTTP, etc.
  */
 #ifndef LWGSM_CFG_NETWORK
-#define LWGSM_CFG_NETWORK                       0
+#define LWGSM_CFG_NETWORK 0
 #endif
 
 /**
@@ -588,7 +592,7 @@
  *                  when trying to attach to network for data transfer
  */
 #ifndef LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT
-#define LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT   0
+#define LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT 0
 #endif
 
 /**
@@ -597,7 +601,7 @@
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
  */
 #ifndef LWGSM_CFG_CONN
-#define LWGSM_CFG_CONN                          0
+#define LWGSM_CFG_CONN 0
 #endif
 
 /**
@@ -605,7 +609,7 @@
  *
  */
 #ifndef LWGSM_CFG_SMS
-#define LWGSM_CFG_SMS                           0
+#define LWGSM_CFG_SMS 0
 #endif
 
 /**
@@ -613,7 +617,7 @@
  *
  */
 #ifndef LWGSM_CFG_CALL
-#define LWGSM_CFG_CALL                          0
+#define LWGSM_CFG_CALL 0
 #endif
 
 /**
@@ -621,7 +625,7 @@
  *
  */
 #ifndef LWGSM_CFG_PHONEBOOK
-#define LWGSM_CFG_PHONEBOOK                     0
+#define LWGSM_CFG_PHONEBOOK 0
 #endif
 
 /**
@@ -630,7 +634,7 @@
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
  */
 #ifndef LWGSM_CFG_HTTP
-#define LWGSM_CFG_HTTP                          0
+#define LWGSM_CFG_HTTP 0
 #endif
 
 /**
@@ -639,7 +643,7 @@
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
  */
 #ifndef LWGSM_CFG_FTP
-#define LWGSM_CFG_FTP                           0
+#define LWGSM_CFG_FTP 0
 #endif
 
 /**
@@ -648,7 +652,7 @@
  * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
  */
 #ifndef LWGSM_CFG_PING
-#define LWGSM_CFG_PING                          0
+#define LWGSM_CFG_PING 0
 #endif
 
 /**
@@ -656,7 +660,7 @@
  *
  */
 #ifndef LWGSM_CFG_USSD
-#define LWGSM_CFG_USSD                          0
+#define LWGSM_CFG_USSD 0
 #endif
 
 /**
@@ -671,7 +675,7 @@
  * \note            Single poll interval applies for all connections
  */
 #ifndef LWGSM_CFG_CONN_POLL_INTERVAL
-#define LWGSM_CFG_CONN_POLL_INTERVAL            500
+#define LWGSM_CFG_CONN_POLL_INTERVAL 500
 #endif
 
 /**
@@ -701,7 +705,7 @@ void *  my_memcpy(void* dst, const void* src, size_t len);
  * \return          Destination memory start address
  */
 #ifndef LWGSM_MEMCPY
-#define LWGSM_MEMCPY(dst, src, len)             memcpy(dst, src, len)
+#define LWGSM_MEMCPY(dst, src, len) memcpy(dst, src, len)
 #endif
 
 /**
@@ -719,7 +723,7 @@ void *  my_memset(void* dst, int b, size_t len);
  * \return          Destination memory start address
  */
 #ifndef LWGSM_MEMSET
-#define LWGSM_MEMSET(dst, b, len)               memset(dst, b, len)
+#define LWGSM_MEMSET(dst, b, len) memset(dst, b, len)
 #endif
 
 /**

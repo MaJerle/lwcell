@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_sim.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Get current cached SIM state from stack
@@ -58,8 +58,7 @@ lwgsm_sim_get_current_state(void) {
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_sim_pin_enter(const char* pin,
-                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_enter(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -84,8 +83,7 @@ lwgsm_sim_pin_enter(const char* pin,
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_sim_pin_add(const char* pin,
-                  const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_add(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -108,8 +106,8 @@ lwgsm_sim_pin_add(const char* pin,
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_sim_pin_change(const char* pin, const char* new_pin,
-                     const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_change(const char* pin, const char* new_pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                     const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -133,8 +131,7 @@ lwgsm_sim_pin_change(const char* pin, const char* new_pin,
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_sim_pin_remove(const char* pin,
-                     const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_pin_remove(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("pin != NULL", pin != NULL);
@@ -157,8 +154,8 @@ lwgsm_sim_pin_remove(const char* pin,
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_sim_puk_enter(const char* puk, const char* new_pin,
-                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_sim_puk_enter(const char* puk, const char* new_pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                    const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("puk != NULL", puk != NULL);

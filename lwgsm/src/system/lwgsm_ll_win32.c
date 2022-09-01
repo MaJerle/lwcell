@@ -31,17 +31,17 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "system/lwgsm_ll.h"
 #include "lwgsm/lwgsm.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_input.h"
+#include "lwgsm/lwgsm_mem.h"
+#include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__
 
 static uint8_t initialized = 0;
 static HANDLE thread_handle;
-static volatile HANDLE com_port;                /*!< COM port handle */
-static uint8_t data_buffer[0x1000];             /*!< Received data array */
+static volatile HANDLE com_port;    /*!< COM port handle */
+static uint8_t data_buffer[0x1000]; /*!< Received data array */
 
 static void uart_thread(void* param);
 
@@ -80,7 +80,7 @@ send_data(const void* data, size_t len) {
  */
 static uint8_t
 configure_uart(uint32_t baudrate) {
-    DCB dcb = { 0 };
+    DCB dcb = {0};
     dcb.DCBlength = sizeof(dcb);
 
     /*
@@ -89,13 +89,7 @@ configure_uart(uint32_t baudrate) {
      * as generic read and write
      */
     if (!initialized) {
-        static const char* com_ports[] = {
-            "\\\\.\\COM23",
-            "\\\\.\\COM12",
-            "\\\\.\\COM9",
-            "\\\\.\\COM8",
-            "\\\\.\\COM4"
-        };
+        static const char* com_ports[] = {"\\\\.\\COM23", "\\\\.\\COM12", "\\\\.\\COM9", "\\\\.\\COM8", "\\\\.\\COM4"};
         for (size_t i = 0; i < sizeof(com_ports) / sizeof(com_ports[0]); ++i) {
             com_port = CreateFileA(com_ports[i], GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
             if (GetCommState(com_port, &dcb)) {
@@ -151,16 +145,16 @@ uart_thread(void* param) {
     DWORD bytes_read;
     lwgsm_sys_sem_t sem;
     FILE* file = NULL;
-    
+
     LWGSM_UNUSED(param);
 
-    lwgsm_sys_sem_create(&sem, 0);              /* Create semaphore for delay functions */
+    lwgsm_sys_sem_create(&sem, 0); /* Create semaphore for delay functions */
 
     while (com_port == NULL) {
-        lwgsm_sys_sem_wait(&sem, 1);            /* Add some delay with yield */
+        lwgsm_sys_sem_wait(&sem, 1); /* Add some delay with yield */
     }
 
-    fopen_s(&file, "log_file.txt", "w+");       /* Open debug file in write mode */
+    fopen_s(&file, "log_file.txt", "w+"); /* Open debug file in write mode */
     while (1) {
         /*
          * Try to read data from COM port
@@ -180,7 +174,7 @@ uart_thread(void* param) {
                 /* Send received data to input processing module */
 #if LWGSM_CFG_INPUT_USE_PROCESS
                 lwgsm_input_process(data_buffer, (size_t)bytes_read);
-#else /* LWGSM_CFG_INPUT_USE_PROCESS */
+#else  /* LWGSM_CFG_INPUT_USE_PROCESS */
                 lwgsm_input(data_buffer, (size_t)bytes_read);
 #endif /* !LWGSM_CFG_INPUT_USE_PROCESS */
 
@@ -213,28 +207,27 @@ lwgsmr_t
 lwgsm_ll_init(lwgsm_ll_t* ll) {
 #if !LWGSM_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
-    static uint8_t memory[0x10000];             /* Create memory for dynamic allocations with specific size */
+    static uint8_t memory[0x10000]; /* Create memory for dynamic allocations with specific size */
 
     /*
      * Create memory region(s) of memory.
      * If device has internal/external memory available,
      * multiple memories may be used
      */
-    lwgsm_mem_region_t mem_regions[] = {
-        { memory, sizeof(memory) }
-    };
+    lwgsm_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
     if (!initialized) {
-        lwgsm_mem_assignmemory(mem_regions, LWGSM_ARRAYSIZE(mem_regions));  /* Assign memory for allocations to GSM library */
+        lwgsm_mem_assignmemory(mem_regions,
+                               LWGSM_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
     }
 #endif /* !LWGSM_CFG_MEM_CUSTOM */
 
     /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {
-        ll->send_fn = send_data;                /* Set callback function to send data */
+        ll->send_fn = send_data; /* Set callback function to send data */
     }
 
     /* Step 3: Configure AT port to be able to send/receive data to/from GSM device */
-    if (!configure_uart(ll->uart.baudrate)) {   /* Initialize UART for communication */
+    if (!configure_uart(ll->uart.baudrate)) { /* Initialize UART for communication */
         return lwgsmERR;
     }
     initialized = 1;

@@ -47,29 +47,29 @@ extern "C" {
  * \{
  */
 
-lwgsm_pbuf_p      lwgsm_pbuf_new(size_t len);
-size_t          lwgsm_pbuf_free(lwgsm_pbuf_p pbuf);
-void*           lwgsm_pbuf_data(const lwgsm_pbuf_p pbuf);
-size_t          lwgsm_pbuf_length(const lwgsm_pbuf_p pbuf, uint8_t tot);
-lwgsmr_t          lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
-size_t          lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset);
+lwgsm_pbuf_p lwgsm_pbuf_new(size_t len);
+size_t lwgsm_pbuf_free(lwgsm_pbuf_p pbuf);
+void* lwgsm_pbuf_data(const lwgsm_pbuf_p pbuf);
+size_t lwgsm_pbuf_length(const lwgsm_pbuf_p pbuf, uint8_t tot);
+lwgsmr_t lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
+size_t lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset);
 
-lwgsmr_t          lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail);
-lwgsmr_t          lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail);
-lwgsmr_t          lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf);
+lwgsmr_t lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail);
+lwgsmr_t lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail);
+lwgsmr_t lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf);
 
-uint8_t         lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el);
-size_t          lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
-size_t          lwgsm_pbuf_strcmp(const lwgsm_pbuf_p pbuf, const char* str, size_t offset);
-size_t          lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t off);
-size_t          lwgsm_pbuf_strfind(const lwgsm_pbuf_p pbuf, const char* str, size_t off);
+uint8_t lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el);
+size_t lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
+size_t lwgsm_pbuf_strcmp(const lwgsm_pbuf_p pbuf, const char* str, size_t offset);
+size_t lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t off);
+size_t lwgsm_pbuf_strfind(const lwgsm_pbuf_p pbuf, const char* str, size_t off);
 
-uint8_t         lwgsm_pbuf_advance(lwgsm_pbuf_p pbuf, int len);
-lwgsm_pbuf_p      lwgsm_pbuf_skip(lwgsm_pbuf_p pbuf, size_t offset, size_t* new_offset);
+uint8_t lwgsm_pbuf_advance(lwgsm_pbuf_p pbuf, int len);
+lwgsm_pbuf_p lwgsm_pbuf_skip(lwgsm_pbuf_p pbuf, size_t offset, size_t* new_offset);
 
-void*           lwgsm_pbuf_get_linear_addr(const lwgsm_pbuf_p pbuf, size_t offset, size_t* new_len);
+void* lwgsm_pbuf_get_linear_addr(const lwgsm_pbuf_p pbuf, size_t offset, size_t* new_len);
 
-void            lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm_port_t port);
+void lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm_port_t port);
 
 /**
  * \}

@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_ftp.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_FTP || __DOXYGEN__
 

@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_device_info.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Get device manufacturer
@@ -45,8 +45,8 @@
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
-                              void* const evt_arg, const uint32_t blocking) {
+lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                              const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("manuf != NULL", manuf != NULL);
@@ -71,8 +71,8 @@ lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_f
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
-                       void* const evt_arg, const uint32_t blocking) {
+lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                       const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("model != NULL", model != NULL);
@@ -97,8 +97,8 @@ lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_f
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
-                          void* const evt_arg, const uint32_t blocking) {
+lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                          const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("rev != NULL", rev != NULL);
@@ -123,8 +123,8 @@ lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
-                               void* const evt_arg, const uint32_t blocking) {
+lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                               const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("serial != NULL", serial != NULL);

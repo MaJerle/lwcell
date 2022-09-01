@@ -32,4 +32,3 @@
  * Version:         v0.1.1
  */
 #include "lwgsm/apps/lwgsm_mqtt_client_evt.h"
-

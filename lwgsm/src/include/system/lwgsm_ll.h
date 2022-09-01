@@ -58,14 +58,14 @@ extern "C" {
  * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \return          lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-lwgsmr_t      lwgsm_ll_init(lwgsm_ll_t* ll);
+lwgsmr_t lwgsm_ll_init(lwgsm_ll_t* ll);
 
 /**
  * \brief           Callback function to de-init low-level communication part
  * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
-lwgsmr_t      lwgsm_ll_deinit(lwgsm_ll_t* ll);
+lwgsmr_t lwgsm_ll_deinit(lwgsm_ll_t* ll);
 
 /**
  * \}

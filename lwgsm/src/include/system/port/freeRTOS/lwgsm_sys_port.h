@@ -52,35 +52,35 @@ extern "C" {
 
 /* Include any OS specific features */
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
+#include "freertos/task.h"
 
 /**
  * \brief           System mutex type
  *
  * It is used by middleware as base type of mutex.
  */
-typedef SemaphoreHandle_t         lwgsm_sys_mutex_t;
+typedef SemaphoreHandle_t lwgsm_sys_mutex_t;
 
 /**
  * \brief           System semaphore type
  *
  * It is used by middleware as base type of mutex.
  */
-typedef SemaphoreHandle_t         lwgsm_sys_sem_t;
+typedef SemaphoreHandle_t lwgsm_sys_sem_t;
 
 /**
  * \brief           System message queue type
  *
  * It is used by middleware as base type of mutex.
  */
-typedef QueueHandle_t             lwgsm_sys_mbox_t;
+typedef QueueHandle_t lwgsm_sys_mbox_t;
 
 /**
  * \brief           System thread ID type
  */
-typedef TaskHandle_t              lwgsm_sys_thread_t;
+typedef TaskHandle_t lwgsm_sys_thread_t;
 
 /**
  * \brief           System thread priority type
@@ -88,28 +88,28 @@ typedef TaskHandle_t              lwgsm_sys_thread_t;
  * It is used as priority type for system function,
  * to start new threads by middleware.
  */
-typedef UBaseType_t               lwgsm_sys_thread_prio_t;
+typedef UBaseType_t lwgsm_sys_thread_prio_t;
 
 /**
  * \brief           Mutex invalid value
  *
  * Value assigned to \ref lwgsm_sys_mutex_t type when it is not valid.
  */
-#define LWGSM_SYS_MUTEX_NULL          ((lwgsm_sys_mutex_t)0)
+#define LWGSM_SYS_MUTEX_NULL  ((lwgsm_sys_mutex_t)0)
 
 /**
  * \brief           Semaphore invalid value
  *
  * Value assigned to \ref lwgsm_sys_sem_t type when it is not valid.
  */
-#define LWGSM_SYS_SEM_NULL            ((lwgsm_sys_sem_t)0)
+#define LWGSM_SYS_SEM_NULL    ((lwgsm_sys_sem_t)0)
 
 /**
  * \brief           Message box invalid value
  *
  * Value assigned to \ref lwgsm_sys_mbox_t type when it is not valid.
  */
-#define LWGSM_SYS_MBOX_NULL           ((lwgsm_sys_mbox_t)0)
+#define LWGSM_SYS_MBOX_NULL   ((lwgsm_sys_mbox_t)0)
 
 /**
  * \brief           OS timeout value
@@ -117,7 +117,7 @@ typedef UBaseType_t               lwgsm_sys_thread_prio_t;
  * Value returned by operating system functions (mutex wait, sem wait, mbox wait)
  * when it returns timeout and does not give valid value to application
  */
-#define LWGSM_SYS_TIMEOUT             ((uint32_t)portMAX_DELAY)
+#define LWGSM_SYS_TIMEOUT     ((uint32_t)portMAX_DELAY)
 
 /**
  * \brief           Default thread priority value used by middleware to start built-in threads
@@ -125,14 +125,14 @@ typedef UBaseType_t               lwgsm_sys_thread_prio_t;
  * Threads can well operate with normal (default) priority and do not require
  * any special feature in terms of priority for prioer operation.
  */
-#define LWGSM_SYS_THREAD_PRIO         (tskIDLE_PRIORITY+1)
+#define LWGSM_SYS_THREAD_PRIO (tskIDLE_PRIORITY + 1)
 
 /**
  * \brief           Stack size in units of bytes for system threads
  *
  * It is used as default stack size for all built-in threads.
  */
-#define LWGSM_SYS_THREAD_SS           (1024)
+#define LWGSM_SYS_THREAD_SS   (1024)
 
 #endif /* LWGSM_CFG_OS && !__DOXYGEN__ */
 

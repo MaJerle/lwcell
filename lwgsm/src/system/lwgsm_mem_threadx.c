@@ -61,7 +61,7 @@ lwgsm_mem_calloc(size_t num, size_t size) {
 
 void
 lwgsm_mem_free(void* ptr) {
-    (VOID)tx_byte_release(ptr);
+    (VOID) tx_byte_release(ptr);
 }
 
 #endif /* !__DOXYGEN__ */

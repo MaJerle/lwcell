@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_threads.h"
 #include "lwgsm/lwgsm_timeout.h"
 #include "system/lwgsm_ll.h"
@@ -41,7 +41,7 @@
 #error LWGSM_CFG_OS must be set to 1!
 #endif
 
-static lwgsmr_t   prv_def_callback(lwgsm_evt_t* cb);
+static lwgsmr_t prv_def_callback(lwgsm_evt_t* cb);
 static lwgsm_evt_func_t def_evt_link;
 
 lwgsm_t lwgsm;
@@ -90,16 +90,16 @@ lwgsmr_t
 lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
     lwgsmr_t res = lwgsmOK;
 
-    lwgsm.status.f.initialized = 0;             /* Clear possible init flag */
+    lwgsm.status.f.initialized = 0; /* Clear possible init flag */
 
     def_evt_link.fn = evt_func != NULL ? evt_func : prv_def_callback;
-    lwgsm.evt_func = &def_evt_link;             /* Set callback function */
+    lwgsm.evt_func = &def_evt_link; /* Set callback function */
 
-    if (!lwgsm_sys_init()) {                    /* Init low-level system */
+    if (!lwgsm_sys_init()) { /* Init low-level system */
         goto cleanup;
     }
 
-    if (!lwgsm_sys_sem_create(&lwgsm.sem_sync, 1)) {/* Create sync semaphore between threads */
+    if (!lwgsm_sys_sem_create(&lwgsm.sem_sync, 1)) { /* Create sync semaphore between threads */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                      "[LWGSM CORE] Cannot allocate sync semaphore!\r\n");
         goto cleanup;
@@ -119,35 +119,37 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
 
     /* Create threads */
     lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);
-    if (!lwgsm_sys_thread_create(&lwgsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &lwgsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
+    if (!lwgsm_sys_thread_create(&lwgsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &lwgsm.sem_sync,
+                                 LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                      "[LWGSM CORE] Cannot create producing thread!\r\n");
         lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore and return */
         goto cleanup;
     }
-    lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);     /* Wait semaphore, should be unlocked in produce thread */
-    if (!lwgsm_sys_thread_create(&lwgsm.thread_process, "lwgsm_process", lwgsm_thread_process, &lwgsm.sem_sync, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
+    lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0); /* Wait semaphore, should be unlocked in produce thread */
+    if (!lwgsm_sys_thread_create(&lwgsm.thread_process, "lwgsm_process", lwgsm_thread_process, &lwgsm.sem_sync,
+                                 LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
                      "[LWGSM CORE] Cannot create processing thread!\r\n");
-        lwgsm_sys_thread_terminate(&lwgsm.thread_produce);  /* Delete produce thread */
-        lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore and return */
+        lwgsm_sys_thread_terminate(&lwgsm.thread_produce); /* Delete produce thread */
+        lwgsm_sys_sem_release(&lwgsm.sem_sync);            /* Release semaphore and return */
         goto cleanup;
     }
-    lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);     /* Wait semaphore, should be unlocked in produce thread */
-    lwgsm_sys_sem_release(&lwgsm.sem_sync);     /* Release semaphore manually */
+    lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0); /* Wait semaphore, should be unlocked in produce thread */
+    lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore manually */
 
     lwgsm_core_lock();
     lwgsm.ll.uart.baudrate = LWGSM_CFG_AT_PORT_BAUDRATE;
-    lwgsm_ll_init(&lwgsm.ll);                   /* Init low-level communication */
+    lwgsm_ll_init(&lwgsm.ll); /* Init low-level communication */
 
 #if !LWGSM_CFG_INPUT_USE_PROCESS
-    lwgsm_buff_init(&lwgsm.buff, LWGSM_CFG_RCV_BUFF_SIZE);  /* Init buffer for input data */
-#endif /* !LWGSM_CFG_INPUT_USE_PROCESS */
+    lwgsm_buff_init(&lwgsm.buff, LWGSM_CFG_RCV_BUFF_SIZE); /* Init buffer for input data */
+#endif                                                     /* !LWGSM_CFG_INPUT_USE_PROCESS */
 
-    lwgsm.status.f.initialized = 1;             /* We are initialized now */
-    lwgsm.status.f.dev_present = 1;             /* We assume device is present at this point */
+    lwgsm.status.f.initialized = 1; /* We are initialized now */
+    lwgsm.status.f.dev_present = 1; /* We assume device is present at this point */
 
-    lwgsmi_send_cb(LWGSM_EVT_INIT_FINISH);      /* Call user callback function */
+    lwgsmi_send_cb(LWGSM_EVT_INIT_FINISH); /* Call user callback function */
 
 #if LWGSM_CFG_KEEP_ALIVE
     /* Register keep-alive events */
@@ -161,10 +163,11 @@ lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
 #if LWGSM_CFG_RESET_ON_INIT
     if (lwgsm.status.f.dev_present) {
         lwgsm_core_unlock();
-        res = lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL, blocking);  /* Send reset sequence with delay */
+        res = lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL,
+                                     blocking); /* Send reset sequence with delay */
         lwgsm_core_lock();
     }
-#else /* LWGSM_CFG_RESET_ON_INIT */
+#else  /* LWGSM_CFG_RESET_ON_INIT */
     LWGSM_UNUSED(blocking);
 #endif /* !LWGSM_CFG_RESET_ON_INIT */
     lwgsm_core_unlock();
@@ -208,8 +211,8 @@ lwgsm_reset(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_reset_with_delay(uint32_t delay,
-                       const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_reset_with_delay(uint32_t delay, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                       const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
@@ -289,8 +292,7 @@ lwgsm_delay(uint32_t ms) {
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_set_func_mode(uint8_t mode,
-                    const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_set_func_mode(uint8_t mode, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
@@ -314,8 +316,8 @@ lwgsm_set_func_mode(uint8_t mode,
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_device_set_present(uint8_t present,
-                         const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_device_set_present(uint8_t present, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                         const uint32_t blocking) {
     lwgsmr_t res = lwgsmOK;
     lwgsm_core_lock();
     present = present ? 1 : 0;
@@ -328,11 +330,12 @@ lwgsm_device_set_present(uint8_t present,
         } else {
 #if LWGSM_CFG_RESET_ON_DEVICE_PRESENT
             lwgsm_core_unlock();
-            res = lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
+            res =
+                lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
             lwgsm_core_lock();
 #endif /* LWGSM_CFG_RESET_ON_DEVICE_PRESENT */
         }
-        lwgsmi_send_cb(LWGSM_EVT_DEVICE_PRESENT);   /* Send present event */
+        lwgsmi_send_cb(LWGSM_EVT_DEVICE_PRESENT); /* Send present event */
     }
     lwgsm_core_unlock();
 

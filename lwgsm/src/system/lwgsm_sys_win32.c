@@ -31,10 +31,10 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include <string.h>
 #include <stdlib.h>
-#include "system/lwgsm_sys.h"
+#include <string.h>
 #include "lwgsm/lwgsm_private.h"
+#include "system/lwgsm_sys.h"
 
 #if !__DOXYGEN__
 
@@ -42,15 +42,15 @@
  * \brief           Custom message queue implementation for WIN32
  */
 typedef struct {
-    lwgsm_sys_sem_t sem_not_empty;              /*!< Semaphore indicates not empty */
-    lwgsm_sys_sem_t sem_not_full;               /*!< Semaphore indicates not full */
-    lwgsm_sys_sem_t sem;                        /*!< Semaphore to lock access */
+    lwgsm_sys_sem_t sem_not_empty; /*!< Semaphore indicates not empty */
+    lwgsm_sys_sem_t sem_not_full;  /*!< Semaphore indicates not full */
+    lwgsm_sys_sem_t sem;           /*!< Semaphore to lock access */
     size_t in, out, size;
     void* entries[1];
 } win32_mbox_t;
 
 static LARGE_INTEGER freq, sys_start_time;
-static lwgsm_sys_mutex_t sys_mutex;             /* Mutex ID for main protection */
+static lwgsm_sys_mutex_t sys_mutex; /* Mutex ID for main protection */
 
 static uint8_t
 mbox_is_full(win32_mbox_t* m) {
@@ -73,10 +73,10 @@ osKernelSysTick(void) {
     LONGLONG ret;
     LARGE_INTEGER now;
 
-    QueryPerformanceFrequency(&freq);           /* Get frequency */
-    QueryPerformanceCounter(&now);              /* Get current time */
+    QueryPerformanceFrequency(&freq); /* Get frequency */
+    QueryPerformanceCounter(&now);    /* Get current time */
     ret = now.QuadPart - sys_start_time.QuadPart;
-    return (uint32_t)(((ret) * 1000) / freq.QuadPart);
+    return (uint32_t)(((ret)*1000) / freq.QuadPart);
 }
 
 uint8_t
@@ -197,7 +197,7 @@ lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size) {
     mbox = malloc(sizeof(*mbox) + size * sizeof(void*));
     if (mbox != NULL) {
         memset(mbox, 0x00, sizeof(*mbox));
-        mbox->size = size + 1;                  /* Set it to 1 more as cyclic buffer has only one less than size */
+        mbox->size = size + 1; /* Set it to 1 more as cyclic buffer has only one less than size */
         lwgsm_sys_sem_create(&mbox->sem, 1);
         lwgsm_sys_sem_create(&mbox->sem_not_empty, 0);
         lwgsm_sys_sem_create(&mbox->sem_not_full, 0);
@@ -219,9 +219,9 @@ lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
 uint32_t
 lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
     win32_mbox_t* mbox = *b;
-    uint32_t time = osKernelSysTick();          /* Get start time */
+    uint32_t time = osKernelSysTick(); /* Get start time */
 
-    lwgsm_sys_sem_wait(&mbox->sem, 0);          /* Wait for access */
+    lwgsm_sys_sem_wait(&mbox->sem, 0); /* Wait for access */
 
     /*
      * Since function is blocking until ready to write something to queue,
@@ -229,16 +229,16 @@ lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
      * to process the queue before we can write new value.
      */
     while (mbox_is_full(mbox)) {
-        lwgsm_sys_sem_release(&mbox->sem);      /* Release semaphore */
+        lwgsm_sys_sem_release(&mbox->sem);          /* Release semaphore */
         lwgsm_sys_sem_wait(&mbox->sem_not_full, 0); /* Wait for semaphore indicating not full */
-        lwgsm_sys_sem_wait(&mbox->sem, 0);      /* Wait availability again */
+        lwgsm_sys_sem_wait(&mbox->sem, 0);          /* Wait availability again */
     }
     mbox->entries[mbox->in] = m;
     if (++mbox->in >= mbox->size) {
         mbox->in = 0;
     }
-    lwgsm_sys_sem_release(&mbox->sem_not_empty);/* Signal non-empty state */
-    lwgsm_sys_sem_release(&mbox->sem);          /* Release access for other threads */
+    lwgsm_sys_sem_release(&mbox->sem_not_empty); /* Signal non-empty state */
+    lwgsm_sys_sem_release(&mbox->sem);           /* Release access for other threads */
     return osKernelSysTick() - time;
 }
 
@@ -294,9 +294,9 @@ uint8_t
 lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
     win32_mbox_t* mbox = *b;
 
-    lwgsm_sys_sem_wait(&mbox->sem, 0);          /* Wait exclusive access */
+    lwgsm_sys_sem_wait(&mbox->sem, 0); /* Wait exclusive access */
     if (mbox->in == mbox->out) {
-        lwgsm_sys_sem_release(&mbox->sem);      /* Release access */
+        lwgsm_sys_sem_release(&mbox->sem); /* Release access */
         return 0;
     }
 
@@ -311,17 +311,18 @@ lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
 
 uint8_t
 lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
-    return b != NULL && *b != NULL;             /* Return status if message box is valid */
+    return b != NULL && *b != NULL; /* Return status if message box is valid */
 }
 
 uint8_t
 lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
-    *b = LWGSM_SYS_MBOX_NULL;                   /* Invalidate message box */
+    *b = LWGSM_SYS_MBOX_NULL; /* Invalidate message box */
     return 1;
 }
 
 uint8_t
-lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio) {
+lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg,
+                        size_t stack_size, lwgsm_sys_thread_prio_t prio) {
     HANDLE h;
     DWORD id;
 
@@ -338,7 +339,7 @@ lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_threa
 
 uint8_t
 lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
-    if (t == NULL) {                            /* Shall we terminate ourself? */
+    if (t == NULL) { /* Shall we terminate ourself? */
         ExitThread(0);
     } else {
         /* We have known thread, find handle by looking at ID */

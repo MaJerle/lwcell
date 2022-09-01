@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_parser.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Parse number from string
@@ -45,38 +45,38 @@ int32_t
 lwgsmi_parse_number(const char** str) {
     int32_t val = 0;
     uint8_t minus = 0;
-    const char* p = *str;                       /*  */
+    const char* p = *str; /*  */
 
-    if (*p == '"') {                            /* Skip leading quotes */
+    if (*p == '"') { /* Skip leading quotes */
         ++p;
     }
-    if (*p == ',') {                            /* Skip leading comma */
+    if (*p == ',') { /* Skip leading comma */
         ++p;
     }
-    if (*p == '"') {                            /* Skip leading quotes */
+    if (*p == '"') { /* Skip leading quotes */
         ++p;
     }
-    if (*p == '/') {                            /* Skip '/' character, used in datetime */
+    if (*p == '/') { /* Skip '/' character, used in datetime */
         ++p;
     }
-    if (*p == ':') {                            /* Skip ':' character, used in datetime */
+    if (*p == ':') { /* Skip ':' character, used in datetime */
         ++p;
     }
-    if (*p == '+') {                            /* Skip '+' character, used in datetime */
+    if (*p == '+') { /* Skip '+' character, used in datetime */
         ++p;
     }
-    if (*p == '-') {                            /* Check negative number */
+    if (*p == '-') { /* Check negative number */
         minus = 1;
         ++p;
     }
-    while (LWGSM_CHARISNUM(*p)) {               /* Parse until character is valid number */
+    while (LWGSM_CHARISNUM(*p)) { /* Parse until character is valid number */
         val = val * 10 + LWGSM_CHARTONUM(*p);
         ++p;
     }
-    if (*p == '"') {                            /* Skip trailling quotes */
+    if (*p == '"') { /* Skip trailling quotes */
         ++p;
     }
-    *str = p;                                   /* Save new pointer with new offset */
+    *str = p; /* Save new pointer with new offset */
 
     return minus ? -val : val;
 }
@@ -90,25 +90,25 @@ lwgsmi_parse_number(const char** str) {
 uint32_t
 lwgsmi_parse_hexnumber(const char** str) {
     int32_t val = 0;
-    const char* p = *str;                       /*  */
+    const char* p = *str; /*  */
 
-    if (*p == '"') {                            /* Skip leading quotes */
+    if (*p == '"') { /* Skip leading quotes */
         ++p;
     }
-    if (*p == ',') {                            /* Skip leading comma */
+    if (*p == ',') { /* Skip leading comma */
         ++p;
     }
-    if (*p == '"') {                            /* Skip leading quotes */
+    if (*p == '"') { /* Skip leading quotes */
         ++p;
     }
-    while (LWGSM_CHARISHEXNUM(*p)) {            /* Parse until character is valid number */
+    while (LWGSM_CHARISHEXNUM(*p)) { /* Parse until character is valid number */
         val = val * 16 + LWGSM_CHARHEXTONUM(*p);
         ++p;
     }
-    if (*p == ',') {                            /* Go to next entry if possible */
+    if (*p == ',') { /* Go to next entry if possible */
         ++p;
     }
-    *str = p;                                   /* Save new pointer with new offset */
+    *str = p; /* Save new pointer with new offset */
     return val;
 }
 
@@ -139,8 +139,7 @@ lwgsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
         --dst_len;
     }
     while (*p) {
-        if ((*p == '"' && (p[1] == ',' || p[1] == '\r' || p[1] == '\n'))
-            || (*p == '\r' || *p == '\n')) {
+        if ((*p == '"' && (p[1] == ',' || p[1] == '\r' || p[1] == '\n')) || (*p == '\r' || *p == '\n')) {
             ++p;
             break;
         }
@@ -202,7 +201,7 @@ lwgsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
         ++p;
     }
 
-    *src = p;                                   /* Set new pointer */
+    *src = p; /* Set new pointer */
     return 1;
 }
 
@@ -269,7 +268,7 @@ lwgsmi_parse_memory(const char** src) {
     }
 
     if (mem == LWGSM_MEM_UNKNOWN) {
-        lwgsmi_parse_string(&s, NULL, 0, 1);    /* Skip string */
+        lwgsmi_parse_string(&s, NULL, 0, 1); /* Skip string */
     }
     if (*s == '"') {
         ++s;
@@ -277,7 +276,6 @@ lwgsmi_parse_memory(const char** src) {
     *src = s;
     return mem;
 }
-
 
 /**
  * \brief           Parse a string of memories in format "M1","M2","M3","M4",...
@@ -298,7 +296,7 @@ lwgsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
         ++str;
     }
     do {
-        mem = lwgsmi_parse_memory(&str);        /* Parse memory string */
+        mem = lwgsmi_parse_memory(&str);            /* Parse memory string */
         *mem_dst |= LWGSM_U32(1 << LWGSM_U32(mem)); /* Set as bit field */
     } while (*str && *str != ')');
     if (*str == ')') {
@@ -329,15 +327,15 @@ lwgsmi_parse_creg(const char* str, uint8_t skip_first) {
      * In case we are connected to network,
      * scan for current network info
      */
-    if (lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED ||
-        lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
+    if (lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED
+        || lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
         /* Try to get operator */
         /* Notify user in case we are not able to add new command to queue */
         lwgsm_operator_get(&lwgsm.m.network.curr_operator, NULL, NULL, 0);
 #if LWGSM_CFG_NETWORK
     } else if (lwgsm_network_is_attached()) {
-        lwgsm_network_check_status(NULL, NULL, 0);  /* Do the update */
-#endif /* LWGSM_CFG_NETWORK */
+        lwgsm_network_check_status(NULL, NULL, 0); /* Do the update */
+#endif                                             /* LWGSM_CFG_NETWORK */
     }
 
     /* Send callback event */
@@ -364,15 +362,14 @@ lwgsmi_parse_csq(const char* str) {
     } else {
         rssi = 0;
     }
-    lwgsm.m.rssi = rssi;                        /* Save RSSI to global variable */
-    if (lwgsm.msg->cmd_def == LWGSM_CMD_CSQ_GET &&
-        lwgsm.msg->msg.csq.rssi != NULL) {
-        *lwgsm.msg->msg.csq.rssi = rssi;        /* Save to user variable */
+    lwgsm.m.rssi = rssi; /* Save RSSI to global variable */
+    if (lwgsm.msg->cmd_def == LWGSM_CMD_CSQ_GET && lwgsm.msg->msg.csq.rssi != NULL) {
+        *lwgsm.msg->msg.csq.rssi = rssi; /* Save to user variable */
     }
 
     /* Report CSQ status */
     lwgsm.evt.evt.rssi.rssi = rssi;
-    lwgsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH);  /* RSSI event type */
+    lwgsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH); /* RSSI event type */
 
     return 1;
 }
@@ -439,10 +436,12 @@ lwgsmi_parse_cops(const char* str) {
         if (*str != '\r') {
             switch (lwgsm.m.network.curr_operator.format) {
                 case LWGSM_OPERATOR_FORMAT_LONG_NAME:
-                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.long_name, sizeof(lwgsm.m.network.curr_operator.data.long_name), 1);
+                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.long_name,
+                                        sizeof(lwgsm.m.network.curr_operator.data.long_name), 1);
                     break;
                 case LWGSM_OPERATOR_FORMAT_SHORT_NAME:
-                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.short_name, sizeof(lwgsm.m.network.curr_operator.data.short_name), 1);
+                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.short_name,
+                                        sizeof(lwgsm.m.network.curr_operator.data.short_name), 1);
                     break;
                 case LWGSM_OPERATOR_FORMAT_NUMBER:
                     lwgsm.m.network.curr_operator.data.num = LWGSM_U32(lwgsmi_parse_number(&str));
@@ -455,9 +454,9 @@ lwgsmi_parse_cops(const char* str) {
         lwgsm.m.network.curr_operator.format = LWGSM_OPERATOR_FORMAT_INVALID;
     }
 
-    if (CMD_IS_DEF(LWGSM_CMD_COPS_GET) &&
-        lwgsm.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
-        LWGSM_MEMCPY(lwgsm.msg->msg.cops_get.curr, &lwgsm.m.network.curr_operator, sizeof(*lwgsm.msg->msg.cops_get.curr));
+    if (CMD_IS_DEF(LWGSM_CMD_COPS_GET) && lwgsm.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
+        LWGSM_MEMCPY(lwgsm.msg->msg.cops_get.curr, &lwgsm.m.network.curr_operator,
+                     sizeof(*lwgsm.msg->msg.cops_get.curr));
     }
     return 1;
 }
@@ -473,67 +472,68 @@ uint8_t
 lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     static union {
         struct {
-            uint8_t bo: 1;                      /*!< Bracket open flag (Bracket Open) */
-            uint8_t ccd: 1;                     /*!< 2 consecutive commas detected in a row (Comma Comma Detected) */
-            uint8_t tn: 2;                      /*!< Term number in response, 2 bits for 4 diff values */
-            uint8_t tp;                         /*!< Current term character position */
-            uint8_t ch_prev;                    /*!< Previous character */
+            uint8_t bo  : 1; /*!< Bracket open flag (Bracket Open) */
+            uint8_t ccd : 1; /*!< 2 consecutive commas detected in a row (Comma Comma Detected) */
+            uint8_t tn  : 2; /*!< Term number in response, 2 bits for 4 diff values */
+            uint8_t tp;      /*!< Current term character position */
+            uint8_t ch_prev; /*!< Previous character */
         } f;
     } u;
 
-    if (reset) {                                /* Check for reset status */
-        LWGSM_MEMSET(&u, 0x00, sizeof(u));      /* Reset everything */
+    if (reset) {                           /* Check for reset status */
+        LWGSM_MEMSET(&u, 0x00, sizeof(u)); /* Reset everything */
         u.f.ch_prev = 0;
         return 1;
     }
 
-    if (u.f.ch_prev == 0) {                     /* Check if this is first character */
-        if (ch == ' ') {                        /* Skip leading spaces */
+    if (u.f.ch_prev == 0) { /* Check if this is first character */
+        if (ch == ' ') {    /* Skip leading spaces */
             return 1;
-        } else if (ch == ',') {                 /* If first character is comma, no operators available */
-            u.f.ccd = 1;                        /* Fake double commas in a row */
+        } else if (ch == ',') { /* If first character is comma, no operators available */
+            u.f.ccd = 1;        /* Fake double commas in a row */
         }
     }
 
-    if (u.f.ccd ||                              /* Ignore data after 2 commas in a row */
-        lwgsm.msg->msg.cops_scan.opsi >= lwgsm.msg->msg.cops_scan.opsl) {   /* or if array is full */
+    if (u.f.ccd ||                                                        /* Ignore data after 2 commas in a row */
+        lwgsm.msg->msg.cops_scan.opsi >= lwgsm.msg->msg.cops_scan.opsl) { /* or if array is full */
         return 1;
     }
 
-    if (u.f.bo) {                               /* Bracket already open */
-        if (ch == ')') {                        /* Close bracket check */
-            u.f.bo = 0;                         /* Clear bracket open flag */
-            u.f.tn = 0;                         /* Go to next term */
-            u.f.tp = 0;                         /* Go to beginning of next term */
-            ++lwgsm.msg->msg.cops_scan.opsi;    /* Increase index */
+    if (u.f.bo) {                            /* Bracket already open */
+        if (ch == ')') {                     /* Close bracket check */
+            u.f.bo = 0;                      /* Clear bracket open flag */
+            u.f.tn = 0;                      /* Go to next term */
+            u.f.tp = 0;                      /* Go to beginning of next term */
+            ++lwgsm.msg->msg.cops_scan.opsi; /* Increase index */
             if (lwgsm.msg->msg.cops_scan.opf != NULL) {
                 *lwgsm.msg->msg.cops_scan.opf = lwgsm.msg->msg.cops_scan.opsi;
             }
         } else if (ch == ',') {
-            ++u.f.tn;                           /* Go to next term */
-            u.f.tp = 0;                         /* Go to beginning of next term */
-        } else if (ch != '"') {                 /* We have valid data */
+            ++u.f.tn;           /* Go to next term */
+            u.f.tp = 0;         /* Go to beginning of next term */
+        } else if (ch != '"') { /* We have valid data */
             size_t i = lwgsm.msg->msg.cops_scan.opsi;
             switch (u.f.tn) {
-                case 0: {                       /* Parse status info */
-                    lwgsm.msg->msg.cops_scan.ops[i].stat = (lwgsm_operator_status_t)(10 * (size_t)lwgsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
+                case 0: { /* Parse status info */
+                    lwgsm.msg->msg.cops_scan.ops[i].stat =
+                        (lwgsm_operator_status_t)(10 * (size_t)lwgsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
                     break;
                 }
-                case 1: {                       /*!< Parse long name */
+                case 1: { /*!< Parse long name */
                     if (u.f.tp < sizeof(lwgsm.msg->msg.cops_scan.ops[i].long_name) - 1) {
                         lwgsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = ch;
                         lwgsm.msg->msg.cops_scan.ops[i].long_name[++u.f.tp] = 0;
                     }
                     break;
                 }
-                case 2: {                       /*!< Parse short name */
+                case 2: { /*!< Parse short name */
                     if (u.f.tp < sizeof(lwgsm.msg->msg.cops_scan.ops[i].short_name) - 1) {
                         lwgsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = ch;
                         lwgsm.msg->msg.cops_scan.ops[i].short_name[++u.f.tp] = 0;
                     }
                     break;
                 }
-                case 3: {                       /*!< Parse number */
+                case 3: { /*!< Parse number */
                     lwgsm.msg->msg.cops_scan.ops[i].num = (10 * lwgsm.msg->msg.cops_scan.ops[i].num) + (ch - '0');
                     break;
                 }
@@ -542,10 +542,10 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             }
         }
     } else {
-        if (ch == '(') {                        /* Check for opening bracket */
+        if (ch == '(') { /* Check for opening bracket */
             u.f.bo = 1;
         } else if (ch == ',' && u.f.ch_prev == ',') {
-            u.f.ccd = 1;                        /* 2 commas in a row */
+            u.f.ccd = 1; /* 2 commas in a row */
         }
     }
     u.f.ch_prev = ch;
@@ -567,7 +567,7 @@ lwgsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
     dt->minutes = lwgsmi_parse_number(src);
     dt->seconds = lwgsmi_parse_number(src);
 
-    lwgsmi_check_and_trim(src);                 /* Trim text to the end */
+    lwgsmi_check_and_trim(src); /* Trim text to the end */
     return 1;
 }
 
@@ -616,7 +616,7 @@ lwgsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
     lwgsm_sms_status_t s;
     char t[11];
 
-    lwgsmi_parse_string(src, t, sizeof(t), 1);  /* Parse string and advance */
+    lwgsmi_parse_string(src, t, sizeof(t), 1); /* Parse string and advance */
     if (!strcmp(t, "REC UNREAD")) {
         s = LWGSM_SMS_STATUS_UNREAD;
     } else if (!strcmp(t, "REC READ")) {
@@ -626,7 +626,7 @@ lwgsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
     } else if (!strcmp(t, "REC SENT")) {
         s = LWGSM_SMS_STATUS_SENT;
     } else {
-        s = LWGSM_SMS_STATUS_ALL;               /* Error! */
+        s = LWGSM_SMS_STATUS_ALL; /* Error! */
     }
     if (s != LWGSM_SMS_STATUS_ALL) {
         *stat = s;
@@ -686,8 +686,7 @@ uint8_t
 lwgsmi_parse_cmgl(const char* str) {
     lwgsm_sms_entry_t* e;
 
-    if (!CMD_IS_DEF(LWGSM_CMD_CMGL) ||
-        lwgsm.msg->msg.sms_list.ei >= lwgsm.msg->msg.sms_list.etr) {
+    if (!CMD_IS_DEF(LWGSM_CMD_CMGL) || lwgsm.msg->msg.sms_list.ei >= lwgsm.msg->msg.sms_list.etr) {
         return 0;
     }
 
@@ -697,8 +696,8 @@ lwgsmi_parse_cmgl(const char* str) {
 
     e = &lwgsm.msg->msg.sms_list.entries[lwgsm.msg->msg.sms_list.ei];
     e->length = 0;
-    e->mem = lwgsm.msg->msg.sms_list.mem;       /* Manually set memory */
-    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));   /* Scan position */
+    e->mem = lwgsm.msg->msg.sms_list.mem;         /* Manually set memory */
+    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str)); /* Scan position */
     lwgsmi_parse_sms_status(&str, &e->status);
     lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
     lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
@@ -740,27 +739,27 @@ lwgsmi_parse_cpms(const char* str, uint8_t opt) {
     if (*str == '+') {
         str += 7;
     }
-    switch (opt) {                              /* Check expected input string */
-        case 0: {                               /* Get list of CPMS options: +CPMS: (("","","",..),("....")("...")) */
-            for (i = 0; i < 3; ++i) {           /* 3 different memories for "operation","receive","sent" */
+    switch (opt) {                    /* Check expected input string */
+        case 0: {                     /* Get list of CPMS options: +CPMS: (("","","",..),("....")("...")) */
+            for (i = 0; i < 3; ++i) { /* 3 different memories for "operation","receive","sent" */
                 if (!lwgsmi_parse_memories_string(&str, &lwgsm.m.sms.mem[i].mem_available)) {
                     return 0;
                 }
             }
             break;
         }
-        case 1: {                               /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
-            for (i = 0; i < 3; ++i) {           /* 3 memories expected */
+        case 1: {                     /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
+            for (i = 0; i < 3; ++i) { /* 3 memories expected */
                 lwgsm.m.sms.mem[i].current = lwgsmi_parse_memory(&str); /* Parse memory string and save it as current */
-                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);/* Get used memory size */
+                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);    /* Get used memory size */
                 lwgsm.m.sms.mem[i].total = lwgsmi_parse_number(&str);   /* Get total memory size */
             }
             break;
         }
-        case 2: {                               /* Received statement of set info: +CPMS: 10,20,2,20 */
-            for (i = 0; i < 3; ++i) {           /* 3 memories expected */
-                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);/* Get used memory size */
-                lwgsm.m.sms.mem[i].total = lwgsmi_parse_number(&str);   /* Get total memory size */
+        case 2: {                     /* Received statement of set info: +CPMS: 10,20,2,20 */
+            for (i = 0; i < 3; ++i) { /* 3 memories expected */
+                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);  /* Get used memory size */
+                lwgsm.m.sms.mem[i].total = lwgsmi_parse_number(&str); /* Get total memory size */
             }
             break;
         }
@@ -785,19 +784,19 @@ lwgsmi_parse_cpbs(const char* str, uint8_t opt) {
     if (*str == '+') {
         str += 7;
     }
-    switch (opt) {                              /* Check expected input string */
-        case 0: {                               /* Get list of CPBS options: ("M1","M2","M3",...) */
+    switch (opt) { /* Check expected input string */
+        case 0: {  /* Get list of CPBS options: ("M1","M2","M3",...) */
             return lwgsmi_parse_memories_string(&str, &lwgsm.m.pb.mem.mem_available);
         }
-        case 1: {                               /* Received statement of current info: +CPBS: "ME",10,20 */
+        case 1: { /* Received statement of current info: +CPBS: "ME",10,20 */
             lwgsm.m.pb.mem.current = lwgsmi_parse_memory(&str); /* Parse memory string and save it as current */
-            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);/* Get used memory size */
+            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);    /* Get used memory size */
             lwgsm.m.pb.mem.total = lwgsmi_parse_number(&str);   /* Get total memory size */
             break;
         }
-        case 2: {                               /* Received statement of set info: +CPBS: 10,20 */
-            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);/* Get used memory size */
-            lwgsm.m.pb.mem.total = lwgsmi_parse_number(&str);   /* Get total memory size */
+        case 2: {                                             /* Received statement of set info: +CPBS: 10,20 */
+            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);  /* Get used memory size */
+            lwgsm.m.pb.mem.total = lwgsmi_parse_number(&str); /* Get total memory size */
             break;
         }
     }
@@ -813,8 +812,7 @@ uint8_t
 lwgsmi_parse_cpbr(const char* str) {
     lwgsm_pb_entry_t* e;
 
-    if (!CMD_IS_DEF(LWGSM_CMD_CPBR) ||
-        lwgsm.msg->msg.pb_list.ei >= lwgsm.msg->msg.pb_list.etr) {
+    if (!CMD_IS_DEF(LWGSM_CMD_CPBR) || lwgsm.msg->msg.pb_list.ei >= lwgsm.msg->msg.pb_list.etr) {
         return 0;
     }
 
@@ -844,8 +842,7 @@ uint8_t
 lwgsmi_parse_cpbf(const char* str) {
     lwgsm_pb_entry_t* e;
 
-    if (!CMD_IS_DEF(LWGSM_CMD_CPBF) ||
-        lwgsm.msg->msg.pb_search.ei >= lwgsm.msg->msg.pb_search.etr) {
+    if (!CMD_IS_DEF(LWGSM_CMD_CPBF) || lwgsm.msg->msg.pb_search.ei >= lwgsm.msg->msg.pb_search.etr) {
         return 0;
     }
 
@@ -891,7 +888,7 @@ lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* cont
         /* Check if PDP context is deactivated or not */
         tmp_pdp_state = 1;
         if (!strncmp(&str[7], "IP INITIAL", 10)) {
-            *continueScan = 0;                  /* Stop command execution at this point (no OK,ERROR received after this line) */
+            *continueScan = 0; /* Stop command execution at this point (no OK,ERROR received after this line) */
             tmp_pdp_state = 0;
         } else if (!strncmp(&str[7], "PDP DEACT", 9)) {
             /* Deactivated */
@@ -939,9 +936,9 @@ lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* cont
 
     } else if (!strcmp(s_tmp, "CLOSING")) {
 
-    } else if (!strcmp(s_tmp, "CLOSED")) {      /* Connection closed */
-        if (conn->status.f.active) {            /* Check if connection is not */
-            lwgsmi_conn_closed_process(conn->num, 0);   /* Process closed event */
+    } else if (!strcmp(s_tmp, "CLOSED")) {            /* Connection closed */
+        if (conn->status.f.active) {                  /* Check if connection is not */
+            lwgsmi_conn_closed_process(conn->num, 0); /* Process closed event */
         }
     }
 
@@ -965,24 +962,24 @@ lwgsmi_parse_ipd(const char* str) {
     if (*str == '+') {
         ++str;
         if (*str == 'R') {
-            str += 8;                           /* Advance for RECEIVE */
+            str += 8; /* Advance for RECEIVE */
         } else {
-            str += 4;                           /* Advance for IPD */
+            str += 4; /* Advance for IPD */
         }
     }
 
-    conn = lwgsmi_parse_number(&str);           /* Parse number for connection number */
-    len = lwgsmi_parse_number(&str);            /* Parse number for number of bytes to read */
+    conn = lwgsmi_parse_number(&str); /* Parse number for connection number */
+    len = lwgsmi_parse_number(&str);  /* Parse number for number of bytes to read */
 
-    c = conn < LWGSM_CFG_MAX_CONNS ? &lwgsm.m.conns[conn] : NULL;   /* Get connection handle */
-    if (c == NULL) {                            /* Invalid connection number */
+    c = conn < LWGSM_CFG_MAX_CONNS ? &lwgsm.m.conns[conn] : NULL; /* Get connection handle */
+    if (c == NULL) {                                              /* Invalid connection number */
         return 0;
     }
 
-    lwgsm.m.ipd.read = 1;                       /* Start reading network data */
-    lwgsm.m.ipd.tot_len = len;                  /* Total number of bytes in this received packet */
-    lwgsm.m.ipd.rem_len = len;                  /* Number of remaining bytes to read */
-    lwgsm.m.ipd.conn = c;                       /* Pointer to connection we have data for */
+    lwgsm.m.ipd.read = 1;      /* Start reading network data */
+    lwgsm.m.ipd.tot_len = len; /* Total number of bytes in this received packet */
+    lwgsm.m.ipd.rem_len = len; /* Number of remaining bytes to read */
+    lwgsm.m.ipd.conn = c;      /* Pointer to connection we have data for */
 
     return 1;
 }

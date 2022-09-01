@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_ussd.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_USSD || __DOXYGEN__
 
@@ -48,8 +48,8 @@
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  */
 lwgsmr_t
-lwgsm_ussd_run(const char* code, char* resp, size_t resp_len,
-               const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwgsm_ussd_run(const char* code, char* resp, size_t resp_len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+               const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
     LWGSM_ASSERT("code != NULL && strlen(code) > 0", code != NULL && strlen(code) > 0);
