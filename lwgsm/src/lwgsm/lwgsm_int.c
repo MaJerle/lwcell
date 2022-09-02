@@ -33,10 +33,6 @@
  */
 #include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_int.h"
-#include "lwgsm/lwgsm.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_parser.h"
-#include "lwgsm/lwgsm_unicode.h"
 #include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__

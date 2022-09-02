@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "lwgsm/lwgsm_opt.h"
 
 #ifdef __cplusplus
 extern "C" {

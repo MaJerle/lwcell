@@ -32,7 +32,6 @@
  * Version:         v0.1.1
  */
 #include "lwgsm/lwgsm_timeout.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_private.h"
 
 static lwgsm_timeout_t* first_timeout;

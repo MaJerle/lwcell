@@ -31,9 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_sim.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_private.h"
+#include "lwgsm/lwgsm_sim.h"
 
 /**
  * \brief           Get current cached SIM state from stack

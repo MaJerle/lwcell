@@ -31,9 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_network.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_private.h"
+#include "lwgsm/lwgsm_network.h"
 
 #if LWGSM_CFG_NETWORK || __DOXYGEN__
 

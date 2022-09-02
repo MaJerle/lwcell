@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_private.h"
+#include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_threads.h"
 #include "lwgsm/lwgsm_timeout.h"
 #include "system/lwgsm_ll.h"

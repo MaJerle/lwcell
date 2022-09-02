@@ -32,8 +32,8 @@
  * Version:         v0.1.1
  */
 #include <stdint.h>
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_utils.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Convert `unsigned 32-bit` number to string

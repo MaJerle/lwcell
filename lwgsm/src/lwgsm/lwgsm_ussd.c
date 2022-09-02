@@ -32,7 +32,6 @@
  * Version:         v0.1.1
  */
 #include "lwgsm/lwgsm_ussd.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_USSD || __DOXYGEN__

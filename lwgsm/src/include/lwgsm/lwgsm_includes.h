@@ -36,7 +36,6 @@
 
 #include "lwgsm/lwgsm_opt.h"
 #include "lwgsm/lwgsm_typedefs.h"
-
 #include "lwgsm/lwgsm_buff.h"
 #include "lwgsm/lwgsm_debug.h"
 #include "lwgsm/lwgsm_device_info.h"

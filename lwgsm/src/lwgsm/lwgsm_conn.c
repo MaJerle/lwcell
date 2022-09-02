@@ -31,10 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_conn.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_private.h"
-#include "lwgsm/lwgsm_timeout.h"
+#include "lwgsm/lwgsm_conn.h"
 
 #if LWGSM_CFG_CONN || __DOXYGEN__
 

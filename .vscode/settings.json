@@ -10,7 +10,13 @@
         "lwgsm_includes.h": "c",
         "lwgsm_opt.h": "c",
         "lwgsm_device_info.h": "c",
-        "lwgsm_typedefs.h": "c"
+        "lwgsm_typedefs.h": "c",
+        "lwgsm_int.h": "c",
+        "lwgsm_mem.h": "c",
+        "lwgsm_sim.h": "c",
+        "lwgsm_buff.h": "c",
+        "lwgsm_input.h": "c",
+        "lwgsm_parser.h": "c"
     },
     "esbonio.sphinx.confDir": ""
 }

@@ -31,9 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_sms.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_private.h"
+#include "lwgsm/lwgsm_sms.h"
 
 #if LWGSM_CFG_SMS || __DOXYGEN__
 
