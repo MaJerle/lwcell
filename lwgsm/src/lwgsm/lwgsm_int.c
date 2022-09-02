@@ -1463,17 +1463,20 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
     } else if (CMD_IS_DEF(LWGSM_CMD_CPIN_SET)) { /* Set PIN code */
         switch (CMD_GET_CUR()) {
             case LWGSM_CMD_CPIN_GET: { /* Get own phone number */
-                if (*is_ok && lwgsm.m.sim.state == LWGSM_SIM_STATE_PIN) {
-                    SET_NEW_CMD(LWGSM_CMD_CPIN_SET); /* Set command to write PIN */
-                } else if (lwgsm.m.sim.state != LWGSM_SIM_STATE_READY) {
-                    *is_ok = 0;
-                    *is_error = 1;
+                if (msg->i == 0) {
+                    if (*is_ok && lwgsm.m.sim.state == LWGSM_SIM_STATE_PIN) {
+                        SET_NEW_CMD(LWGSM_CMD_CPIN_SET); /* Set command to write PIN */
+                    } else if (lwgsm.m.sim.state != LWGSM_SIM_STATE_READY) {
+                        *is_ok = 0;
+                        *is_error = 1;
+                    }
                 }
                 break;
             }
             case LWGSM_CMD_CPIN_SET: { /* Set CPIN */
                 if (*is_ok) {
                     lwgsm_delay(5000); /* Make delay to make sure SIM is ready */
+                    SET_NEW_CMD(LWGSM_CMD_CPIN_GET);
                 }
                 break;
             }
@@ -1598,8 +1601,7 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
         }
 #endif /* LWGSM_CFG_PHONEBOOK */
 #if LWGSM_CFG_NETWORK
-    }
-    if (CMD_IS_DEF(LWGSM_CMD_NETWORK_ATTACH)) {
+    } else if (CMD_IS_DEF(LWGSM_CMD_NETWORK_ATTACH)) {
         switch (msg->i) {
             case 0:
                 SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CGACT_SET_0);
