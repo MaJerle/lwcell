@@ -108,6 +108,7 @@ typedef enum {
     LWGSM_SIM_STATE_PUK,          /*!< SIM is waiting for PUT to be given */
     LWGSM_SIM_STATE_PH_PIN,
     LWGSM_SIM_STATE_PH_PUK,
+    LWGSM_SIM_STATE_END,
 } lwgsm_sim_state_t;
 
 /**

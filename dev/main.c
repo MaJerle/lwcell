@@ -39,7 +39,7 @@ typedef struct {
     const char* puk;
 } my_sim_t;
 my_sim_t sim = {
-    .pin = "7958",
+    .pin = "4591",
     .puk = "10663647",
 };
 
@@ -207,7 +207,7 @@ input_thread(void* arg) {
  */
 static void
 main_thread(void* arg) {
-    lwgsm_sim_state_t sim_state;
+    lwgsm_sim_state_t sim_state, sim_prev_state;
 
     LWGSM_UNUSED(arg);
 
@@ -220,10 +220,13 @@ main_thread(void* arg) {
     /* Start input thread */
     lwgsm_sys_thread_create(NULL, "input", (lwgsm_sys_thread_fn)input_thread, NULL, 0, LWGSM_SYS_THREAD_PRIO);
 
+    sim_prev_state = LWGSM_SIM_STATE_END;
     while (1) {
         /* Check for sim card */
-        while ((sim_state = lwgsm_sim_get_current_state()) != LWGSM_SIM_STATE_READY) {
-            if (sim_state == LWGSM_SIM_STATE_PIN) {
+        if ((sim_state = lwgsm_sim_get_current_state()) != sim_prev_state) {
+            if (sim_state == LWGSM_SIM_STATE_READY) {
+                printf("SIM pin is now ready\r\n");
+            } else if (sim_state == LWGSM_SIM_STATE_PIN) {
                 printf("GSM state PIN\r\n");
                 lwgsm_sim_pin_enter(sim.pin, pin_evt, NULL, 1);
             } else if (sim_state == LWGSM_SIM_STATE_PUK) {
@@ -234,7 +237,7 @@ main_thread(void* arg) {
             } else if (sim_state == LWGSM_SIM_STATE_NOT_INSERTED) {
                 printf("GSM SIM not inserted!\r\n");
             }
-            lwgsm_delay(1000);
+            sim_prev_state = sim_state;
         }
 
         /* Some delay */

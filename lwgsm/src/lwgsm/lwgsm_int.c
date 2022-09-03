@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_int.h"
+#include "lwgsm/lwgsm_private.h"
 #include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__
@@ -909,7 +909,17 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
 
     /* Check general responses for active commands */
     if (lwgsm.msg != NULL) {
-        if (0) {
+        if (CMD_IS_CUR(LWGSM_CMD_CPIN_GET)) {
+            /*
+             * CME ERROR 10 indicates no SIM pin inserted.
+             *
+             * This may be different response on various modules,
+             * some replying with CME error, some with "+CPIN: SIM NOT INSERTED" message
+             */
+            if (is_error == 10) {
+                lwgsm.m.sim.state = LWGSM_SIM_STATE_NOT_INSERTED;
+                lwgsmi_send_cb(LWGSM_EVT_SIM_STATE_CHANGED);
+            }
 #if LWGSM_CFG_SMS
         } else if (CMD_IS_CUR(LWGSM_CMD_CMGS) && is_ok) {
             /* At this point we have to wait for "> " to send data */
