@@ -1480,12 +1480,25 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                         *is_ok = 0;
                         *is_error = 1;
                     }
+                } else {
+                    /* 
+                     * This else will only get executed when CPIN_GET is requested after CPIN has been set.
+                     * This is indicated by msg command counter (msg->i > 0).
+                     * 
+                     * We try several times to acquire status, each time with different delays in-between.
+                     * This allows to immediately stop execution on fast modems, 
+                     * while it allows slow modems to take more time to handle the situation
+                     */
+                    if ((*is_error || lwgsm.m.sim.state != LWGSM_SIM_STATE_READY) && msg->i < 5) {
+                        lwgsm_delay(500 * msg->i);
+                        SET_NEW_CMD(LWGSM_CMD_CPIN_GET);
+                    }
                 }
                 break;
             }
             case LWGSM_CMD_CPIN_SET: { /* Set CPIN */
                 if (*is_ok) {
-                    lwgsm_delay(5000); /* Make delay to make sure SIM is ready */
+                    lwgsm_delay(500);
                     SET_NEW_CMD(LWGSM_CMD_CPIN_GET);
                 }
                 break;
