@@ -1267,15 +1267,10 @@ lwgsmi_process(const void* data, size_t data_len) {
             }
             if (res == lwgsmOK) {     /* Can we process the character(s) */
                 if (unicode.t == 1) { /* Totally 1 character? */
-                    switch (ch) {
-                        case '\n':
-                            RECV_ADD(ch);                      /* Add character to input buffer */
-                            lwgsmi_parse_received(&recv_buff); /* Parse received string */
-                            RECV_RESET();                      /* Reset received string */
-                            break;
-                        default:
-                            RECV_ADD(ch); /* Any ASCII valid character */
-                            break;
+                    RECV_ADD(ch); /* Any ASCII valid character */
+                    if (ch == '\n') {
+                        lwbg95i_parse_received(&recv_buff); /* Parse received string */
+                        RECV_RESET();                       /* Reset received string */
                     }
 
 #if LWGSM_CFG_CONN
