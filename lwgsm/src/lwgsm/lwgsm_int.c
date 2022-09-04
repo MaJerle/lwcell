@@ -932,7 +932,7 @@ lwgsmi_parse_received(lwgsm_recv_t* rcv) {
             }
             /* Check if connection data received */
             if (rcv->len > 3) {
-                uint8_t continueScan, processed = 0;
+                uint8_t continueScan = 0, processed = 0;
                 if (rcv->data[0] == 'C' && rcv->data[1] == ':' && rcv->data[2] == ' ') {
                     processed = 1;
                     lwgsmi_parse_cipstatus_conn(rcv->data, 1, &continueScan);
@@ -1267,7 +1267,7 @@ lwgsmi_process(const void* data, size_t data_len) {
             }
             if (res == lwgsmOK) {     /* Can we process the character(s) */
                 if (unicode.t == 1) { /* Totally 1 character? */
-                    RECV_ADD(ch); /* Any ASCII valid character */
+                    RECV_ADD(ch);     /* Any ASCII valid character */
                     if (ch == '\n') {
                         lwbg95i_parse_received(&recv_buff); /* Parse received string */
                         RECV_RESET();                       /* Reset received string */
