@@ -1269,8 +1269,8 @@ lwgsmi_process(const void* data, size_t data_len) {
                 if (unicode.t == 1) { /* Totally 1 character? */
                     RECV_ADD(ch);     /* Any ASCII valid character */
                     if (ch == '\n') {
-                        lwbg95i_parse_received(&recv_buff); /* Parse received string */
-                        RECV_RESET();                       /* Reset received string */
+                        lwgsmi_parse_received(&recv_buff); /* Parse received string */
+                        RECV_RESET();                      /* Reset received string */
                     }
 
 #if LWGSM_CFG_CONN
