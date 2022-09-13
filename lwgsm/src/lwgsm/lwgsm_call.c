@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_call.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_CALL || __DOXYGEN__
 
@@ -119,9 +119,9 @@ lwgsmr_t
 lwgsm_call_start(const char* number, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("number != NULL", number != NULL);
+    LWGSM_ASSERT(number != NULL);
     CHECK_ENABLED(); /* Check if enabled */
-    LWGSM_ASSERT("check_ready == lwgsmOK", check_ready() == lwgsmOK);
+    LWGSM_ASSERT(check_ready() == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);

@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_operator.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Get current operator
@@ -72,9 +72,9 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
     LWGSM_MSG_VAR_DEFINE(msg);
 
     if (mode != LWGSM_OPERATOR_MODE_AUTO) { /* Check parameters only if non-auto mode */
-        LWGSM_ASSERT("format < LWGSM_OPERATOR_FORMAT_INVALID", format < LWGSM_OPERATOR_FORMAT_INVALID);
+        LWGSM_ASSERT(format < LWGSM_OPERATOR_FORMAT_INVALID);
         if (format != LWGSM_OPERATOR_FORMAT_NUMBER) {
-            LWGSM_ASSERT("name != NULL", name != NULL);
+            LWGSM_ASSERT(name != NULL);
         }
     }
 

@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_conn.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_CONN || __DOXYGEN__
 
@@ -113,9 +113,9 @@ conn_send(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, cons
           size_t* const bw, uint8_t fau, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("conn != NULL", conn != NULL);
-    LWGSM_ASSERT("data != NULL", data != NULL);
-    LWGSM_ASSERT("btw > 0", btw > 0);
+    LWGSM_ASSERT(conn != NULL);
+    LWGSM_ASSERT(data != NULL);
+    LWGSM_ASSERT(btw > 0);
 
     if (bw != NULL) {
         *bw = 0;
@@ -190,9 +190,9 @@ lwgsm_conn_start(lwgsm_conn_p* conn, lwgsm_conn_type_t type, const char* const h
                  lwgsm_evt_fn conn_evt_fn, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("host != NULL", host != NULL);
-    LWGSM_ASSERT("port > 0", port > 0);
-    LWGSM_ASSERT("conn_evt_fn != NULL", conn_evt_fn != NULL);
+    LWGSM_ASSERT(host != NULL);
+    LWGSM_ASSERT(port > 0);
+    LWGSM_ASSERT(conn_evt_fn != NULL);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSTART;
@@ -219,7 +219,7 @@ lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
     lwgsmr_t res = lwgsmOK;
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT(conn != NULL);
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn); /* Check if we can continue */
 
@@ -256,7 +256,7 @@ lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
 lwgsmr_t
 lwgsm_conn_sendto(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, const void* data, size_t btw,
                   size_t* bw, const uint32_t blocking) {
-    LWGSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT(conn != NULL);
 
     flush_buff(conn); /* Flush currently written memory if exists */
     return conn_send(conn, ip, port, data, btw, bw, 0, blocking);
@@ -277,9 +277,9 @@ lwgsm_conn_send(lwgsm_conn_p conn, const void* data, size_t btw, size_t* const b
     lwgsmr_t res;
     const uint8_t* d = data;
 
-    LWGSM_ASSERT("conn != NULL", conn != NULL);
-    LWGSM_ASSERT("data != NULL", data != NULL);
-    LWGSM_ASSERT("btw > 0", btw > 0);
+    LWGSM_ASSERT(conn != NULL);
+    LWGSM_ASSERT(data != NULL);
+    LWGSM_ASSERT(btw > 0);
 
     lwgsm_core_lock();
     if (conn->buff.buff != NULL) { /* Check if memory available */
@@ -471,7 +471,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
 
     const uint8_t* d = data;
 
-    LWGSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT(conn != NULL);
 
     /*
      * Steps during write process:
@@ -572,7 +572,7 @@ size_t
 lwgsm_conn_get_total_recved_count(lwgsm_conn_p conn) {
     size_t tot;
 
-    LWGSM_ASSERT("conn != NULL", conn != NULL);
+    LWGSM_ASSERT(conn != NULL);
 
     lwgsm_core_lock();
     tot = conn->total_recved; /* Get total received bytes */

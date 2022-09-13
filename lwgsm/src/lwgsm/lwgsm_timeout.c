@@ -121,7 +121,7 @@ lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg) {
     lwgsm_timeout_t* to;
     uint32_t now;
 
-    LWGSM_ASSERT("fn != NULL", fn != NULL);
+    LWGSM_ASSERT(fn != NULL);
 
     /* Allocate memory for timeout structure */
     if ((to = lwgsm_mem_calloc(1, sizeof(*to))) == NULL) {

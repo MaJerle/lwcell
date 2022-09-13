@@ -50,16 +50,15 @@ extern "C" {
 /**
  * \brief           Assert an input parameter if in valid range
  * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref lwgsmr_t enumeration
- * \param[in]       msg: message to print to debug if test fails
  * \param[in]       c: Condition to test
  */
-#define LWGSM_ASSERT(msg, c)                                                                                           \
+#define LWGSM_ASSERT(c)                                                                                           \
     do {                                                                                                               \
         if (!(c)) {                                                                                                    \
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_ASSERT, "Wrong parameters on file %s and line %d: %p\r\n", __FILE__,            \
-                         (int)__LINE__, (void*)(msg));                                                                 \
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__, (int)__LINE__, \
+                         #c);                                                                                          \
             return lwgsmPARERR;                                                                                        \
-        }                                                                                                              \
+        }                                                                                                             \
     } while (0)
 
 /**

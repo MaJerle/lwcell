@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_sim.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Get current cached SIM state from stack
@@ -60,7 +60,7 @@ lwgsmr_t
 lwgsm_sim_pin_enter(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("pin != NULL", pin != NULL);
+    LWGSM_ASSERT(pin != NULL);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -85,7 +85,7 @@ lwgsmr_t
 lwgsm_sim_pin_add(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("pin != NULL", pin != NULL);
+    LWGSM_ASSERT(pin != NULL);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -109,8 +109,8 @@ lwgsm_sim_pin_change(const char* pin, const char* new_pin, const lwgsm_api_cmd_e
                      const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("pin != NULL", pin != NULL);
-    LWGSM_ASSERT("new_pin != NULL", new_pin != NULL);
+    LWGSM_ASSERT(pin != NULL);
+    LWGSM_ASSERT(new_pin != NULL);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -133,7 +133,7 @@ lwgsmr_t
 lwgsm_sim_pin_remove(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("pin != NULL", pin != NULL);
+    LWGSM_ASSERT(pin != NULL);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -157,8 +157,8 @@ lwgsm_sim_puk_enter(const char* puk, const char* new_pin, const lwgsm_api_cmd_ev
                     const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("puk != NULL", puk != NULL);
-    LWGSM_ASSERT("new_pin != NULL", new_pin != NULL);
+    LWGSM_ASSERT(puk != NULL);
+    LWGSM_ASSERT(new_pin != NULL);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);

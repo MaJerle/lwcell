@@ -51,9 +51,9 @@ lwgsm_ussd_run(const char* code, char* resp, size_t resp_len, const lwgsm_api_cm
                const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("code != NULL && strlen(code) > 0", code != NULL && strlen(code) > 0);
-    LWGSM_ASSERT("resp != NULL", resp != NULL);
-    LWGSM_ASSERT("resp_len != NULL", resp_len > 0);
+    LWGSM_ASSERT(code != NULL && strlen(code) > 0);
+    LWGSM_ASSERT(resp != NULL);
+    LWGSM_ASSERT(resp_len > 0);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);

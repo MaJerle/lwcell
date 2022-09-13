@@ -259,7 +259,7 @@ free_ret:
  */
 lwgsmr_t
 lwgsm_netconn_delete(lwgsm_netconn_p nc) {
-    LWGSM_ASSERT("netconn != NULL", nc != NULL);
+    LWGSM_ASSERT(nc != NULL);
 
     lwgsm_core_lock();
     flush_mboxes(nc, 0); /* Clear mboxes */
@@ -294,9 +294,9 @@ lwgsmr_t
 lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port) {
     lwgsmr_t res;
 
-    LWGSM_ASSERT("nc != NULL", nc != NULL);
-    LWGSM_ASSERT("host != NULL", host != NULL);
-    LWGSM_ASSERT("port > 0", port > 0);
+    LWGSM_ASSERT(nc != NULL);
+    LWGSM_ASSERT(host != NULL);
+    LWGSM_ASSERT(port > 0);
 
     /*
      * Start a new connection as client and:
@@ -323,10 +323,9 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
     const uint8_t* d = data;
     lwgsmr_t res;
 
-    LWGSM_ASSERT("nc != NULL", nc != NULL);
-    LWGSM_ASSERT("nc->type must be TCP or SSL",
-                 nc->type == LWGSM_NETCONN_TYPE_TCP || nc->type == LWGSM_NETCONN_TYPE_SSL);
-    LWGSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
+    LWGSM_ASSERT(nc != NULL);
+    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_TCP || nc->type == LWGSM_NETCONN_TYPE_SSL);
+    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
 
     /*
      * Several steps are done in write process
@@ -402,10 +401,9 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
  */
 lwgsmr_t
 lwgsm_netconn_flush(lwgsm_netconn_p nc) {
-    LWGSM_ASSERT("nc != NULL", nc != NULL);
-    LWGSM_ASSERT("nc->type must be TCP or SSL",
-                 nc->type == LWGSM_NETCONN_TYPE_TCP || nc->type == LWGSM_NETCONN_TYPE_SSL);
-    LWGSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
+    LWGSM_ASSERT(nc != NULL);
+    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_TCP || nc->type == LWGSM_NETCONN_TYPE_SSL);
+    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
 
     /*
      * In case we have data in write buffer,
@@ -429,9 +427,9 @@ lwgsm_netconn_flush(lwgsm_netconn_p nc) {
  */
 lwgsmr_t
 lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw) {
-    LWGSM_ASSERT("nc != NULL", nc != NULL);
-    LWGSM_ASSERT("nc->type must be UDP", nc->type == LWGSM_NETCONN_TYPE_UDP);
-    LWGSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
+    LWGSM_ASSERT(nc != NULL);
+    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_UDP);
+    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
 
     return lwgsm_conn_send(nc->conn, data, btw, NULL, 1);
 }
@@ -448,9 +446,9 @@ lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw) {
  */
 lwgsmr_t
 lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port, const void* data, size_t btw) {
-    LWGSM_ASSERT("nc != NULL", nc != NULL);
-    LWGSM_ASSERT("nc->type must be UDP", nc->type == LWGSM_NETCONN_TYPE_UDP);
-    LWGSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
+    LWGSM_ASSERT(nc != NULL);
+    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_UDP);
+    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
 
     return lwgsm_conn_sendto(nc->conn, ip, port, data, btw, NULL, 1);
 }
@@ -467,8 +465,8 @@ lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port
  */
 lwgsmr_t
 lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf) {
-    LWGSM_ASSERT("nc != NULL", nc != NULL);
-    LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
+    LWGSM_ASSERT(nc != NULL);
+    LWGSM_ASSERT(pbuf != NULL);
 
     *pbuf = NULL;
 #if LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT
@@ -501,9 +499,9 @@ lwgsmr_t
 lwgsm_netconn_close(lwgsm_netconn_p nc) {
     lwgsm_conn_p conn;
 
-    LWGSM_ASSERT("nc != NULL", nc != NULL);
-    LWGSM_ASSERT("nc->conn != NULL", nc->conn != NULL);
-    LWGSM_ASSERT("nc->conn must be active", lwgsm_conn_is_active(nc->conn));
+    LWGSM_ASSERT(nc != NULL);
+    LWGSM_ASSERT(nc->conn != NULL);
+    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
 
     lwgsm_netconn_flush(nc); /* Flush data and ignore result */
     conn = nc->conn;

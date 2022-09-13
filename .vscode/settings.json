@@ -16,7 +16,8 @@
         "lwgsm_sim.h": "c",
         "lwgsm_buff.h": "c",
         "lwgsm_input.h": "c",
-        "lwgsm_parser.h": "c"
+        "lwgsm_parser.h": "c",
+        "lwgsm_debug.h": "c"
     },
     "esbonio.sphinx.confDir": ""
 }

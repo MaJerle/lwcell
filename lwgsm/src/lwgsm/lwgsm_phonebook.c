@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_phonebook.h"
+#include "lwgsm/lwgsm_private.h"
 
 #if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
 
@@ -128,10 +128,10 @@ lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_ty
              const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("name != NULL", name != NULL);
-    LWGSM_ASSERT("num != NULL", num != NULL);
+    LWGSM_ASSERT(name != NULL);
+    LWGSM_ASSERT(num != NULL);
     CHECK_ENABLED(); /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == lwgsmOK", check_mem(mem, 1) == lwgsmOK);
+    LWGSM_ASSERT(check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -184,10 +184,10 @@ lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lw
               const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("name != NULL", name != NULL);
-    LWGSM_ASSERT("num != NULL", num != NULL);
+    LWGSM_ASSERT(name != NULL);
+    LWGSM_ASSERT(num != NULL);
     CHECK_ENABLED(); /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == lwgsmOK);
+    LWGSM_ASSERT(check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -221,9 +221,9 @@ lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos, const lwgsm_api_cmd_evt_fn evt_fn, 
                 const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("pos > 0", pos > 0);
+    LWGSM_ASSERT(pos > 0);
     CHECK_ENABLED(); /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == lwgsmOK", check_mem(mem, 1) == lwgsmOK);
+    LWGSM_ASSERT(check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -258,11 +258,11 @@ lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, si
               const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("start_index", start_index);
-    LWGSM_ASSERT("entries != NULL", entries != NULL);
-    LWGSM_ASSERT("etr > 0", etr > 0);
+    LWGSM_ASSERT(start_index);
+    LWGSM_ASSERT(entries != NULL);
+    LWGSM_ASSERT(etr > 0);
     CHECK_ENABLED();
-    LWGSM_ASSERT("check_mem() == lwgsmOK", check_mem(mem, 1) == lwgsmOK);
+    LWGSM_ASSERT(check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
@@ -305,11 +305,11 @@ lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* entries, 
                 const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWGSM_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT("search != NULL", search != NULL);
-    LWGSM_ASSERT("entries != NULL", entries != NULL);
-    LWGSM_ASSERT("etr > 0", etr > 0);
+    LWGSM_ASSERT(search != NULL);
+    LWGSM_ASSERT(entries != NULL);
+    LWGSM_ASSERT(etr > 0);
     CHECK_ENABLED(); /* Check if enabled */
-    LWGSM_ASSERT("check_mem() == mem", check_mem(mem, 1) == lwgsmOK);
+    LWGSM_ASSERT(check_mem(mem, 1) == lwgsmOK);
 
     LWGSM_MSG_VAR_ALLOC(msg, blocking);
     LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);

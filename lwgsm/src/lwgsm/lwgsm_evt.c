@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_evt.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           Register callback function for global (non-connection based) events
@@ -44,7 +44,7 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
     lwgsmr_t res = lwgsmOK;
     lwgsm_evt_func_t *func, *new_func;
 
-    LWGSM_ASSERT("fn != NULL", fn != NULL);
+    LWGSM_ASSERT(fn != NULL);
 
     lwgsm_core_lock();
 
@@ -86,7 +86,7 @@ lwgsm_evt_register(lwgsm_evt_fn fn) {
 lwgsmr_t
 lwgsm_evt_unregister(lwgsm_evt_fn fn) {
     lwgsm_evt_func_t *func, *prev;
-    LWGSM_ASSERT("fn != NULL", fn != NULL);
+    LWGSM_ASSERT(fn != NULL);
 
     lwgsm_core_lock();
     for (prev = lwgsm.evt_func, func = lwgsm.evt_func->next; func != NULL; prev = func, func = func->next) {

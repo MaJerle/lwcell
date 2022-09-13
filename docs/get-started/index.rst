@@ -75,7 +75,7 @@ and it should be copied (or simply renamed in-place) and named ``lwgsm_opts.h``
 
 .. note::
     Default configuration template file location: ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h``.
-    File must be renamed to ``lwesp_opts.h`` first and then copied to the project directory where compiler
+    File must be renamed to ``lwgsm_opts.h`` first and then copied to the project directory where compiler
     include paths have access to it by using ``#include "lwgsm_opts.h"``.
 
 List of configuration options are available in the :ref:`api_lwgsm_opt` section.

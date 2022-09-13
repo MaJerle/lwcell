@@ -1141,10 +1141,10 @@ lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_po
                           const lwgsm_mqtt_client_info_t* info) {
     lwgsmr_t res = lwgsmERR;
 
-    LWGSM_ASSERT("client != NULL", client != NULL); /* t input parameters */
-    LWGSM_ASSERT("host != NULL", host != NULL);
-    LWGSM_ASSERT("port > 0", port > 0);
-    LWGSM_ASSERT("info != NULL", info != NULL);
+    LWGSM_ASSERT( client != NULL); /* t input parameters */
+    LWGSM_ASSERT( host != NULL);
+    LWGSM_ASSERT( port > 0);
+    LWGSM_ASSERT( info != NULL);
 
     lwgsm_core_lock();
     if (lwgsm_network_is_attached() && client->conn_state == LWGSM_MQTT_CONN_DISCONNECTED) {

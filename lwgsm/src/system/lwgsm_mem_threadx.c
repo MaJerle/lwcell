@@ -36,7 +36,7 @@
 
 #if !__DOXYGEN__
 
-/* Byte pool is defined externally, in the lwesp_sys_threadx.c file */
+/* Byte pool is defined externally, in the lwgsm_sys_threadx.c file */
 extern TX_BYTE_POOL* lwgsm_threadx_byte_pool;
 
 void*

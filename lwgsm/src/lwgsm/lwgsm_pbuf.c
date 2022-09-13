@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_pbuf.h"
+#include "lwgsm/lwgsm_private.h"
 
 /* Set size of pbuf structure */
 #define SIZEOF_PBUF_STRUCT LWGSM_MEM_ALIGN(sizeof(lwgsm_pbuf_t))
@@ -100,7 +100,7 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
     lwgsm_pbuf_p p, pn;
     size_t ref, cnt;
 
-    LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
+    LWGSM_ASSERT(pbuf != NULL);
 
     /*
      * Free all pbufs until first ->ref > 1 is reached
@@ -139,8 +139,8 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
  */
 lwgsmr_t
 lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
-    LWGSM_ASSERT("head != NULL", head != NULL);
-    LWGSM_ASSERT("tail != NULL", tail != NULL);
+    LWGSM_ASSERT(head != NULL);
+    LWGSM_ASSERT(tail != NULL);
 
     /*
      * For all pbuf packets in head,
@@ -208,7 +208,7 @@ lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
  */
 lwgsmr_t
 lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
-    LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
+    LWGSM_ASSERT(pbuf != NULL);
 
     ++pbuf->ref; /* Increase reference count for pbuf */
     return lwgsmOK;
@@ -227,10 +227,10 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
     const uint8_t* d = data;
     size_t copy_len;
 
-    LWGSM_ASSERT("pbuf != NULL", pbuf != NULL);
-    LWGSM_ASSERT("data != NULL", data != NULL);
-    LWGSM_ASSERT("len > 0", len > 0);
-    LWGSM_ASSERT("pbuf->tot_len >= len", pbuf->tot_len >= len);
+    LWGSM_ASSERT(pbuf != NULL);
+    LWGSM_ASSERT(data != NULL);
+    LWGSM_ASSERT(len > 0);
+    LWGSM_ASSERT(pbuf->tot_len >= len);
 
     /* Skip if necessary and check if we are in valid range */
     if (offset > 0) {

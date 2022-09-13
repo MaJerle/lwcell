@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_private.h"
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_buff.h"
+#include "lwgsm/lwgsm_private.h"
 
 static uint32_t lwgsm_recv_total_len;
 static uint32_t lwgsm_recv_calls;
