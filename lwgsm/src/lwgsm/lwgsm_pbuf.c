@@ -241,7 +241,7 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
     }
 
     if (pbuf->tot_len < (len + offset)) {
-        return lwgsmPARERR;
+        return lwgsmERRPAR;
     }
 
     /* First only copy in case we have some offset from first pbuf */

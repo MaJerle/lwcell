@@ -57,7 +57,7 @@ extern "C" {
         if (!(c)) {                                                                                                    \
             LWGSM_DEBUGF(LWGSM_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__, (int)__LINE__, \
                          #c);                                                                                          \
-            return lwgsmPARERR;                                                                                        \
+            return lwgsmERRPAR;                                                                                        \
         }                                                                                                             \
     } while (0)
 

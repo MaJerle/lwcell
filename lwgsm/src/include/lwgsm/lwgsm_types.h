@@ -65,7 +65,7 @@ typedef enum {
                                                         but ignore sending more data.
                                                         This result is possible on connection data receive callback */
     lwgsmERR,          /*!< Generic error */
-    lwgsmPARERR,       /*!< Wrong parameters on function call */
+    lwgsmERRPAR,       /*!< Wrong parameters on function call */
     lwgsmERRMEM,       /*!< Memory error occurred */
     lwgsmTIMEOUT,      /*!< Timeout occurred on command */
     lwgsmCONT,         /*!< There is still some command to be processed in current command */
