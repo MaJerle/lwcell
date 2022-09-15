@@ -1,6 +1,6 @@
 /**
- * \file            lwgsm_includes.h
- * \brief           All main includes
+ * \file            lwgsm_debug_types.h
+ * \brief           Debugging types
  */
 
 /*
@@ -31,49 +31,59 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_INCLUDES_H
-#define LWGSM_HDR_INCLUDES_H
-
-#include "lwgsm/lwgsm_opt.h"
-#include "lwgsm/lwgsm_types.h"
-
-#include "lwgsm/lwgsm_buff.h"
-#include "lwgsm/lwgsm_debug.h"
-#include "lwgsm/lwgsm_device_info.h"
-#include "lwgsm/lwgsm_evt.h"
-#include "lwgsm/lwgsm_input.h"
-#include "lwgsm/lwgsm_network.h"
-#include "lwgsm/lwgsm_operator.h"
-#include "lwgsm/lwgsm_pbuf.h"
-#include "lwgsm/lwgsm_sim.h"
-#include "lwgsm/lwgsm_utils.h"
-#include "system/lwgsm_sys.h"
-
-#if LWGSM_CFG_SMS || __DOXYGEN__
-#include "lwgsm/lwgsm_sms.h"
-#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
-#if LWGSM_CFG_CALL || __DOXYGEN__
-#include "lwgsm/lwgsm_call.h"
-#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
-#if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
-#include "lwgsm/lwgsm_phonebook.h"
-#endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
-#if LWGSM_CFG_CONN || __DOXYGEN__
-#include "lwgsm/lwgsm_conn.h"
-#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
-#if LWGSM_CFG_NETCONN || __DOXYGEN__
-#include "lwgsm/lwgsm_netconn.h"
-#endif /* LWGSM_CFG_NETCONN || __DOXYGEN__ */
-#if LWGSM_CFG_USSD || __DOXYGEN__
-#include "lwgsm/lwgsm_ussd.h"
-#endif /* LWGSM_CFG_USSD || __DOXYGEN__ */
+#ifndef LWGSM_HDR_DEBUG_TYPES_H
+#define LWGSM_HDR_DEBUG_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+/**
+ * \ingroup         LWGSM_DEBUG
+ * \{
+ */
+
+#define LWGSM_DBG_ON          0x80 /*!< Indicates debug is enabled */
+#define LWGSM_DBG_OFF         0    /*!< Indicates debug is disabled */
+
+/**
+ * \anchor          LWGSM_DBG_LVL
+ * \name            Debug levels
+ * \brief           List of debug levels
+ * \{
+ */
+
+#define LWGSM_DBG_LVL_ALL     0x00 /*!< Print all messages of all types */
+#define LWGSM_DBG_LVL_WARNING 0x01 /*!< Print warning and upper messages */
+#define LWGSM_DBG_LVL_DANGER  0x02 /*!< Print danger errors */
+#define LWGSM_DBG_LVL_SEVERE  0x03 /*!< Print severe problems affecting program flow */
+#define LWGSM_DBG_LVL_MASK    0x03 /*!< Mask for getting debug level */
+
+/**
+ * \}
+ */
+
+/**
+ * \anchor          LWGSM_DBG_TYPE
+ * \name            Debug types
+ * \brief           List of possible debugging types
+ * \{
+ */
+
+#define LWGSM_DBG_TYPE_TRACE  0x40 /*!< Debug trace messages for program flow */
+#define LWGSM_DBG_TYPE_STATE  0x20 /*!< Debug state messages (such as state machines) */
+#define LWGSM_DBG_TYPE_ALL    (LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_TYPE_STATE) /*!< All debug types */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_INCLUDES_H */
+#endif /* LWGSM_HDR_DEBUG_TYPES_H */

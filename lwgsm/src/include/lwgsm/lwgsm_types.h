@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_typedefs.h
+ * \file            lwgsm_types.h
  * \brief           List of structures and enumerations for public usage
  */
 
@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_DEFS_H
-#define LWGSM_HDR_DEFS_H
+#ifndef LWGSM_HDR_TYPES_H
+#define LWGSM_HDR_TYPES_H
 
 #include <stdint.h>
 #include <stdio.h>
@@ -46,7 +46,7 @@ extern "C" {
 
 /**
  * \ingroup         LWGSM
- * \defgroup        LWGSM_TYPEDEFS Structures and enumerations
+ * \defgroup        LWGSM_TYPES Structures and enumerations
  * \brief           List of core structures and enumerations
  * \{
  */
@@ -56,7 +56,7 @@ extern "C" {
  */
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           Result enumeration used across application functions
  */
 typedef enum {
@@ -85,7 +85,7 @@ typedef enum {
 } lwgsmr_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           GSM device model type
  */
 typedef enum {
@@ -112,7 +112,7 @@ typedef enum {
 } lwgsm_sim_state_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           IP structure
  */
 typedef struct {
@@ -120,13 +120,13 @@ typedef struct {
 } lwgsm_ip_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           Port variable
  */
 typedef uint16_t lwgsm_port_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           MAC address
  */
 typedef struct {
@@ -134,7 +134,7 @@ typedef struct {
 } lwgsm_mac_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           Date and time structure
  */
 typedef struct {
@@ -158,7 +158,7 @@ typedef enum {
 } lwgsm_conn_type_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           Available device memories
  */
 typedef enum {
@@ -171,7 +171,7 @@ typedef enum {
 } lwgsm_mem_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           GSM number type
  */
 typedef enum {
@@ -638,7 +638,7 @@ typedef struct {
 } lwgsm_buff_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           Linear buffer structure
  */
 typedef struct {
@@ -648,7 +648,7 @@ typedef struct {
 } lwgsm_linbuff_t;
 
 /**
- * \ingroup         LWGSM_TYPEDEFS
+ * \ingroup         LWGSM_TYPES
  * \brief           Function declaration for API function command event callback function
  * \param[in]       res: Operation result, member of \ref lwgsmr_t enumeration
  * \param[in]       arg: Custom user argument
@@ -670,4 +670,4 @@ typedef struct {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_DEFS_H */
+#endif /* LWGSM_HDR_TYPES_H */

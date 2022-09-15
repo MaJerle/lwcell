@@ -1,6 +1,6 @@
-.. _api_lwgsm_typedefs:
+.. _api_lwgsm_types:
 
 Structures and enumerations
 ===========================
 
-.. doxygengroup:: LWGSM_TYPEDEFS
+.. doxygengroup:: LWGSM_TYPES

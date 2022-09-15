@@ -38,6 +38,7 @@
 /* #define LWGSM_IGNORE_USER_OPTS */
 
 /* Include application options */
+#include "lwgsm/lwgsm_debug_types.h"
 #ifndef LWGSM_IGNORE_USER_OPTS
 #include "lwgsm_opts.h"
 #endif /* LWGSM_IGNORE_USER_OPTS */

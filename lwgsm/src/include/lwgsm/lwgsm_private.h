@@ -34,13 +34,13 @@
 #ifndef LWGSM_HDR_PRIV_H
 #define LWGSM_HDR_PRIV_H
 
+#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_debug.h"
-#include "lwgsm/lwgsm_typedefs.h"
-#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_input.h"
-#include "lwgsm/lwgsm_timeout.h"
+#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_parser.h"
+#include "lwgsm/lwgsm_timeout.h"
 #include "lwgsm/lwgsm_unicode.h"
 
 #ifdef __cplusplus
@@ -48,7 +48,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \addtogroup      LWGSM_TYPEDEFS
+ * \addtogroup      LWGSM_TYPES
  * \{
  */
 

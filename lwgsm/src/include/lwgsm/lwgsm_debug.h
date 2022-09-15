@@ -49,41 +49,6 @@ extern "C" {
  * \{
  */
 
-#define LWGSM_DBG_ON          0x80 /*!< Indicates debug is enabled */
-#define LWGSM_DBG_OFF         0    /*!< Indicates debug is disabled */
-
-/**
- * \anchor          LWGSM_DBG_LVL
- * \name            Debug levels
- * \brief           List of debug levels
- * \{
- */
-
-#define LWGSM_DBG_LVL_ALL     0x00 /*!< Print all messages of all types */
-#define LWGSM_DBG_LVL_WARNING 0x01 /*!< Print warning and upper messages */
-#define LWGSM_DBG_LVL_DANGER  0x02 /*!< Print danger errors */
-#define LWGSM_DBG_LVL_SEVERE  0x03 /*!< Print severe problems affecting program flow */
-#define LWGSM_DBG_LVL_MASK    0x03 /*!< Mask for getting debug level */
-
-/**
- * \}
- */
-
-/**
- * \anchor          LWGSM_DBG_TYPE
- * \name            Debug types
- * \brief           List of possible debugging types
- * \{
- */
-
-#define LWGSM_DBG_TYPE_TRACE  0x40 /*!< Debug trace messages for program flow */
-#define LWGSM_DBG_TYPE_STATE  0x20 /*!< Debug state messages (such as state machines) */
-#define LWGSM_DBG_TYPE_ALL    (LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_TYPE_STATE) /*!< All debug types */
-
-/**
- * \}
- */
-
 #if LWGSM_CFG_DBG && !defined(LWGSM_CFG_DBG_OUT)
 #warning "LWGSM_CFG_DBG_OUT is not defined but debugging is enabled!"
 #endif
