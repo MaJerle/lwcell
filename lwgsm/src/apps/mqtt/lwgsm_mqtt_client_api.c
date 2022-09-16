@@ -32,7 +32,7 @@
  * Version:         v0.1.1
  */
 #include "lwgsm/apps/lwgsm_mqtt_client_api.h"
-#include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_private.h"
 
 /* Tracing debug message */
 #define LWGSM_CFG_DBG_MQTT_API_TRACE         (LWGSM_CFG_DBG_MQTT_API | LWGSM_DBG_TYPE_TRACE)

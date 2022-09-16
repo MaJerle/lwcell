@@ -34,8 +34,6 @@
 #ifndef LWGSM_HDR_DEBUG_H
 #define LWGSM_HDR_DEBUG_H
 
-#include <stdint.h>
-#include <string.h>
 #include "lwgsm/lwgsm_opt.h"
 
 #ifdef __cplusplus

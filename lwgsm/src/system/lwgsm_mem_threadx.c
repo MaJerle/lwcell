@@ -31,7 +31,7 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_types.h"
 #include "tx_api.h"
 
 #if !__DOXYGEN__

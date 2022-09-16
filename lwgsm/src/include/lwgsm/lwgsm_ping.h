@@ -34,7 +34,7 @@
 #ifndef LWGSM_HDR_PING_H
 #define LWGSM_HDR_PING_H
 
-#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_types.h"
 
 #ifdef __cplusplus
 extern "C" {

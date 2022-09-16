@@ -32,8 +32,7 @@
  * Version:         v0.1.1
  */
 #include "lwgsm/apps/lwgsm_mqtt_client.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_pbuf.h"
+#include "lwgsm/lwgsm_private.h"
 
 /**
  * \brief           MQTT client connection

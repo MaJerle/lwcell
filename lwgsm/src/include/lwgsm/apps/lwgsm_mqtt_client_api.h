@@ -34,8 +34,8 @@
 #ifndef LWGSM_HDR_APP_MQTT_CLIENT_API_H
 #define LWGSM_HDR_APP_MQTT_CLIENT_API_H
 
+#include "lwgsm/lwgsm_includes.h"
 #include "lwgsm/apps/lwgsm_mqtt_client.h"
-#include "lwgsm/lwgsm.h"
 
 #ifdef __cplusplus
 extern "C" {

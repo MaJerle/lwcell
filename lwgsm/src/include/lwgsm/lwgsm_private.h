@@ -34,8 +34,10 @@
 #ifndef LWGSM_HDR_PRIV_H
 #define LWGSM_HDR_PRIV_H
 
-#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_opt.h"
+#include "lwgsm/lwgsm_includes.h"
+#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_debug.h"
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_mem.h"

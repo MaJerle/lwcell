@@ -38,7 +38,7 @@
 extern "C" {
 #endif /* defined(__cplusplus) */
 
-#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_types.h"
 
 int32_t lwgsmi_parse_number(const char** str);
 uint8_t lwgsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim);

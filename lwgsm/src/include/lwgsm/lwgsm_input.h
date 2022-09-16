@@ -35,7 +35,7 @@
 #define LWGSM_HDR_INPUT_H
 
 #include <string.h>
-#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_types.h"
 
 #ifdef __cplusplus
 extern "C" {

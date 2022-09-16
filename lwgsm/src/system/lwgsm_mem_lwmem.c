@@ -31,7 +31,7 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm.h"
+#include "lwgsm/lwgsm_types.h"
 
 /* See lwgsm_mem.c file for function documentation on parameters and return values */
 
