@@ -23,7 +23,8 @@
         "lwgsm_unicode.h": "c",
         "lwgsm_sys.h": "c",
         "lwgsm_mqtt_client_api.h": "c",
-        "lwgsm_mqtt_client.h": "c"
+        "lwgsm_mqtt_client.h": "c",
+        "lwgsm_phonebook.h": "c"
     },
     "esbonio.sphinx.confDir": ""
 }

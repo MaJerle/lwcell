@@ -36,7 +36,6 @@
 
 #include "lwgsm/lwgsm_opt.h"
 #include "lwgsm/lwgsm_types.h"
-
 #include "lwgsm/lwgsm_buff.h"
 #include "lwgsm/lwgsm_debug.h"
 #include "lwgsm/lwgsm_device_info.h"
@@ -45,6 +44,7 @@
 #include "lwgsm/lwgsm_network.h"
 #include "lwgsm/lwgsm_operator.h"
 #include "lwgsm/lwgsm_pbuf.h"
+#include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_sim.h"
 #include "lwgsm/lwgsm_utils.h"
 #include "system/lwgsm_sys.h"
