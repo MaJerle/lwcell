@@ -38,10 +38,12 @@
  */
 #include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_input.h"
+#include "lwgsm/lwgsm_utils.h"
 #include "lwgsm/lwgsm_mem.h"
 #include "lwrb/lwrb.h"
 #include "mcu.h"
 #include "system/lwgsm_ll.h"
+#include "system/lwgsm_sys.h"
 #include "tx_api.h"
 
 #if !__DOXYGEN__
