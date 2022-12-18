@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_TIMEOUT_H
-#define LWGSM_HDR_TIMEOUT_H
+#ifndef LWGSM_TIMEOUT_HDR_H
+#define LWGSM_TIMEOUT_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -58,4 +58,4 @@ lwgsmr_t lwgsm_timeout_remove(lwgsm_timeout_fn fn);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_TIMEOUT_H */
+#endif /* LWGSM_TIMEOUT_HDR_H */

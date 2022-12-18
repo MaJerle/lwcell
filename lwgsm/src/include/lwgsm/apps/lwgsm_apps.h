@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_APPS_H
-#define LWGSM_HDR_APPS_H
+#ifndef LWGSM_APPS_HDR_H
+#define LWGSM_APPS_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -54,4 +54,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_APPS_H */
+#endif /* LWGSM_APPS_HDR_H */

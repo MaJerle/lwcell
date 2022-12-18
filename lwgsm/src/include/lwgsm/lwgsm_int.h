@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_INT_H
-#define LWGSM_HDR_INT_H
+#ifndef LWGSM_INT_HDR_H
+#define LWGSM_INT_HDR_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,4 +42,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_INT_H */
+#endif /* LWGSM_INT_HDR_H */

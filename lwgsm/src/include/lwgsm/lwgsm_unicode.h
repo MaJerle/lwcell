@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_UNICODE_H
-#define LWGSM_HDR_UNICODE_H
+#ifndef LWGSM_UNICODE_HDR_H
+#define LWGSM_UNICODE_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -57,4 +57,4 @@ lwgsmr_t lwgsmi_unicode_decode(lwgsm_unicode_t* uni, uint8_t ch);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_UNICODE_H */
+#endif /* LWGSM_UNICODE_HDR_H */

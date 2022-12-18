@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_APP_MQTT_CLIENT_EVT_H
-#define LWGSM_HDR_APP_MQTT_CLIENT_EVT_H
+#ifndef LWGSM_APP_MQTT_CLIENT_EVT_HDR_H
+#define LWGSM_APP_MQTT_CLIENT_EVT_HDR_H
 
 #include "lwgsm/apps/lwgsm_mqtt_client.h"
 
@@ -251,4 +251,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_APP_MQTT_CLIENT_EVT_H */
+#endif /* LWGSM_APP_MQTT_CLIENT_EVT_HDR_H */

@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_OPERATOR_H
-#define LWGSM_HDR_OPERATOR_H
+#ifndef LWGSM_OPERATOR_HDR_H
+#define LWGSM_OPERATOR_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -63,4 +63,4 @@ lwgsmr_t lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf, co
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_OPERATOR_H */
+#endif /* LWGSM_OPERATOR_HDR_H */

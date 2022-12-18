@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_OPT_H
-#define LWGSM_HDR_OPT_H
+#ifndef LWGSM_OPT_HDR_H
+#define LWGSM_OPT_HDR_H
 
 /* Uncomment to ignore user options (or set macro in compiler flags) */
 /* #define LWGSM_IGNORE_USER_OPTS */
@@ -747,4 +747,4 @@ void *  my_memset(void* dst, int b, size_t len);
 
 #include "lwgsm/lwgsm_debug.h"
 
-#endif /* LWGSM_HDR_OPT_H */
+#endif /* LWGSM_OPT_HDR_H */

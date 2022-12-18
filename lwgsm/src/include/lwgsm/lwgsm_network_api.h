@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_NETWORK_API_H
-#define LWGSM_HDR_NETWORK_API_H
+#ifndef LWGSM_NETWORK_API_HDR_H
+#define LWGSM_NETWORK_API_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -59,4 +59,4 @@ lwgsmr_t lwgsm_network_request_detach(void);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_NETWORK_API_H */
+#endif /* LWGSM_NETWORK_API_HDR_H */

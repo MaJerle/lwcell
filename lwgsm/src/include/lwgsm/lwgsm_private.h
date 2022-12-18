@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_PRIV_H
-#define LWGSM_HDR_PRIV_H
+#ifndef LWGSM_PRIV_HDR_H
+#define LWGSM_PRIV_HDR_H
 
 #include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_opt.h"
@@ -825,4 +825,4 @@ void lwgsmi_process_events_for_timeout_or_error(lwgsm_msg_t* msg, lwgsmr_t err);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_PRIV_H */
+#endif /* LWGSM_PRIV_HDR_H */

@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_TYPES_H
-#define LWGSM_HDR_TYPES_H
+#ifndef LWGSM_TYPES_HDR_H
+#define LWGSM_TYPES_HDR_H
 
 #include <stdint.h>
 #include <stdio.h>
@@ -670,4 +670,4 @@ typedef struct {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_TYPES_H */
+#endif /* LWGSM_TYPES_HDR_H */

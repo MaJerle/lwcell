@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_PHONEBOOK_H
-#define LWGSM_HDR_PHONEBOOK_H
+#ifndef LWGSM_PHONEBOOK_HDR_H
+#define LWGSM_PHONEBOOK_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -71,4 +71,4 @@ lwgsmr_t lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* 
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_PHONEBOOK_H */
+#endif /* LWGSM_PHONEBOOK_HDR_H */

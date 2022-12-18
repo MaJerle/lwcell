@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_PBUF_H
-#define LWGSM_HDR_PBUF_H
+#ifndef LWGSM_PBUF_HDR_H
+#define LWGSM_PBUF_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -79,4 +79,4 @@ void lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm_port_t por
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_PBUF_H */
+#endif /* LWGSM_PBUF_HDR_H */

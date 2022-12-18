@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_NETWORK_H
-#define LWGSM_HDR_NETWORK_H
+#ifndef LWGSM_NETWORK_HDR_H
+#define LWGSM_NETWORK_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -68,4 +68,4 @@ lwgsmr_t lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void* con
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_NETWORK_H */
+#endif /* LWGSM_NETWORK_HDR_H */

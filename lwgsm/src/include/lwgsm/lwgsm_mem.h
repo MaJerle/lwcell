@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_MEM_H
-#define LWGSM_HDR_MEM_H
+#ifndef LWGSM_MEM_HDR_H
+#define LWGSM_MEM_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -75,4 +75,4 @@ uint8_t lwgsm_mem_free_s(void** ptr);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_MEM_H */
+#endif /* LWGSM_MEM_HDR_H */

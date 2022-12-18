@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_SIM_H
-#define LWGSM_HDR_SIM_H
+#ifndef LWGSM_SIM_HDR_H
+#define LWGSM_SIM_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -67,4 +67,4 @@ lwgsmr_t lwgsm_sim_puk_enter(const char* puk, const char* new_pin, const lwgsm_a
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_SIM_H */
+#endif /* LWGSM_SIM_HDR_H */

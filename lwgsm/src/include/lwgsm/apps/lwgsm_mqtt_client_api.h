@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_APP_MQTT_CLIENT_API_H
-#define LWGSM_HDR_APP_MQTT_CLIENT_API_H
+#ifndef LWGSM_APP_MQTT_CLIENT_API_HDR_H
+#define LWGSM_APP_MQTT_CLIENT_API_HDR_H
 
 #include "lwgsm/lwgsm_includes.h"
 #include "lwgsm/apps/lwgsm_mqtt_client.h"

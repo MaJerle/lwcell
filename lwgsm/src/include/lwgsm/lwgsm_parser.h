@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_PARSER_H
-#define LWGSM_HDR_PARSER_H
+#ifndef LWGSM_PARSER_HDR_H
+#define LWGSM_PARSER_HDR_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -73,4 +73,4 @@ uint8_t lwgsmi_parse_ipd(const char* str);
 }
 #endif /* defined(__cplusplus) */
 
-#endif /* LWGSM_HDR_PARSER_H */
+#endif /* LWGSM_PARSER_HDR_H */

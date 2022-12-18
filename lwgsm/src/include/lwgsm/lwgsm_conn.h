@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_CONN_H
-#define LWGSM_HDR_CONN_H
+#ifndef LWGSM_CONN_HDR_H
+#define LWGSM_CONN_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -77,4 +77,4 @@ lwgsm_port_t lwgsm_conn_get_local_port(lwgsm_conn_p conn);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_CONN_H */
+#endif /* LWGSM_CONN_HDR_H */

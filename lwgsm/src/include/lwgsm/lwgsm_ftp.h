@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_FTP_H
-#define LWGSM_HDR_FTP_H
+#ifndef LWGSM_FTP_HDR_H
+#define LWGSM_FTP_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -58,4 +58,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_FTP_H */
+#endif /* LWGSM_FTP_HDR_H */

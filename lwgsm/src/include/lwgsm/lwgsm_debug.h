@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_DEBUG_H
-#define LWGSM_HDR_DEBUG_H
+#ifndef LWGSM_DEBUG_HDR_H
+#define LWGSM_DEBUG_HDR_H
 
 #include "lwgsm/lwgsm_opt.h"
 
@@ -94,4 +94,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_DEBUG_H */
+#endif /* LWGSM_DEBUG_HDR_H */

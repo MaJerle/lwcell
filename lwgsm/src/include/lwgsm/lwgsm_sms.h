@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_SMS_H
-#define LWGSM_HDR_SMS_H
+#ifndef LWGSM_SMS_HDR_H
+#define LWGSM_SMS_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -73,4 +73,4 @@ lwgsmr_t lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwg
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_SMS_H */
+#endif /* LWGSM_SMS_HDR_H */

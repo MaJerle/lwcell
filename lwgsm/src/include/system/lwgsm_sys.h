@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_MAIN_SYS_H
-#define LWGSM_HDR_MAIN_SYS_H
+#ifndef LWGSM_MAIN_SYS_HDR_H
+#define LWGSM_MAIN_SYS_HDR_H
 
 #include <stdlib.h>
 #include "lwgsm/lwgsm_opt.h"
@@ -409,4 +409,4 @@ uint8_t lwgsm_sys_thread_yield(void);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_MAIN_SYS_H */
+#endif /* LWGSM_MAIN_SYS_HDR_H */

@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_CALL_H
-#define LWGSM_HDR_CALL_H
+#ifndef LWGSM_CALL_HDR_H
+#define LWGSM_CALL_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -63,4 +63,4 @@ lwgsmr_t lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_ar
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_CALL_H */
+#endif /* LWGSM_CALL_HDR_H */

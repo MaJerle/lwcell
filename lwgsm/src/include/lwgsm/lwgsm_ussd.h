@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_USSD_H
-#define LWGSM_HDR_USSD_H
+#ifndef LWGSM_USSD_HDR_H
+#define LWGSM_USSD_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 

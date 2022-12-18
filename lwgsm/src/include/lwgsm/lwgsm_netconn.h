@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_NETCONN_H
-#define LWGSM_HDR_NETCONN_H
+#ifndef LWGSM_NETCONN_HDR_H
+#define LWGSM_NETCONN_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -89,4 +89,4 @@ lwgsmr_t lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_po
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_NETCONN_H */
+#endif /* LWGSM_NETCONN_HDR_H */

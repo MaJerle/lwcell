@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_SYSTEM_PORT_H
-#define LWGSM_HDR_SYSTEM_PORT_H
+#ifndef LWGSM_SYSTEM_PORT_HDR_H
+#define LWGSM_SYSTEM_PORT_HDR_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -63,4 +63,4 @@ void lwgsm_sys_preinit_threadx_set_bytepool_handle(TX_BYTE_POOL* bp);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_SYSTEM_PORT_H */
+#endif /* LWGSM_SYSTEM_PORT_HDR_H */

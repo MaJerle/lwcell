@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_INCLUDES_H
-#define LWGSM_HDR_INCLUDES_H
+#ifndef LWGSM_INCLUDES_HDR_H
+#define LWGSM_INCLUDES_HDR_H
 
 #include "lwgsm/lwgsm_opt.h"
 #include "lwgsm/lwgsm_types.h"
@@ -76,4 +76,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_INCLUDES_H */
+#endif /* LWGSM_INCLUDES_HDR_H */

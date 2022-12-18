@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_OPTS_H
-#define LWGSM_HDR_OPTS_H
+#ifndef LWGSM_OPTS_HDR_H
+#define LWGSM_OPTS_HDR_H
 
 /* Rename this file to "lwgsm_opts.h" for your application */
 
@@ -41,4 +41,4 @@
  * copy & replace here settings you want to change values
  */
 
-#endif /* LWGSM_HDR_OPTS_H */
+#endif /* LWGSM_OPTS_HDR_H */

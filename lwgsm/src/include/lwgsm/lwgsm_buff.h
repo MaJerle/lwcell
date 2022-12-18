@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_BUFF_H
-#define LWGSM_HDR_BUFF_H
+#ifndef LWGSM_BUFF_HDR_H
+#define LWGSM_BUFF_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -92,4 +92,4 @@ size_t BUF_PREF(buff_advance)(BUF_PREF(buff_t) * buff, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_BUFF_H */
+#endif /* LWGSM_BUFF_HDR_H */

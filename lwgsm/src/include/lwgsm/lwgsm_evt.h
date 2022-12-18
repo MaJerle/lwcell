@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_EVT_H
-#define LWGSM_HDR_EVT_H
+#ifndef LWGSM_EVT_HDR_H
+#define LWGSM_EVT_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -269,4 +269,4 @@ size_t lwgsm_evt_operator_scan_get_length(lwgsm_evt_t* cc);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_EVT_H */
+#endif /* LWGSM_EVT_HDR_H */

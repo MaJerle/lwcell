@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_INPUT_H
-#define LWGSM_HDR_INPUT_H
+#ifndef LWGSM_INPUT_HDR_H
+#define LWGSM_INPUT_HDR_H
 
 #include <string.h>
 #include "lwgsm/lwgsm_types.h"
@@ -59,4 +59,4 @@ lwgsmr_t lwgsm_input_process(const void* data, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_INPUT_H */
+#endif /* LWGSM_INPUT_HDR_H */

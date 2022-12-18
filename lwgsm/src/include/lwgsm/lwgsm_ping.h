@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_PING_H
-#define LWGSM_HDR_PING_H
+#ifndef LWGSM_PING_HDR_H
+#define LWGSM_PING_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -55,4 +55,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_PING_H */
+#endif /* LWGSM_PING_HDR_H */

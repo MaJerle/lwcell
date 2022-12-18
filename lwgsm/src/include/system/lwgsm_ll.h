@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_LL_H
-#define LWGSM_HDR_LL_H
+#ifndef LWGSM_LL_HDR_H
+#define LWGSM_LL_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -75,4 +75,4 @@ lwgsmr_t lwgsm_ll_deinit(lwgsm_ll_t* ll);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_LL_H */
+#endif /* LWGSM_LL_HDR_H */

@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_DEVICE_INFO_H
-#define LWGSM_HDR_DEVICE_INFO_H
+#ifndef LWGSM_DEVICE_INFO_HDR_H
+#define LWGSM_DEVICE_INFO_HDR_H
 
 #include "lwgsm/lwgsm_types.h"
 
@@ -64,4 +64,4 @@ lwgsmr_t lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_ap
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_DEVICE_INFO_H */
+#endif /* LWGSM_DEVICE_INFO_HDR_H */

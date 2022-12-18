@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_SYSTEM_PORT_H
-#define LWGSM_HDR_SYSTEM_PORT_H
+#ifndef LWGSM_SYSTEM_PORT_HDR_H
+#define LWGSM_SYSTEM_PORT_HDR_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -64,4 +64,4 @@ typedef osPriority_t lwgsm_sys_thread_prio_t;
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_SYSTEM_PORT_H */
+#endif /* LWGSM_SYSTEM_PORT_HDR_H */
