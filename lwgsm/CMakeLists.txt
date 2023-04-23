@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
 
-#Debug message
-message("Entering ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
-
 # Library core sources
 set(lwgsm_core_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm.c
@@ -66,7 +63,4 @@ target_include_directories(lwgsm_api INTERFACE ${lwgsm_include_DIRS})
 # Register apps to the system
 add_library(lwgsm_apps INTERFACE)
 target_sources(lwgsm_apps PUBLIC ${lwgsm_allapps_SRCS})
-target_include_directories(lwgsm_apps INTERFACE ${lwgsm_include_DIRS})
-
-#Debug message
-message("Exiting ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
+target_include_directories(lwgsm_apps INTERFACE ${lwgsm_include_DIRS})	

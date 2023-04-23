@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
 
-#Debug message
-message("Entering ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
-
 # Setup generic source files
 set(lwgsm_snippets_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/call.c
@@ -25,7 +22,4 @@ set(lwgsm_snippets_include_DIRS
 # Register library to the system
 add_library(lwgsm_snippets INTERFACE)
 target_sources(lwgsm_snippets PUBLIC ${lwgsm_snippets_SRCS})
-target_include_directories(lwgsm_snippets INTERFACE ${lwgsm_snippets_include_DIRS})
-
-#Debug message
-message("Exiting ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
+target_include_directories(lwgsm_snippets INTERFACE ${lwgsm_snippets_include_DIRS})	
