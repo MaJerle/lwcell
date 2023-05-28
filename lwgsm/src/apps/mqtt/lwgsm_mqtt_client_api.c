@@ -32,6 +32,7 @@
  * Version:         v0.1.1
  */
 #include "lwgsm/apps/lwgsm_mqtt_client_api.h"
+#include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_private.h"
 
 /* Tracing debug message */
@@ -187,8 +188,7 @@ prv_mqtt_evt(lwgsm_mqtt_client_p client, lwgsm_mqtt_evt_t* evt) {
             prv_release_sem(api_client); /* Release semaphore */
             break;
         }
-        default:
-            break;
+        default: break;
     }
 }
 
@@ -308,7 +308,7 @@ lwgsmr_t
 lwgsm_mqtt_client_api_close(lwgsm_mqtt_client_api_p client) {
     lwgsmr_t res = lwgsmERR;
 
-    LWGSM_ASSERT( client != NULL);
+    LWGSM_ASSERT(client != NULL);
 
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
@@ -336,8 +336,8 @@ lwgsmr_t
 lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topic, lwgsm_mqtt_qos_t qos) {
     lwgsmr_t res = lwgsmERR;
 
-    LWGSM_ASSERT( client != NULL);
-    LWGSM_ASSERT( topic != NULL);
+    LWGSM_ASSERT(client != NULL);
+    LWGSM_ASSERT(topic != NULL);
 
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
@@ -365,8 +365,8 @@ lwgsmr_t
 lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* topic) {
     lwgsmr_t res = lwgsmERR;
 
-    LWGSM_ASSERT( client != NULL);
-    LWGSM_ASSERT( topic != NULL);
+    LWGSM_ASSERT(client != NULL);
+    LWGSM_ASSERT(topic != NULL);
 
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
@@ -399,10 +399,10 @@ lwgsm_mqtt_client_api_publish(lwgsm_mqtt_client_api_p client, const char* topic,
                               lwgsm_mqtt_qos_t qos, uint8_t retain) {
     lwgsmr_t res = lwgsmERR;
 
-    LWGSM_ASSERT( client != NULL);
-    LWGSM_ASSERT( topic != NULL);
-    LWGSM_ASSERT( data != NULL);
-    LWGSM_ASSERT( btw > 0);
+    LWGSM_ASSERT(client != NULL);
+    LWGSM_ASSERT(topic != NULL);
+    LWGSM_ASSERT(data != NULL);
+    LWGSM_ASSERT(btw > 0);
 
     lwgsm_sys_mutex_lock(&client->mutex);
     lwgsm_sys_sem_wait(&client->sync_sem, 0);
@@ -451,8 +451,8 @@ lwgsm_mqtt_client_api_is_connected(lwgsm_mqtt_client_api_p client) {
  */
 lwgsmr_t
 lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_api_buf_p* p, uint32_t timeout) {
-    LWGSM_ASSERT( client != NULL);
-    LWGSM_ASSERT( p != NULL);
+    LWGSM_ASSERT(client != NULL);
+    LWGSM_ASSERT(p != NULL);
 
     *p = NULL;
 

@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_utils.h"
 #include "system/lwgsm_ll.h"
 #include "system/lwgsm_sys.h"

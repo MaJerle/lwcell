@@ -34,9 +34,9 @@
  */
 #include "driver/uart.h"
 #include "esp_log.h"
-#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_types.h"
 #include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__
@@ -109,8 +109,7 @@ uart_event_task(void* pvParameters) {
                     uart_flush_input(GSM_UART_NUM);
                     xQueueReset(gsm_uart_queue);
                     break;
-                default:
-                    break;
+                default: break;
             }
         }
     }

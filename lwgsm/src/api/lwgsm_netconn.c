@@ -183,8 +183,7 @@ netconn_evt(lwgsm_evt_t* evt) {
 
             break;
         }
-        default:
-            return lwgsmERR;
+        default: return lwgsmERR;
     }
     return lwgsmOK;
 }
@@ -197,8 +196,7 @@ netconn_evt(lwgsm_evt_t* evt) {
 static lwgsmr_t
 lwgsm_evt(lwgsm_evt_t* evt) {
     switch (lwgsm_evt_get_type(evt)) {
-        default:
-            break;
+        default: break;
     }
     return lwgsmOK;
 }

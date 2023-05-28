@@ -35,14 +35,14 @@
 #define LWGSM_PRIV_HDR_H
 
 #include "lwgsm/lwgsm.h"
-#include "lwgsm/lwgsm_opt.h"
-#include "lwgsm/lwgsm_includes.h"
-#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_debug.h"
+#include "lwgsm/lwgsm_includes.h"
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_opt.h"
 #include "lwgsm/lwgsm_parser.h"
 #include "lwgsm/lwgsm_timeout.h"
+#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_unicode.h"
 
 #ifdef __cplusplus

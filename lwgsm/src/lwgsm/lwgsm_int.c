@@ -412,22 +412,12 @@ void
 lwgsmi_send_sms_stat(lwgsm_sms_status_t status, uint8_t q, uint8_t c) {
     const char* t;
     switch (status) {
-        case LWGSM_SMS_STATUS_UNREAD:
-            t = "REC UNREAD";
-            break;
-        case LWGSM_SMS_STATUS_READ:
-            t = "REC READ";
-            break;
-        case LWGSM_SMS_STATUS_UNSENT:
-            t = "STO UNSENT";
-            break;
-        case LWGSM_SMS_STATUS_SENT:
-            t = "STO SENT";
-            break;
+        case LWGSM_SMS_STATUS_UNREAD: t = "REC UNREAD"; break;
+        case LWGSM_SMS_STATUS_READ: t = "REC READ"; break;
+        case LWGSM_SMS_STATUS_UNSENT: t = "STO UNSENT"; break;
+        case LWGSM_SMS_STATUS_SENT: t = "STO SENT"; break;
         case LWGSM_SMS_STATUS_ALL:
-        default:
-            t = "ALL";
-            break;
+        default: t = "ALL"; break;
     }
     lwgsmi_send_string(t, 0, q, c);
 }
@@ -1399,24 +1389,12 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                 break;
             }
             case LWGSM_CMD_ATE0:
-            case LWGSM_CMD_ATE1:
-                SET_NEW_CMD(LWGSM_CMD_CFUN_SET);
-                break; /* Set full functionality */
-            case LWGSM_CMD_CFUN_SET:
-                SET_NEW_CMD(LWGSM_CMD_CMEE_SET);
-                break; /* Set detailed error reporting */
-            case LWGSM_CMD_CMEE_SET:
-                SET_NEW_CMD(LWGSM_CMD_CGMI_GET);
-                break; /* Get manufacturer */
-            case LWGSM_CMD_CGMI_GET:
-                SET_NEW_CMD(LWGSM_CMD_CGMM_GET);
-                break; /* Get model */
-            case LWGSM_CMD_CGMM_GET:
-                SET_NEW_CMD(LWGSM_CMD_CGSN_GET);
-                break; /* Get product serial number */
-            case LWGSM_CMD_CGSN_GET:
-                SET_NEW_CMD(LWGSM_CMD_CGMR_GET);
-                break; /* Get product revision */
+            case LWGSM_CMD_ATE1: SET_NEW_CMD(LWGSM_CMD_CFUN_SET); break;     /* Set full functionality */
+            case LWGSM_CMD_CFUN_SET: SET_NEW_CMD(LWGSM_CMD_CMEE_SET); break; /* Set detailed error reporting */
+            case LWGSM_CMD_CMEE_SET: SET_NEW_CMD(LWGSM_CMD_CGMI_GET); break; /* Get manufacturer */
+            case LWGSM_CMD_CGMI_GET: SET_NEW_CMD(LWGSM_CMD_CGMM_GET); break; /* Get model */
+            case LWGSM_CMD_CGMM_GET: SET_NEW_CMD(LWGSM_CMD_CGSN_GET); break; /* Get product serial number */
+            case LWGSM_CMD_CGSN_GET: SET_NEW_CMD(LWGSM_CMD_CGMR_GET); break; /* Get product revision */
             case LWGSM_CMD_CGMR_GET: {
                 /*
                  * At this point we have modem info.
@@ -1428,16 +1406,10 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                 SET_NEW_CMD(LWGSM_CMD_CREG_SET); /* Enable unsolicited code for CREG */
                 break;
             }
-            case LWGSM_CMD_CREG_SET:
-                SET_NEW_CMD(LWGSM_CMD_CLCC_SET);
-                break; /* Set call state */
-            case LWGSM_CMD_CLCC_SET:
-                SET_NEW_CMD(LWGSM_CMD_CPIN_GET);
-                break; /* Get SIM state */
-            case LWGSM_CMD_CPIN_GET:
-                break;
-            default:
-                break;
+            case LWGSM_CMD_CREG_SET: SET_NEW_CMD(LWGSM_CMD_CLCC_SET); break; /* Set call state */
+            case LWGSM_CMD_CLCC_SET: SET_NEW_CMD(LWGSM_CMD_CPIN_GET); break; /* Get SIM state */
+            case LWGSM_CMD_CPIN_GET: break;
+            default: break;
         }
 
         /* Send event */
@@ -1498,19 +1470,14 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
                 }
                 break;
             }
-            default:
-                break;
+            default: break;
         }
 #if LWGSM_CFG_SMS
     } else if (CMD_IS_DEF(LWGSM_CMD_SMS_ENABLE)) {
         switch (CMD_GET_CUR()) {
-            case LWGSM_CMD_CPMS_GET_OPT:
-                SET_NEW_CMD(LWGSM_CMD_CPMS_GET);
-                break;
-            case LWGSM_CMD_CPMS_GET:
-                break;
-            default:
-                break;
+            case LWGSM_CMD_CPMS_GET_OPT: SET_NEW_CMD(LWGSM_CMD_CPMS_GET); break;
+            case LWGSM_CMD_CPMS_GET: break;
+            default: break;
         }
         if (!*is_ok || n_cmd == LWGSM_CMD_IDLE) { /* Stop execution on any command */
             SET_NEW_CMD(LWGSM_CMD_IDLE);
@@ -1621,63 +1588,31 @@ lwgsmi_process_sub_cmd(lwgsm_msg_t* msg, uint8_t* is_ok, uint16_t* is_error) {
 #if LWGSM_CFG_NETWORK
     } else if (CMD_IS_DEF(LWGSM_CMD_NETWORK_ATTACH)) {
         switch (msg->i) {
-            case 0:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CGACT_SET_0);
-                break;
-            case 1:
-                SET_NEW_CMD(LWGSM_CMD_CGACT_SET_1);
-                break;
+            case 0: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CGACT_SET_0); break;
+            case 1: SET_NEW_CMD(LWGSM_CMD_CGACT_SET_1); break;
 #if LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT
-            case 2:
-                SET_NEW_CMD(LWGSM_CMD_CGATT_SET_0);
-                break;
+            case 2: SET_NEW_CMD(LWGSM_CMD_CGATT_SET_0); break;
 #else  /* LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT */
-            case 2:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CGATT_SET_0);
-                break;
+            case 2: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CGATT_SET_0); break;
 #endif /* !LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT */
-            case 3:
-                SET_NEW_CMD(LWGSM_CMD_CGATT_SET_1);
-                break;
-            case 4:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIPSHUT);
-                break;
-            case 5:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIPMUX_SET);
-                break;
-            case 6:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIPRXGET_SET);
-                break;
-            case 7:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CSTT_SET);
-                break;
-            case 8:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIICR);
-                break;
-            case 9:
-                SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIFSR);
-                break;
-            case 10:
-                SET_NEW_CMD(LWGSM_CMD_CIPSTATUS);
-                break;
-            default:
-                break;
+            case 3: SET_NEW_CMD(LWGSM_CMD_CGATT_SET_1); break;
+            case 4: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIPSHUT); break;
+            case 5: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIPMUX_SET); break;
+            case 6: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIPRXGET_SET); break;
+            case 7: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CSTT_SET); break;
+            case 8: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIICR); break;
+            case 9: SET_NEW_CMD_CHECK_ERROR(LWGSM_CMD_CIFSR); break;
+            case 10: SET_NEW_CMD(LWGSM_CMD_CIPSTATUS); break;
+            default: break;
         }
     } else if (CMD_IS_DEF(LWGSM_CMD_NETWORK_DETACH)) {
         switch (msg->i) {
-            case 0:
-                SET_NEW_CMD(LWGSM_CMD_CGATT_SET_0);
-                break;
-            case 1:
-                SET_NEW_CMD(LWGSM_CMD_CGACT_SET_0);
-                break;
+            case 0: SET_NEW_CMD(LWGSM_CMD_CGATT_SET_0); break;
+            case 1: SET_NEW_CMD(LWGSM_CMD_CGACT_SET_0); break;
 #if LWGSM_CFG_CONN
-            case 2:
-                SET_NEW_CMD(LWGSM_CMD_CIPSTATUS);
-                break;
+            case 2: SET_NEW_CMD(LWGSM_CMD_CIPSTATUS); break;
 #endif /* LWGSM_CFG_CONN */
-            default:
-                break;
+            default: break;
         }
         if (!n_cmd) {
             *is_ok = 1;
@@ -1922,11 +1857,8 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
                 lwgsmi_send_number(LWGSM_U32(msg->msg.cops_set.format), 0, 1);
                 switch (msg->msg.cops_set.format) {
                     case LWGSM_OPERATOR_FORMAT_LONG_NAME:
-                    case LWGSM_OPERATOR_FORMAT_SHORT_NAME:
-                        lwgsmi_send_string(msg->msg.cops_set.name, 1, 1, 1);
-                        break;
-                    default:
-                        lwgsmi_send_number(LWGSM_U32(msg->msg.cops_set.num), 0, 1);
+                    case LWGSM_OPERATOR_FORMAT_SHORT_NAME: lwgsmi_send_string(msg->msg.cops_set.name, 1, 1, 1); break;
+                    default: lwgsmi_send_number(LWGSM_U32(msg->msg.cops_set.num), 0, 1);
                 }
             }
             AT_PORT_SEND_END_AT();
@@ -2092,26 +2024,13 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CMGDA=");
             switch (msg->msg.sms_delete_all.status) {
-                case LWGSM_SMS_STATUS_READ:
-                    lwgsmi_send_string("DEL READ", 0, 1, 0);
-                    break;
-                case LWGSM_SMS_STATUS_UNREAD:
-                    lwgsmi_send_string("DEL UNREAD", 0, 1, 0);
-                    break;
-                case LWGSM_SMS_STATUS_SENT:
-                    lwgsmi_send_string("DEL SENT", 0, 1, 0);
-                    break;
-                case LWGSM_SMS_STATUS_UNSENT:
-                    lwgsmi_send_string("DEL UNSENT", 0, 1, 0);
-                    break;
-                case LWGSM_SMS_STATUS_INBOX:
-                    lwgsmi_send_string("DEL INBOX", 0, 1, 0);
-                    break;
-                case LWGSM_SMS_STATUS_ALL:
-                    lwgsmi_send_string("DEL ALL", 0, 1, 0);
-                    break;
-                default:
-                    break;
+                case LWGSM_SMS_STATUS_READ: lwgsmi_send_string("DEL READ", 0, 1, 0); break;
+                case LWGSM_SMS_STATUS_UNREAD: lwgsmi_send_string("DEL UNREAD", 0, 1, 0); break;
+                case LWGSM_SMS_STATUS_SENT: lwgsmi_send_string("DEL SENT", 0, 1, 0); break;
+                case LWGSM_SMS_STATUS_UNSENT: lwgsmi_send_string("DEL UNSENT", 0, 1, 0); break;
+                case LWGSM_SMS_STATUS_INBOX: lwgsmi_send_string("DEL INBOX", 0, 1, 0); break;
+                case LWGSM_SMS_STATUS_ALL: lwgsmi_send_string("DEL ALL", 0, 1, 0); break;
+                default: break;
             }
             AT_PORT_SEND_END_AT();
             break;
@@ -2204,17 +2123,10 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBS=");
             switch (CMD_GET_DEF()) {
-                case LWGSM_CMD_CPBW_SET:
-                    mem = msg->msg.pb_write.mem;
-                    break;
-                case LWGSM_CMD_CPBR:
-                    mem = msg->msg.pb_list.mem;
-                    break;
-                case LWGSM_CMD_CPBF:
-                    mem = msg->msg.pb_search.mem;
-                    break;
-                default:
-                    break;
+                case LWGSM_CMD_CPBW_SET: mem = msg->msg.pb_write.mem; break;
+                case LWGSM_CMD_CPBR: mem = msg->msg.pb_list.mem; break;
+                case LWGSM_CMD_CPBF: mem = msg->msg.pb_search.mem; break;
+                default: break;
             }
             lwgsmi_send_dev_memory(mem == LWGSM_MEM_CURRENT ? lwgsm.m.pb.mem.current : mem, 1, 0);
             AT_PORT_SEND_END_AT();
@@ -2325,9 +2237,8 @@ lwgsmi_initiate_cmd(lwgsm_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-#endif /* LWGSM_CFG_USSD */
-        default:
-            return lwgsmERR; /* Invalid command */
+#endif                            /* LWGSM_CFG_USSD */
+        default: return lwgsmERR; /* Invalid command */
     }
     return lwgsmOK; /* Valid command */
 }
@@ -2463,7 +2374,6 @@ lwgsmi_process_events_for_timeout_or_error(lwgsm_msg_t* msg, lwgsmr_t err) {
         }
 #endif /* LWGSM_CFG_SMS */
 
-        default:
-            break;
+        default: break;
     }
 }

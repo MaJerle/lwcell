@@ -43,9 +43,9 @@
  *
  * \ref LWGSM_CFG_INPUT_USE_PROCESS must be enabled in `lwgsm_config.h` to use this driver.
  */
-#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_types.h"
 #include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__

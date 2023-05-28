@@ -44,9 +44,9 @@
  * USART_DMA_STREAM:    DMA_STREAM_1
  * USART_DMA_CHANNEL:   DMA_CHANNEL_5
  */
-#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_input.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_types.h"
 #include "system/lwgsm_ll.h"
 
 #if !__DOXYGEN__

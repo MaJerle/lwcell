@@ -36,10 +36,10 @@
  * This is special driver for STM32H735G-DK utilizing ThreadX operating system
  * and full DMA support for TX and RX operation.
  */
-#include "lwgsm/lwgsm_types.h"
 #include "lwgsm/lwgsm_input.h"
-#include "lwgsm/lwgsm_utils.h"
 #include "lwgsm/lwgsm_mem.h"
+#include "lwgsm/lwgsm_types.h"
+#include "lwgsm/lwgsm_utils.h"
 #include "lwrb/lwrb.h"
 #include "mcu.h"
 #include "system/lwgsm_ll.h"

@@ -445,8 +445,7 @@ lwgsmi_parse_cops(const char* str) {
                 case LWGSM_OPERATOR_FORMAT_NUMBER:
                     lwgsm.m.network.curr_operator.data.num = LWGSM_U32(lwgsmi_parse_number(&str));
                     break;
-                default:
-                    break;
+                default: break;
             }
         }
     } else {
@@ -536,8 +535,7 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
                     lwgsm.msg->msg.cops_scan.ops[i].num = (10 * lwgsm.msg->msg.cops_scan.ops[i].num) + (ch - '0');
                     break;
                 }
-                default:
-                    break;
+                default: break;
             }
         }
     } else {
@@ -762,8 +760,7 @@ lwgsmi_parse_cpms(const char* str, uint8_t opt) {
             }
             break;
         }
-        default:
-            break;
+        default: break;
     }
     return 1;
 }

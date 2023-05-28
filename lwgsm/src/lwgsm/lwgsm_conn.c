@@ -437,18 +437,12 @@ lwgsm_conn_getnum(lwgsm_conn_p conn) {
 lwgsm_conn_p
 lwgsm_conn_get_from_evt(lwgsm_evt_t* evt) {
     switch (evt->type) {
-        case LWGSM_EVT_CONN_ACTIVE:
-            return lwgsm_evt_conn_active_get_conn(evt);
-        case LWGSM_EVT_CONN_CLOSE:
-            return lwgsm_evt_conn_close_get_conn(evt);
-        case LWGSM_EVT_CONN_RECV:
-            return lwgsm_evt_conn_recv_get_conn(evt);
-        case LWGSM_EVT_CONN_SEND:
-            return lwgsm_evt_conn_send_get_conn(evt);
-        case LWGSM_EVT_CONN_POLL:
-            return lwgsm_evt_conn_poll_get_conn(evt);
-        default:
-            return NULL;
+        case LWGSM_EVT_CONN_ACTIVE: return lwgsm_evt_conn_active_get_conn(evt);
+        case LWGSM_EVT_CONN_CLOSE: return lwgsm_evt_conn_close_get_conn(evt);
+        case LWGSM_EVT_CONN_RECV: return lwgsm_evt_conn_recv_get_conn(evt);
+        case LWGSM_EVT_CONN_SEND: return lwgsm_evt_conn_send_get_conn(evt);
+        case LWGSM_EVT_CONN_POLL: return lwgsm_evt_conn_poll_get_conn(evt);
+        default: return NULL;
     }
 }
 

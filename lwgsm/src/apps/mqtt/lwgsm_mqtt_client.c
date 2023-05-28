@@ -292,11 +292,8 @@ prv_write_fixed_header(lwgsm_mqtt_client_p client, mqtt_msg_type_t type, uint8_t
             break;
         case MQTT_MSG_TYPE_PUBREL:
         case MQTT_MSG_TYPE_SUBSCRIBE:
-        case MQTT_MSG_TYPE_UNSUBSCRIBE:
-            b |= LWGSM_U8(LWGSM_MQTT_QOS_AT_LEAST_ONCE) << 0x01;
-            break;
-        default:
-            break;
+        case MQTT_MSG_TYPE_UNSUBSCRIBE: b |= LWGSM_U8(LWGSM_MQTT_QOS_AT_LEAST_ONCE) << 0x01; break;
+        default: break;
     }
     lwgsm_buff_write(&client->tx_buff, &b, 1); /* Write start of packet parameters */
 
@@ -660,8 +657,7 @@ prv_mqtt_process_incoming_message(lwgsm_mqtt_client_p client) {
             }
             break;
         }
-        default:
-            return 0;
+        default: return 0;
     }
     return 1;
 }
@@ -766,8 +762,7 @@ prv_mqtt_parse_incoming(lwgsm_mqtt_client_p client, lwgsm_pbuf_p pbuf) {
                     }
                     break;
                 }
-                default:
-                    client->parser_state = MQTT_PARSER_STATE_INIT;
+                default: client->parser_state = MQTT_PARSER_STATE_INIT;
             }
         }
     } while (buff_len > 0);
@@ -1078,8 +1073,7 @@ prv_mqtt_conn_cb(lwgsm_evt_t* evt) {
                                lwgsm_evt_conn_close_is_forced(evt));
             break;
         }
-        default:
-            break;
+        default: break;
     }
     return lwgsmOK;
 }
@@ -1140,10 +1134,10 @@ lwgsm_mqtt_client_connect(lwgsm_mqtt_client_p client, const char* host, lwgsm_po
                           const lwgsm_mqtt_client_info_t* info) {
     lwgsmr_t res = lwgsmERR;
 
-    LWGSM_ASSERT( client != NULL); /* t input parameters */
-    LWGSM_ASSERT( host != NULL);
-    LWGSM_ASSERT( port > 0);
-    LWGSM_ASSERT( info != NULL);
+    LWGSM_ASSERT(client != NULL); /* t input parameters */
+    LWGSM_ASSERT(host != NULL);
+    LWGSM_ASSERT(port > 0);
+    LWGSM_ASSERT(info != NULL);
 
     lwgsm_core_lock();
     if (lwgsm_network_is_attached() && client->conn_state == LWGSM_MQTT_CONN_DISCONNECTED) {

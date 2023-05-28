@@ -52,13 +52,13 @@ extern "C" {
  * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref lwgsmr_t enumeration
  * \param[in]       c: Condition to test
  */
-#define LWGSM_ASSERT(c)                                                                                           \
+#define LWGSM_ASSERT(c)                                                                                                \
     do {                                                                                                               \
         if (!(c)) {                                                                                                    \
             LWGSM_DEBUGF(LWGSM_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__, (int)__LINE__, \
                          #c);                                                                                          \
             return lwgsmERRPAR;                                                                                        \
-        }                                                                                                             \
+        }                                                                                                              \
     } while (0)
 
 /**
