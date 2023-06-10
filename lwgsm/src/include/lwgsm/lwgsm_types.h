@@ -60,17 +60,17 @@ extern "C" {
  * \brief           Result enumeration used across application functions
  */
 typedef enum {
-    lwgsmOK = 0,       /*!< Function returned OK */
-    lwgsmOKIGNOREMORE, /*!< Function succedded, should continue as \ref lwgsmOK
+    lwgsmOK = 0,              /*!< Function returned OK */
+    lwgsmOKIGNOREMORE,        /*!< Function succedded, should continue as \ref lwgsmOK
                                                         but ignore sending more data.
                                                         This result is possible on connection data receive callback */
-    lwgsmERR,          /*!< Generic error */
-    lwgsmERRPAR,       /*!< Wrong parameters on function call */
-    lwgsmERRMEM,       /*!< Memory error occurred */
-    lwgsmTIMEOUT,      /*!< Timeout occurred on command */
-    lwgsmCONT,         /*!< There is still some command to be processed in current command */
-    lwgsmCLOSED,       /*!< Connection just closed */
-    lwgsmINPROG,       /*!< Operation is in progress */
+    lwgsmERR,                 /*!< Generic error */
+    lwgsmERRPAR,              /*!< Wrong parameters on function call */
+    lwgsmERRMEM,              /*!< Memory error occurred */
+    lwgsmTIMEOUT,             /*!< Timeout occurred on command */
+    lwgsmCONT,                /*!< There is still some command to be processed in current command */
+    lwgsmCLOSED,              /*!< Connection just closed */
+    lwgsmINPROG,              /*!< Operation is in progress */
 
     lwgsmERRNOTENABLED,       /*!< Feature not enabled error */
     lwgsmERRNOIP,             /*!< Station does not have IP address */
@@ -333,8 +333,8 @@ typedef enum {
  * \note            Data received on `+CLCC` info
  */
 typedef struct {
-    uint8_t ready;   /*!< Flag indicating feature ready by device */
-    uint8_t enabled; /*!< Flag indicating feature enabled */
+    uint8_t ready;            /*!< Flag indicating feature ready by device */
+    uint8_t enabled;          /*!< Flag indicating feature enabled */
 
     uint8_t id;               /*!< Call identification number, 0-7 */
     lwgsm_call_dir_t dir;     /*!< Call direction */
@@ -376,34 +376,34 @@ typedef lwgsmr_t (*lwgsm_evt_fn)(struct lwgsm_evt* evt);
  * \brief           List of possible callback types received to user
  */
 typedef enum lwgsm_cb_type_t {
-    LWGSM_EVT_INIT_FINISH, /*!< Initialization has been finished at this point */
+    LWGSM_EVT_INIT_FINISH,              /*!< Initialization has been finished at this point */
 
-    LWGSM_EVT_RESET,   /*!< Device reset operation finished */
-    LWGSM_EVT_RESTORE, /*!< Device restore operation finished */
+    LWGSM_EVT_RESET,                    /*!< Device reset operation finished */
+    LWGSM_EVT_RESTORE,                  /*!< Device restore operation finished */
 
-    LWGSM_EVT_CMD_TIMEOUT, /*!< Timeout on command.
+    LWGSM_EVT_CMD_TIMEOUT,              /*!< Timeout on command.
                                                         When application receives this event,
                                                         it may reset system as there was (maybe) a problem in device */
 
-    LWGSM_EVT_DEVICE_PRESENT,    /*!< Notification when device present status changes */
-    LWGSM_EVT_DEVICE_IDENTIFIED, /*!< Device identified event */
+    LWGSM_EVT_DEVICE_PRESENT,           /*!< Notification when device present status changes */
+    LWGSM_EVT_DEVICE_IDENTIFIED,        /*!< Device identified event */
 
-    LWGSM_EVT_KEEP_ALIVE, /*!< Generic keep-alive event type, used as periodic timeout.
+    LWGSM_EVT_KEEP_ALIVE,               /*!< Generic keep-alive event type, used as periodic timeout.
                                                     Optionally enabled with \ref LWGSM_CFG_KEEP_ALIVE */
 
-    LWGSM_EVT_SIGNAL_STRENGTH, /*!< Signal strength event */
+    LWGSM_EVT_SIGNAL_STRENGTH,          /*!< Signal strength event */
 
-    LWGSM_EVT_SIM_STATE_CHANGED, /*!< SIM card state changed */
+    LWGSM_EVT_SIM_STATE_CHANGED,        /*!< SIM card state changed */
 
-    LWGSM_EVT_OPERATOR_SCAN, /*!< Operator scan finished event */
+    LWGSM_EVT_OPERATOR_SCAN,            /*!< Operator scan finished event */
 
     LWGSM_EVT_NETWORK_OPERATOR_CURRENT, /*!< Current operator event */
     LWGSM_EVT_NETWORK_REG_CHANGED,      /*!< Network registration changed.
                                                          Available even when \ref LWGSM_CFG_NETWORK is disabled */
 #if LWGSM_CFG_NETWORK || __DOXYGEN__
-    LWGSM_EVT_NETWORK_ATTACHED, /*!< Attached to network, PDP context active and ready for TCP/IP application */
-    LWGSM_EVT_NETWORK_DETACHED, /*!< Detached from network, PDP context not active anymore */
-#endif                          /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
+    LWGSM_EVT_NETWORK_ATTACHED,         /*!< Attached to network, PDP context active and ready for TCP/IP application */
+    LWGSM_EVT_NETWORK_DETACHED,         /*!< Detached from network, PDP context not active anymore */
+#endif                                  /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
 
 #if LWGSM_CFG_CONN || __DOXYGEN__
     LWGSM_EVT_CONN_RECV,   /*!< Connection data received */
@@ -415,14 +415,14 @@ typedef enum lwgsm_cb_type_t {
 #endif                     /* LWGSM_CFG_CONN || __DOXYGEN__ */
 
 #if LWGSM_CFG_SMS || __DOXYGEN__
-    LWGSM_EVT_SMS_ENABLE, /*!< SMS enable event */
-    LWGSM_EVT_SMS_READY,  /*!< SMS ready event */
-    LWGSM_EVT_SMS_SEND,   /*!< SMS send event */
-    LWGSM_EVT_SMS_RECV,   /*!< SMS received */
-    LWGSM_EVT_SMS_READ,   /*!< SMS read */
-    LWGSM_EVT_SMS_DELETE, /*!< SMS delete */
-    LWGSM_EVT_SMS_LIST,   /*!< SMS list */
-#endif                    /* LWGSM_CFG_SMS || __DOXYGEN__ */
+    LWGSM_EVT_SMS_ENABLE,      /*!< SMS enable event */
+    LWGSM_EVT_SMS_READY,       /*!< SMS ready event */
+    LWGSM_EVT_SMS_SEND,        /*!< SMS send event */
+    LWGSM_EVT_SMS_RECV,        /*!< SMS received */
+    LWGSM_EVT_SMS_READ,        /*!< SMS read */
+    LWGSM_EVT_SMS_DELETE,      /*!< SMS delete */
+    LWGSM_EVT_SMS_LIST,        /*!< SMS list */
+#endif                         /* LWGSM_CFG_SMS || __DOXYGEN__ */
 #if LWGSM_CFG_CALL || __DOXYGEN__
     LWGSM_EVT_CALL_ENABLE,     /*!< Call enable event */
     LWGSM_EVT_CALL_READY,      /*!< Call ready event */
@@ -432,10 +432,10 @@ typedef enum lwgsm_cb_type_t {
     LWGSM_EVT_CALL_NO_CARRIER, /*!< No carrier to make a call */
 #endif                         /* LWGSM_CFG_CALL || __DOXYGEN__ */
 #if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
-    LWGSM_EVT_PB_ENABLE, /*!< Phonebook enable event */
-    LWGSM_EVT_PB_LIST,   /*!< Phonebook list event */
-    LWGSM_EVT_PB_SEARCH, /*!< Phonebook search event */
-#endif                   /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
+    LWGSM_EVT_PB_ENABLE,       /*!< Phonebook enable event */
+    LWGSM_EVT_PB_LIST,         /*!< Phonebook list event */
+    LWGSM_EVT_PB_SEARCH,       /*!< Phonebook search event */
+#endif                         /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
 } lwgsm_evt_type_t;
 
 /**
@@ -574,7 +574,9 @@ typedef struct lwgsm_evt {
 /**
  * \ingroup         LWGSM_LL
  * \brief           Function prototype for AT output data
- * \param[in]       data: Pointer to data to send. This parameter can be set to `NULL`
+ * \param[in]       data: Pointer to data to send. This parameter can be set to `NULL`,
+ *                      indicating to the low-level that (if used) DMA could be started
+ *                      to transmit data to the device
  * \param[in]       len: Number of bytes to send. This parameter can be set to `0`
  *                      to indicate that internal buffer can be flushed to stream.
  *                      This is implementation defined and feature might be ignored

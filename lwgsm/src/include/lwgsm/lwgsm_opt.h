@@ -133,6 +133,16 @@
 #endif
 
 /**
+ * \brief           Minimal buffer in bytes for connection receive allocation.
+ * 
+ *                  Allocation will always start with (up to) \ref LWGSM_CFG_CONN_MAX_DATA_LEN
+ *                  and will continue with trial down to this setting up until allocating is successful.
+ */
+#ifndef LWGSM_CFG_CONN_MIN_DATA_LEN
+#define LWGSM_CFG_CONN_MIN_DATA_LEN 16
+#endif
+
+/**
  * \brief           Set number of retries for send data command.
  *
  * Sometimes it may happen that `AT+SEND` command fails due to different problems.
@@ -140,15 +150,6 @@
  */
 #ifndef LWGSM_CFG_MAX_SEND_RETRIES
 #define LWGSM_CFG_MAX_SEND_RETRIES 3
-#endif
-
-/**
- * \brief           Maximum single buffer size for network receive data (TCP/UDP connections)
- *
- * \note            When GSM sends buffer buffer than maximal, multiple buffers are created
- */
-#ifndef LWGSM_CFG_IPD_MAX_BUFF_SIZE
-#define LWGSM_CFG_IPD_MAX_BUFF_SIZE 1460
 #endif
 
 /**

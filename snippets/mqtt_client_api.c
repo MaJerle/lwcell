@@ -10,16 +10,16 @@
  * test.mosquitto.org server and subscribe to publishing topic
  */
 
-#include "lwgsm/apps/lwgsm_mqtt_client_api.h"
 #include "mqtt_client_api.h"
+#include "lwgsm/apps/lwgsm_mqtt_client_api.h"
+#include "lwgsm/lwgsm.h"
 #include "lwgsm/lwgsm_mem.h"
 #include "lwgsm/lwgsm_network_api.h"
 
 /**
  * \brief           Connection information for MQTT CONNECT packet
  */
-static const lwgsm_mqtt_client_info_t
-mqtt_client_info = {
+static const lwgsm_mqtt_client_info_t mqtt_client_info = {
     .keep_alive = 10,
 
     /* Server login data */
@@ -33,8 +33,7 @@ mqtt_client_info = {
 /**
  * \brief           Memory for temporary topic
  */
-static char
-mqtt_topic_str[256];
+static char mqtt_topic_str[256];
 
 /**
  * \brief           Generate random number and write it to string
@@ -111,7 +110,8 @@ mqtt_client_api_thread(void const* arg) {
                 /* Publish data on channel 1 */
                 generate_random(random_str);
                 sprintf(mqtt_topic_str, "v1/%s/things/%s/data/1", mqtt_client_info.user, mqtt_client_info.id);
-                lwgsm_mqtt_client_api_publish(client, mqtt_topic_str, random_str, strlen(random_str), LWGSM_MQTT_QOS_AT_LEAST_ONCE, 0);
+                lwgsm_mqtt_client_api_publish(client, mqtt_topic_str, random_str, strlen(random_str),
+                                              LWGSM_MQTT_QOS_AT_LEAST_ONCE, 0);
             }
         }
         goto terminate;

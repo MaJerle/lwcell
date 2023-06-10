@@ -59,14 +59,14 @@
  */
 static void
 conn_timeout_cb(void* arg) {
-    lwgsm_conn_p conn = arg; /* Argument is actual connection */
+    lwgsm_conn_p conn = arg;                  /* Argument is actual connection */
 
     if (conn->status.f.active) {              /* Handle only active connections */
         lwgsm.evt.type = LWGSM_EVT_CONN_POLL; /* Poll connection event */
         lwgsm.evt.evt.conn_poll.conn = conn;  /* Set connection pointer */
         lwgsmi_send_conn_cb(conn, NULL);      /* Send connection callback */
 
-        lwgsmi_conn_start_timeout(conn); /* Schedule new timeout */
+        lwgsmi_conn_start_timeout(conn);      /* Schedule new timeout */
         LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Poll event: %p\r\n", (void*)conn);
     }
 }
@@ -229,7 +229,7 @@ lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
     LWGSM_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
     LWGSM_MSG_VAR_REF(msg).msg.conn_close.val_id = lwgsmi_conn_get_val_id(conn);
 
-    flush_buff(conn); /* First flush buffer */
+    flush_buff(conn);                  /* First flush buffer */
     res = lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 1000);
     if (res == lwgsmOK && !blocking) { /* Function succedded in non-blocking mode */
         lwgsm_core_lock();
@@ -453,7 +453,7 @@ lwgsm_conn_get_from_evt(lwgsm_evt_t* evt) {
  * \param[in]       data: Data to copy to write buffer
  * \param[in]       btw: Number of bytes to write
  * \param[in]       flush: Flush flag. Set to `1` if you want to send data immediately after copying
- * \param[out]      mem_available: Available memory size available in current write buffer.
+ * \param[out]      mem_available: Available memory size in current write buffer.
  *                  When the buffer length is reached, current one is sent and a new one is automatically created.
  *                  If function returns \ref lwgsmOK and `*mem_available = 0`, there was a problem
  *                  allocating a new buffer for next operation
@@ -462,7 +462,6 @@ lwgsm_conn_get_from_evt(lwgsm_evt_t* evt) {
 lwgsmr_t
 lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available) {
     size_t len;
-
     const uint8_t* d = data;
 
     LWGSM_ASSERT(conn != NULL);
@@ -471,7 +470,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
      * Steps during write process:
      *
      * 1. Check if we have buffer already allocated and
-     *      write data to the tail of buffer
+     *      write data to the tail of the buffer
      *   1.1. In case buffer is full, send it non-blocking,
      *      and enable freeing after it is sent
      * 2. Check how many bytes we can copy as single buffer directly and send
