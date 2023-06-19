@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "lwgsm/lwgsm_opt.h"
 
 #ifdef __cplusplus
@@ -134,20 +135,6 @@ typedef struct {
 } lwgsm_mac_t;
 
 /**
- * \ingroup         LWGSM_TYPES
- * \brief           Date and time structure
- */
-typedef struct {
-    uint8_t date;    /*!< Day in a month, from `1` to up to `31` */
-    uint8_t month;   /*!< Month in a year, from `1` to `12` */
-    uint16_t year;   /*!< Year */
-    uint8_t day;     /*!< Day in a week, from `1` to `7`, 0 = invalid */
-    uint8_t hours;   /*!< Hours in a day, from `0` to `23` */
-    uint8_t minutes; /*!< Minutes in a hour, from `0` to `59` */
-    uint8_t seconds; /*!< Seconds in a minute, from `0` to `59` */
-} lwgsm_datetime_t;
-
-/**
  * \ingroup         LWGSM_CONN
  * \brief           List of possible connection types
  */
@@ -201,7 +188,7 @@ typedef enum {
 typedef struct {
     lwgsm_mem_t mem;           /*!< Memory storage */
     size_t pos;                /*!< Memory position */
-    lwgsm_datetime_t datetime; /*!< Date and time */
+    struct tm dt;              /*!< Date and time */
     lwgsm_sms_status_t status; /*!< Message status */
     char number[26];           /*!< Phone number */
     char name[20];             /*!< Name in phonebook if exists */

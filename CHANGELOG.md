@@ -11,6 +11,7 @@
 - Add `LWGSM ` prefix for debug messages
 - Update code style with astyle
 - Add `.clang-format` draft
+- Delete `lwgsm_datetime_t` and use generic `struct tm` instead
 
 ## v0.1.1
 

@@ -46,7 +46,7 @@ lwgsmi_parse_number(const char** str) {
     uint8_t minus = 0;
     const char* p = *str; /*  */
 
-    if (*p == '"') { /* Skip leading quotes */
+    if (*p == '"') {      /* Skip leading quotes */
         ++p;
     }
     if (*p == ',') { /* Skip leading comma */
@@ -91,7 +91,7 @@ lwgsmi_parse_hexnumber(const char** str) {
     int32_t val = 0;
     const char* p = *str; /*  */
 
-    if (*p == '"') { /* Skip leading quotes */
+    if (*p == '"') {      /* Skip leading quotes */
         ++p;
     }
     if (*p == ',') { /* Skip leading comma */
@@ -361,7 +361,7 @@ lwgsmi_parse_csq(const char* str) {
     } else {
         rssi = 0;
     }
-    lwgsm.m.rssi = rssi; /* Save RSSI to global variable */
+    lwgsm.m.rssi = rssi;                 /* Save RSSI to global variable */
     if (lwgsm.msg->cmd_def == LWGSM_CMD_CSQ_GET && lwgsm.msg->msg.csq.rssi != NULL) {
         *lwgsm.msg->msg.csq.rssi = rssi; /* Save to user variable */
     }
@@ -484,8 +484,8 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
         return 1;
     }
 
-    if (u.f.ch_prev == 0) { /* Check if this is first character */
-        if (ch == ' ') {    /* Skip leading spaces */
+    if (u.f.ch_prev == 0) {     /* Check if this is first character */
+        if (ch == ' ') {        /* Skip leading spaces */
             return 1;
         } else if (ch == ',') { /* If first character is comma, no operators available */
             u.f.ccd = 1;        /* Fake double commas in a row */
@@ -556,13 +556,13 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_datetime(const char** src, lwgsm_datetime_t* dt) {
-    dt->date = lwgsmi_parse_number(src);
-    dt->month = lwgsmi_parse_number(src);
-    dt->year = LWGSM_U16(2000) + lwgsmi_parse_number(src);
-    dt->hours = lwgsmi_parse_number(src);
-    dt->minutes = lwgsmi_parse_number(src);
-    dt->seconds = lwgsmi_parse_number(src);
+lwgsmi_parse_datetime(const char** src, struct tm* dt) {
+    dt->tm_mday = lwgsmi_parse_number(src);
+    dt->tm_mon = lwgsmi_parse_number(src) - 1;
+    dt->tm_year = LWGSM_U16(100) + lwgsmi_parse_number(src);
+    dt->tm_hour = lwgsmi_parse_number(src);
+    dt->tm_min = lwgsmi_parse_number(src);
+    dt->tm_sec = lwgsmi_parse_number(src);
 
     lwgsmi_check_and_trim(src); /* Trim text to the end */
     return 1;
@@ -668,7 +668,7 @@ lwgsmi_parse_cmgr(const char* str) {
     lwgsmi_parse_sms_status(&str, &e->status);
     lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
     lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    lwgsmi_parse_datetime(&str, &e->datetime);
+    lwgsmi_parse_datetime(&str, &e->dt);
 
     return 1;
 }
@@ -698,7 +698,7 @@ lwgsmi_parse_cmgl(const char* str) {
     lwgsmi_parse_sms_status(&str, &e->status);
     lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
     lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    lwgsmi_parse_datetime(&str, &e->datetime);
+    lwgsmi_parse_datetime(&str, &e->dt);
 
     return 1;
 }
@@ -964,8 +964,8 @@ lwgsmi_parse_ipd(const char* str) {
         }
     }
 
-    conn = lwgsmi_parse_number(&str); /* Parse number for connection number */
-    len = lwgsmi_parse_number(&str);  /* Parse number for number of bytes to read */
+    conn = lwgsmi_parse_number(&str);                             /* Parse number for connection number */
+    len = lwgsmi_parse_number(&str);                              /* Parse number for number of bytes to read */
 
     c = conn < LWGSM_CFG_MAX_CONNS ? &lwgsm.m.conns[conn] : NULL; /* Get connection handle */
     if (c == NULL) {                                              /* Invalid connection number */
