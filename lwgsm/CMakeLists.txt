@@ -49,6 +49,12 @@ set(lwgsm_allapps_SRCS
 set(lwgsm_include_DIRS
     ${CMAKE_CURRENT_LIST_DIR}/src/include
     )
+    
+# Add system port to core if user defined
+if (DEFINED LWGSM_SYS_PORT)
+    set(lwgsm_core_SRCS ${lwgsm_core_SRCS} ${CMAKE_CURRENT_LIST_DIR}/src/system/lwgsm_sys_${LWGSM_SYS_PORT}.c)
+    set(lwgsm_include_DIRS ${lwgsm_include_DIRS} ${CMAKE_CURRENT_LIST_DIR}/src/include/system/port/${LWGSM_SYS_PORT})
+endif()
 
 # Register core library to the system
 add_library(lwgsm INTERFACE)
