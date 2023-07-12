@@ -76,10 +76,10 @@ lwgsm_pbuf_new(size_t len) {
     lwgsm_pbuf_p p;
 
     p = lwgsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p == NULL, "[LWGSM PBUF] Failed to allocate %d bytes\r\n",
-                 (int)len);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p != NULL, "[LWGSM PBUF] Allocated %d bytes on %p\r\n",
-                 (int)len, (void*)p);
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p == NULL, "[LWGSM PBUF] Failed to allocate %u bytes\r\n",
+                 (unsigned)len);
+    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p != NULL, "[LWGSM PBUF] Allocated %u bytes on %p\r\n",
+                 (unsigned)len, (void*)p);
     if (p != NULL) {
         p->next = NULL;                                        /* No next element in chain */
         p->tot_len = len;                                      /* Set total length of pbuf chain */
@@ -92,8 +92,14 @@ lwgsm_pbuf_new(size_t len) {
 
 /**
  * \brief           Free previously allocated packet buffer
+ * \note            Application must not use reference to pbuf after the call to this function.
+ *                  It is advised to immediately set pointer to `NULL` or to call.
+ *                  Alternatively, call \ref lwgsm_pbuf_free_s, which will reset the pointer
+ *                  after free operation has been completed
+ *                  
  * \param[in]       pbuf: Packet buffer to free
  * \return          Number of freed pbufs from head
+ * \sa              lwgsm_pbuf_free_s
  */
 size_t
 lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
@@ -113,8 +119,8 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
         lwgsm_core_unlock();
         if (ref == 0) { /* Did we reach 0 and are ready to free it? */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM PBUF] Deallocating %p with len/tot_len: %d/%d\r\n", (void*)p, (int)p->len,
-                         (int)p->tot_len);
+                         "[LWGSM PBUF] Deallocating %p with len/tot_len: %u/%u\r\n", (void*)p, (unsigned)p->len,
+                         (unsigned)p->tot_len);
             pn = p->next;                 /* Save next entry */
             lwgsm_mem_free_s((void**)&p); /* Free memory for pbuf */
             p = pn;                       /* Restore with next entry */
@@ -122,6 +128,27 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
         } else {
             break;
         }
+    }
+    return cnt;
+}
+
+/**
+ * \brief           Free previously allocated packet buffer in safe way.
+ *                  Function accepts pointer to pointer and will set the pointer to `NULL`
+ *                  after the successful allocation
+ * 
+ * \param[in,out]   pbuf_ptr: Pointer to pointer to packet buffer
+ * \return          Number of packet buffers freed in the chain
+ */
+size_t
+lwgsm_pbuf_free_s(lwgsm_pbuf_p* pbuf_ptr) {
+    size_t cnt = 0;
+
+    LWGSM_ASSERT0(pbuf_ptr != NULL);
+
+    if (*pbuf_ptr != NULL) {
+        cnt = lwgsm_pbuf_free(*pbuf_ptr);
+        *pbuf_ptr = NULL;
     }
     return cnt;
 }
@@ -135,6 +162,7 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \sa              lwgsm_pbuf_cat_s
  * \sa              lwgsm_pbuf_chain
  */
 lwgsmr_t
@@ -149,10 +177,34 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
     for (; head->next != NULL; head = head->next) {
         head->tot_len += tail->tot_len; /* Increase total length of packet */
     }
-    head->tot_len += tail->tot_len;     /* Increase total length of last packet in chain */
-    head->next = tail;                  /* Set next packet buffer as next one */
+    head->tot_len += tail->tot_len; /* Increase total length of last packet in chain */
+    head->next = tail;              /* Set next packet buffer as next one */
 
     return lwgsmOK;
+}
+
+/**
+ * \brief           Concatenate `2` packet buffers together to one big packet with safe pointer management
+ * \note            After `tail` pbuf has been added to `head` pbuf chain,
+ *                  `tail` pointer will be set to `NULL`
+ * \param[in]       head: Head packet buffer to append new pbuf to
+ * \param[in]       tail: Pointer to pointer to tail packet buffer to append to head pbuf.
+ *                      Pointed memory will be set to `NULL` after successful concatenation
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \sa              lwgsm_pbuf_cat
+ * \sa              lwgsm_pbuf_chain
+ */
+lwgsmr_t
+lwgsm_pbuf_cat_s(lwgsm_pbuf_p head, lwgsm_pbuf_p* tail) {
+    lwgsmr_t res;
+
+    LWGSM_ASSERT(head != NULL);
+    LWGSM_ASSERT(tail != NULL);
+
+    if (*tail != NULL && (res = lwgsm_pbuf_cat(head, *tail)) == lwgsmOK) {
+        *tail = NULL;
+    }
+    return res;
 }
 
 /**
@@ -164,10 +216,15 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
  * \param[in]       tail: Tail packet buffer to append to head pbuf
  * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
  * \sa              lwgsm_pbuf_cat
+ * \sa              lwgsm_pbuf_cat_s
+ * \sa              lwgsm_pbuf_chain_s
  */
 lwgsmr_t
 lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
     lwgsmr_t res;
+
+    LWGSM_ASSERT(head != NULL);
+    LWGSM_ASSERT(tail != NULL);
 
     /*
      * To prevent issues with multi-thread access,
@@ -195,8 +252,8 @@ lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
     if (head != NULL && head->next != NULL) { /* Check for valid pbuf */
         r = head->next;                       /* Set return value as next pbuf */
 
-        head->next = NULL;                    /* Clear next pbuf */
-        head->tot_len = head->len;            /* Set new length of head pbuf */
+        head->next = NULL;         /* Clear next pbuf */
+        head->tot_len = head->len; /* Set new length of head pbuf */
     }
     return r;
 }
@@ -547,8 +604,8 @@ lwgsm_pbuf_dump(lwgsm_pbuf_p p, uint8_t seq) {
         LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, "[LWGSM PBUF] Dump start: %p\r\n", (void*)p);
         for (; p != NULL; p = p->next) {
             LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM PBUF] Dump %p; ref: %d; len: %d; tot_len: %d, next: %p\r\n", (void*)p, (int)p->ref,
-                         (int)p->len, (int)p->tot_len, (void*)p->next);
+                         "[LWGSM PBUF] Dump %p; ref: %u; len: %u; tot_len: %u, next: %p\r\n", (void*)p,
+                         (unsigned)p->ref, (unsigned)p->len, (unsigned)p->tot_len, (void*)p->next);
             if (!seq) {
                 break;
             }

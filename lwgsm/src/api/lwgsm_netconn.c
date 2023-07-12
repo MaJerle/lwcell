@@ -89,7 +89,7 @@ flush_mboxes(lwgsm_netconn_t* nc, uint8_t protect) {
     if (lwgsm_sys_mbox_isvalid(&nc->mbox_receive)) {
         while (lwgsm_sys_mbox_getnow(&nc->mbox_receive, (void**)&pbuf)) {
             if (pbuf != NULL && (uint8_t*)pbuf != (uint8_t*)&recv_closed) {
-                lwgsm_pbuf_free(pbuf); /* Free received data buffers */
+                lwgsm_pbuf_free_s(&pbuf); /* Free received data buffers */
             }
         }
         lwgsm_sys_mbox_delete(&nc->mbox_receive);  /* Delete message queue */
@@ -159,7 +159,7 @@ netconn_evt(lwgsm_evt_t* evt) {
             if (nc == NULL || !lwgsm_sys_mbox_isvalid(&nc->mbox_receive)
                 || !lwgsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN, "[LWGSM NETCONN] Ignoring more data for receive!\r\n");
-                lwgsm_pbuf_free(pbuf);    /* Free pbuf */
+                lwgsm_pbuf_free_s(&pbuf); /* Free pbuf */
                 return lwgsmOKIGNOREMORE; /* Return OK to free the memory and ignore further data */
             }
             ++nc->rcv_packets; /* Increase number of received packets */

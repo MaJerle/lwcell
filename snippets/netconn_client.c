@@ -7,18 +7,17 @@
 /**
  * \brief           Host and port settings
  */
-#define NETCONN_HOST        "example.com"
-#define NETCONN_PORT        80
+#define NETCONN_HOST "example.com"
+#define NETCONN_PORT 80
 
 /**
  * \brief           Request header to send on successful connection
  */
-static const char
-request_header[] = ""
-                   "GET / HTTP/1.1\r\n"
-                   "Host: " NETCONN_HOST "\r\n"
-                   "Connection: close\r\n"
-                   "\r\n";
+static const char request_header[] = ""
+                                     "GET / HTTP/1.1\r\n"
+                                     "Host: " NETCONN_HOST "\r\n"
+                                     "Connection: close\r\n"
+                                     "\r\n";
 
 /**
  * \brief           Netconn client thread implementation
@@ -50,12 +49,12 @@ netconn_client_thread(void const* arg) {
          */
         if ((res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT)) == lwgsmOK) {
             printf("Connected to %s\r\n", NETCONN_HOST);
-            
+
             /* Send data to server */
             if ((res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1)) == lwgsmOK) {
-                res = lwgsm_netconn_flush(client);/* Flush data to output */
+                res = lwgsm_netconn_flush(client); /* Flush data to output */
             }
-            if (res == lwgsmOK) {                 /* Were data sent? */
+            if (res == lwgsmOK) { /* Were data sent? */
                 printf("Data were successfully sent to server\r\n");
 
                 /*
@@ -75,11 +74,13 @@ netconn_client_thread(void const* arg) {
                      * was closed too early from remote side
                      */
                     res = lwgsm_netconn_receive(client, &pbuf);
-                    if (res == lwgsmCLOSED) {     /* Was the connection closed? This can be checked by return status of receive function */
+                    if (res
+                        == lwgsmCLOSED) { /* Was the connection closed? This can be checked by return status of receive function */
                         printf("Connection closed by remote side...\r\n");
                         break;
                     } else if (res == lwgsmTIMEOUT) {
-                        printf("Netconn timeout while receiving data. You may try multiple readings before deciding to close manually\r\n");
+                        printf("Netconn timeout while receiving data. You may try multiple readings before deciding to "
+                               "close manually\r\n");
                     }
 
                     if (res == lwgsmOK && pbuf != NULL) { /* Make sure we have valid packet buffer */
@@ -91,8 +92,7 @@ netconn_client_thread(void const* arg) {
                          * you free the memory otherwise memory leaks will appear
                          */
                         printf("Received new data packet of %d bytes\r\n", (int)lwgsm_pbuf_length(pbuf, 1));
-                        lwgsm_pbuf_free(pbuf);    /* Free the memory after usage */
-                        pbuf = NULL;
+                        lwgsm_pbuf_free_s(&pbuf); /* Free the memory after usage */
                     }
                 } while (1);
             } else {
@@ -109,14 +109,14 @@ netconn_client_thread(void const* arg) {
         } else {
             printf("Cannot connect to remote host %s:%d!\r\n", NETCONN_HOST, NETCONN_PORT);
         }
-        lwgsm_netconn_delete(client);             /* Delete netconn structure */
+        lwgsm_netconn_delete(client); /* Delete netconn structure */
     }
-    lwgsm_network_request_detach();               /* Detach from network */
+    lwgsm_network_request_detach(); /* Detach from network */
 
     if (lwgsm_sys_sem_isvalid(sem)) {
         lwgsm_sys_sem_release(sem);
     }
-    lwgsm_sys_thread_terminate(NULL);             /* Terminate current thread */
+    lwgsm_sys_thread_terminate(NULL); /* Terminate current thread */
 }
 
 #endif /* LWGSM_CFG_NETCONN */

@@ -62,6 +62,20 @@ extern "C" {
     } while (0)
 
 /**
+ * \brief           Assert an input parameter if in valid range, return 0 from function on failure
+ * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref lwgsmr_t enumeration
+ * \param[in]       c: Condition to test
+ */
+#define LWGSM_ASSERT0(c)                                                                                               \
+    do {                                                                                                               \
+        if (!(c)) {                                                                                                    \
+            LWGSM_DEBUGF(LWGSM_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__, (int)__LINE__, \
+                         #c);                                                                                          \
+            return 0;                                                                                                  \
+        }                                                                                                              \
+    } while (0)
+
+/**
  * \brief           Align `x` value to specific number of bytes, provided by \ref LWGSM_CFG_MEM_ALIGNMENT configuration
  * \param[in]       x: Input value to align
  * \return          Input value aligned to specific number of bytes

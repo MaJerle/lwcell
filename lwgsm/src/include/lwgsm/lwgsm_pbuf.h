@@ -49,12 +49,14 @@ extern "C" {
 
 lwgsm_pbuf_p lwgsm_pbuf_new(size_t len);
 size_t lwgsm_pbuf_free(lwgsm_pbuf_p pbuf);
+size_t lwgsm_pbuf_free_s(lwgsm_pbuf_p* pbuf);
 void* lwgsm_pbuf_data(const lwgsm_pbuf_p pbuf);
 size_t lwgsm_pbuf_length(const lwgsm_pbuf_p pbuf, uint8_t tot);
 lwgsmr_t lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset);
 size_t lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset);
 
 lwgsmr_t lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail);
+lwgsmr_t lwgsm_pbuf_cat_s(lwgsm_pbuf_p head, lwgsm_pbuf_p* tail);
 lwgsmr_t lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail);
 lwgsmr_t lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf);
 
