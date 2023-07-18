@@ -83,6 +83,7 @@ uint32_t lwgsm_netconn_get_receive_timeout(lwgsm_netconn_p nc);
 
 /* TCP only */
 lwgsmr_t lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw);
+lwgsmr_t lwgsm_netconn_write_ex(lwgsm_netconn_p nc, const void* data, size_t btw, uint16_t flags);
 lwgsmr_t lwgsm_netconn_flush(lwgsm_netconn_p nc);
 
 /* UDP only */
