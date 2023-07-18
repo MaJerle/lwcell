@@ -51,18 +51,18 @@
  * \brief           Sequential API structure
  */
 typedef struct lwgsm_netconn {
-    struct lwgsm_netconn* next; /*!< Linked list entry */
+    struct lwgsm_netconn* next;    /*!< Linked list entry */
 
-    lwgsm_netconn_type_t type; /*!< Netconn type */
+    lwgsm_netconn_type_t type;     /*!< Netconn type */
 
-    size_t rcv_packets; /*!< Number of received packets so far on this connection */
-    lwgsm_conn_p conn;  /*!< Pointer to actual connection */
+    size_t rcv_packets;            /*!< Number of received packets so far on this connection */
+    lwgsm_conn_p conn;             /*!< Pointer to actual connection */
 
     lwgsm_sys_mbox_t mbox_receive; /*!< Message queue for receive mbox */
 
-    lwgsm_linbuff_t buff; /*!< Linear buffer structure */
+    lwgsm_linbuff_t buff;          /*!< Linear buffer structure */
 
-    uint16_t conn_timeout; /*!< Connection timeout in units of seconds when
+    uint16_t conn_timeout;         /*!< Connection timeout in units of seconds when
                                                     netconn is in server (listen) mode.
                                                     Connection will be automatically closed if there is no
                                                     data exchange in time. Set to `0` when timeout feature is disabled. */
@@ -121,9 +121,9 @@ netconn_evt(lwgsm_evt_t* evt) {
             if (lwgsm_conn_is_client(conn)) {  /* Was connection started by us? */
                 nc = lwgsm_conn_get_arg(conn); /* Argument should be already set */
                 if (nc != NULL) {
-                    nc->conn = conn; /* Save actual connection */
+                    nc->conn = conn;           /* Save actual connection */
                 } else {
-                    close = 1; /* Close this connection, invalid netconn */
+                    close = 1;                 /* Close this connection, invalid netconn */
                 }
             } else {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING,
@@ -137,7 +137,7 @@ netconn_evt(lwgsm_evt_t* evt) {
                     lwgsm_conn_set_arg(conn, NULL); /* Reset argument */
                     lwgsm_netconn_delete(nc);       /* Free memory for API */
                 }
-                lwgsm_conn_close(conn, 0); /* Close the connection */
+                lwgsm_conn_close(conn, 0);          /* Close the connection */
                 close = 0;
             }
             break;
@@ -153,16 +153,16 @@ netconn_evt(lwgsm_evt_t* evt) {
             nc = lwgsm_conn_get_arg(conn);            /* Get API from connection */
             pbuf = lwgsm_evt_conn_recv_get_buff(evt); /* Get received buff */
 
-            lwgsm_conn_recved(conn, pbuf); /* Notify stack about received data */
+            lwgsm_conn_recved(conn, pbuf);            /* Notify stack about received data */
 
-            lwgsm_pbuf_ref(pbuf); /* Increase reference counter */
+            lwgsm_pbuf_ref(pbuf);                     /* Increase reference counter */
             if (nc == NULL || !lwgsm_sys_mbox_isvalid(&nc->mbox_receive)
                 || !lwgsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
                 LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN, "[LWGSM NETCONN] Ignoring more data for receive!\r\n");
                 lwgsm_pbuf_free_s(&pbuf); /* Free pbuf */
                 return lwgsmOKIGNOREMORE; /* Return OK to free the memory and ignore further data */
             }
-            ++nc->rcv_packets; /* Increase number of received packets */
+            ++nc->rcv_packets;            /* Increase number of received packets */
             LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE,
                          "[LWGSM NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
                          (int)lwgsm_pbuf_length(pbuf, 0));
@@ -220,8 +220,8 @@ lwgsm_netconn_new(lwgsm_netconn_type_t type) {
     lwgsm_core_unlock();
     a = lwgsm_mem_calloc(1, sizeof(*a)); /* Allocate memory for core object */
     if (a != NULL) {
-        a->type = type;      /* Save netconn type */
-        a->conn_timeout = 0; /* Default connection timeout */
+        a->type = type;                  /* Save netconn type */
+        a->conn_timeout = 0;             /* Default connection timeout */
         if (!lwgsm_sys_mbox_create(
                 &a->mbox_receive,
                 LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN)) { /* Allocate memory for receiving message box */
@@ -375,20 +375,44 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
     }
 
     /* Step 3 */
-    if (nc->buff.buff == NULL) { /* Check if we should allocate a new buffer */
+    if (nc->buff.buff == NULL) {                    /* Check if we should allocate a new buffer */
         nc->buff.buff = lwgsm_mem_malloc(sizeof(*nc->buff.buff) * LWGSM_CFG_CONN_MAX_DATA_LEN);
         nc->buff.len = LWGSM_CFG_CONN_MAX_DATA_LEN; /* Save buffer length */
         nc->buff.ptr = 0;                           /* Save buffer pointer */
     }
 
     /* Step 4 */
-    if (nc->buff.buff != NULL) {                            /* Memory available? */
-        LWGSM_MEMCPY(&nc->buff.buff[nc->buff.ptr], d, btw); /* Copy data to buffer */
+    if (nc->buff.buff != NULL) {                              /* Memory available? */
+        LWGSM_MEMCPY(&nc->buff.buff[nc->buff.ptr], d, btw);   /* Copy data to buffer */
         nc->buff.ptr += btw;
     } else {                                                  /* Still no memory available? */
         return lwgsm_conn_send(nc->conn, data, btw, NULL, 1); /* Simply send directly blocking */
     }
     return lwgsmOK;
+}
+
+/**
+ * \brief           Extended version of \ref lwgsm_netconn_write with additional
+ *                  option to set custom flags.
+ * 
+ * \note            It is recommended to use this for full features support 
+ * 
+ * \param[in]       nc: Netconn handle used to write data to
+ * \param[in]       data: Pointer to data to write
+ * \param[in]       btw: Number of bytes to write
+ * \param           flags: Bitwise-ORed set of flags for netconn.
+ *                      Flags start with \ref LWGSM_NETCONN_FLAG_xxx
+ * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ */
+lwgsmr_t
+lwgsm_netconn_write_ex(lwgsm_netconn_p nc, const void* data, size_t btw, uint16_t flags) {
+    lwgsmr_t res = lwgsm_netconn_write(nc, data, btw);
+    if (res == lwgsmOK) {
+        if (flags & LWGSM_NETCONN_FLAG_FLUSH) {
+            res = lwgsm_netconn_flush(nc);
+        }
+    }
+    return res;
 }
 
 /**
@@ -472,7 +496,11 @@ lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf) {
      * Wait for new received data for up to specific timeout
      * or throw error for timeout notification
      */
-    if (lwgsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == LWGSM_SYS_TIMEOUT) {
+    if (nc->rcv_timeout == LWGSM_NETCONN_RECEIVE_NO_WAIT) {
+        if (!lwgsm_sys_mbox_getnow(&nc->mbox_receive, (void**)pbuf)) {
+            return lwgsmTIMEOUT;
+        }
+    } else if (lwgsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == LWGSM_SYS_TIMEOUT) {
         return lwgsmTIMEOUT;
     }
 #else  /* LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT */
@@ -534,7 +562,9 @@ lwgsm_netconn_getconnnum(lwgsm_netconn_p nc) {
  *
  * \param[in]       nc: Netconn handle
  * \param[in]       timeout: Timeout in units of milliseconds.
- *                  Set to `0` to disable timeout for \ref lwgsm_netconn_receive function
+ *                      Set to `0` to disable timeout feature. Function blocks until data receive or connection closed
+ *                      Set to `> 0` to set maximum milliseconds to wait before timeout
+ *                      Set to \ref LWGSM_NETCONN_RECEIVE_NO_WAIT to enable non-blocking receive
  */
 void
 lwgsm_netconn_set_receive_timeout(lwgsm_netconn_p nc, uint32_t timeout) {

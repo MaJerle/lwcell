@@ -55,6 +55,15 @@ struct lwgsm_netconn;
 typedef struct lwgsm_netconn* lwgsm_netconn_p;
 
 /**
+ * \brief           Receive data with no timeout
+ * \note            Used with \ref lwgsm_netconn_set_receive_timeout function
+ */
+#define LWGSM_NETCONN_RECEIVE_NO_WAIT 0xFFFFFFFF
+
+/* Immediate flush for TCP write. Used with \ref lwgsm_netconn_write_ex*/
+#define LWGSM_NETCONN_FLAG_FLUSH      ((uint16_t)0x0001) /*!< Immediate flush after netconn write */
+
+/**
  * \brief           Netconn connection type
  */
 typedef enum {
