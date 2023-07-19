@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwCELL - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Before you start using WIN32 implementation with USB and VCP,
  * check lwcell_ll_win32.c implementation and choose your COM port!

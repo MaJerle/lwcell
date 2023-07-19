@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwCELL - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.0
