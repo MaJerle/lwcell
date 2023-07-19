@@ -1,6 +1,6 @@
-.. _api_lwgsm_network:
+.. _api_lwcell_network:
 
 Network
 =======
 
-.. doxygengroup:: LWGSM_NETWORK
+.. doxygengroup:: LWCELL_NETWORK

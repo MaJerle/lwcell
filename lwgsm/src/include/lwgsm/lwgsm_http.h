@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_http.h
+ * \file            lwcell_http.h
  * \brief           HTTP API
  */
 
@@ -26,23 +26,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HTTP_HDR_H
-#define LWGSM_HTTP_HDR_H
+#ifndef LWCELL_HTTP_HDR_H
+#define LWCELL_HTTP_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_HTTP Hyper Text Transfer Protocol
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_HTTP Hyper Text Transfer Protocol
  * \brief           Hyper Text Transfer Protocol (HTTP) manager
  * \{
  *
@@ -58,4 +58,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HTTP_HDR_H */
+#endif /* LWCELL_HTTP_HDR_H */

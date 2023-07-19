@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_mem_lwmem.c
+ * \file            lwcell_mem_lwmem.c
  * \brief           Dynamic memory manager implemented with LwMEM
  */
 
@@ -26,16 +26,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
-/* See lwgsm_mem.c file for function documentation on parameters and return values */
+/* See lwcell_mem.c file for function documentation on parameters and return values */
 
-#if LWGSM_CFG_MEM_CUSTOM && !__DOXYGEN__
+#if LWCELL_CFG_MEM_CUSTOM && !__DOXYGEN__
 
 /*
  * Before this driver can be used, user must:
@@ -47,23 +47,23 @@
 #include "lwmem/lwmem.h"
 
 void*
-lwgsm_mem_malloc(size_t size) {
+lwcell_mem_malloc(size_t size) {
     return lwmem_malloc(size);
 }
 
 void*
-lwgsm_mem_realloc(void* ptr, size_t size) {
+lwcell_mem_realloc(void* ptr, size_t size) {
     return lwmem_realloc(ptr, size);
 }
 
 void*
-lwgsm_mem_calloc(size_t num, size_t size) {
+lwcell_mem_calloc(size_t num, size_t size) {
     return lwmem_calloc(num, size);
 }
 
 void
-lwgsm_mem_free(void* ptr) {
+lwcell_mem_free(void* ptr) {
     lwmem_free(ptr);
 }
 
-#endif /* LWGSM_CFG_MEM_CUSTOM && !__DOXYGEN__ */
+#endif /* LWCELL_CFG_MEM_CUSTOM && !__DOXYGEN__ */

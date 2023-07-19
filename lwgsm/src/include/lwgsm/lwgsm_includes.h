@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_includes.h
+ * \file            lwcell_includes.h
  * \brief           All main includes
  */
 
@@ -26,47 +26,47 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_INCLUDES_HDR_H
-#define LWGSM_INCLUDES_HDR_H
+#ifndef LWCELL_INCLUDES_HDR_H
+#define LWCELL_INCLUDES_HDR_H
 
-#include "lwgsm/lwgsm_buff.h"
-#include "lwgsm/lwgsm_debug.h"
-#include "lwgsm/lwgsm_device_info.h"
-#include "lwgsm/lwgsm_evt.h"
-#include "lwgsm/lwgsm_input.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_network.h"
-#include "lwgsm/lwgsm_operator.h"
-#include "lwgsm/lwgsm_opt.h"
-#include "lwgsm/lwgsm_pbuf.h"
-#include "lwgsm/lwgsm_sim.h"
-#include "lwgsm/lwgsm_types.h"
-#include "lwgsm/lwgsm_utils.h"
-#include "system/lwgsm_sys.h"
+#include "lwcell/lwcell_buff.h"
+#include "lwcell/lwcell_debug.h"
+#include "lwcell/lwcell_device_info.h"
+#include "lwcell/lwcell_evt.h"
+#include "lwcell/lwcell_input.h"
+#include "lwcell/lwcell_mem.h"
+#include "lwcell/lwcell_network.h"
+#include "lwcell/lwcell_operator.h"
+#include "lwcell/lwcell_opt.h"
+#include "lwcell/lwcell_pbuf.h"
+#include "lwcell/lwcell_sim.h"
+#include "lwcell/lwcell_types.h"
+#include "lwcell/lwcell_utils.h"
+#include "system/lwcell_sys.h"
 
-#if LWGSM_CFG_SMS || __DOXYGEN__
-#include "lwgsm/lwgsm_sms.h"
-#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
-#if LWGSM_CFG_CALL || __DOXYGEN__
-#include "lwgsm/lwgsm_call.h"
-#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
-#if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
-#include "lwgsm/lwgsm_phonebook.h"
-#endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
-#if LWGSM_CFG_CONN || __DOXYGEN__
-#include "lwgsm/lwgsm_conn.h"
-#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
-#if LWGSM_CFG_NETCONN || __DOXYGEN__
-#include "lwgsm/lwgsm_netconn.h"
-#endif /* LWGSM_CFG_NETCONN || __DOXYGEN__ */
-#if LWGSM_CFG_USSD || __DOXYGEN__
-#include "lwgsm/lwgsm_ussd.h"
-#endif /* LWGSM_CFG_USSD || __DOXYGEN__ */
+#if LWCELL_CFG_SMS || __DOXYGEN__
+#include "lwcell/lwcell_sms.h"
+#endif /* LWCELL_CFG_SMS || __DOXYGEN__ */
+#if LWCELL_CFG_CALL || __DOXYGEN__
+#include "lwcell/lwcell_call.h"
+#endif /* LWCELL_CFG_CALL || __DOXYGEN__ */
+#if LWCELL_CFG_PHONEBOOK || __DOXYGEN__
+#include "lwcell/lwcell_phonebook.h"
+#endif /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
+#if LWCELL_CFG_CONN || __DOXYGEN__
+#include "lwcell/lwcell_conn.h"
+#endif /* LWCELL_CFG_CONN || __DOXYGEN__ */
+#if LWCELL_CFG_NETCONN || __DOXYGEN__
+#include "lwcell/lwcell_netconn.h"
+#endif /* LWCELL_CFG_NETCONN || __DOXYGEN__ */
+#if LWCELL_CFG_USSD || __DOXYGEN__
+#include "lwcell/lwcell_ussd.h"
+#endif /* LWCELL_CFG_USSD || __DOXYGEN__ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,4 +76,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_INCLUDES_HDR_H */
+#endif /* LWCELL_INCLUDES_HDR_H */

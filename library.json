@@ -1,11 +1,11 @@
 {
-	"name": "LwGSM",
+	"name": "LwCELL",
 	"version": "0.1.1",
 	"description": "Lightweight GSM AT commands parser for embedded systems and SimCOM modules",
-	"keywords": "lwgsm, simcom, quectel, lightweiight, AT, AT Commands",
+	"keywords": "lwcell, simcom, quectel, lightweiight, AT, AT Commands",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/MaJerle/lwgsm.git"
+		"url": "https://github.com/MaJerle/lwcell.git"
 	},
 	"authors": [
 		{
@@ -15,7 +15,7 @@
 		}
 	],
 	"license": "MIT",
-	"homepage": "https://github.com/MaJerle/lwgsm",
+	"homepage": "https://github.com/MaJerle/lwcell",
 	"dependencies": {
 
 	},

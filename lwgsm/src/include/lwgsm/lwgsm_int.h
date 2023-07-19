@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_int.h
+ * \file            lwcell_int.h
  * \brief           Internal functions
  */
 
@@ -26,13 +26,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_INT_HDR_H
-#define LWGSM_INT_HDR_H
+#ifndef LWCELL_INT_HDR_H
+#define LWCELL_INT_HDR_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,4 +42,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_INT_HDR_H */
+#endif /* LWCELL_INT_HDR_H */

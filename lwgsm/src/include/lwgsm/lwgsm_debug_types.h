@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_debug_types.h
+ * \file            lwcell_debug_types.h
  * \brief           Debugging types
  */
 
@@ -26,53 +26,53 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_DEBUG_TYPES_HDR_H
-#define LWGSM_DEBUG_TYPES_HDR_H
+#ifndef LWCELL_DEBUG_TYPES_HDR_H
+#define LWCELL_DEBUG_TYPES_HDR_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM_DEBUG
+ * \ingroup         LWCELL_DEBUG
  * \{
  */
 
-#define LWGSM_DBG_ON          0x80 /*!< Indicates debug is enabled */
-#define LWGSM_DBG_OFF         0    /*!< Indicates debug is disabled */
+#define LWCELL_DBG_ON          0x80 /*!< Indicates debug is enabled */
+#define LWCELL_DBG_OFF         0    /*!< Indicates debug is disabled */
 
 /**
- * \anchor          LWGSM_DBG_LVL
+ * \anchor          LWCELL_DBG_LVL
  * \name            Debug levels
  * \brief           List of debug levels
  * \{
  */
 
-#define LWGSM_DBG_LVL_ALL     0x00 /*!< Print all messages of all types */
-#define LWGSM_DBG_LVL_WARNING 0x01 /*!< Print warning and upper messages */
-#define LWGSM_DBG_LVL_DANGER  0x02 /*!< Print danger errors */
-#define LWGSM_DBG_LVL_SEVERE  0x03 /*!< Print severe problems affecting program flow */
-#define LWGSM_DBG_LVL_MASK    0x03 /*!< Mask for getting debug level */
+#define LWCELL_DBG_LVL_ALL     0x00 /*!< Print all messages of all types */
+#define LWCELL_DBG_LVL_WARNING 0x01 /*!< Print warning and upper messages */
+#define LWCELL_DBG_LVL_DANGER  0x02 /*!< Print danger errors */
+#define LWCELL_DBG_LVL_SEVERE  0x03 /*!< Print severe problems affecting program flow */
+#define LWCELL_DBG_LVL_MASK    0x03 /*!< Mask for getting debug level */
 
 /**
  * \}
  */
 
 /**
- * \anchor          LWGSM_DBG_TYPE
+ * \anchor          LWCELL_DBG_TYPE
  * \name            Debug types
  * \brief           List of possible debugging types
  * \{
  */
 
-#define LWGSM_DBG_TYPE_TRACE  0x40 /*!< Debug trace messages for program flow */
-#define LWGSM_DBG_TYPE_STATE  0x20 /*!< Debug state messages (such as state machines) */
-#define LWGSM_DBG_TYPE_ALL    (LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_TYPE_STATE) /*!< All debug types */
+#define LWCELL_DBG_TYPE_TRACE  0x40 /*!< Debug trace messages for program flow */
+#define LWCELL_DBG_TYPE_STATE  0x20 /*!< Debug state messages (such as state machines) */
+#define LWCELL_DBG_TYPE_ALL    (LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_TYPE_STATE) /*!< All debug types */
 
 /**
  * \}
@@ -86,4 +86,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_DEBUG_TYPES_HDR_H */
+#endif /* LWCELL_DEBUG_TYPES_HDR_H */

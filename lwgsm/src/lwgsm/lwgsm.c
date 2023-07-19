@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm.c
+ * \file            lwcell.c
  * \brief           Main GSM core file
  */
 
@@ -26,38 +26,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm.h"
-#include "lwgsm/lwgsm_private.h"
-#include "lwgsm/lwgsm_threads.h"
-#include "lwgsm/lwgsm_timeout.h"
-#include "system/lwgsm_ll.h"
+#include "lwcell/lwcell.h"
+#include "lwcell/lwcell_private.h"
+#include "lwcell/lwcell_threads.h"
+#include "lwcell/lwcell_timeout.h"
+#include "system/lwcell_ll.h"
 
-#if LWGSM_CFG_OS != 1
-#error LWGSM_CFG_OS must be set to 1!
+#if LWCELL_CFG_OS != 1
+#error LWCELL_CFG_OS must be set to 1!
 #endif
 
-static lwgsmr_t prv_def_callback(lwgsm_evt_t* cb);
-static lwgsm_evt_func_t def_evt_link;
+static lwcellr_t prv_def_callback(lwcell_evt_t* cb);
+static lwcell_evt_func_t def_evt_link;
 
-lwgsm_t lwgsm;
+lwcell_t lwcell;
 
 /**
  * \brief           Default callback function for events
  * \param[in]       evt: Pointer to callback data structure
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-static lwgsmr_t
-prv_def_callback(lwgsm_evt_t* evt) {
-    LWGSM_UNUSED(evt);
-    return lwgsmOK;
+static lwcellr_t
+prv_def_callback(lwcell_evt_t* evt) {
+    LWCELL_UNUSED(evt);
+    return lwcellOK;
 }
 
-#if LWGSM_CFG_KEEP_ALIVE
+#if LWCELL_CFG_KEEP_ALIVE
 
 /**
  * \brief           Keep-alive timeout callback function
@@ -66,128 +66,128 @@ prv_def_callback(lwgsm_evt_t* evt) {
 static void
 prv_keep_alive_timeout_fn(void* arg) {
     /* Dispatch keep-alive events */
-    lwgsmi_send_cb(LWGSM_EVT_KEEP_ALIVE);
+    lwcelli_send_cb(LWCELL_EVT_KEEP_ALIVE);
 
     /* Start new timeout */
-    lwgsm_timeout_add(LWGSM_CFG_KEEP_ALIVE_TIMEOUT, prv_keep_alive_timeout_fn, arg);
+    lwcell_timeout_add(LWCELL_CFG_KEEP_ALIVE_TIMEOUT, prv_keep_alive_timeout_fn, arg);
 }
 
-#endif /* LWGSM_CFG_KEEP_ALIVE */
+#endif /* LWCELL_CFG_KEEP_ALIVE */
 
 /**
  * \brief           Init and prepare GSM stack for device operation
  * \note            Function must be called from operating system thread context.
  *                  It creates necessary threads and waits them to start, thus running operating system is important.
- *                  - When \ref LWGSM_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device
- *                      otherwise manual call to \ref lwgsm_reset is required to setup device
+ *                  - When \ref LWCELL_CFG_RESET_ON_INIT is enabled, reset sequence will be sent to device
+ *                      otherwise manual call to \ref lwcell_reset is required to setup device
  *
  * \param[in]       evt_func: Global event callback function for all major events
  * \param[in]       blocking: Status whether command should be blocking or not.
- *                      Used when \ref LWGSM_CFG_RESET_ON_INIT is enabled.
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ *                      Used when \ref LWCELL_CFG_RESET_ON_INIT is enabled.
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking) {
-    lwgsmr_t res = lwgsmOK;
+lwcellr_t
+lwcell_init(lwcell_evt_fn evt_func, const uint32_t blocking) {
+    lwcellr_t res = lwcellOK;
 
-    lwgsm.status.f.initialized = 0; /* Clear possible init flag */
+    lwcell.status.f.initialized = 0; /* Clear possible init flag */
 
     def_evt_link.fn = evt_func != NULL ? evt_func : prv_def_callback;
-    lwgsm.evt_func = &def_evt_link; /* Set callback function */
+    lwcell.evt_func = &def_evt_link; /* Set callback function */
 
-    if (!lwgsm_sys_init()) { /* Init low-level system */
+    if (!lwcell_sys_init()) { /* Init low-level system */
         goto cleanup;
     }
 
-    if (!lwgsm_sys_sem_create(&lwgsm.sem_sync, 1)) { /* Create sync semaphore between threads */
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM CORE] Cannot allocate sync semaphore!\r\n");
+    if (!lwcell_sys_sem_create(&lwcell.sem_sync, 1)) { /* Create sync semaphore between threads */
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
+                     "[LWCELL CORE] Cannot allocate sync semaphore!\r\n");
         goto cleanup;
     }
 
     /* Create message queues */
-    if (!lwgsm_sys_mbox_create(&lwgsm.mbox_producer, LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE)) {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM CORE] Cannot allocate producer mbox queue!\r\n");
+    if (!lwcell_sys_mbox_create(&lwcell.mbox_producer, LWCELL_CFG_THREAD_PRODUCER_MBOX_SIZE)) {
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
+                     "[LWCELL CORE] Cannot allocate producer mbox queue!\r\n");
         goto cleanup;
     }
-    if (!lwgsm_sys_mbox_create(&lwgsm.mbox_process, LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE)) {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM CORE] Cannot allocate process mbox queue!\r\n");
+    if (!lwcell_sys_mbox_create(&lwcell.mbox_process, LWCELL_CFG_THREAD_PROCESS_MBOX_SIZE)) {
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
+                     "[LWCELL CORE] Cannot allocate process mbox queue!\r\n");
         goto cleanup;
     }
 
     /* Create threads */
-    lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0);
-    if (!lwgsm_sys_thread_create(&lwgsm.thread_produce, "lwgsm_produce", lwgsm_thread_produce, &lwgsm.sem_sync,
-                                 LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM CORE] Cannot create producing thread!\r\n");
-        lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore and return */
+    lwcell_sys_sem_wait(&lwcell.sem_sync, 0);
+    if (!lwcell_sys_thread_create(&lwcell.thread_produce, "lwcell_produce", lwcell_thread_produce, &lwcell.sem_sync,
+                                 LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO)) {
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
+                     "[LWCELL CORE] Cannot create producing thread!\r\n");
+        lwcell_sys_sem_release(&lwcell.sem_sync); /* Release semaphore and return */
         goto cleanup;
     }
-    lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0); /* Wait semaphore, should be unlocked in produce thread */
-    if (!lwgsm_sys_thread_create(&lwgsm.thread_process, "lwgsm_process", lwgsm_thread_process, &lwgsm.sem_sync,
-                                 LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO)) {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_INIT | LWGSM_DBG_LVL_SEVERE | LWGSM_DBG_TYPE_TRACE,
-                     "[LWGSM CORE] Cannot create processing thread!\r\n");
-        lwgsm_sys_thread_terminate(&lwgsm.thread_produce); /* Delete produce thread */
-        lwgsm_sys_sem_release(&lwgsm.sem_sync);            /* Release semaphore and return */
+    lwcell_sys_sem_wait(&lwcell.sem_sync, 0); /* Wait semaphore, should be unlocked in produce thread */
+    if (!lwcell_sys_thread_create(&lwcell.thread_process, "lwcell_process", lwcell_thread_process, &lwcell.sem_sync,
+                                 LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO)) {
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
+                     "[LWCELL CORE] Cannot create processing thread!\r\n");
+        lwcell_sys_thread_terminate(&lwcell.thread_produce); /* Delete produce thread */
+        lwcell_sys_sem_release(&lwcell.sem_sync);            /* Release semaphore and return */
         goto cleanup;
     }
-    lwgsm_sys_sem_wait(&lwgsm.sem_sync, 0); /* Wait semaphore, should be unlocked in produce thread */
-    lwgsm_sys_sem_release(&lwgsm.sem_sync); /* Release semaphore manually */
+    lwcell_sys_sem_wait(&lwcell.sem_sync, 0); /* Wait semaphore, should be unlocked in produce thread */
+    lwcell_sys_sem_release(&lwcell.sem_sync); /* Release semaphore manually */
 
-    lwgsm_core_lock();
-    lwgsm.ll.uart.baudrate = LWGSM_CFG_AT_PORT_BAUDRATE;
-    lwgsm_ll_init(&lwgsm.ll); /* Init low-level communication */
+    lwcell_core_lock();
+    lwcell.ll.uart.baudrate = LWCELL_CFG_AT_PORT_BAUDRATE;
+    lwcell_ll_init(&lwcell.ll); /* Init low-level communication */
 
-#if !LWGSM_CFG_INPUT_USE_PROCESS
-    lwgsm_buff_init(&lwgsm.buff, LWGSM_CFG_RCV_BUFF_SIZE); /* Init buffer for input data */
-#endif                                                     /* !LWGSM_CFG_INPUT_USE_PROCESS */
+#if !LWCELL_CFG_INPUT_USE_PROCESS
+    lwcell_buff_init(&lwcell.buff, LWCELL_CFG_RCV_BUFF_SIZE); /* Init buffer for input data */
+#endif                                                     /* !LWCELL_CFG_INPUT_USE_PROCESS */
 
-    lwgsm.status.f.initialized = 1; /* We are initialized now */
-    lwgsm.status.f.dev_present = 1; /* We assume device is present at this point */
+    lwcell.status.f.initialized = 1; /* We are initialized now */
+    lwcell.status.f.dev_present = 1; /* We assume device is present at this point */
 
-    lwgsmi_send_cb(LWGSM_EVT_INIT_FINISH); /* Call user callback function */
+    lwcelli_send_cb(LWCELL_EVT_INIT_FINISH); /* Call user callback function */
 
-#if LWGSM_CFG_KEEP_ALIVE
+#if LWCELL_CFG_KEEP_ALIVE
     /* Register keep-alive events */
-    lwgsm_timeout_add(LWGSM_CFG_KEEP_ALIVE_TIMEOUT, prv_keep_alive_timeout_fn, NULL);
-#endif /* LWGSM_CFG_KEEP_ALIVE */
+    lwcell_timeout_add(LWCELL_CFG_KEEP_ALIVE_TIMEOUT, prv_keep_alive_timeout_fn, NULL);
+#endif /* LWCELL_CFG_KEEP_ALIVE */
 
     /*
      * Call reset command and call default
      * AT commands to prepare basic setup for device
      */
-#if LWGSM_CFG_RESET_ON_INIT
-    if (lwgsm.status.f.dev_present) {
-        lwgsm_core_unlock();
-        res = lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, NULL, NULL,
+#if LWCELL_CFG_RESET_ON_INIT
+    if (lwcell.status.f.dev_present) {
+        lwcell_core_unlock();
+        res = lwcell_reset_with_delay(LWCELL_CFG_RESET_DELAY_DEFAULT, NULL, NULL,
                                      blocking); /* Send reset sequence with delay */
-        lwgsm_core_lock();
+        lwcell_core_lock();
     }
-#else  /* LWGSM_CFG_RESET_ON_INIT */
-    LWGSM_UNUSED(blocking);
-#endif /* !LWGSM_CFG_RESET_ON_INIT */
-    lwgsm_core_unlock();
+#else  /* LWCELL_CFG_RESET_ON_INIT */
+    LWCELL_UNUSED(blocking);
+#endif /* !LWCELL_CFG_RESET_ON_INIT */
+    lwcell_core_unlock();
 
     return res;
 
 cleanup:
-    if (lwgsm_sys_mbox_isvalid(&lwgsm.mbox_producer)) {
-        lwgsm_sys_mbox_delete(&lwgsm.mbox_producer);
-        lwgsm_sys_mbox_invalid(&lwgsm.mbox_producer);
+    if (lwcell_sys_mbox_isvalid(&lwcell.mbox_producer)) {
+        lwcell_sys_mbox_delete(&lwcell.mbox_producer);
+        lwcell_sys_mbox_invalid(&lwcell.mbox_producer);
     }
-    if (lwgsm_sys_mbox_isvalid(&lwgsm.mbox_process)) {
-        lwgsm_sys_mbox_delete(&lwgsm.mbox_process);
-        lwgsm_sys_mbox_invalid(&lwgsm.mbox_process);
+    if (lwcell_sys_mbox_isvalid(&lwcell.mbox_process)) {
+        lwcell_sys_mbox_delete(&lwcell.mbox_process);
+        lwcell_sys_mbox_invalid(&lwcell.mbox_process);
     }
-    if (lwgsm_sys_sem_isvalid(&lwgsm.sem_sync)) {
-        lwgsm_sys_sem_delete(&lwgsm.sem_sync);
-        lwgsm_sys_sem_invalid(&lwgsm.sem_sync);
+    if (lwcell_sys_sem_isvalid(&lwcell.sem_sync)) {
+        lwcell_sys_sem_delete(&lwcell.sem_sync);
+        lwcell_sys_sem_invalid(&lwcell.sem_sync);
     }
-    return lwgsmERRMEM;
+    return lwcellERRMEM;
 }
 
 /**
@@ -195,11 +195,11 @@ cleanup:
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_reset(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    return lwgsm_reset_with_delay(0, evt_fn, evt_arg, blocking);
+lwcellr_t
+lwcell_reset(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    return lwcell_reset_with_delay(0, evt_fn, evt_arg, blocking);
 }
 
 /**
@@ -208,19 +208,19 @@ lwgsm_reset(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_reset_with_delay(uint32_t delay, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_reset_with_delay(uint32_t delay, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                        const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_RESET;
-    LWGSM_MSG_VAR_REF(msg).msg.reset.delay = delay;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_RESET;
+    LWCELL_MSG_VAR_REF(msg).msg.reset.delay = delay;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 60000);
 }
 
 /**
@@ -229,32 +229,32 @@ lwgsm_reset_with_delay(uint32_t delay, const lwgsm_api_cmd_evt_fn evt_fn, void* 
  * If lock was `0` prior function call, lock is enabled and increased
  *
  * \note            Function may be called multiple times to increase locks.
- *                  Application must take care to call \ref lwgsm_core_unlock
+ *                  Application must take care to call \ref lwcell_core_unlock
  *                  the same amount of time to make sure lock gets back to `0`
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_core_lock(void) {
-    lwgsm_sys_protect();
-    ++lwgsm.locked_cnt;
-    return lwgsmOK;
+lwcellr_t
+lwcell_core_lock(void) {
+    lwcell_sys_protect();
+    ++lwcell.locked_cnt;
+    return lwcellOK;
 }
 
 /**
  * \brief           Unlock stack for multi-thread access
  *
- * Used in conjunction with \ref lwgsm_core_lock function
+ * Used in conjunction with \ref lwcell_core_lock function
  *
  * If lock was non-zero before function call, lock is decreased.
  * When `lock == 0`, protection is disabled and other threads may access to core
  *
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_core_unlock(void) {
-    --lwgsm.locked_cnt;
-    lwgsm_sys_unprotect();
-    return lwgsmOK;
+lwcellr_t
+lwcell_core_unlock(void) {
+    --lwcell.locked_cnt;
+    lwcell_sys_unprotect();
+    return lwcellOK;
 }
 
 /**
@@ -268,15 +268,15 @@ lwgsm_core_unlock(void) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_delay(uint32_t ms) {
-    lwgsm_sys_sem_t sem;
+lwcell_delay(uint32_t ms) {
+    lwcell_sys_sem_t sem;
     if (ms == 0) {
         return 1;
     }
-    if (lwgsm_sys_sem_create(&sem, 0)) {
-        lwgsm_sys_sem_wait(&sem, ms);
-        lwgsm_sys_sem_release(&sem);
-        lwgsm_sys_sem_delete(&sem);
+    if (lwcell_sys_sem_create(&sem, 0)) {
+        lwcell_sys_sem_wait(&sem, ms);
+        lwcell_sys_sem_release(&sem);
+        lwcell_sys_sem_delete(&sem);
         return 1;
     }
     return 0;
@@ -289,18 +289,18 @@ lwgsm_delay(uint32_t ms) {
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_set_func_mode(uint8_t mode, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_set_func_mode(uint8_t mode, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CFUN_SET;
-    LWGSM_MSG_VAR_REF(msg).msg.cfun.mode = mode;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CFUN_SET;
+    LWCELL_MSG_VAR_REF(msg).msg.cfun.mode = mode;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 60000);
 }
 
 /**
@@ -313,35 +313,35 @@ lwgsm_set_func_mode(uint8_t mode, const lwgsm_api_cmd_evt_fn evt_fn, void* const
  * \param[in]       evt_fn: Callback function called when command is finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_device_set_present(uint8_t present, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_device_set_present(uint8_t present, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                          const uint32_t blocking) {
-    lwgsmr_t res = lwgsmOK;
-    lwgsm_core_lock();
+    lwcellr_t res = lwcellOK;
+    lwcell_core_lock();
     present = present ? 1 : 0;
-    if (present != lwgsm.status.f.dev_present) {
-        lwgsm.status.f.dev_present = present;
+    if (present != lwcell.status.f.dev_present) {
+        lwcell.status.f.dev_present = present;
 
-        if (!lwgsm.status.f.dev_present) {
+        if (!lwcell.status.f.dev_present) {
             /* Manually reset stack to default device state */
-            lwgsmi_reset_everything(1);
+            lwcelli_reset_everything(1);
         } else {
-#if LWGSM_CFG_RESET_ON_DEVICE_PRESENT
-            lwgsm_core_unlock();
+#if LWCELL_CFG_RESET_ON_DEVICE_PRESENT
+            lwcell_core_unlock();
             res =
-                lwgsm_reset_with_delay(LWGSM_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
-            lwgsm_core_lock();
-#endif /* LWGSM_CFG_RESET_ON_DEVICE_PRESENT */
+                lwcell_reset_with_delay(LWCELL_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
+            lwcell_core_lock();
+#endif /* LWCELL_CFG_RESET_ON_DEVICE_PRESENT */
         }
-        lwgsmi_send_cb(LWGSM_EVT_DEVICE_PRESENT); /* Send present event */
+        lwcelli_send_cb(LWCELL_EVT_DEVICE_PRESENT); /* Send present event */
     }
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
 
-    LWGSM_UNUSED(evt_fn);
-    LWGSM_UNUSED(evt_arg);
-    LWGSM_UNUSED(blocking);
+    LWCELL_UNUSED(evt_fn);
+    LWCELL_UNUSED(evt_arg);
+    LWCELL_UNUSED(blocking);
 
     return res;
 }
@@ -351,10 +351,10 @@ lwgsm_device_set_present(uint8_t present, const lwgsm_api_cmd_evt_fn evt_fn, voi
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_device_is_present(void) {
+lwcell_device_is_present(void) {
     uint8_t res;
-    lwgsm_core_lock();
-    res = lwgsm.status.f.dev_present;
-    lwgsm_core_unlock();
+    lwcell_core_lock();
+    res = lwcell.status.f.dev_present;
+    lwcell_core_unlock();
     return res;
 }

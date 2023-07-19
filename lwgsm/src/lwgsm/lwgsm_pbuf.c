@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_pbuf.c
+ * \file            lwcell_pbuf.c
  * \brief           Packet buffer manager
  */
 
@@ -26,16 +26,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_pbuf.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_pbuf.h"
+#include "lwcell/lwcell_private.h"
 
 /* Set size of pbuf structure */
-#define SIZEOF_PBUF_STRUCT LWGSM_MEM_ALIGN(sizeof(lwgsm_pbuf_t))
+#define SIZEOF_PBUF_STRUCT LWCELL_MEM_ALIGN(sizeof(lwcell_pbuf_t))
 #define SET_NEW_LEN(v, len)                                                                                            \
     do {                                                                                                               \
         if ((v) != NULL) {                                                                                             \
@@ -50,8 +50,8 @@
  * \param[out]      new_off: New offset on new returned pbuf
  * \return          New pbuf where offset was found, `NULL` if offset too big for pbuf chain
  */
-static lwgsm_pbuf_p
-pbuf_skip(lwgsm_pbuf_p p, size_t off, size_t* new_off) {
+static lwcell_pbuf_p
+pbuf_skip(lwcell_pbuf_p p, size_t off, size_t* new_off) {
     if (p == NULL || p->tot_len < off) { /* Check valid parameters */
         SET_NEW_LEN(new_off, 0);         /* Set output value */
         return NULL;
@@ -71,14 +71,14 @@ pbuf_skip(lwgsm_pbuf_p p, size_t off, size_t* new_off) {
  * \param[in]       len: Length of payload memory to allocate
  * \return          Pointer to allocated memory, `NULL` otherwise
  */
-lwgsm_pbuf_p
-lwgsm_pbuf_new(size_t len) {
-    lwgsm_pbuf_p p;
+lwcell_pbuf_p
+lwcell_pbuf_new(size_t len) {
+    lwcell_pbuf_p p;
 
-    p = lwgsm_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p == NULL, "[LWGSM PBUF] Failed to allocate %u bytes\r\n",
+    p = lwcell_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, p == NULL, "[LWCELL PBUF] Failed to allocate %u bytes\r\n",
                  (unsigned)len);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, p != NULL, "[LWGSM PBUF] Allocated %u bytes on %p\r\n",
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, p != NULL, "[LWCELL PBUF] Allocated %u bytes on %p\r\n",
                  (unsigned)len, (void*)p);
     if (p != NULL) {
         p->next = NULL;                                        /* No next element in chain */
@@ -94,19 +94,19 @@ lwgsm_pbuf_new(size_t len) {
  * \brief           Free previously allocated packet buffer
  * \note            Application must not use reference to pbuf after the call to this function.
  *                  It is advised to immediately set pointer to `NULL` or to call.
- *                  Alternatively, call \ref lwgsm_pbuf_free_s, which will reset the pointer
+ *                  Alternatively, call \ref lwcell_pbuf_free_s, which will reset the pointer
  *                  after free operation has been completed
  *                  
  * \param[in]       pbuf: Packet buffer to free
  * \return          Number of freed pbufs from head
- * \sa              lwgsm_pbuf_free_s
+ * \sa              lwcell_pbuf_free_s
  */
 size_t
-lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
-    lwgsm_pbuf_p p, pn;
+lwcell_pbuf_free(lwcell_pbuf_p pbuf) {
+    lwcell_pbuf_p p, pn;
     size_t ref, cnt;
 
-    LWGSM_ASSERT(pbuf != NULL);
+    LWCELL_ASSERT(pbuf != NULL);
 
     /*
      * Free all pbufs until first ->ref > 1 is reached
@@ -114,15 +114,15 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
      */
     cnt = 0;
     for (p = pbuf; p != NULL;) {
-        lwgsm_core_lock();
+        lwcell_core_lock();
         ref = --p->ref; /* Decrease current value and save it */
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
         if (ref == 0) { /* Did we reach 0 and are ready to free it? */
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM PBUF] Deallocating %p with len/tot_len: %u/%u\r\n", (void*)p, (unsigned)p->len,
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE,
+                         "[LWCELL PBUF] Deallocating %p with len/tot_len: %u/%u\r\n", (void*)p, (unsigned)p->len,
                          (unsigned)p->tot_len);
             pn = p->next;                 /* Save next entry */
-            lwgsm_mem_free_s((void**)&p); /* Free memory for pbuf */
+            lwcell_mem_free_s((void**)&p); /* Free memory for pbuf */
             p = pn;                       /* Restore with next entry */
             ++cnt;                        /* Increase number of freed pbufs */
         } else {
@@ -141,13 +141,13 @@ lwgsm_pbuf_free(lwgsm_pbuf_p pbuf) {
  * \return          Number of packet buffers freed in the chain
  */
 size_t
-lwgsm_pbuf_free_s(lwgsm_pbuf_p* pbuf_ptr) {
+lwcell_pbuf_free_s(lwcell_pbuf_p* pbuf_ptr) {
     size_t cnt = 0;
 
-    LWGSM_ASSERT0(pbuf_ptr != NULL);
+    LWCELL_ASSERT0(pbuf_ptr != NULL);
 
     if (*pbuf_ptr != NULL) {
-        cnt = lwgsm_pbuf_free(*pbuf_ptr);
+        cnt = lwcell_pbuf_free(*pbuf_ptr);
         *pbuf_ptr = NULL;
     }
     return cnt;
@@ -157,18 +157,18 @@ lwgsm_pbuf_free_s(lwgsm_pbuf_p* pbuf_ptr) {
  * \brief           Concatenate `2` packet buffers together to one big packet
  * \note            After `tail` pbuf has been added to `head` pbuf chain,
  *                  it must not be referenced by user anymore as it is now completely controlled by `head` pbuf.
- *                  In simple words, when user calls this function, it should not call \ref lwgsm_pbuf_free function anymore,
+ *                  In simple words, when user calls this function, it should not call \ref lwcell_pbuf_free function anymore,
  *                  as it might make memory undefined for `head` pbuf.
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
- * \sa              lwgsm_pbuf_cat_s
- * \sa              lwgsm_pbuf_chain
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
+ * \sa              lwcell_pbuf_cat_s
+ * \sa              lwcell_pbuf_chain
  */
-lwgsmr_t
-lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
-    LWGSM_ASSERT(head != NULL);
-    LWGSM_ASSERT(tail != NULL);
+lwcellr_t
+lwcell_pbuf_cat(lwcell_pbuf_p head, const lwcell_pbuf_p tail) {
+    LWCELL_ASSERT(head != NULL);
+    LWCELL_ASSERT(tail != NULL);
 
     /*
      * For all pbuf packets in head,
@@ -180,7 +180,7 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
     head->tot_len += tail->tot_len; /* Increase total length of last packet in chain */
     head->next = tail;              /* Set next packet buffer as next one */
 
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
@@ -190,49 +190,49 @@ lwgsm_pbuf_cat(lwgsm_pbuf_p head, const lwgsm_pbuf_p tail) {
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Pointer to pointer to tail packet buffer to append to head pbuf.
  *                      Pointed memory will be set to `NULL` after successful concatenation
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
- * \sa              lwgsm_pbuf_cat
- * \sa              lwgsm_pbuf_chain
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
+ * \sa              lwcell_pbuf_cat
+ * \sa              lwcell_pbuf_chain
  */
-lwgsmr_t
-lwgsm_pbuf_cat_s(lwgsm_pbuf_p head, lwgsm_pbuf_p* tail) {
-    lwgsmr_t res;
+lwcellr_t
+lwcell_pbuf_cat_s(lwcell_pbuf_p head, lwcell_pbuf_p* tail) {
+    lwcellr_t res;
 
-    LWGSM_ASSERT(head != NULL);
-    LWGSM_ASSERT(tail != NULL);
+    LWCELL_ASSERT(head != NULL);
+    LWCELL_ASSERT(tail != NULL);
 
-    if (*tail != NULL && (res = lwgsm_pbuf_cat(head, *tail)) == lwgsmOK) {
+    if (*tail != NULL && (res = lwcell_pbuf_cat(head, *tail)) == lwcellOK) {
         *tail = NULL;
     }
     return res;
 }
 
 /**
- * \brief           Chain 2 pbufs together. Similar to \ref lwgsm_pbuf_cat
+ * \brief           Chain 2 pbufs together. Similar to \ref lwcell_pbuf_cat
  *                  but now new reference is done from head pbuf to tail pbuf.
- * \note            After this function call, user must call \ref lwgsm_pbuf_free to remove
- *                  its reference to tail pbuf and allow control to head pbuf: `lwgsm_pbuf_free(tail)`
+ * \note            After this function call, user must call \ref lwcell_pbuf_free to remove
+ *                  its reference to tail pbuf and allow control to head pbuf: `lwcell_pbuf_free(tail)`
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
- * \sa              lwgsm_pbuf_cat
- * \sa              lwgsm_pbuf_cat_s
- * \sa              lwgsm_pbuf_chain_s
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
+ * \sa              lwcell_pbuf_cat
+ * \sa              lwcell_pbuf_cat_s
+ * \sa              lwcell_pbuf_chain_s
  */
-lwgsmr_t
-lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
-    lwgsmr_t res;
+lwcellr_t
+lwcell_pbuf_chain(lwcell_pbuf_p head, lwcell_pbuf_p tail) {
+    lwcellr_t res;
 
-    LWGSM_ASSERT(head != NULL);
-    LWGSM_ASSERT(tail != NULL);
+    LWCELL_ASSERT(head != NULL);
+    LWCELL_ASSERT(tail != NULL);
 
     /*
      * To prevent issues with multi-thread access,
      * first reference pbuf and increase counter
      */
-    lwgsm_pbuf_ref(tail);                                /* Reference tail pbuf by head pbuf now */
-    if ((res = lwgsm_pbuf_cat(head, tail)) != lwgsmOK) { /* Did we concatenate them together successfully? */
-        lwgsm_pbuf_free(tail);                           /* Call free to decrease reference counter */
+    lwcell_pbuf_ref(tail);                                /* Reference tail pbuf by head pbuf now */
+    if ((res = lwcell_pbuf_cat(head, tail)) != lwcellOK) { /* Did we concatenate them together successfully? */
+        lwcell_pbuf_free(tail);                           /* Call free to decrease reference counter */
     }
     return res;
 }
@@ -246,9 +246,9 @@ lwgsm_pbuf_chain(lwgsm_pbuf_p head, lwgsm_pbuf_p tail) {
  * \param[in]       head: First pbuf in chain to remove from chain
  * \return          Next pbuf after `head`
  */
-lwgsm_pbuf_p
-lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
-    lwgsm_pbuf_p r = NULL;
+lwcell_pbuf_p
+lwcell_pbuf_unchain(lwcell_pbuf_p head) {
+    lwcell_pbuf_p r = NULL;
     if (head != NULL && head->next != NULL) { /* Check for valid pbuf */
         r = head->next;                       /* Set return value as next pbuf */
 
@@ -261,14 +261,14 @@ lwgsm_pbuf_unchain(lwgsm_pbuf_p head) {
 /**
  * \brief           Increment reference count on pbuf
  * \param[in]       pbuf: pbuf to increase reference
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
-    LWGSM_ASSERT(pbuf != NULL);
+lwcellr_t
+lwcell_pbuf_ref(lwcell_pbuf_p pbuf) {
+    LWCELL_ASSERT(pbuf != NULL);
 
     ++pbuf->ref; /* Increase reference count for pbuf */
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
@@ -277,34 +277,34 @@ lwgsm_pbuf_ref(lwgsm_pbuf_p pbuf) {
  * \param[in]       data: Input data to copy to pbuf memory
  * \param[in]       len: Length of input data to copy
  * \param[in]       offset: Start offset in pbuf where to start copying
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
+lwcellr_t
+lwcell_pbuf_take(lwcell_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
     const uint8_t* d = data;
     size_t copy_len;
 
-    LWGSM_ASSERT(pbuf != NULL);
-    LWGSM_ASSERT(data != NULL);
-    LWGSM_ASSERT(len > 0);
-    LWGSM_ASSERT(pbuf->tot_len >= len);
+    LWCELL_ASSERT(pbuf != NULL);
+    LWCELL_ASSERT(data != NULL);
+    LWCELL_ASSERT(len > 0);
+    LWCELL_ASSERT(pbuf->tot_len >= len);
 
     /* Skip if necessary and check if we are in valid range */
     if (offset > 0) {
         pbuf = pbuf_skip(pbuf, offset, &offset); /* Offset and check for new length */
         if (pbuf == NULL) {
-            return lwgsmERR;
+            return lwcellERR;
         }
     }
 
     if (pbuf->tot_len < (len + offset)) {
-        return lwgsmERRPAR;
+        return lwcellERRPAR;
     }
 
     /* First only copy in case we have some offset from first pbuf */
     if (offset > 0) {
-        copy_len = LWGSM_MIN(pbuf->len - offset, len);     /* Get length to copy to current pbuf */
-        LWGSM_MEMCPY(pbuf->payload + offset, d, copy_len); /* Copy to memory with offset */
+        copy_len = LWCELL_MIN(pbuf->len - offset, len);     /* Get length to copy to current pbuf */
+        LWCELL_MEMCPY(pbuf->payload + offset, d, copy_len); /* Copy to memory with offset */
         len -= copy_len;                                   /* Decrease remaining bytes to copy */
         d += copy_len;                                     /* Increase data pointer */
         pbuf = pbuf->next;                                 /* Go to next pbuf */
@@ -312,12 +312,12 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
 
     /* Copy user memory to sequence of pbufs */
     for (; len; pbuf = pbuf->next) {
-        copy_len = LWGSM_MIN(len, pbuf->len);     /* Get copy length */
-        LWGSM_MEMCPY(pbuf->payload, d, copy_len); /* Copy memory to pbuf payload */
+        copy_len = LWCELL_MIN(len, pbuf->len);     /* Get copy length */
+        LWCELL_MEMCPY(pbuf->payload, d, copy_len); /* Copy memory to pbuf payload */
         len -= copy_len;                          /* Decrease number of remaining bytes to send */
         d += copy_len;                            /* Increase data pointer */
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
@@ -329,7 +329,7 @@ lwgsm_pbuf_take(lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) 
  * \return          Number of bytes copied
  */
 size_t
-lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
+lwcell_pbuf_copy(lwcell_pbuf_p pbuf, void* data, size_t len, size_t offset) {
     size_t tot, tc;
     uint8_t* d = data;
 
@@ -354,8 +354,8 @@ lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
      */
     tot = 0;
     for (; pbuf != NULL && len; pbuf = pbuf->next) {
-        tc = LWGSM_MIN(pbuf->len - offset, len);     /* Get length of data to copy */
-        LWGSM_MEMCPY(d, pbuf->payload + offset, tc); /* Copy data from pbuf */
+        tc = LWCELL_MIN(pbuf->len - offset, len);     /* Get length of data to copy */
+        LWCELL_MEMCPY(d, pbuf->payload + offset, tc); /* Copy data from pbuf */
         d += tc;
         len -= tc;
         tot += tc;
@@ -372,8 +372,8 @@ lwgsm_pbuf_copy(lwgsm_pbuf_p pbuf, void* data, size_t len, size_t offset) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
-    lwgsm_pbuf_p p;
+lwcell_pbuf_get_at(const lwcell_pbuf_p pbuf, size_t pos, uint8_t* el) {
+    lwcell_pbuf_p p;
 
     if (pbuf != NULL) {
         p = pbuf_skip(pbuf, pos, &pos); /* Skip pbufs to desired position and get new offset from new pbuf */
@@ -391,23 +391,23 @@ lwgsm_pbuf_get_at(const lwgsm_pbuf_p pbuf, size_t pos, uint8_t* el) {
  * \param[in]       needle: Data memory used as needle
  * \param[in]       len: Length of needle memory
  * \param[in]       off: Starting offset in pbuf memory
- * \return          `LWGSM_SIZET_MAX` if no match or position where in pbuf we have a match
- * \sa              lwgsm_pbuf_strfind
+ * \return          `LWCELL_SIZET_MAX` if no match or position where in pbuf we have a match
+ * \sa              lwcell_pbuf_strfind
  */
 size_t
-lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* needle, size_t len, size_t off) {
+lwcell_pbuf_memfind(const lwcell_pbuf_p pbuf, const void* needle, size_t len, size_t off) {
     if (pbuf != NULL && needle != NULL && pbuf->tot_len >= (len + off)) { /* Check if valid entries */
         /*
          * Try entire buffer element by element
          * and in case we have a match, report it
          */
         for (size_t i = off; i <= pbuf->tot_len - len; ++i) {
-            if (!lwgsm_pbuf_memcmp(pbuf, needle, len, i)) { /* Check if identical */
+            if (!lwcell_pbuf_memcmp(pbuf, needle, len, i)) { /* Check if identical */
                 return i;                                   /* We have a match! */
             }
         }
     }
-    return LWGSM_SIZET_MAX; /* Return maximal value of size_t variable to indicate error */
+    return LWCELL_SIZET_MAX; /* Return maximal value of size_t variable to indicate error */
 }
 
 /**
@@ -415,12 +415,12 @@ lwgsm_pbuf_memfind(const lwgsm_pbuf_p pbuf, const void* needle, size_t len, size
  * \param[in]       pbuf: Pbuf used as haystack
  * \param[in]       str: String to search for in pbuf
  * \param[in]       off: Starting offset in pbuf memory
- * \return          `LWGSM_SIZET_MAX` if no match or position where in pbuf we have a match
- * \sa              lwgsm_pbuf_memfind
+ * \return          `LWCELL_SIZET_MAX` if no match or position where in pbuf we have a match
+ * \sa              lwcell_pbuf_memfind
  */
 size_t
-lwgsm_pbuf_strfind(const lwgsm_pbuf_p pbuf, const char* str, size_t off) {
-    return lwgsm_pbuf_memfind(pbuf, str, strlen(str), off);
+lwcell_pbuf_strfind(const lwcell_pbuf_p pbuf, const char* str, size_t off) {
+    return lwcell_pbuf_memfind(pbuf, str, strlen(str), off);
 }
 
 /**
@@ -430,18 +430,18 @@ lwgsm_pbuf_strfind(const lwgsm_pbuf_p pbuf, const char* str, size_t off) {
  * \param[in]       data: Actual data to compare with
  * \param[in]       len: Length of input data in units of bytes
  * \param[in]       offset: Start offset to use when comparing data
- * \return          `0` if equal, `LWGSM_SIZET_MAX` if memory/offset too big or anything between if not equal
- * \sa              lwgsm_pbuf_strcmp
+ * \return          `0` if equal, `LWCELL_SIZET_MAX` if memory/offset too big or anything between if not equal
+ * \sa              lwcell_pbuf_strcmp
  */
 size_t
-lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
-    lwgsm_pbuf_p p;
+lwcell_pbuf_memcmp(const lwcell_pbuf_p pbuf, const void* data, size_t len, size_t offset) {
+    lwcell_pbuf_p p;
     uint8_t el;
     const uint8_t* d = data;
 
     if (pbuf == NULL || data == NULL || len == 0 /* Input parameters check */
         || pbuf->tot_len < (offset + len)) {     /* Check of valid ranges */
-        return LWGSM_SIZET_MAX;                  /* Invalid check here */
+        return LWCELL_SIZET_MAX;                  /* Invalid check here */
     }
 
     /*
@@ -459,7 +459,7 @@ lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t 
      * Use byte by byte read function to inspect bytes separatelly
      */
     for (size_t i = 0; i < len; ++i) {
-        if (!lwgsm_pbuf_get_at(p, offset + i, &el) || el != d[i]) { /* Get value from pbuf at specific offset */
+        if (!lwcell_pbuf_get_at(p, offset + i, &el) || el != d[i]) { /* Get value from pbuf at specific offset */
             return offset + 1;                                      /* Return value from offset where it failed */
         }
     }
@@ -472,12 +472,12 @@ lwgsm_pbuf_memcmp(const lwgsm_pbuf_p pbuf, const void* data, size_t len, size_t 
  * \param[in]       pbuf: Pbuf used to compare with data memory
  * \param[in]       str: String to be compared with pbuf
  * \param[in]       offset: Start memory offset in pbuf
- * \return          `0` if equal, `LWGSM_SIZET_MAX` if memory/offset too big or anything between if not equal
- * \sa              lwgsm_pbuf_memcmp
+ * \return          `0` if equal, `LWCELL_SIZET_MAX` if memory/offset too big or anything between if not equal
+ * \sa              lwcell_pbuf_memcmp
  */
 size_t
-lwgsm_pbuf_strcmp(const lwgsm_pbuf_p pbuf, const char* str, size_t offset) {
-    return lwgsm_pbuf_memcmp(pbuf, str, strlen(str), offset);
+lwcell_pbuf_strcmp(const lwcell_pbuf_p pbuf, const char* str, size_t offset) {
+    return lwcell_pbuf_memcmp(pbuf, str, strlen(str), offset);
 }
 
 /**
@@ -490,8 +490,8 @@ lwgsm_pbuf_strcmp(const lwgsm_pbuf_p pbuf, const char* str, size_t offset) {
  * \return          Pointer to memory on success, `NULL` otherwise
  */
 void*
-lwgsm_pbuf_get_linear_addr(const lwgsm_pbuf_p pbuf, size_t offset, size_t* new_len) {
-    lwgsm_pbuf_p p = pbuf;
+lwcell_pbuf_get_linear_addr(const lwcell_pbuf_p pbuf, size_t offset, size_t* new_len) {
+    lwcell_pbuf_p p = pbuf;
 
     if (pbuf == NULL || pbuf->tot_len < offset) { /* Check input parameters */
         SET_NEW_LEN(new_len, 0);
@@ -515,7 +515,7 @@ lwgsm_pbuf_get_linear_addr(const lwgsm_pbuf_p pbuf, size_t offset, size_t* new_l
  * \return          Pointer to data buffer on success, `NULL` otherwise
  */
 void*
-lwgsm_pbuf_data(const lwgsm_pbuf_p pbuf) {
+lwcell_pbuf_data(const lwcell_pbuf_p pbuf) {
     return pbuf != NULL ? pbuf->payload : NULL;
 }
 
@@ -526,7 +526,7 @@ lwgsm_pbuf_data(const lwgsm_pbuf_p pbuf) {
  * \return          Length of data in units of bytes
  */
 size_t
-lwgsm_pbuf_length(const lwgsm_pbuf_p pbuf, uint8_t tot) {
+lwcell_pbuf_length(const lwcell_pbuf_p pbuf, uint8_t tot) {
     return pbuf != NULL ? (tot ? pbuf->tot_len : pbuf->len) : 0;
 }
 
@@ -537,9 +537,9 @@ lwgsm_pbuf_length(const lwgsm_pbuf_p pbuf, uint8_t tot) {
  * \param[in]       port: Port number to assign to packet buffer
  */
 void
-lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm_port_t port) {
+lwcell_pbuf_set_ip(lwcell_pbuf_p pbuf, const lwcell_ip_t* ip, lwcell_port_t port) {
     if (pbuf != NULL && ip != NULL) {
-        LWGSM_MEMCPY(&pbuf->ip, ip, sizeof(*ip));
+        LWCELL_MEMCPY(&pbuf->ip, ip, sizeof(*ip));
         pbuf->port = port;
     }
 }
@@ -557,7 +557,7 @@ lwgsm_pbuf_set_ip(lwgsm_pbuf_p pbuf, const lwgsm_ip_t* ip, lwgsm_port_t port) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_pbuf_advance(lwgsm_pbuf_p pbuf, int len) {
+lwcell_pbuf_advance(lwcell_pbuf_p pbuf, int len) {
     uint8_t process = 0;
     if (pbuf == NULL || len == 0) {
         return 0;
@@ -588,8 +588,8 @@ lwgsm_pbuf_advance(lwgsm_pbuf_p pbuf, int len) {
  * \param[out]      new_offset: Pointer to output variable to save new offset in returned pbuf
  * \return          New pbuf on success, `NULL` otherwise
  */
-lwgsm_pbuf_p
-lwgsm_pbuf_skip(lwgsm_pbuf_p pbuf, size_t offset, size_t* new_offset) {
+lwcell_pbuf_p
+lwcell_pbuf_skip(lwcell_pbuf_p pbuf, size_t offset, size_t* new_offset) {
     return pbuf_skip(pbuf, offset, new_offset); /* Skip pbufs with internal function */
 }
 
@@ -599,17 +599,17 @@ lwgsm_pbuf_skip(lwgsm_pbuf_p pbuf, size_t offset, size_t* new_offset) {
  * \param[in]       seq: Set to `1` to dump all `pbufs` in linked list or `0` to dump first one only
  */
 void
-lwgsm_pbuf_dump(lwgsm_pbuf_p p, uint8_t seq) {
+lwcell_pbuf_dump(lwcell_pbuf_p p, uint8_t seq) {
     if (p != NULL) {
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, "[LWGSM PBUF] Dump start: %p\r\n", (void*)p);
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, "[LWCELL PBUF] Dump start: %p\r\n", (void*)p);
         for (; p != NULL; p = p->next) {
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM PBUF] Dump %p; ref: %u; len: %u; tot_len: %u, next: %p\r\n", (void*)p,
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE,
+                         "[LWCELL PBUF] Dump %p; ref: %u; len: %u; tot_len: %u, next: %p\r\n", (void*)p,
                          (unsigned)p->ref, (unsigned)p->len, (unsigned)p->tot_len, (void*)p->next);
             if (!seq) {
                 break;
             }
         }
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_PBUF | LWGSM_DBG_TYPE_TRACE, "[LWGSM PBUF] Dump end\r\n");
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, "[LWCELL PBUF] Dump end\r\n");
     }
 }

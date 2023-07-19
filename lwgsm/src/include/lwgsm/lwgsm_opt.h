@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_opt.h
+ * \file            lwcell_opt.h
  * \brief           GSM-AT options
  */
 
@@ -26,26 +26,26 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_OPT_HDR_H
-#define LWGSM_OPT_HDR_H
+#ifndef LWCELL_OPT_HDR_H
+#define LWCELL_OPT_HDR_H
 
 /* Uncomment to ignore user options (or set macro in compiler flags) */
-/* #define LWGSM_IGNORE_USER_OPTS */
+/* #define LWCELL_IGNORE_USER_OPTS */
 
 /* Include application options */
-#include "lwgsm/lwgsm_debug_types.h"
-#ifndef LWGSM_IGNORE_USER_OPTS
-#include "lwgsm_opts.h"
-#endif /* LWGSM_IGNORE_USER_OPTS */
+#include "lwcell/lwcell_debug_types.h"
+#ifndef LWCELL_IGNORE_USER_OPTS
+#include "lwcell_opts.h"
+#endif /* LWCELL_IGNORE_USER_OPTS */
 
 /**
- * \defgroup        LWGSM_OPT Configuration
- * \brief           LwGSM options
+ * \defgroup        LWCELL_OPT Configuration
+ * \brief           LwCELL options
  * \{
  *
  */
@@ -55,29 +55,29 @@
  *
  * \note            Value must be set to 1 in the current revision
  *
- * \note            Check \ref LWGSM_OPT_OS group for more configuration related to operating system
+ * \note            Check \ref LWCELL_OPT_OS group for more configuration related to operating system
  *
  */
-#ifndef LWGSM_CFG_OS
-#define LWGSM_CFG_OS 1
+#ifndef LWCELL_CFG_OS
+#define LWCELL_CFG_OS 1
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` custom memory management functions
  *
- * When set to `1`, \ref LWGSM_MEM block must be provided manually.
- * This includes implementation of functions \ref lwgsm_mem_malloc,
- * \ref lwgsm_mem_calloc, \ref lwgsm_mem_realloc and \ref lwgsm_mem_free
+ * When set to `1`, \ref LWCELL_MEM block must be provided manually.
+ * This includes implementation of functions \ref lwcell_mem_malloc,
+ * \ref lwcell_mem_calloc, \ref lwcell_mem_realloc and \ref lwcell_mem_free
  *
  * \note            Function declaration follows standard C functions `malloc, calloc, realloc, free`.
- *                  Declaration is available in `lwgsm/lwgsm_mem.h` file. Include this file to final
+ *                  Declaration is available in `lwcell/lwcell_mem.h` file. Include this file to final
  *                  implementation file
  *
  * \note            When implementing custom memory allocation, it is necessary
  *                  to take care of multiple threads accessing same resource for custom allocator
  */
-#ifndef LWGSM_CFG_MEM_CUSTOM
-#define LWGSM_CFG_MEM_CUSTOM 0
+#ifndef LWCELL_CFG_MEM_CUSTOM
+#define LWCELL_CFG_MEM_CUSTOM 0
 #endif
 
 /**
@@ -92,8 +92,8 @@
  *
  * \note            This value must be power of `2`
  */
-#ifndef LWGSM_CFG_MEM_ALIGNMENT
-#define LWGSM_CFG_MEM_ALIGNMENT 4
+#ifndef LWCELL_CFG_MEM_ALIGNMENT
+#define LWCELL_CFG_MEM_ALIGNMENT 4
 #endif
 
 /**
@@ -102,12 +102,12 @@
  * When enabled, `2` additional parameters are available in API functions.
  * When command is executed, callback function with its parameter could be called when not set to `NULL`.
  */
-#ifndef LWGSM_CFG_USE_API_FUNC_EVT
-#define LWGSM_CFG_USE_API_FUNC_EVT 1
+#ifndef LWCELL_CFG_USE_API_FUNC_EVT
+#define LWCELL_CFG_USE_API_FUNC_EVT 1
 #endif
 
 /**
- * \defgroup        LWGSM_OPT_CONN Connection settings
+ * \defgroup        LWCELL_OPT_CONN Connection settings
  * \brief           Connection settings
  * \{
  */
@@ -116,8 +116,8 @@
  * \brief           Maximal number of connections AT software can support on GSM device
  *
  */
-#ifndef LWGSM_CFG_MAX_CONNS
-#define LWGSM_CFG_MAX_CONNS 6
+#ifndef LWCELL_CFG_MAX_CONNS
+#define LWCELL_CFG_MAX_CONNS 6
 #endif
 
 /**
@@ -128,18 +128,18 @@
  *                  is not an issue, it should be set to maximal value (`1460`)
  *                  to optimize data transfer speed performance
  */
-#ifndef LWGSM_CFG_CONN_MAX_DATA_LEN
-#define LWGSM_CFG_CONN_MAX_DATA_LEN 1460
+#ifndef LWCELL_CFG_CONN_MAX_DATA_LEN
+#define LWCELL_CFG_CONN_MAX_DATA_LEN 1460
 #endif
 
 /**
  * \brief           Minimal buffer in bytes for connection receive allocation.
  * 
- *                  Allocation will always start with (up to) \ref LWGSM_CFG_CONN_MAX_DATA_LEN
+ *                  Allocation will always start with (up to) \ref LWCELL_CFG_CONN_MAX_DATA_LEN
  *                  and will continue with trial down to this setting up until allocating is successful.
  */
-#ifndef LWGSM_CFG_CONN_MIN_DATA_LEN
-#define LWGSM_CFG_CONN_MIN_DATA_LEN 16
+#ifndef LWCELL_CFG_CONN_MIN_DATA_LEN
+#define LWCELL_CFG_CONN_MIN_DATA_LEN 16
 #endif
 
 /**
@@ -148,8 +148,8 @@
  * Sometimes it may happen that `AT+SEND` command fails due to different problems.
  * Trying to send the same data multiple times can raise chances we are successful.
  */
-#ifndef LWGSM_CFG_MAX_SEND_RETRIES
-#define LWGSM_CFG_MAX_SEND_RETRIES 3
+#ifndef LWCELL_CFG_MAX_SEND_RETRIES
+#define LWCELL_CFG_MAX_SEND_RETRIES 3
 #endif
 
 /**
@@ -161,8 +161,8 @@
  *
  * \note            Later, user may call API function to change to desired baudrate if necessary
  */
-#ifndef LWGSM_CFG_AT_PORT_BAUDRATE
-#define LWGSM_CFG_AT_PORT_BAUDRATE 115200
+#ifndef LWCELL_CFG_AT_PORT_BAUDRATE
+#define LWCELL_CFG_AT_PORT_BAUDRATE 115200
 #endif
 
 /**
@@ -174,65 +174,65 @@
  *                  In case of DMA (CPU can work other tasks), buffer may be smaller as CPU
  *                  will have more time to process all the incoming bytes
  *
- * \note            This parameter has no meaning when \ref LWGSM_CFG_INPUT_USE_PROCESS is enabled
+ * \note            This parameter has no meaning when \ref LWCELL_CFG_INPUT_USE_PROCESS is enabled
  */
-#ifndef LWGSM_CFG_RCV_BUFF_SIZE
-#define LWGSM_CFG_RCV_BUFF_SIZE 0x400
+#ifndef LWCELL_CFG_RCV_BUFF_SIZE
+#define LWCELL_CFG_RCV_BUFF_SIZE 0x400
 #endif
 
 /**
- * \brief           Enables `1` or disables `0` reset sequence after \ref lwgsm_init call
+ * \brief           Enables `1` or disables `0` reset sequence after \ref lwcell_init call
  *
- * \note            When this functionality is disabled, user must manually call \ref lwgsm_reset to send
+ * \note            When this functionality is disabled, user must manually call \ref lwcell_reset to send
  *                  reset sequence to GSM device.
  */
-#ifndef LWGSM_CFG_RESET_ON_INIT
-#define LWGSM_CFG_RESET_ON_INIT 1
+#ifndef LWCELL_CFG_RESET_ON_INIT
+#define LWCELL_CFG_RESET_ON_INIT 1
 #endif
 
 /**
- * \brief           Enables `1` or disables `0` reset sequence after \ref lwgsm_device_set_present call
+ * \brief           Enables `1` or disables `0` reset sequence after \ref lwcell_device_set_present call
  *
- * \note            When this functionality is disabled, user must manually call \ref lwgsm_reset to send
+ * \note            When this functionality is disabled, user must manually call \ref lwcell_reset to send
  *                  reset sequence to GSM device.
  */
-#ifndef LWGSM_CFG_RESET_ON_DEVICE_PRESENT
-#define LWGSM_CFG_RESET_ON_DEVICE_PRESENT 1
+#ifndef LWCELL_CFG_RESET_ON_DEVICE_PRESENT
+#define LWCELL_CFG_RESET_ON_DEVICE_PRESENT 1
 #endif
 
 /**
  * \brief           Default delay (milliseconds unit) before sending first AT command on reset sequence
  */
-#ifndef LWGSM_CFG_RESET_DELAY_DEFAULT
-#define LWGSM_CFG_RESET_DELAY_DEFAULT 1000
+#ifndef LWCELL_CFG_RESET_DELAY_DEFAULT
+#define LWCELL_CFG_RESET_DELAY_DEFAULT 1000
 #endif
 
 /**
  * \brief           Default delay (milliseconds unit) after reset sequence
  */
-#ifndef LWGSM_CFG_RESET_DELAY_AFTER
-#define LWGSM_CFG_RESET_DELAY_AFTER 5000
+#ifndef LWCELL_CFG_RESET_DELAY_AFTER
+#define LWCELL_CFG_RESET_DELAY_AFTER 5000
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` periodic keep-alive events to registered callbacks
  *
  */
-#ifndef LWGSM_CFG_KEEP_ALIVE
-#define LWGSM_CFG_KEEP_ALIVE 1
+#ifndef LWCELL_CFG_KEEP_ALIVE
+#define LWCELL_CFG_KEEP_ALIVE 1
 #endif
 
 /**
  * \brief           Timeout periodic time to trigger keep alive events to registered callbacks
  *
- * Feature must be enabled with \ref LWGSM_CFG_KEEP_ALIVE
+ * Feature must be enabled with \ref LWCELL_CFG_KEEP_ALIVE
  */
-#ifndef LWGSM_CFG_KEEP_ALIVE_TIMEOUT
-#define LWGSM_CFG_KEEP_ALIVE_TIMEOUT 1000
+#ifndef LWCELL_CFG_KEEP_ALIVE_TIMEOUT
+#define LWCELL_CFG_KEEP_ALIVE_TIMEOUT 1000
 #endif
 
 /**
- * \defgroup        LWGSM_OPT_DBG Debugging
+ * \defgroup        LWCELL_OPT_DBG Debugging
  * \brief           Debugging configurations
  * \{
  */
@@ -240,12 +240,12 @@
 /**
  * \brief           Set global debug support.
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  *
- * \note            Set to \ref LWGSM_DBG_OFF to globally disable all debugs
+ * \note            Set to \ref LWCELL_DBG_OFF to globally disable all debugs
  */
-#ifndef LWGSM_CFG_DBG
-#define LWGSM_CFG_DBG LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG
+#define LWCELL_CFG_DBG LWCELL_DBG_OFF
 #endif
 
 /**
@@ -253,8 +253,8 @@
  *
  *                  Called with format and optional parameters for printf style debug
  */
-#ifndef LWGSM_CFG_DBG_OUT
-#define LWGSM_CFG_DBG_OUT(fmt, ...)                                                                                    \
+#ifndef LWCELL_CFG_DBG_OUT
+#define LWCELL_CFG_DBG_OUT(fmt, ...)                                                                                    \
     do {                                                                                                               \
         extern int printf(const char* format, ...);                                                                    \
         printf(fmt, ##__VA_ARGS__);                                                                                    \
@@ -264,112 +264,112 @@
 /**
  * \brief           Minimal debug level
  *
- *                  Check \ref LWGSM_DBG_LVL for possible values
+ *                  Check \ref LWCELL_DBG_LVL for possible values
  */
-#ifndef LWGSM_CFG_DBG_LVL_MIN
-#define LWGSM_CFG_DBG_LVL_MIN LWGSM_DBG_LVL_ALL
+#ifndef LWCELL_CFG_DBG_LVL_MIN
+#define LWCELL_CFG_DBG_LVL_MIN LWCELL_DBG_LVL_ALL
 #endif
 
 /**
  * \brief           Enabled debug types
  *
- * When debug is globally enabled with \ref LWGSM_CFG_DBG parameter,
+ * When debug is globally enabled with \ref LWCELL_CFG_DBG parameter,
  * user must enable debug types such as TRACE or STATE messages.
  *
- * Check \ref LWGSM_DBG_TYPE for possible options. Separate values with `bitwise OR` operator
+ * Check \ref LWCELL_DBG_TYPE for possible options. Separate values with `bitwise OR` operator
  */
-#ifndef LWGSM_CFG_DBG_TYPES_ON
-#define LWGSM_CFG_DBG_TYPES_ON 0
+#ifndef LWCELL_CFG_DBG_TYPES_ON
+#define LWCELL_CFG_DBG_TYPES_ON 0
 #endif
 
 /**
  * \brief           Set debug level for init function
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_INIT
-#define LWGSM_CFG_DBG_INIT LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_INIT
+#define LWCELL_CFG_DBG_INIT LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for memory manager
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_MEM
-#define LWGSM_CFG_DBG_MEM LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_MEM
+#define LWCELL_CFG_DBG_MEM LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for input module
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_INPUT
-#define LWGSM_CFG_DBG_INPUT LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_INPUT
+#define LWCELL_CFG_DBG_INPUT LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for GSM threads
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_THREAD
-#define LWGSM_CFG_DBG_THREAD LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_THREAD
+#define LWCELL_CFG_DBG_THREAD LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for asserting of input variables
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_ASSERT
-#define LWGSM_CFG_DBG_ASSERT LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_ASSERT
+#define LWCELL_CFG_DBG_ASSERT LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for incoming data received from device
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_IPD
-#define LWGSM_CFG_DBG_IPD LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_IPD
+#define LWCELL_CFG_DBG_IPD LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for packet buffer manager
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_PBUF
-#define LWGSM_CFG_DBG_PBUF LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_PBUF
+#define LWCELL_CFG_DBG_PBUF LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for connections
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_CONN
-#define LWGSM_CFG_DBG_CONN LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_CONN
+#define LWCELL_CFG_DBG_CONN LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for dynamic variable allocations
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_VAR
-#define LWGSM_CFG_DBG_VAR LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_VAR
+#define LWCELL_CFG_DBG_VAR LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for netconn sequential API
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_NETCONN
-#define LWGSM_CFG_DBG_NETCONN LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_NETCONN
+#define LWCELL_CFG_DBG_NETCONN LWCELL_DBG_OFF
 #endif
 
 /**
@@ -378,8 +378,8 @@
  *
  * \note            This mode is useful when debugging GSM communication
  */
-#ifndef LWGSM_CFG_AT_ECHO
-#define LWGSM_CFG_AT_ECHO 0
+#ifndef LWCELL_CFG_AT_ECHO
+#define LWCELL_CFG_AT_ECHO 0
 #endif
 
 /**
@@ -387,7 +387,7 @@
  */
 
 /**
- * \defgroup        LWGSM_OPT_OS OS configuration
+ * \defgroup        LWCELL_OPT_OS OS configuration
  * \brief           Operating system dependant configuration
  * \{
  */
@@ -397,8 +397,8 @@
  *
  * Message queue is used for storing memory address to command data
  */
-#ifndef LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE
-#define LWGSM_CFG_THREAD_PRODUCER_MBOX_SIZE 16
+#ifndef LWCELL_CFG_THREAD_PRODUCER_MBOX_SIZE
+#define LWCELL_CFG_THREAD_PRODUCER_MBOX_SIZE 16
 #endif
 
 /**
@@ -406,8 +406,8 @@
  *
  * Message queue is used to notify processing thread about new received data on AT port
  */
-#ifndef LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE
-#define LWGSM_CFG_THREAD_PROCESS_MBOX_SIZE 16
+#ifndef LWCELL_CFG_THREAD_PROCESS_MBOX_SIZE
+#define LWCELL_CFG_THREAD_PROCESS_MBOX_SIZE 16
 #endif
 
 /**
@@ -416,15 +416,15 @@
  * When this mode is enabled, no overhead is included for copying data
  * to receive buffer because bytes are processed directly.
  *
- * \note            This mode can only be used when \ref LWGSM_CFG_OS is enabled
+ * \note            This mode can only be used when \ref LWCELL_CFG_OS is enabled
  *
  * \note            When using this mode, separate thread must be dedicated only
  *                  for reading data on AT port
  *
  * \note            Best case for using this mode is if DMA receive is supported by host device
  */
-#ifndef LWGSM_CFG_INPUT_USE_PROCESS
-#define LWGSM_CFG_INPUT_USE_PROCESS 0
+#ifndef LWCELL_CFG_INPUT_USE_PROCESS
+#define LWCELL_CFG_INPUT_USE_PROCESS 0
 #endif
 
 /**
@@ -432,8 +432,8 @@
  *
  * It can be used to check if thread is alive.
  */
-#ifndef LWGSM_THREAD_PRODUCER_HOOK
-#define LWGSM_THREAD_PRODUCER_HOOK()
+#ifndef LWCELL_THREAD_PRODUCER_HOOK
+#define LWCELL_THREAD_PRODUCER_HOOK()
 #endif
 
 /**
@@ -441,17 +441,17 @@
  *
  * It can be used to check if thread is alive.
  */
-#ifndef LWGSM_THREAD_PROCESS_HOOK
-#define LWGSM_THREAD_PROCESS_HOOK()
+#ifndef LWCELL_THREAD_PROCESS_HOOK
+#define LWCELL_THREAD_PROCESS_HOOK()
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` custom memory byte pool extension for ThreadX port
  *
- * When enabled, user must manually set byte pool at run-time, before \ref lwgsm_init is called
+ * When enabled, user must manually set byte pool at run-time, before \ref lwcell_init is called
  */
-#ifndef LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
-#define LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL 0
+#ifndef LWCELL_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
+#define LWCELL_CFG_THREADX_CUSTOM_MEM_BYTE_POOL 0
 #endif
 
 /**
@@ -466,8 +466,8 @@
  *
  * Have a look at System-ThreadX port for implementation
  */
-#ifndef LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION
-#define LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION 0
+#ifndef LWCELL_CFG_THREADX_IDLE_THREAD_EXTENSION
+#define LWCELL_CFG_THREADX_IDLE_THREAD_EXTENSION 0
 #endif
 
 /**
@@ -475,13 +475,13 @@
  */
 
 /**
- * \defgroup        LWGSM_OPT_MODULES Modules
+ * \defgroup        LWCELL_OPT_MODULES Modules
  * \brief           Configuration of specific modules
  * \{
  */
 
 /**
- * \defgroup        LWGSM_OPT_MODULES_NETCONN Netconn module
+ * \defgroup        LWCELL_OPT_MODULES_NETCONN Netconn module
  * \brief           Configuration of netconn API module
  * \{
  */
@@ -490,10 +490,10 @@
  * \brief           Enables `1` or disables `0` NETCONN sequential API support for OS systems
  *
  * \note            To use this feature, OS support is mandatory.
- * \sa              LWGSM_CFG_OS
+ * \sa              LWCELL_CFG_OS
  */
-#ifndef LWGSM_CFG_NETCONN
-#define LWGSM_CFG_NETCONN 0
+#ifndef LWCELL_CFG_NETCONN
+#define LWCELL_CFG_NETCONN 0
 #endif
 
 /**
@@ -506,8 +506,8 @@
  * \note            Even if this option is enabled, user must still manually set timeout,
  *                  by default time will be set to 0 which means no timeout.
  */
-#ifndef LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT
-#define LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT 1
+#ifndef LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT
+#define LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT 1
 #endif
 
 /**
@@ -515,8 +515,8 @@
  *
  * Defines number of maximal clients waiting in accept queue of server connection
  */
-#ifndef LWGSM_CFG_NETCONN_ACCEPT_QUEUE_LEN
-#define LWGSM_CFG_NETCONN_ACCEPT_QUEUE_LEN 5
+#ifndef LWCELL_CFG_NETCONN_ACCEPT_QUEUE_LEN
+#define LWCELL_CFG_NETCONN_ACCEPT_QUEUE_LEN 5
 #endif
 
 /**
@@ -524,8 +524,8 @@
  *
  * Defines maximal number of pbuf data packet references for receive
  */
-#ifndef LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN
-#define LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN 8
+#ifndef LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN
+#define LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN 8
 #endif
 
 /**
@@ -533,7 +533,7 @@
  */
 
 /**
- * \defgroup        LWGSM_OPT_MODULES_MQTT MQTT client module
+ * \defgroup        LWCELL_OPT_MODULES_MQTT MQTT client module
  * \brief           Configuration of MQTT and MQTT API client modules
  * \{
  */
@@ -542,34 +542,34 @@
  * \brief           Maximal number of open MQTT requests at a time
  *
  */
-#ifndef LWGSM_CFG_MQTT_MAX_REQUESTS
-#define LWGSM_CFG_MQTT_MAX_REQUESTS 8
+#ifndef LWCELL_CFG_MQTT_MAX_REQUESTS
+#define LWCELL_CFG_MQTT_MAX_REQUESTS 8
 #endif
 
 /**
  * \brief           Size of MQTT API message queue for received messages
  *
  */
-#ifndef LWGSM_CFG_MQTT_API_MBOX_SIZE
-#define LWGSM_CFG_MQTT_API_MBOX_SIZE 8
+#ifndef LWCELL_CFG_MQTT_API_MBOX_SIZE
+#define LWCELL_CFG_MQTT_API_MBOX_SIZE 8
 #endif
 
 /**
  * \brief           Set debug level for MQTT client module
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_MQTT
-#define LWGSM_CFG_DBG_MQTT LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_MQTT
+#define LWCELL_CFG_DBG_MQTT LWCELL_DBG_OFF
 #endif
 
 /**
  * \brief           Set debug level for MQTT API client module
  *
- * Possible values are \ref LWGSM_DBG_ON or \ref LWGSM_DBG_OFF
+ * Possible values are \ref LWCELL_DBG_ON or \ref LWCELL_DBG_OFF
  */
-#ifndef LWGSM_CFG_DBG_MQTT_API
-#define LWGSM_CFG_DBG_MQTT_API LWGSM_DBG_OFF
+#ifndef LWCELL_CFG_DBG_MQTT_API
+#define LWCELL_CFG_DBG_MQTT_API LWCELL_DBG_OFF
 #endif
 
 /**
@@ -583,8 +583,8 @@
  * Network must be enabled to use all GPRS/LTE functions such
  * as connection API, FTP, HTTP, etc.
  */
-#ifndef LWGSM_CFG_NETWORK
-#define LWGSM_CFG_NETWORK 0
+#ifndef LWCELL_CFG_NETWORK
+#define LWCELL_CFG_NETWORK 0
 #endif
 
 /**
@@ -593,76 +593,76 @@
  * \note            This may be used for data-only SIM cards where command might fail
  *                  when trying to attach to network for data transfer
  */
-#ifndef LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT
-#define LWGSM_CFG_NETWORK_IGNORE_CGACT_RESULT 0
+#ifndef LWCELL_CFG_NETWORK_IGNORE_CGACT_RESULT
+#define LWCELL_CFG_NETWORK_IGNORE_CGACT_RESULT 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` connection API.
  *
- * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
+ * \note            \ref LWCELL_CFG_NETWORK must be enabled to use connection feature
  */
-#ifndef LWGSM_CFG_CONN
-#define LWGSM_CFG_CONN 0
+#ifndef LWCELL_CFG_CONN
+#define LWCELL_CFG_CONN 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` SMS API.
  *
  */
-#ifndef LWGSM_CFG_SMS
-#define LWGSM_CFG_SMS 0
+#ifndef LWCELL_CFG_SMS
+#define LWCELL_CFG_SMS 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` call API.
  *
  */
-#ifndef LWGSM_CFG_CALL
-#define LWGSM_CFG_CALL 0
+#ifndef LWCELL_CFG_CALL
+#define LWCELL_CFG_CALL 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` phonebook API.
  *
  */
-#ifndef LWGSM_CFG_PHONEBOOK
-#define LWGSM_CFG_PHONEBOOK 0
+#ifndef LWCELL_CFG_PHONEBOOK
+#define LWCELL_CFG_PHONEBOOK 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` HTTP API.
  *
- * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
+ * \note            \ref LWCELL_CFG_NETWORK must be enabled to use connection feature
  */
-#ifndef LWGSM_CFG_HTTP
-#define LWGSM_CFG_HTTP 0
+#ifndef LWCELL_CFG_HTTP
+#define LWCELL_CFG_HTTP 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` FTP API.
  *
- * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
+ * \note            \ref LWCELL_CFG_NETWORK must be enabled to use connection feature
  */
-#ifndef LWGSM_CFG_FTP
-#define LWGSM_CFG_FTP 0
+#ifndef LWCELL_CFG_FTP
+#define LWCELL_CFG_FTP 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` PING API.
  *
- * \note            \ref LWGSM_CFG_NETWORK must be enabled to use connection feature
+ * \note            \ref LWCELL_CFG_NETWORK must be enabled to use connection feature
  */
-#ifndef LWGSM_CFG_PING
-#define LWGSM_CFG_PING 0
+#ifndef LWCELL_CFG_PING
+#define LWCELL_CFG_PING 0
 #endif
 
 /**
  * \brief           Enables `1` or disables `0` USSD API.
  *
  */
-#ifndef LWGSM_CFG_USSD
-#define LWGSM_CFG_USSD 0
+#ifndef LWCELL_CFG_USSD
+#define LWCELL_CFG_USSD 0
 #endif
 
 /**
@@ -676,12 +676,12 @@
  *
  * \note            Single poll interval applies for all connections
  */
-#ifndef LWGSM_CFG_CONN_POLL_INTERVAL
-#define LWGSM_CFG_CONN_POLL_INTERVAL 500
+#ifndef LWCELL_CFG_CONN_POLL_INTERVAL
+#define LWCELL_CFG_CONN_POLL_INTERVAL 500
 #endif
 
 /**
- * \defgroup        LWGSM_OPT_STD_LIB Standard library
+ * \defgroup        LWCELL_OPT_STD_LIB Standard library
  * \brief           Standard C library configuration
  * \{
  *
@@ -706,8 +706,8 @@ void *  my_memcpy(void* dst, const void* src, size_t len);
  * \param[in]       len: Number of bytes to copy
  * \return          Destination memory start address
  */
-#ifndef LWGSM_MEMCPY
-#define LWGSM_MEMCPY(dst, src, len) memcpy(dst, src, len)
+#ifndef LWCELL_MEMCPY
+#define LWCELL_MEMCPY(dst, src, len) memcpy(dst, src, len)
 #endif
 
 /**
@@ -724,8 +724,8 @@ void *  my_memset(void* dst, int b, size_t len);
  * \param[in]       len: Number of bytes to set
  * \return          Destination memory start address
  */
-#ifndef LWGSM_MEMSET
-#define LWGSM_MEMSET(dst, b, len) memset(dst, b, len)
+#ifndef LWCELL_MEMSET
+#define LWCELL_MEMSET(dst, b, len) memset(dst, b, len)
 #endif
 
 /**
@@ -738,14 +738,14 @@ void *  my_memset(void* dst, int b, size_t len);
 
 #if !__DOXYGEN__
 
-#if !LWGSM_CFG_OS
-#if LWGSM_CFG_INPUT_USE_PROCESS
-#error "LWGSM_CFG_INPUT_USE_PROCESS may only be enabled when OS is used!"
-#endif /* LWGSM_CFG_INPUT_USE_PROCESS */
-#endif /* !LWGSM_CFG_OS */
+#if !LWCELL_CFG_OS
+#if LWCELL_CFG_INPUT_USE_PROCESS
+#error "LWCELL_CFG_INPUT_USE_PROCESS may only be enabled when OS is used!"
+#endif /* LWCELL_CFG_INPUT_USE_PROCESS */
+#endif /* !LWCELL_CFG_OS */
 
 #endif /* !__DOXYGEN__ */
 
-#include "lwgsm/lwgsm_debug.h"
+#include "lwcell/lwcell_debug.h"
 
-#endif /* LWGSM_OPT_HDR_H */
+#endif /* LWCELL_OPT_HDR_H */

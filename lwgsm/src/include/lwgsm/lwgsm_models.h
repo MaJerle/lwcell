@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_models.h
+ * \file            lwcell_models.h
  * \brief           Supported GSM devices
  */
 
@@ -26,16 +26,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
 
 /* Order: Device name; Device model identification, Is_2G, Is_LTE */
-LWGSM_DEVICE_MODEL_ENTRY(SIM800x, "SIM800", 1, 0)
-LWGSM_DEVICE_MODEL_ENTRY(SIM900x, "SIM900", 1, 0)
-//LWGSM_DEVICE_MODEL_ENTRY(SIM7000x, "SIM7000", 1, 0)
-//LWGSM_DEVICE_MODEL_ENTRY(SIM7020x, "SIM7020", 1, 0)
+LWCELL_DEVICE_MODEL_ENTRY(SIM800x, "SIM800", 1, 0)
+LWCELL_DEVICE_MODEL_ENTRY(SIM900x, "SIM900", 1, 0)
+//LWCELL_DEVICE_MODEL_ENTRY(SIM7000x, "SIM7000", 1, 0)
+//LWCELL_DEVICE_MODEL_ENTRY(SIM7020x, "SIM7020", 1, 0)
 
-#undef LWGSM_DEVICE_MODEL_ENTRY
+#undef LWCELL_DEVICE_MODEL_ENTRY

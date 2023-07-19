@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_threads.h
+ * \file            lwcell_threads.h
  * \brief           OS threads implementations
  */
 
@@ -26,25 +26,25 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_THREADS_HDR_H
-#define LWGSM_THREADS_HDR_H
+#ifndef LWCELL_THREADS_HDR_H
+#define LWCELL_THREADS_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-void lwgsm_thread_produce(void* const arg);
-void lwgsm_thread_process(void* const arg);
+void lwcell_thread_produce(void* const arg);
+void lwcell_thread_process(void* const arg);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_THREADS_HDR_H */
+#endif /* LWCELL_THREADS_HDR_H */

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>lwgsm_stm32f429zi_nucleo_mqtt_client_api_rtos</name>
+	<name>lwcell_stm32f429zi_nucleo_mqtt_client_api_rtos</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -119,172 +119,172 @@
 			<locationURI>PARENT-3-PROJECT_LOC/lib/FreeRTOS/timers.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_api/lwgsm_netconn.c</name>
+			<name>lwcell_api/lwcell_netconn.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/api/lwgsm_netconn.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/api/lwcell_netconn.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_api/lwgsm_network_api.c</name>
+			<name>lwcell_api/lwcell_network_api.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/api/lwgsm_network_api.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/api/lwcell_network_api.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm.c</name>
+			<name>lwcell/lwcell.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_buff.c</name>
+			<name>lwcell/lwcell_buff.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_buff.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_buff.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_call.c</name>
+			<name>lwcell/lwcell_call.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_call.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_call.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_conn.c</name>
+			<name>lwcell/lwcell_conn.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_conn.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_conn.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_debug.c</name>
+			<name>lwcell/lwcell_debug.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_debug.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_debug.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_device_info.c</name>
+			<name>lwcell/lwcell_device_info.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_device_info.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_device_info.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_evt.c</name>
+			<name>lwcell/lwcell_evt.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_evt.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_evt.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_ftp.c</name>
+			<name>lwcell/lwcell_ftp.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_ftp.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_ftp.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_http.c</name>
+			<name>lwcell/lwcell_http.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_http.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_http.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_input.c</name>
+			<name>lwcell/lwcell_input.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_input.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_input.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_int.c</name>
+			<name>lwcell/lwcell_int.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_int.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_int.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_mem.c</name>
+			<name>lwcell/lwcell_mem.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_mem.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_mem.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_network.c</name>
+			<name>lwcell/lwcell_network.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_network.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_network.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_operator.c</name>
+			<name>lwcell/lwcell_operator.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_operator.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_operator.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_parser.c</name>
+			<name>lwcell/lwcell_parser.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_parser.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_parser.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_pbuf.c</name>
+			<name>lwcell/lwcell_pbuf.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_pbuf.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_pbuf.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_phonebook.c</name>
+			<name>lwcell/lwcell_phonebook.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_phonebook.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_phonebook.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_ping.c</name>
+			<name>lwcell/lwcell_ping.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_ping.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_ping.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_sim.c</name>
+			<name>lwcell/lwcell_sim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_sim.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_sim.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_sms.c</name>
+			<name>lwcell/lwcell_sms.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_sms.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_sms.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_threads.c</name>
+			<name>lwcell/lwcell_threads.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_threads.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_threads.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_timeout.c</name>
+			<name>lwcell/lwcell_timeout.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_timeout.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_timeout.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_unicode.c</name>
+			<name>lwcell/lwcell_unicode.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_unicode.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_unicode.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm/lwgsm_utils.c</name>
+			<name>lwcell/lwcell_utils.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/lwgsm/lwgsm_utils.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/lwcell/lwcell_utils.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_ll/lwgsm_ll_stm32f429zi_nucleo.c</name>
+			<name>lwcell_ll/lwcell_ll_stm32f429zi_nucleo.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/system/lwgsm_ll_stm32f429zi_nucleo.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/system/lwcell_ll_stm32f429zi_nucleo.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_ll/lwgsm_sys_cmsis_os.c</name>
+			<name>lwcell_ll/lwcell_sys_cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/system/lwgsm_sys_cmsis_os.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/system/lwcell_sys_cmsis_os.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_apps/lwgsm_mqtt_client.c</name>
+			<name>lwcell_apps/lwcell_mqtt_client.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/apps/mqtt/lwgsm_mqtt_client.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/apps/mqtt/lwcell_mqtt_client.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_apps/lwgsm_mqtt_client_api.c</name>
+			<name>lwcell_apps/lwcell_mqtt_client_api.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/apps/mqtt/lwgsm_mqtt_client_api.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/apps/mqtt/lwcell_mqtt_client_api.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_apps/lwgsm_mqtt_client_evt.c</name>
+			<name>lwcell_apps/lwcell_mqtt_client_evt.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/lwgsm/src/apps/mqtt/lwgsm_mqtt_client_evt.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/lwcell/src/apps/mqtt/lwcell_mqtt_client_evt.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_snippets/mqtt_client_api.c</name>
+			<name>lwcell_snippets/mqtt_client_api.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/mqtt_client_api.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_snippets/network_utils.c</name>
+			<name>lwcell_snippets/network_utils.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/network_utils.c</locationURI>
 		</link>
 		<link>
-			<name>lwgsm_snippets/sim_manager.c</name>
+			<name>lwcell_snippets/sim_manager.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/sim_manager.c</locationURI>
 		</link>

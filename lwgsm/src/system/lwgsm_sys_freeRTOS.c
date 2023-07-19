@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_sys_freertos.c
+ * \file            lwcell_sys_freertos.c
  * \brief           System dependant functions for FreeRTOS
  */
 
@@ -32,7 +32,7 @@
  */
 #include "FreeRTOS.h"
 #include "semphr.h"
-#include "system/lwgsm_sys.h"
+#include "system/lwcell_sys.h"
 #include "task.h"
 
 #if !__DOXYGEN__
@@ -45,63 +45,63 @@ typedef struct {
 } freertos_mbox_t;
 
 uint8_t
-lwgsm_sys_init(void) {
+lwcell_sys_init(void) {
     sys_mutex = xSemaphoreCreateMutex();
     return sys_mutex == NULL ? 0 : 1;
 }
 
 uint32_t
-lwgsm_sys_now(void) {
+lwcell_sys_now(void) {
     return xTaskGetTickCount() * portTICK_PERIOD_MS;
 }
 
 uint8_t
-lwgsm_sys_protect(void) {
-    lwgsm_sys_mutex_lock(&sys_mutex);
+lwcell_sys_protect(void) {
+    lwcell_sys_mutex_lock(&sys_mutex);
     return 1;
 }
 
 uint8_t
-lwgsm_sys_unprotect(void) {
-    lwgsm_sys_mutex_unlock(&sys_mutex);
+lwcell_sys_unprotect(void) {
+    lwcell_sys_mutex_unlock(&sys_mutex);
     return 1;
 }
 
 uint8_t
-lwgsm_sys_mutex_create(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_create(lwcell_sys_mutex_t* p) {
     *p = xSemaphoreCreateRecursiveMutex();
     return *p != NULL;
 }
 
 uint8_t
-lwgsm_sys_mutex_delete(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_delete(lwcell_sys_mutex_t* p) {
     vSemaphoreDelete(*p);
     return 1;
 }
 
 uint8_t
-lwgsm_sys_mutex_lock(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_lock(lwcell_sys_mutex_t* p) {
     return xSemaphoreTakeRecursive(*p, portMAX_DELAY) == pdPASS;
 }
 
 uint8_t
-lwgsm_sys_mutex_unlock(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_unlock(lwcell_sys_mutex_t* p) {
     return xSemaphoreGiveRecursive(*p) == pdPASS;
 }
 
 uint8_t
-lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_isvalid(lwcell_sys_mutex_t* p) {
     return p != NULL && *p != NULL;
 }
 
 uint8_t
-lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p) {
-    *p = LWGSM_SYS_MUTEX_NULL;
+lwcell_sys_mutex_invalid(lwcell_sys_mutex_t* p) {
+    *p = LWCELL_SYS_MUTEX_NULL;
     return 1;
 }
 
 uint8_t
-lwgsm_sys_sem_create(lwgsm_sys_sem_t* p, uint8_t cnt) {
+lwcell_sys_sem_create(lwcell_sys_sem_t* p, uint8_t cnt) {
     *p = xSemaphoreCreateBinary();
 
     if (*p != NULL && cnt) {
@@ -111,43 +111,43 @@ lwgsm_sys_sem_create(lwgsm_sys_sem_t* p, uint8_t cnt) {
 }
 
 uint8_t
-lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
+lwcell_sys_sem_delete(lwcell_sys_sem_t* p) {
     vSemaphoreDelete(*p);
     return 1;
 }
 
 uint32_t
-lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
+lwcell_sys_sem_wait(lwcell_sys_sem_t* p, uint32_t timeout) {
     uint32_t t = xTaskGetTickCount();
     return xSemaphoreTake(*p, !timeout ? portMAX_DELAY : pdMS_TO_TICKS(timeout)) == pdPASS
                ? ((xTaskGetTickCount() - t) * portTICK_PERIOD_MS)
-               : LWGSM_SYS_TIMEOUT;
+               : LWCELL_SYS_TIMEOUT;
 }
 
 uint8_t
-lwgsm_sys_sem_release(lwgsm_sys_sem_t* p) {
+lwcell_sys_sem_release(lwcell_sys_sem_t* p) {
     return xSemaphoreGive(*p) == pdPASS;
 }
 
 uint8_t
-lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p) {
+lwcell_sys_sem_isvalid(lwcell_sys_sem_t* p) {
     return p != NULL && *p != NULL;
 }
 
 uint8_t
-lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p) {
-    *p = LWGSM_SYS_SEM_NULL;
+lwcell_sys_sem_invalid(lwcell_sys_sem_t* p) {
+    *p = LWCELL_SYS_SEM_NULL;
     return 1;
 }
 
 uint8_t
-lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size) {
+lwcell_sys_mbox_create(lwcell_sys_mbox_t* b, size_t size) {
     *b = xQueueCreate(size, sizeof(freertos_mbox_t));
     return *b != NULL;
 }
 
 uint8_t
-lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
+lwcell_sys_mbox_delete(lwcell_sys_mbox_t* b) {
     if (uxQueueMessagesWaiting(*b)) {
         return 0;
     }
@@ -156,7 +156,7 @@ lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
 }
 
 uint32_t
-lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
+lwcell_sys_mbox_put(lwcell_sys_mbox_t* b, void* m) {
     freertos_mbox_t mb;
     uint32_t t = xTaskGetTickCount();
 
@@ -166,7 +166,7 @@ lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
 }
 
 uint32_t
-lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
+lwcell_sys_mbox_get(lwcell_sys_mbox_t* b, void** m, uint32_t timeout) {
     freertos_mbox_t mb;
     uint32_t t = xTaskGetTickCount();
 
@@ -174,11 +174,11 @@ lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
         *m = mb.d;
         return (xTaskGetTickCount() - t) * portTICK_PERIOD_MS;
     }
-    return LWGSM_SYS_TIMEOUT;
+    return LWCELL_SYS_TIMEOUT;
 }
 
 uint8_t
-lwgsm_sys_mbox_putnow(lwgsm_sys_mbox_t* b, void* m) {
+lwcell_sys_mbox_putnow(lwcell_sys_mbox_t* b, void* m) {
     freertos_mbox_t mb;
 
     mb.d = m;
@@ -186,7 +186,7 @@ lwgsm_sys_mbox_putnow(lwgsm_sys_mbox_t* b, void* m) {
 }
 
 uint8_t
-lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
+lwcell_sys_mbox_getnow(lwcell_sys_mbox_t* b, void** m) {
     freertos_mbox_t mb;
 
     if (xQueueReceive(*b, &mb, 0)) {
@@ -197,30 +197,30 @@ lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
 }
 
 uint8_t
-lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
+lwcell_sys_mbox_isvalid(lwcell_sys_mbox_t* b) {
     return b != NULL && *b != NULL;
 }
 
 uint8_t
-lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
-    *b = LWGSM_SYS_MBOX_NULL;
+lwcell_sys_mbox_invalid(lwcell_sys_mbox_t* b) {
+    *b = LWCELL_SYS_MBOX_NULL;
     return 1;
 }
 
 uint8_t
-lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg,
-                        size_t stack_size, lwgsm_sys_thread_prio_t prio) {
+lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func, void* const arg,
+                        size_t stack_size, lwcell_sys_thread_prio_t prio) {
     return xTaskCreate(thread_func, name, stack_size / sizeof(portSTACK_TYPE), arg, prio, t) == pdPASS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
+lwcell_sys_thread_terminate(lwcell_sys_thread_t* t) {
     vTaskDelete(*t);
     return 1;
 }
 
 uint8_t
-lwgsm_sys_thread_yield(void) {
+lwcell_sys_thread_yield(void) {
     taskYIELD();
     return 1;
 }

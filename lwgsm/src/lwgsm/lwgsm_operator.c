@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_operator.c
+ * \file            lwcell_operator.c
  * \brief           Operator API functions
  */
 
@@ -26,13 +26,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_operator.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_operator.h"
+#include "lwcell/lwcell_private.h"
 
 /**
  * \brief           Get current operator
@@ -40,54 +40,54 @@
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_operator_get(lwgsm_operator_curr_t* curr, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_operator_get(lwcell_operator_curr_t* curr, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                    const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_COPS_GET;
-    LWGSM_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_COPS_GET;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_get.curr = curr;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 2000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 2000);
 }
 
 /**
  * \brief           Set current operator
- * \param[in]       mode: Operator mode. This parameter can be a value of \ref lwgsm_operator_mode_t enumeration
- * \param[in]       format: Operator data format. This parameter can be a value of \ref lwgsm_operator_format_t enumeration
+ * \param[in]       mode: Operator mode. This parameter can be a value of \ref lwcell_operator_mode_t enumeration
+ * \param[in]       format: Operator data format. This parameter can be a value of \ref lwcell_operator_format_t enumeration
  * \param[in]       name: Operator name. This parameter must be valid according to `format` parameter
  * \param[in]       num: Operator number. This parameter must be valid according to `format` parameter
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, const char* name, uint32_t num,
-                   const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_operator_set(lwcell_operator_mode_t mode, lwcell_operator_format_t format, const char* name, uint32_t num,
+                   const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    if (mode != LWGSM_OPERATOR_MODE_AUTO) { /* Check parameters only if non-auto mode */
-        LWGSM_ASSERT(format < LWGSM_OPERATOR_FORMAT_INVALID);
-        if (format != LWGSM_OPERATOR_FORMAT_NUMBER) {
-            LWGSM_ASSERT(name != NULL);
+    if (mode != LWCELL_OPERATOR_MODE_AUTO) { /* Check parameters only if non-auto mode */
+        LWCELL_ASSERT(format < LWCELL_OPERATOR_FORMAT_INVALID);
+        if (format != LWCELL_OPERATOR_FORMAT_NUMBER) {
+            LWCELL_ASSERT(name != NULL);
         }
     }
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_COPS_SET;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_COPS_SET;
 
-    LWGSM_MSG_VAR_REF(msg).msg.cops_set.mode = mode;
-    LWGSM_MSG_VAR_REF(msg).msg.cops_set.format = format;
-    LWGSM_MSG_VAR_REF(msg).msg.cops_set.name = name;
-    LWGSM_MSG_VAR_REF(msg).msg.cops_set.num = num;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_set.mode = mode;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_set.format = format;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_set.name = name;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_set.num = num;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 2000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 2000);
 }
 
 /**
@@ -98,23 +98,23 @@ lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, c
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t
+lwcell_operator_scan(lwcell_operator_t* ops, size_t opsl, size_t* opf, const lwcell_api_cmd_evt_fn evt_fn,
                     void* const evt_arg, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
     if (opf != NULL) {
         *opf = 0;
     }
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_COPS_GET_OPT;
-    LWGSM_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
-    LWGSM_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
-    LWGSM_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_COPS_GET_OPT;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_scan.ops = ops;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_scan.opsl = opsl;
+    LWCELL_MSG_VAR_REF(msg).msg.cops_scan.opf = opf;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 120000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 120000);
 }

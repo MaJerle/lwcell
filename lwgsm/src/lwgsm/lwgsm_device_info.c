@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_device_info.c
+ * \file            lwcell_device_info.c
  * \brief           Basic device information
  */
 
@@ -26,13 +26,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_device_info.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_device_info.h"
+#include "lwcell/lwcell_private.h"
 
 /**
  * \brief           Get device manufacturer
@@ -41,23 +41,23 @@
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_device_get_manufacturer(char* manuf, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                               const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(manuf != NULL);
-    LWGSM_ASSERT(len > 0);
+    LWCELL_ASSERT(manuf != NULL);
+    LWCELL_ASSERT(len > 0);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGMI_GET;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = manuf;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CGMI_GET;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.str = manuf;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }
 
 /**
@@ -67,23 +67,23 @@ lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_f
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_device_get_model(char* model, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                        const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(model != NULL);
-    LWGSM_ASSERT(len > 0);
+    LWCELL_ASSERT(model != NULL);
+    LWCELL_ASSERT(len > 0);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGMM_GET;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = model;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CGMM_GET;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.str = model;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }
 
 /**
@@ -93,23 +93,23 @@ lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_f
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_device_get_revision(char* rev, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                           const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(rev != NULL);
-    LWGSM_ASSERT(len > 0);
+    LWCELL_ASSERT(rev != NULL);
+    LWCELL_ASSERT(len > 0);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGMR_GET;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = rev;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CGMR_GET;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.str = rev;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }
 
 /**
@@ -119,21 +119,21 @@ lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_device_get_serial_number(char* serial, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                                const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(serial != NULL);
-    LWGSM_ASSERT(len > 0);
+    LWCELL_ASSERT(serial != NULL);
+    LWCELL_ASSERT(len > 0);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CGSN_GET;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.str = serial;
-    LWGSM_MSG_VAR_REF(msg).msg.device_info.len = len;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CGSN_GET;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.str = serial;
+    LWCELL_MSG_VAR_REF(msg).msg.device_info.len = len;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }

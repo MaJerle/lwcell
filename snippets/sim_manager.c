@@ -1,5 +1,5 @@
 #include "sim_manager.h"
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 
 /**
  * \brief           SIM card pin code
@@ -17,9 +17,9 @@ static const char* puk_code = "10663647";
  */
 uint8_t
 configure_sim_card(void) {
-    LWGSM_UNUSED(puk_code);
+    LWCELL_UNUSED(puk_code);
     if (pin_code != NULL && strlen(pin_code)) {
-        if (lwgsm_sim_pin_enter(pin_code, NULL, NULL, 1) == lwgsmOK) {
+        if (lwcell_sim_pin_enter(pin_code, NULL, NULL, 1) == lwcellOK) {
             return 1;
         }
         return 0;

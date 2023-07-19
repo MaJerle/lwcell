@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_mqtt_client_evt.c
+ * \file            lwcell_mqtt_client_evt.c
  * \brief           MQTT client event helper functions
  */
 
@@ -26,9 +26,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/apps/lwgsm_mqtt_client_evt.h"
+#include "lwcell/apps/lwcell_mqtt_client_evt.h"

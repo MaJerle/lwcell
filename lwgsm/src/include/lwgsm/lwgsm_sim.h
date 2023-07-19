@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_sim.h
+ * \file            lwcell_sim.h
  * \brief           SIM API
  */
 
@@ -26,37 +26,37 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_SIM_HDR_H
-#define LWGSM_SIM_HDR_H
+#ifndef LWCELL_SIM_HDR_H
+#define LWCELL_SIM_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_SIM SIM API
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_SIM SIM API
  * \brief           SIM card manager
  * \{
  */
 
-lwgsm_sim_state_t lwgsm_sim_get_current_state(void);
-lwgsmr_t lwgsm_sim_pin_enter(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcell_sim_state_t lwcell_sim_get_current_state(void);
+lwcellr_t lwcell_sim_pin_enter(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                              const uint32_t blocking);
-lwgsmr_t lwgsm_sim_pin_add(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_sim_pin_add(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                            const uint32_t blocking);
-lwgsmr_t lwgsm_sim_pin_remove(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_sim_pin_remove(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                               const uint32_t blocking);
-lwgsmr_t lwgsm_sim_pin_change(const char* pin, const char* new_pin, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t lwcell_sim_pin_change(const char* pin, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn,
                               void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_sim_puk_enter(const char* puk, const char* new_pin, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t lwcell_sim_puk_enter(const char* puk, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn,
                              void* const evt_arg, const uint32_t blocking);
 
 /**
@@ -67,4 +67,4 @@ lwgsmr_t lwgsm_sim_puk_enter(const char* puk, const char* new_pin, const lwgsm_a
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_SIM_HDR_H */
+#endif /* LWCELL_SIM_HDR_H */

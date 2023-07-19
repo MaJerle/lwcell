@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ussd.c
+ * \file            lwcell_ussd.c
  * \brief           Unstructured Supplementary Service Data
  */
 
@@ -26,15 +26,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_ussd.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_ussd.h"
+#include "lwcell/lwcell_private.h"
 
-#if LWGSM_CFG_USSD || __DOXYGEN__
+#if LWCELL_CFG_USSD || __DOXYGEN__
 
 /**
  * \brief           Run USSD command, such as `*123#` to get balance on SIM card
@@ -44,26 +44,26 @@
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_ussd_run(const char* code, char* resp, size_t resp_len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_ussd_run(const char* code, char* resp, size_t resp_len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(code != NULL && strlen(code) > 0);
-    LWGSM_ASSERT(resp != NULL);
-    LWGSM_ASSERT(resp_len > 0);
+    LWCELL_ASSERT(code != NULL && strlen(code) > 0);
+    LWCELL_ASSERT(resp != NULL);
+    LWCELL_ASSERT(resp_len > 0);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CUSD;
-    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CUSD_GET;
-    LWGSM_MSG_VAR_REF(msg).msg.ussd.code = code;
-    LWGSM_MSG_VAR_REF(msg).msg.ussd.resp = resp;
-    LWGSM_MSG_VAR_REF(msg).msg.ussd.resp_len = resp_len;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CUSD;
+    LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CUSD_GET;
+    LWCELL_MSG_VAR_REF(msg).msg.ussd.code = code;
+    LWCELL_MSG_VAR_REF(msg).msg.ussd.resp = resp;
+    LWCELL_MSG_VAR_REF(msg).msg.ussd.resp_len = resp_len;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }
 
-#endif /* LWGSM_CFG_USSD || __DOXYGEN__ */
+#endif /* LWCELL_CFG_USSD || __DOXYGEN__ */

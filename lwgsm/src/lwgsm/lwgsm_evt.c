@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_evt.c
+ * \file            lwcell_evt.c
  * \brief           Event helper functions
  */
 
@@ -26,107 +26,107 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_evt.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_evt.h"
+#include "lwcell/lwcell_private.h"
 
 /**
  * \brief           Register callback function for global (non-connection based) events
  * \param[in]       fn: Callback function to call on specific event
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_evt_register(lwgsm_evt_fn fn) {
-    lwgsmr_t res = lwgsmOK;
-    lwgsm_evt_func_t *func, *new_func;
+lwcellr_t
+lwcell_evt_register(lwcell_evt_fn fn) {
+    lwcellr_t res = lwcellOK;
+    lwcell_evt_func_t *func, *new_func;
 
-    LWGSM_ASSERT(fn != NULL);
+    LWCELL_ASSERT(fn != NULL);
 
-    lwgsm_core_lock();
+    lwcell_core_lock();
 
     /* Check if function already exists on list */
-    for (func = lwgsm.evt_func; func != NULL; func = func->next) {
+    for (func = lwcell.evt_func; func != NULL; func = func->next) {
         if (func->fn == fn) {
-            res = lwgsmERR;
+            res = lwcellERR;
             break;
         }
     }
 
-    if (res == lwgsmOK) {
-        new_func = lwgsm_mem_malloc(sizeof(*new_func));
+    if (res == lwcellOK) {
+        new_func = lwcell_mem_malloc(sizeof(*new_func));
         if (new_func != NULL) {
-            LWGSM_MEMSET(new_func, 0x00, sizeof(*new_func));
+            LWCELL_MEMSET(new_func, 0x00, sizeof(*new_func));
             new_func->fn = fn; /* Set function pointer */
-            for (func = lwgsm.evt_func; func != NULL && func->next != NULL; func = func->next) {}
+            for (func = lwcell.evt_func; func != NULL && func->next != NULL; func = func->next) {}
             if (func != NULL) {
                 func->next = new_func; /* Set new function as next */
-                res = lwgsmOK;
+                res = lwcellOK;
             } else {
-                lwgsm_mem_free_s((void**)&new_func);
-                res = lwgsmERRMEM;
+                lwcell_mem_free_s((void**)&new_func);
+                res = lwcellERRMEM;
             }
         } else {
-            res = lwgsmERRMEM;
+            res = lwcellERRMEM;
         }
     }
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
     return res;
 }
 
 /**
  * \brief           Unregister callback function for global (non-connection based) events
- * \note            Function must be first registered using \ref lwgsm_evt_register
+ * \note            Function must be first registered using \ref lwcell_evt_register
  * \param[in]       fn: Callback function to remove from event list
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_evt_unregister(lwgsm_evt_fn fn) {
-    lwgsm_evt_func_t *func, *prev;
-    LWGSM_ASSERT(fn != NULL);
+lwcellr_t
+lwcell_evt_unregister(lwcell_evt_fn fn) {
+    lwcell_evt_func_t *func, *prev;
+    LWCELL_ASSERT(fn != NULL);
 
-    lwgsm_core_lock();
-    for (prev = lwgsm.evt_func, func = lwgsm.evt_func->next; func != NULL; prev = func, func = func->next) {
+    lwcell_core_lock();
+    for (prev = lwcell.evt_func, func = lwcell.evt_func->next; func != NULL; prev = func, func = func->next) {
         if (func->fn == fn) {
             prev->next = func->next;
-            lwgsm_mem_free_s((void**)&func);
+            lwcell_mem_free_s((void**)&func);
             break;
         }
     }
-    lwgsm_core_unlock();
-    return lwgsmOK;
+    lwcell_core_unlock();
+    return lwcellOK;
 }
 
 /**
  * \brief           Get event type
  * \param[in]       cc: Event handle
- * \return          Event type. Member of \ref lwgsm_evt_type_t enumeration
+ * \return          Event type. Member of \ref lwcell_evt_type_t enumeration
  */
-lwgsm_evt_type_t
-lwgsm_evt_get_type(lwgsm_evt_t* cc) {
+lwcell_evt_type_t
+lwcell_evt_get_type(lwcell_evt_t* cc) {
     return cc->type;
 }
 
 /**
  * \brief           Get reset sequence operation status
  * \param[in]       cc: Event data
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_reset_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_reset_get_result(lwcell_evt_t* cc) {
     return cc->evt.reset.res;
 }
 
 /**
  * \brief           Get restore sequence operation status
  * \param[in]       cc: Event data
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_restore_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_restore_get_result(lwcell_evt_t* cc) {
     return cc->evt.restore.res;
 }
 
@@ -135,18 +135,18 @@ lwgsm_evt_restore_get_result(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event data
  * \return          Current operator handle
  */
-const lwgsm_operator_curr_t*
-lwgsm_evt_network_operator_get_current(lwgsm_evt_t* cc) {
+const lwcell_operator_curr_t*
+lwcell_evt_network_operator_get_current(lwcell_evt_t* cc) {
     return cc->evt.operator_current.operator_current;
 }
 
 /**
  * \brief           Get operator scan operation status
  * \param[in]       cc: Event data
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_operator_scan_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_operator_scan_get_result(lwcell_evt_t* cc) {
     return cc->evt.operator_scan.res;
 }
 
@@ -155,8 +155,8 @@ lwgsm_evt_operator_scan_get_result(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event data
  * \return          Pointer to array of operator entries
  */
-lwgsm_operator_t*
-lwgsm_evt_operator_scan_get_entries(lwgsm_evt_t* cc) {
+lwcell_operator_t*
+lwcell_evt_operator_scan_get_entries(lwcell_evt_t* cc) {
     return cc->evt.operator_scan.ops;
 }
 
@@ -166,7 +166,7 @@ lwgsm_evt_operator_scan_get_entries(lwgsm_evt_t* cc) {
  * \return          Number of operators scanned
  */
 size_t
-lwgsm_evt_operator_scan_get_length(lwgsm_evt_t* cc) {
+lwcell_evt_operator_scan_get_length(lwcell_evt_t* cc) {
     return cc->evt.operator_scan.opf;
 }
 
@@ -176,19 +176,19 @@ lwgsm_evt_operator_scan_get_length(lwgsm_evt_t* cc) {
  * \return          RSSI value in units of dBm
  */
 int16_t
-lwgsm_evt_signal_strength_get_rssi(lwgsm_evt_t* cc) {
+lwcell_evt_signal_strength_get_rssi(lwcell_evt_t* cc) {
     return cc->evt.rssi.rssi;
 }
 
-#if LWGSM_CFG_CONN || __DOXYGEN__
+#if LWCELL_CFG_CONN || __DOXYGEN__
 
 /**
  * \brief           Get buffer from received data
  * \param[in]       cc: Event handle
  * \return          Buffer handle
  */
-lwgsm_pbuf_p
-lwgsm_evt_conn_recv_get_buff(lwgsm_evt_t* cc) {
+lwcell_pbuf_p
+lwcell_evt_conn_recv_get_buff(lwcell_evt_t* cc) {
     return cc->evt.conn_data_recv.buff;
 }
 
@@ -197,8 +197,8 @@ lwgsm_evt_conn_recv_get_buff(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-lwgsm_conn_p
-lwgsm_evt_conn_recv_get_conn(lwgsm_evt_t* cc) {
+lwcell_conn_p
+lwcell_evt_conn_recv_get_conn(lwcell_evt_t* cc) {
     return cc->evt.conn_data_recv.conn;
 }
 
@@ -207,8 +207,8 @@ lwgsm_evt_conn_recv_get_conn(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-lwgsm_conn_p
-lwgsm_evt_conn_send_get_conn(lwgsm_evt_t* cc) {
+lwcell_conn_p
+lwcell_evt_conn_send_get_conn(lwcell_evt_t* cc) {
     return cc->evt.conn_data_send.conn;
 }
 
@@ -218,17 +218,17 @@ lwgsm_evt_conn_send_get_conn(lwgsm_evt_t* cc) {
  * \return          Number of bytes sent
  */
 size_t
-lwgsm_evt_conn_send_get_length(lwgsm_evt_t* cc) {
+lwcell_evt_conn_send_get_length(lwcell_evt_t* cc) {
     return cc->evt.conn_data_send.sent;
 }
 
 /**
  * \brief           Check if connection send was successful
  * \param[in]       cc: Event handle
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_conn_send_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_conn_send_get_result(lwcell_evt_t* cc) {
     return cc->evt.conn_data_send.res;
 }
 
@@ -237,8 +237,8 @@ lwgsm_evt_conn_send_get_result(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-lwgsm_conn_p
-lwgsm_evt_conn_active_get_conn(lwgsm_evt_t* cc) {
+lwcell_conn_p
+lwcell_evt_conn_active_get_conn(lwcell_evt_t* cc) {
     return cc->evt.conn_active_close.conn;
 }
 
@@ -248,8 +248,8 @@ lwgsm_evt_conn_active_get_conn(lwgsm_evt_t* cc) {
  * \return          `1` if client, `0` otherwise
  */
 uint8_t
-lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc) {
-    return LWGSM_U8(cc->evt.conn_active_close.client > 0);
+lwcell_evt_conn_active_is_client(lwcell_evt_t* cc) {
+    return LWCELL_U8(cc->evt.conn_active_close.client > 0);
 }
 
 /**
@@ -257,8 +257,8 @@ lwgsm_evt_conn_active_is_client(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-lwgsm_conn_p
-lwgsm_evt_conn_close_get_conn(lwgsm_evt_t* cc) {
+lwcell_conn_p
+lwcell_evt_conn_close_get_conn(lwcell_evt_t* cc) {
     return cc->evt.conn_active_close.conn;
 }
 
@@ -268,7 +268,7 @@ lwgsm_evt_conn_close_get_conn(lwgsm_evt_t* cc) {
  * \return          `1` if client, `0` otherwise
  */
 uint8_t
-lwgsm_evt_conn_close_is_client(lwgsm_evt_t* cc) {
+lwcell_evt_conn_close_is_client(lwcell_evt_t* cc) {
     return cc->evt.conn_active_close.client;
 }
 
@@ -278,17 +278,17 @@ lwgsm_evt_conn_close_is_client(lwgsm_evt_t* cc) {
  * \return          `1` if forced, `0` otherwise
  */
 uint8_t
-lwgsm_evt_conn_close_is_forced(lwgsm_evt_t* cc) {
+lwcell_evt_conn_close_is_forced(lwcell_evt_t* cc) {
     return cc->evt.conn_active_close.forced;
 }
 
 /**
  * \brief           Get connection close event result
  * \param[in]       cc: Event handle
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_conn_close_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_conn_close_get_result(lwcell_evt_t* cc) {
     return cc->evt.conn_active_close.res;
 }
 
@@ -297,28 +297,28 @@ lwgsm_evt_conn_close_get_result(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Connection handle
  */
-lwgsm_conn_p
-lwgsm_evt_conn_poll_get_conn(lwgsm_evt_t* cc) {
+lwcell_conn_p
+lwcell_evt_conn_poll_get_conn(lwcell_evt_t* cc) {
     return cc->evt.conn_poll.conn;
 }
 
 /**
  * \brief           Get connection error type
  * \param[in]       cc: Event handle
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_conn_error_get_error(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_conn_error_get_error(lwcell_evt_t* cc) {
     return cc->evt.conn_error.err;
 }
 
 /**
  * \brief           Get connection type
  * \param[in]       cc: Event handle
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsm_conn_type_t
-lwgsm_evt_conn_error_get_type(lwgsm_evt_t* cc) {
+lwcell_conn_type_t
+lwcell_evt_conn_error_get_type(lwcell_evt_t* cc) {
     return cc->evt.conn_error.type;
 }
 
@@ -328,7 +328,7 @@ lwgsm_evt_conn_error_get_type(lwgsm_evt_t* cc) {
  * \return          Host name for connection
  */
 const char*
-lwgsm_evt_conn_error_get_host(lwgsm_evt_t* cc) {
+lwcell_evt_conn_error_get_host(lwcell_evt_t* cc) {
     return cc->evt.conn_error.host;
 }
 
@@ -337,8 +337,8 @@ lwgsm_evt_conn_error_get_host(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          Host port number
  */
-lwgsm_port_t
-lwgsm_evt_conn_error_get_port(lwgsm_evt_t* cc) {
+lwcell_port_t
+lwcell_evt_conn_error_get_port(lwcell_evt_t* cc) {
     return cc->evt.conn_error.port;
 }
 
@@ -348,13 +348,13 @@ lwgsm_evt_conn_error_get_port(lwgsm_evt_t* cc) {
  * \return          User argument
  */
 void*
-lwgsm_evt_conn_error_get_arg(lwgsm_evt_t* cc) {
+lwcell_evt_conn_error_get_arg(lwcell_evt_t* cc) {
     return cc->evt.conn_error.arg;
 }
 
-#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
+#endif /* LWCELL_CFG_CONN || __DOXYGEN__ */
 
-#if LWGSM_CFG_SMS || __DOXYGEN__
+#if LWCELL_CFG_SMS || __DOXYGEN__
 
 /**
  * \brief           Get SMS position in memory which has been saved on receive
@@ -362,7 +362,7 @@ lwgsm_evt_conn_error_get_arg(lwgsm_evt_t* cc) {
  * \return          SMS position in memory
  */
 size_t
-lwgsm_evt_sms_recv_get_pos(lwgsm_evt_t* cc) {
+lwcell_evt_sms_recv_get_pos(lwcell_evt_t* cc) {
     return cc->evt.sms_recv.pos;
 }
 
@@ -371,8 +371,8 @@ lwgsm_evt_sms_recv_get_pos(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS memory location
  */
-lwgsm_mem_t
-lwgsm_evt_sms_recv_get_mem(lwgsm_evt_t* cc) {
+lwcell_mem_t
+lwcell_evt_sms_recv_get_mem(lwcell_evt_t* cc) {
     return cc->evt.sms_recv.mem;
 }
 
@@ -381,8 +381,8 @@ lwgsm_evt_sms_recv_get_mem(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS entry
  */
-lwgsm_sms_entry_t*
-lwgsm_evt_sms_read_get_entry(lwgsm_evt_t* cc) {
+lwcell_sms_entry_t*
+lwcell_evt_sms_read_get_entry(lwcell_evt_t* cc) {
     return cc->evt.sms_read.entry;
 }
 
@@ -391,18 +391,18 @@ lwgsm_evt_sms_read_get_entry(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS entry
  */
-lwgsmr_t
-lwgsm_evt_sms_read_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_sms_read_get_result(lwcell_evt_t* cc) {
     return cc->evt.sms_read.res;
 }
 
 /**
  * \brief           Get SMS send result status
  * \param[in]       cc: Event handle
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_sms_send_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_sms_send_get_result(lwcell_evt_t* cc) {
     return cc->evt.sms_send.res;
 }
 
@@ -413,17 +413,17 @@ lwgsm_evt_sms_send_get_result(lwgsm_evt_t* cc) {
  * \return          Position in memory
  */
 size_t
-lwgsm_evt_sms_send_get_pos(lwgsm_evt_t* cc) {
+lwcell_evt_sms_send_get_pos(lwcell_evt_t* cc) {
     return cc->evt.sms_send.pos;
 }
 
 /**
  * \brief           Get SMS delete result status
  * \param[in]       cc: Event handle
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_evt_sms_delete_get_result(lwgsm_evt_t* cc) {
+lwcellr_t
+lwcell_evt_sms_delete_get_result(lwcell_evt_t* cc) {
     return cc->evt.sms_delete.res;
 }
 
@@ -433,7 +433,7 @@ lwgsm_evt_sms_delete_get_result(lwgsm_evt_t* cc) {
  * \return          Deleted position in memory
  */
 size_t
-lwgsm_evt_sms_delete_get_pos(lwgsm_evt_t* cc) {
+lwcell_evt_sms_delete_get_pos(lwcell_evt_t* cc) {
     return cc->evt.sms_delete.pos;
 }
 
@@ -442,24 +442,24 @@ lwgsm_evt_sms_delete_get_pos(lwgsm_evt_t* cc) {
  * \param[in]       cc: Event handle
  * \return          SMS memory for delete operation
  */
-lwgsm_mem_t
-lwgsm_evt_sms_delete_get_mem(lwgsm_evt_t* cc) {
+lwcell_mem_t
+lwcell_evt_sms_delete_get_mem(lwcell_evt_t* cc) {
     return cc->evt.sms_delete.mem;
 }
 
-#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
+#endif /* LWCELL_CFG_SMS || __DOXYGEN__ */
 
-#if LWGSM_CFG_CALL || __DOXYGEN__
+#if LWCELL_CFG_CALL || __DOXYGEN__
 
 /**
  * \brief           Get call information from changed event
  * \param[in]       cc: Event handle
  * \return          Position in memory
  */
-const lwgsm_call_t*
-lwgsm_evt_call_changed_get_call(lwgsm_evt_t* cc) {
-    LWGSM_UNUSED(cc);
-    return lwgsm.evt.evt.call_changed.call;
+const lwcell_call_t*
+lwcell_evt_call_changed_get_call(lwcell_evt_t* cc) {
+    LWCELL_UNUSED(cc);
+    return lwcell.evt.evt.call_changed.call;
 }
 
-#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#endif /* LWCELL_CFG_CALL || __DOXYGEN__ */

@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_unicode.h
+ * \file            lwcell_unicode.h
  * \brief           Unicode support
  */
 
@@ -26,28 +26,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_UNICODE_HDR_H
-#define LWGSM_UNICODE_HDR_H
+#ifndef LWCELL_UNICODE_HDR_H
+#define LWCELL_UNICODE_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_UNICODE Unicode manager
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_UNICODE Unicode manager
  * \brief           Unicode support manager
  * \{
  */
 
-lwgsmr_t lwgsmi_unicode_decode(lwgsm_unicode_t* uni, uint8_t ch);
+lwcellr_t lwcelli_unicode_decode(lwcell_unicode_t* uni, uint8_t ch);
 
 /**
  * \}
@@ -57,4 +57,4 @@ lwgsmr_t lwgsmi_unicode_decode(lwgsm_unicode_t* uni, uint8_t ch);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_UNICODE_HDR_H */
+#endif /* LWCELL_UNICODE_HDR_H */

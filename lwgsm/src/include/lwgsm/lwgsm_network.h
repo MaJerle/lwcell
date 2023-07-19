@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_network.h
+ * \file            lwcell_network.h
  * \brief           Network API
  */
 
@@ -26,39 +26,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_NETWORK_HDR_H
-#define LWGSM_NETWORK_HDR_H
+#ifndef LWCELL_NETWORK_HDR_H
+#define LWCELL_NETWORK_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_NETWORK Network API
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_NETWORK Network API
  * \brief           Network manager
  * \{
  */
 
 /* Basic commands, always available */
-lwgsmr_t lwgsm_network_rssi(int16_t* rssi, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_network_rssi(int16_t* rssi, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                             const uint32_t blocking);
-lwgsm_network_reg_status_t lwgsm_network_get_reg_status(void);
+lwcell_network_reg_status_t lwcell_network_get_reg_status(void);
 
 /* TCP/IP related commands */
-lwgsmr_t lwgsm_network_attach(const char* apn, const char* user, const char* pass, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t lwcell_network_attach(const char* apn, const char* user, const char* pass, const lwcell_api_cmd_evt_fn evt_fn,
                               void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_network_detach(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-uint8_t lwgsm_network_is_attached(void);
-lwgsmr_t lwgsm_network_copy_ip(lwgsm_ip_t* ip);
-lwgsmr_t lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_network_detach(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+uint8_t lwcell_network_is_attached(void);
+lwcellr_t lwcell_network_copy_ip(lwcell_ip_t* ip);
+lwcellr_t lwcell_network_check_status(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}
@@ -68,4 +68,4 @@ lwgsmr_t lwgsm_network_check_status(const lwgsm_api_cmd_evt_fn evt_fn, void* con
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_NETWORK_HDR_H */
+#endif /* LWCELL_NETWORK_HDR_H */

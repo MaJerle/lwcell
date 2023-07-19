@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_netconn.c
+ * \file            lwcell_netconn.c
  * \brief           API functions for sequential calls
  */
 
@@ -26,54 +26,54 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_netconn.h"
-#include "lwgsm/lwgsm_conn.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_netconn.h"
+#include "lwcell/lwcell_conn.h"
+#include "lwcell/lwcell_mem.h"
+#include "lwcell/lwcell_private.h"
 
-#if LWGSM_CFG_NETCONN || __DOXYGEN__
+#if LWCELL_CFG_NETCONN || __DOXYGEN__
 
 /* Check conditions */
-#if !LWGSM_CFG_CONN
-#error "LWGSM_CFG_CONN must be enabled for NETCONN API!"
-#endif /* !LWGSM_CFG_CONN */
+#if !LWCELL_CFG_CONN
+#error "LWCELL_CFG_CONN must be enabled for NETCONN API!"
+#endif /* !LWCELL_CFG_CONN */
 
-#if LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN < 2
-#error "LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN must be greater or equal to 2"
-#endif /* LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN < 2 */
+#if LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN < 2
+#error "LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN must be greater or equal to 2"
+#endif /* LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN < 2 */
 
 /**
  * \brief           Sequential API structure
  */
-typedef struct lwgsm_netconn {
-    struct lwgsm_netconn* next;    /*!< Linked list entry */
+typedef struct lwcell_netconn {
+    struct lwcell_netconn* next;    /*!< Linked list entry */
 
-    lwgsm_netconn_type_t type;     /*!< Netconn type */
+    lwcell_netconn_type_t type;     /*!< Netconn type */
 
     size_t rcv_packets;            /*!< Number of received packets so far on this connection */
-    lwgsm_conn_p conn;             /*!< Pointer to actual connection */
+    lwcell_conn_p conn;             /*!< Pointer to actual connection */
 
-    lwgsm_sys_mbox_t mbox_receive; /*!< Message queue for receive mbox */
+    lwcell_sys_mbox_t mbox_receive; /*!< Message queue for receive mbox */
 
-    lwgsm_linbuff_t buff;          /*!< Linear buffer structure */
+    lwcell_linbuff_t buff;          /*!< Linear buffer structure */
 
     uint16_t conn_timeout;         /*!< Connection timeout in units of seconds when
                                                     netconn is in server (listen) mode.
                                                     Connection will be automatically closed if there is no
                                                     data exchange in time. Set to `0` when timeout feature is disabled. */
 
-#if LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__
+#if LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__
     uint32_t rcv_timeout; /*!< Receive timeout in unit of milliseconds */
 #endif
-} lwgsm_netconn_t;
+} lwcell_netconn_t;
 
 static uint8_t recv_closed = 0xFF;
-static lwgsm_netconn_t* netconn_list; /*!< Linked list of netconn entries */
+static lwcell_netconn_t* netconn_list; /*!< Linked list of netconn entries */
 
 /**
  * \brief           Flush all mboxes and clear possible used memories
@@ -81,63 +81,63 @@ static lwgsm_netconn_t* netconn_list; /*!< Linked list of netconn entries */
  * \param[in]       protect: Set to 1 to protect against multi-thread access
  */
 static void
-flush_mboxes(lwgsm_netconn_t* nc, uint8_t protect) {
-    lwgsm_pbuf_p pbuf;
+flush_mboxes(lwcell_netconn_t* nc, uint8_t protect) {
+    lwcell_pbuf_p pbuf;
     if (protect) {
-        lwgsm_core_lock();
+        lwcell_core_lock();
     }
-    if (lwgsm_sys_mbox_isvalid(&nc->mbox_receive)) {
-        while (lwgsm_sys_mbox_getnow(&nc->mbox_receive, (void**)&pbuf)) {
+    if (lwcell_sys_mbox_isvalid(&nc->mbox_receive)) {
+        while (lwcell_sys_mbox_getnow(&nc->mbox_receive, (void**)&pbuf)) {
             if (pbuf != NULL && (uint8_t*)pbuf != (uint8_t*)&recv_closed) {
-                lwgsm_pbuf_free_s(&pbuf); /* Free received data buffers */
+                lwcell_pbuf_free_s(&pbuf); /* Free received data buffers */
             }
         }
-        lwgsm_sys_mbox_delete(&nc->mbox_receive);  /* Delete message queue */
-        lwgsm_sys_mbox_invalid(&nc->mbox_receive); /* Invalid handle */
+        lwcell_sys_mbox_delete(&nc->mbox_receive);  /* Delete message queue */
+        lwcell_sys_mbox_invalid(&nc->mbox_receive); /* Invalid handle */
     }
     if (protect) {
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
 }
 
 /**
  * \brief           Callback function for every server connection
  * \param[in]       evt: Pointer to callback structure
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-static lwgsmr_t
-netconn_evt(lwgsm_evt_t* evt) {
-    lwgsm_conn_p conn;
-    lwgsm_netconn_t* nc = NULL;
+static lwcellr_t
+netconn_evt(lwcell_evt_t* evt) {
+    lwcell_conn_p conn;
+    lwcell_netconn_t* nc = NULL;
     uint8_t close = 0;
 
-    conn = lwgsm_conn_get_from_evt(evt); /* Get connection from event */
-    switch (lwgsm_evt_get_type(evt)) {
+    conn = lwcell_conn_get_from_evt(evt); /* Get connection from event */
+    switch (lwcell_evt_get_type(evt)) {
         /*
          * A new connection has been active
          * and should be handled by netconn API
          */
-        case LWGSM_EVT_CONN_ACTIVE: {          /* A new connection active is active */
-            if (lwgsm_conn_is_client(conn)) {  /* Was connection started by us? */
-                nc = lwgsm_conn_get_arg(conn); /* Argument should be already set */
+        case LWCELL_EVT_CONN_ACTIVE: {          /* A new connection active is active */
+            if (lwcell_conn_is_client(conn)) {  /* Was connection started by us? */
+                nc = lwcell_conn_get_arg(conn); /* Argument should be already set */
                 if (nc != NULL) {
                     nc->conn = conn;           /* Save actual connection */
                 } else {
                     close = 1;                 /* Close this connection, invalid netconn */
                 }
             } else {
-                LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_WARNING,
-                             "[LWGSM NETCONN] Closing connection, it is not in client mode!\r\n");
+                LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_WARNING,
+                             "[LWCELL NETCONN] Closing connection, it is not in client mode!\r\n");
                 close = 1; /* Close the connection at this point */
             }
 
             /* Decide if some events want to close the connection */
             if (close) {
                 if (nc != NULL) {
-                    lwgsm_conn_set_arg(conn, NULL); /* Reset argument */
-                    lwgsm_netconn_delete(nc);       /* Free memory for API */
+                    lwcell_conn_set_arg(conn, NULL); /* Reset argument */
+                    lwcell_netconn_delete(nc);       /* Free memory for API */
                 }
-                lwgsm_conn_close(conn, 0);          /* Close the connection */
+                lwcell_conn_close(conn, 0);          /* Close the connection */
                 close = 0;
             }
             break;
@@ -147,58 +147,58 @@ netconn_evt(lwgsm_evt_t* evt) {
          * We have a new data received which
          * should have netconn structure as argument
          */
-        case LWGSM_EVT_CONN_RECV: {
-            lwgsm_pbuf_p pbuf;
+        case LWCELL_EVT_CONN_RECV: {
+            lwcell_pbuf_p pbuf;
 
-            nc = lwgsm_conn_get_arg(conn);            /* Get API from connection */
-            pbuf = lwgsm_evt_conn_recv_get_buff(evt); /* Get received buff */
+            nc = lwcell_conn_get_arg(conn);            /* Get API from connection */
+            pbuf = lwcell_evt_conn_recv_get_buff(evt); /* Get received buff */
 
-            lwgsm_conn_recved(conn, pbuf);            /* Notify stack about received data */
+            lwcell_conn_recved(conn, pbuf);            /* Notify stack about received data */
 
-            lwgsm_pbuf_ref(pbuf);                     /* Increase reference counter */
-            if (nc == NULL || !lwgsm_sys_mbox_isvalid(&nc->mbox_receive)
-                || !lwgsm_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
-                LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN, "[LWGSM NETCONN] Ignoring more data for receive!\r\n");
-                lwgsm_pbuf_free_s(&pbuf); /* Free pbuf */
-                return lwgsmOKIGNOREMORE; /* Return OK to free the memory and ignore further data */
+            lwcell_pbuf_ref(pbuf);                     /* Increase reference counter */
+            if (nc == NULL || !lwcell_sys_mbox_isvalid(&nc->mbox_receive)
+                || !lwcell_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
+                LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN, "[LWCELL NETCONN] Ignoring more data for receive!\r\n");
+                lwcell_pbuf_free_s(&pbuf); /* Free pbuf */
+                return lwcellOKIGNOREMORE; /* Return OK to free the memory and ignore further data */
             }
             ++nc->rcv_packets;            /* Increase number of received packets */
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE,
-                         "[LWGSM NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
-                         (int)lwgsm_pbuf_length(pbuf, 0));
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN | LWCELL_DBG_TYPE_TRACE,
+                         "[LWCELL NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
+                         (int)lwcell_pbuf_length(pbuf, 0));
             break;
         }
 
         /* Connection was just closed */
-        case LWGSM_EVT_CONN_CLOSE: {
-            nc = lwgsm_conn_get_arg(conn); /* Get API from connection */
+        case LWCELL_EVT_CONN_CLOSE: {
+            nc = lwcell_conn_get_arg(conn); /* Get API from connection */
 
             /*
              * In case we have a netconn available,
              * simply write pointer to received variable to indicate closed state
              */
-            if (nc != NULL && lwgsm_sys_mbox_isvalid(&nc->mbox_receive)) {
-                lwgsm_sys_mbox_putnow(&nc->mbox_receive, (void*)&recv_closed);
+            if (nc != NULL && lwcell_sys_mbox_isvalid(&nc->mbox_receive)) {
+                lwcell_sys_mbox_putnow(&nc->mbox_receive, (void*)&recv_closed);
             }
 
             break;
         }
-        default: return lwgsmERR;
+        default: return lwcellERR;
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
  * \brief           Global event callback function
  * \param[in]       evt: Callback information and data
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  */
-static lwgsmr_t
-lwgsm_evt(lwgsm_evt_t* evt) {
-    switch (lwgsm_evt_get_type(evt)) {
+static lwcellr_t
+lwcell_evt(lwcell_evt_t* evt) {
+    switch (lwcell_evt_get_type(evt)) {
         default: break;
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
@@ -206,46 +206,46 @@ lwgsm_evt(lwgsm_evt_t* evt) {
  * \param[in]       type: Netconn connection type
  * \return          New netconn connection on success, `NULL` otherwise
  */
-lwgsm_netconn_p
-lwgsm_netconn_new(lwgsm_netconn_type_t type) {
-    lwgsm_netconn_t* a;
+lwcell_netconn_p
+lwcell_netconn_new(lwcell_netconn_type_t type) {
+    lwcell_netconn_t* a;
     static uint8_t first = 1;
 
     /* Register only once! */
-    lwgsm_core_lock();
+    lwcell_core_lock();
     if (first) {
         first = 0;
-        lwgsm_evt_register(lwgsm_evt); /* Register global event function */
+        lwcell_evt_register(lwcell_evt); /* Register global event function */
     }
-    lwgsm_core_unlock();
-    a = lwgsm_mem_calloc(1, sizeof(*a)); /* Allocate memory for core object */
+    lwcell_core_unlock();
+    a = lwcell_mem_calloc(1, sizeof(*a)); /* Allocate memory for core object */
     if (a != NULL) {
         a->type = type;                  /* Save netconn type */
         a->conn_timeout = 0;             /* Default connection timeout */
-        if (!lwgsm_sys_mbox_create(
+        if (!lwcell_sys_mbox_create(
                 &a->mbox_receive,
-                LWGSM_CFG_NETCONN_RECEIVE_QUEUE_LEN)) { /* Allocate memory for receiving message box */
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_NETCONN | LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_LVL_DANGER,
-                         "[LWGSM NETCONN] Cannot create receive MBOX\r\n");
+                LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN)) { /* Allocate memory for receiving message box */
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_DANGER,
+                         "[LWCELL NETCONN] Cannot create receive MBOX\r\n");
             goto free_ret;
         }
-        lwgsm_core_lock();
+        lwcell_core_lock();
         if (netconn_list == NULL) { /* Add new netconn to the existing list */
             netconn_list = a;
         } else {
             a->next = netconn_list; /* Add it to beginning of the list */
             netconn_list = a;
         }
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
     return a;
 free_ret:
-    if (lwgsm_sys_mbox_isvalid(&a->mbox_receive)) {
-        lwgsm_sys_mbox_delete(&a->mbox_receive);
-        lwgsm_sys_mbox_invalid(&a->mbox_receive);
+    if (lwcell_sys_mbox_isvalid(&a->mbox_receive)) {
+        lwcell_sys_mbox_delete(&a->mbox_receive);
+        lwcell_sys_mbox_invalid(&a->mbox_receive);
     }
     if (a != NULL) {
-        lwgsm_mem_free_s((void**)&a);
+        lwcell_mem_free_s((void**)&a);
     }
     return NULL;
 }
@@ -253,20 +253,20 @@ free_ret:
 /**
  * \brief           Delete netconn connection
  * \param[in]       nc: Netconn handle
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_netconn_delete(lwgsm_netconn_p nc) {
-    LWGSM_ASSERT(nc != NULL);
+lwcellr_t
+lwcell_netconn_delete(lwcell_netconn_p nc) {
+    LWCELL_ASSERT(nc != NULL);
 
-    lwgsm_core_lock();
+    lwcell_core_lock();
     flush_mboxes(nc, 0); /* Clear mboxes */
 
     /* Remove netconn from linkedlist */
     if (netconn_list == nc) {
         netconn_list = netconn_list->next; /* Remove first from linked list */
     } else if (netconn_list != NULL) {
-        lwgsm_netconn_p tmp, prev;
+        lwcell_netconn_p tmp, prev;
         /* Find element on the list */
         for (prev = netconn_list, tmp = netconn_list->next; tmp != NULL; prev = tmp, tmp = tmp->next) {
             if (nc == tmp) {
@@ -275,10 +275,10 @@ lwgsm_netconn_delete(lwgsm_netconn_p nc) {
             }
         }
     }
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
 
-    lwgsm_mem_free_s((void**)&nc);
-    return lwgsmOK;
+    lwcell_mem_free_s((void**)&nc);
+    return lwcellOK;
 }
 
 /**
@@ -286,15 +286,15 @@ lwgsm_netconn_delete(lwgsm_netconn_p nc) {
  * \param[in]       nc: Netconn handle
  * \param[in]       host: Pointer to host, such as domain name or IP address in string format
  * \param[in]       port: Target port to use
- * \return          \ref lwgsmOK if successfully connected, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK if successfully connected, member of \ref lwcellr_t otherwise
  */
-lwgsmr_t
-lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port) {
-    lwgsmr_t res;
+lwcellr_t
+lwcell_netconn_connect(lwcell_netconn_p nc, const char* host, lwcell_port_t port) {
+    lwcellr_t res;
 
-    LWGSM_ASSERT(nc != NULL);
-    LWGSM_ASSERT(host != NULL);
-    LWGSM_ASSERT(port > 0);
+    LWCELL_ASSERT(nc != NULL);
+    LWCELL_ASSERT(host != NULL);
+    LWCELL_ASSERT(port > 0);
 
     /*
      * Start a new connection as client and:
@@ -303,7 +303,7 @@ lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port) {
      *  - Set netconn callback function for connection management
      *  - Start connection in blocking mode
      */
-    res = lwgsm_conn_start(NULL, (lwgsm_conn_type_t)nc->type, host, port, nc, netconn_evt, 1);
+    res = lwcell_conn_start(NULL, (lwcell_conn_type_t)nc->type, host, port, nc, netconn_evt, 1);
     return res;
 }
 
@@ -313,17 +313,17 @@ lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port) {
  * \param[in]       nc: Netconn handle used to write data to
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
+lwcellr_t
+lwcell_netconn_write(lwcell_netconn_p nc, const void* data, size_t btw) {
     size_t len, sent;
     const uint8_t* d = data;
-    lwgsmr_t res;
+    lwcellr_t res;
 
-    LWGSM_ASSERT(nc != NULL);
-    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_TCP || nc->type == LWGSM_NETCONN_TYPE_SSL);
-    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
+    LWCELL_ASSERT(nc != NULL);
+    LWCELL_ASSERT(nc->type == LWCELL_NETCONN_TYPE_TCP || nc->type == LWCELL_NETCONN_TYPE_SSL);
+    LWCELL_ASSERT(lwcell_conn_is_active(nc->conn));
 
     /*
      * Several steps are done in write process
@@ -337,9 +337,9 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
 
     /* Step 1 */
     if (nc->buff.buff != NULL) {                           /* Is there a write buffer ready to accept more data? */
-        len = LWGSM_MIN(nc->buff.len - nc->buff.ptr, btw); /* Get number of bytes we can write to buffer */
+        len = LWCELL_MIN(nc->buff.len - nc->buff.ptr, btw); /* Get number of bytes we can write to buffer */
         if (len > 0) {
-            LWGSM_MEMCPY(&nc->buff.buff[nc->buff.ptr], data, len); /* Copy memory to temporary write buffer */
+            LWCELL_MEMCPY(&nc->buff.buff[nc->buff.ptr], data, len); /* Copy memory to temporary write buffer */
             d += len;
             nc->buff.ptr += len;
             btw -= len;
@@ -347,23 +347,23 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
 
         /* Step 1.1 */
         if (nc->buff.ptr == nc->buff.len) {
-            res = lwgsm_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
+            res = lwcell_conn_send(nc->conn, nc->buff.buff, nc->buff.len, &sent, 1);
 
-            lwgsm_mem_free_s((void**)&nc->buff.buff);
-            if (res != lwgsmOK) {
+            lwcell_mem_free_s((void**)&nc->buff.buff);
+            if (res != lwcellOK) {
                 return res;
             }
         } else {
-            return lwgsmOK; /* Buffer is not yet full yet */
+            return lwcellOK; /* Buffer is not yet full yet */
         }
     }
 
     /* Step 2 */
-    if (btw >= LWGSM_CFG_CONN_MAX_DATA_LEN) {
+    if (btw >= LWCELL_CFG_CONN_MAX_DATA_LEN) {
         size_t rem;
-        rem = btw % LWGSM_CFG_CONN_MAX_DATA_LEN;                 /* Get remaining bytes for max data length */
-        res = lwgsm_conn_send(nc->conn, d, btw - rem, &sent, 1); /* Write data directly */
-        if (res != lwgsmOK) {
+        rem = btw % LWCELL_CFG_CONN_MAX_DATA_LEN;                 /* Get remaining bytes for max data length */
+        res = lwcell_conn_send(nc->conn, d, btw - rem, &sent, 1); /* Write data directly */
+        if (res != lwcellOK) {
             return res;
         }
         d += sent;   /* Advance in data pointer */
@@ -371,28 +371,28 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
     }
 
     if (btw == 0) { /* Sent everything? */
-        return lwgsmOK;
+        return lwcellOK;
     }
 
     /* Step 3 */
     if (nc->buff.buff == NULL) {                    /* Check if we should allocate a new buffer */
-        nc->buff.buff = lwgsm_mem_malloc(sizeof(*nc->buff.buff) * LWGSM_CFG_CONN_MAX_DATA_LEN);
-        nc->buff.len = LWGSM_CFG_CONN_MAX_DATA_LEN; /* Save buffer length */
+        nc->buff.buff = lwcell_mem_malloc(sizeof(*nc->buff.buff) * LWCELL_CFG_CONN_MAX_DATA_LEN);
+        nc->buff.len = LWCELL_CFG_CONN_MAX_DATA_LEN; /* Save buffer length */
         nc->buff.ptr = 0;                           /* Save buffer pointer */
     }
 
     /* Step 4 */
     if (nc->buff.buff != NULL) {                              /* Memory available? */
-        LWGSM_MEMCPY(&nc->buff.buff[nc->buff.ptr], d, btw);   /* Copy data to buffer */
+        LWCELL_MEMCPY(&nc->buff.buff[nc->buff.ptr], d, btw);   /* Copy data to buffer */
         nc->buff.ptr += btw;
     } else {                                                  /* Still no memory available? */
-        return lwgsm_conn_send(nc->conn, data, btw, NULL, 1); /* Simply send directly blocking */
+        return lwcell_conn_send(nc->conn, data, btw, NULL, 1); /* Simply send directly blocking */
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
- * \brief           Extended version of \ref lwgsm_netconn_write with additional
+ * \brief           Extended version of \ref lwcell_netconn_write with additional
  *                  option to set custom flags.
  * 
  * \note            It is recommended to use this for full features support 
@@ -401,15 +401,15 @@ lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw) {
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
  * \param           flags: Bitwise-ORed set of flags for netconn.
- *                      Flags start with \ref LWGSM_NETCONN_FLAG_xxx
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ *                      Flags start with \ref LWCELL_NETCONN_FLAG_xxx
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_netconn_write_ex(lwgsm_netconn_p nc, const void* data, size_t btw, uint16_t flags) {
-    lwgsmr_t res = lwgsm_netconn_write(nc, data, btw);
-    if (res == lwgsmOK) {
-        if (flags & LWGSM_NETCONN_FLAG_FLUSH) {
-            res = lwgsm_netconn_flush(nc);
+lwcellr_t
+lwcell_netconn_write_ex(lwcell_netconn_p nc, const void* data, size_t btw, uint16_t flags) {
+    lwcellr_t res = lwcell_netconn_write(nc, data, btw);
+    if (res == lwcellOK) {
+        if (flags & LWCELL_NETCONN_FLAG_FLUSH) {
+            res = lwcell_netconn_flush(nc);
         }
     }
     return res;
@@ -419,13 +419,13 @@ lwgsm_netconn_write_ex(lwgsm_netconn_p nc, const void* data, size_t btw, uint16_
  * \brief           Flush buffered data on netconn \e TCP/SSL connection
  * \note            This function may only be used on \e TCP/SSL connection
  * \param[in]       nc: Netconn handle to flush data
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_netconn_flush(lwgsm_netconn_p nc) {
-    LWGSM_ASSERT(nc != NULL);
-    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_TCP || nc->type == LWGSM_NETCONN_TYPE_SSL);
-    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
+lwcellr_t
+lwcell_netconn_flush(lwcell_netconn_p nc) {
+    LWCELL_ASSERT(nc != NULL);
+    LWCELL_ASSERT(nc->type == LWCELL_NETCONN_TYPE_TCP || nc->type == LWCELL_NETCONN_TYPE_SSL);
+    LWCELL_ASSERT(lwcell_conn_is_active(nc->conn));
 
     /*
      * In case we have data in write buffer,
@@ -433,11 +433,11 @@ lwgsm_netconn_flush(lwgsm_netconn_p nc) {
      */
     if (nc->buff.buff != NULL) {                                             /* Check remaining data */
         if (nc->buff.ptr > 0) {                                              /* Do we have data in current buffer? */
-            lwgsm_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1); /* Send data */
+            lwcell_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1); /* Send data */
         }
-        lwgsm_mem_free_s((void**)&nc->buff.buff);
+        lwcell_mem_free_s((void**)&nc->buff.buff);
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
@@ -445,15 +445,15 @@ lwgsm_netconn_flush(lwgsm_netconn_p nc) {
  * \param[in]       nc: Netconn handle used to send
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw) {
-    LWGSM_ASSERT(nc != NULL);
-    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_UDP);
-    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
+lwcellr_t
+lwcell_netconn_send(lwcell_netconn_p nc, const void* data, size_t btw) {
+    LWCELL_ASSERT(nc != NULL);
+    LWCELL_ASSERT(nc->type == LWCELL_NETCONN_TYPE_UDP);
+    LWCELL_ASSERT(lwcell_conn_is_active(nc->conn));
 
-    return lwgsm_conn_send(nc->conn, data, btw, NULL, 1);
+    return lwcell_conn_send(nc->conn, data, btw, NULL, 1);
 }
 
 /**
@@ -464,15 +464,15 @@ lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw) {
  * \param[in]       port: Port number used to send data
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port, const void* data, size_t btw) {
-    LWGSM_ASSERT(nc != NULL);
-    LWGSM_ASSERT(nc->type == LWGSM_NETCONN_TYPE_UDP);
-    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
+lwcellr_t
+lwcell_netconn_sendto(lwcell_netconn_p nc, const lwcell_ip_t* ip, lwcell_port_t port, const void* data, size_t btw) {
+    LWCELL_ASSERT(nc != NULL);
+    LWCELL_ASSERT(nc->type == LWCELL_NETCONN_TYPE_UDP);
+    LWCELL_ASSERT(lwcell_conn_is_active(nc->conn));
 
-    return lwgsm_conn_sendto(nc->conn, ip, port, data, btw, NULL, 1);
+    return lwcell_conn_sendto(nc->conn, ip, port, data, btw, NULL, 1);
 }
 
 /**
@@ -480,94 +480,94 @@ lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port
  * \param[in]       nc: Netconn handle used to receive from
  * \param[in]       pbuf: Pointer to pointer to save new receive buffer to.
  *                     When function returns, user must check for valid pbuf value `pbuf != NULL`
- * \return          \ref lwgsmOK when new data ready,
- * \return          \ref lwgsmCLOSED when connection closed by remote side,
- * \return          \ref lwgsmTIMEOUT when receive timeout occurs
- * \return          Any other member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK when new data ready,
+ * \return          \ref lwcellCLOSED when connection closed by remote side,
+ * \return          \ref lwcellTIMEOUT when receive timeout occurs
+ * \return          Any other member of \ref lwcellr_t otherwise
  */
-lwgsmr_t
-lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf) {
-    LWGSM_ASSERT(nc != NULL);
-    LWGSM_ASSERT(pbuf != NULL);
+lwcellr_t
+lwcell_netconn_receive(lwcell_netconn_p nc, lwcell_pbuf_p* pbuf) {
+    LWCELL_ASSERT(nc != NULL);
+    LWCELL_ASSERT(pbuf != NULL);
 
     *pbuf = NULL;
-#if LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT
+#if LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT
     /*
      * Wait for new received data for up to specific timeout
      * or throw error for timeout notification
      */
-    if (nc->rcv_timeout == LWGSM_NETCONN_RECEIVE_NO_WAIT) {
-        if (!lwgsm_sys_mbox_getnow(&nc->mbox_receive, (void**)pbuf)) {
-            return lwgsmTIMEOUT;
+    if (nc->rcv_timeout == LWCELL_NETCONN_RECEIVE_NO_WAIT) {
+        if (!lwcell_sys_mbox_getnow(&nc->mbox_receive, (void**)pbuf)) {
+            return lwcellTIMEOUT;
         }
-    } else if (lwgsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == LWGSM_SYS_TIMEOUT) {
-        return lwgsmTIMEOUT;
+    } else if (lwcell_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, nc->rcv_timeout) == LWCELL_SYS_TIMEOUT) {
+        return lwcellTIMEOUT;
     }
-#else  /* LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT */
+#else  /* LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT */
     /* Forever wait for new receive packet */
-    lwgsm_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, 0);
-#endif /* !LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT */
+    lwcell_sys_mbox_get(&nc->mbox_receive, (void**)pbuf, 0);
+#endif /* !LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT */
 
     /* Check if connection closed */
     if ((uint8_t*)(*pbuf) == (uint8_t*)&recv_closed) {
         *pbuf = NULL; /* Reset pbuf */
-        return lwgsmCLOSED;
+        return lwcellCLOSED;
     }
-    return lwgsmOK; /* We have data available */
+    return lwcellOK; /* We have data available */
 }
 
 /**
  * \brief           Close a netconn connection
  * \param[in]       nc: Netconn handle to close
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_netconn_close(lwgsm_netconn_p nc) {
-    lwgsm_conn_p conn;
+lwcellr_t
+lwcell_netconn_close(lwcell_netconn_p nc) {
+    lwcell_conn_p conn;
 
-    LWGSM_ASSERT(nc != NULL);
-    LWGSM_ASSERT(nc->conn != NULL);
-    LWGSM_ASSERT(lwgsm_conn_is_active(nc->conn));
+    LWCELL_ASSERT(nc != NULL);
+    LWCELL_ASSERT(nc->conn != NULL);
+    LWCELL_ASSERT(lwcell_conn_is_active(nc->conn));
 
-    lwgsm_netconn_flush(nc); /* Flush data and ignore result */
+    lwcell_netconn_flush(nc); /* Flush data and ignore result */
     conn = nc->conn;
     nc->conn = NULL;
 
-    lwgsm_conn_set_arg(conn, NULL); /* Reset argument */
-    lwgsm_conn_close(conn, 1);      /* Close the connection */
+    lwcell_conn_set_arg(conn, NULL); /* Reset argument */
+    lwcell_conn_close(conn, 1);      /* Close the connection */
     flush_mboxes(nc, 1);            /* Flush message queues */
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
  * \brief           Get connection number used for netconn
  * \param[in]       nc: Netconn handle
- * \return          `-1` on failure, connection number between `0` and \ref LWGSM_CFG_MAX_CONNS otherwise
+ * \return          `-1` on failure, connection number between `0` and \ref LWCELL_CFG_MAX_CONNS otherwise
  */
 int8_t
-lwgsm_netconn_getconnnum(lwgsm_netconn_p nc) {
+lwcell_netconn_getconnnum(lwcell_netconn_p nc) {
     if (nc != NULL && nc->conn != NULL) {
-        return lwgsm_conn_getnum(nc->conn);
+        return lwcell_conn_getnum(nc->conn);
     }
     return -1;
 }
 
-#if LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__
+#if LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__
 
 /**
  * \brief           Set timeout value for receiving data.
  *
- * When enabled, \ref lwgsm_netconn_receive will only block for up to
+ * When enabled, \ref lwcell_netconn_receive will only block for up to
  * \e timeout value and will return if no new data within this time
  *
  * \param[in]       nc: Netconn handle
  * \param[in]       timeout: Timeout in units of milliseconds.
  *                      Set to `0` to disable timeout feature. Function blocks until data receive or connection closed
  *                      Set to `> 0` to set maximum milliseconds to wait before timeout
- *                      Set to \ref LWGSM_NETCONN_RECEIVE_NO_WAIT to enable non-blocking receive
+ *                      Set to \ref LWCELL_NETCONN_RECEIVE_NO_WAIT to enable non-blocking receive
  */
 void
-lwgsm_netconn_set_receive_timeout(lwgsm_netconn_p nc, uint32_t timeout) {
+lwcell_netconn_set_receive_timeout(lwcell_netconn_p nc, uint32_t timeout) {
     nc->rcv_timeout = timeout;
 }
 
@@ -578,10 +578,10 @@ lwgsm_netconn_set_receive_timeout(lwgsm_netconn_p nc, uint32_t timeout) {
  *                  If value is `0`, timeout is disabled (wait forever)
  */
 uint32_t
-lwgsm_netconn_get_receive_timeout(lwgsm_netconn_p nc) {
+lwcell_netconn_get_receive_timeout(lwcell_netconn_p nc) {
     return nc->rcv_timeout; /* Return receive timeout */
 }
 
-#endif /* LWGSM_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__ */
+#endif /* LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__ */
 
-#endif /* LWGSM_CFG_NETCONN || __DOXYGEN__ */
+#endif /* LWCELL_CFG_NETCONN || __DOXYGEN__ */

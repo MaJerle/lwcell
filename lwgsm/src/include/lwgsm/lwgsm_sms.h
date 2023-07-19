@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_sms.h
+ * \file            lwcell_sms.h
  * \brief           SMS API
  */
 
@@ -26,43 +26,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_SMS_HDR_H
-#define LWGSM_SMS_HDR_H
+#ifndef LWCELL_SMS_HDR_H
+#define LWCELL_SMS_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_SMS SMS API
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_SMS SMS API
  * \brief           SMS manager
  * \{
  */
 
-lwgsmr_t lwgsm_sms_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_sms_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_sms_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_sms_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-lwgsmr_t lwgsm_sms_send(const char* num, const char* text, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_sms_send(const char* num, const char* text, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                         const uint32_t blocking);
-lwgsmr_t lwgsm_sms_read(lwgsm_mem_t mem, size_t pos, lwgsm_sms_entry_t* entry, uint8_t update,
-                        const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_sms_delete(lwgsm_mem_t mem, size_t pos, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t update,
+                        const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_sms_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                           const uint32_t blocking);
-lwgsmr_t lwgsm_sms_delete_all(lwgsm_sms_status_t status, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_sms_delete_all(lwcell_sms_status_t status, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                               const uint32_t blocking);
-lwgsmr_t lwgsm_sms_list(lwgsm_mem_t mem, lwgsm_sms_status_t stat, lwgsm_sms_entry_t* entries, size_t etr, size_t* er,
-                        uint8_t update, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* entries, size_t etr, size_t* er,
+                        uint8_t update, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                         const uint32_t blocking);
-lwgsmr_t lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwgsm_mem_t mem3,
-                                         const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_sms_set_preferred_storage(lwcell_mem_t mem1, lwcell_mem_t mem2, lwcell_mem_t mem3,
+                                         const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                                          const uint32_t blocking);
 
 /**
@@ -73,4 +73,4 @@ lwgsmr_t lwgsm_sms_set_preferred_storage(lwgsm_mem_t mem1, lwgsm_mem_t mem2, lwg
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_SMS_HDR_H */
+#endif /* LWCELL_SMS_HDR_H */

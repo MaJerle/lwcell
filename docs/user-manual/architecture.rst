@@ -7,9 +7,9 @@ Architecture of the library consists of ``4`` layers.
 
 .. figure:: ../static/images/system_structure.svg
 	:align: center
-	:alt: LwGSM layer architecture overview
+	:alt: LwCELL layer architecture overview
 
-	LwGSM layer architecture overview
+	LwCELL layer architecture overview
 
 Application layer
 ^^^^^^^^^^^^^^^^^
@@ -40,7 +40,7 @@ architecture oriented. Some examples for `WIN32` and `ARM Cortex-M` are included
 System functions
 ****************
 
-System functions are bridge between operating system running on embedded system and LwGSM middleware.
+System functions are bridge between operating system running on embedded system and LwCELL middleware.
 Functions need to provide:
 
 * Thread management
@@ -50,20 +50,20 @@ Functions need to provide:
 * Current time status information
 
 .. tip::
-	System function prototypes are available in :ref:`api_lwgsm_sys` section.
+	System function prototypes are available in :ref:`api_lwcell_sys` section.
 
 Low-level implementation
 ************************
 
-Low-Level, or *LWGSM_LL*, is part, dedicated for communication between *LwGSM* middleware and *GSM* physical device.
+Low-Level, or *LWCELL_LL*, is part, dedicated for communication between *LwCELL* middleware and *GSM* physical device.
 Application needs to implement output function to send necessary *AT command* instruction aswell as implement
-*input module* to send received data from *GSM* device to *LwGSM* middleware.
+*input module* to send received data from *GSM* device to *LwCELL* middleware.
 
-Application must also assure memory assignment for :ref:`api_lwgsm_mem` when default allocation is used.
+Application must also assure memory assignment for :ref:`api_lwcell_mem` when default allocation is used.
 
 .. tip::
 	Low level, input module & memory function prototypes are available in 
-	:ref:`api_lwgsm_ll`, :ref:`api_lwgsm_input` and :ref:`api_lwgsm_mem` respectfully.
+	:ref:`api_lwcell_ll`, :ref:`api_lwcell_input` and :ref:`api_lwcell_mem` respectfully.
 
 GSM physical device
 ^^^^^^^^^^^^^^^^^^^

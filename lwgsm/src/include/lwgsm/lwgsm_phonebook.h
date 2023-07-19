@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_phonebook.h
+ * \file            lwcell_phonebook.h
  * \brief           Phonebook API
  */
 
@@ -26,42 +26,42 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_PHONEBOOK_HDR_H
-#define LWGSM_PHONEBOOK_HDR_H
+#ifndef LWCELL_PHONEBOOK_HDR_H
+#define LWCELL_PHONEBOOK_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_PHONEBOOK Phonebook API
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_PHONEBOOK Phonebook API
  * \brief           Phonebook manager
  * \{
  */
 
-lwgsmr_t lwgsm_pb_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_pb_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-lwgsmr_t lwgsm_pb_add(lwgsm_mem_t mem, const char* name, const char* num, lwgsm_number_type_t type,
-                      const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_pb_edit(lwgsm_mem_t mem, size_t pos, const char* name, const char* num, lwgsm_number_type_t type,
-                       const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_pb_delete(lwgsm_mem_t mem, size_t pos, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_pb_add(lwcell_mem_t mem, const char* name, const char* num, lwcell_number_type_t type,
+                      const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_edit(lwcell_mem_t mem, size_t pos, const char* name, const char* num, lwcell_number_type_t type,
+                       const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                          const uint32_t blocking);
-lwgsmr_t lwgsm_pb_read(lwgsm_mem_t mem, size_t pos, lwgsm_pb_entry_t* entry, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t lwcell_pb_read(lwcell_mem_t mem, size_t pos, lwcell_pb_entry_t* entry, const lwcell_api_cmd_evt_fn evt_fn,
                        void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_pb_list(lwgsm_mem_t mem, size_t start_index, lwgsm_pb_entry_t* entries, size_t etr, size_t* er,
-                       const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* entries, size_t etr, size_t* er,
-                         const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_list(lwcell_mem_t mem, size_t start_index, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
+                       const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_search(lwcell_mem_t mem, const char* search, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
+                         const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}
@@ -71,4 +71,4 @@ lwgsmr_t lwgsm_pb_search(lwgsm_mem_t mem, const char* search, lwgsm_pb_entry_t* 
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_PHONEBOOK_HDR_H */
+#endif /* LWCELL_PHONEBOOK_HDR_H */

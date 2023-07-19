@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_input.h
+ * \file            lwcell_input.h
  * \brief           Initialization process
  */
 
@@ -26,30 +26,30 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_INPUT_HDR_H
-#define LWGSM_INPUT_HDR_H
+#ifndef LWCELL_INPUT_HDR_H
+#define LWCELL_INPUT_HDR_H
 
 #include <string.h>
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_INPUT Input processing
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_INPUT Input processing
  * \brief           Input function for received data
  * \{
  */
 
-lwgsmr_t lwgsm_input(const void* data, size_t len);
-lwgsmr_t lwgsm_input_process(const void* data, size_t len);
+lwcellr_t lwcell_input(const void* data, size_t len);
+lwcellr_t lwcell_input_process(const void* data, size_t len);
 
 /**
  * \}
@@ -59,4 +59,4 @@ lwgsmr_t lwgsm_input_process(const void* data, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_INPUT_HDR_H */
+#endif /* LWCELL_INPUT_HDR_H */

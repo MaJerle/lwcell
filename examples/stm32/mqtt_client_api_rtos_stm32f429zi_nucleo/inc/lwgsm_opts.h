@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_opts.h
+ * \file            lwcell_opts.h
  * \brief           GSM application options
  */
 
@@ -26,27 +26,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.0
  */
-#ifndef LWGSM_HDR_OPTS_H
-#define LWGSM_HDR_OPTS_H
+#ifndef LWCELL_HDR_OPTS_H
+#define LWCELL_HDR_OPTS_H
 
-/* Rename this file to "lwgsm_opts.h" for your application */
+/* Rename this file to "lwcell_opts.h" for your application */
 
 /*
- * Open "include/lwgsm/lwgsm_opt.h" and
+ * Open "include/lwcell/lwcell_opt.h" and
  * copy & replace here settings you want to change values
  */
-#define LWGSM_CFG_AT_ECHO                     1
-#define LWGSM_CFG_INPUT_USE_PROCESS           1
+#define LWCELL_CFG_AT_ECHO                     1
+#define LWCELL_CFG_INPUT_USE_PROCESS           1
 
 /* Enable network, conn and netconn APIs */
-#define LWGSM_CFG_NETWORK                     1
-#define LWGSM_CFG_CONN                        1
-#define LWGSM_CFG_NETCONN                     1
+#define LWCELL_CFG_NETWORK                     1
+#define LWCELL_CFG_CONN                        1
+#define LWCELL_CFG_NETCONN                     1
 
 
-#endif /* LWGSM_HDR_OPTS_H */
+#endif /* LWCELL_HDR_OPTS_H */

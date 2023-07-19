@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_memories.h
+ * \file            lwcell_memories.h
  * \brief           Supported GSM device memories
  */
 
@@ -26,20 +26,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
 
-LWGSM_DEV_MEMORY_ENTRY(SM_P, "SM_P")
-LWGSM_DEV_MEMORY_ENTRY(ME_P, "ME_P")
-LWGSM_DEV_MEMORY_ENTRY(SM, "SM")
-LWGSM_DEV_MEMORY_ENTRY(ME, "ME")
-LWGSM_DEV_MEMORY_ENTRY(MT, "MT")
-LWGSM_DEV_MEMORY_ENTRY(BM, "BM")
-LWGSM_DEV_MEMORY_ENTRY(SR, "SR")
-LWGSM_DEV_MEMORY_ENTRY(ON, "ON")
-LWGSM_DEV_MEMORY_ENTRY(FD, "FD")
+LWCELL_DEV_MEMORY_ENTRY(SM_P, "SM_P")
+LWCELL_DEV_MEMORY_ENTRY(ME_P, "ME_P")
+LWCELL_DEV_MEMORY_ENTRY(SM, "SM")
+LWCELL_DEV_MEMORY_ENTRY(ME, "ME")
+LWCELL_DEV_MEMORY_ENTRY(MT, "MT")
+LWCELL_DEV_MEMORY_ENTRY(BM, "BM")
+LWCELL_DEV_MEMORY_ENTRY(SR, "SR")
+LWCELL_DEV_MEMORY_ENTRY(ON, "ON")
+LWCELL_DEV_MEMORY_ENTRY(FD, "FD")
 
-#undef LWGSM_DEV_MEMORY_ENTRY
+#undef LWCELL_DEV_MEMORY_ENTRY

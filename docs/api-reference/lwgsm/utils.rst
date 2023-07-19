@@ -1,4 +1,4 @@
-.. _api_lwgsm_utils:
+.. _api_lwcell_utils:
 
 Utilities
 =========
@@ -6,4 +6,4 @@ Utilities
 Utility functions for various cases.
 These function are used across entire middleware and can also be used by application.
 
-.. doxygengroup:: LWGSM_UTILS
+.. doxygengroup:: LWCELL_UTILS

@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ll_esp32.c
+ * \file            lwcell_ll_esp32.c
  * \brief           Low-level communication with GSM device for Esp32
  */
 
@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Authors:          Tilen MAJERLE <tilen@majerle.eu>,
  *                   Ilya Kargapolov <d3vil.st@gmail.com>
@@ -34,10 +34,10 @@
  */
 #include "driver/uart.h"
 #include "esp_log.h"
-#include "lwgsm/lwgsm_input.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_types.h"
-#include "system/lwgsm_ll.h"
+#include "lwcell/lwcell_input.h"
+#include "lwcell/lwcell_mem.h"
+#include "lwcell/lwcell_types.h"
+#include "system/lwcell_ll.h"
 
 #if !__DOXYGEN__
 
@@ -47,19 +47,19 @@
 /* Defines ESP uart number to use */
 #define GSM_UART_NUM UART_NUM_1
 
-#if !defined(LWGSM_USART_DMA_RX_BUFF_SIZE)
-#define LWGSM_USART_DMA_RX_BUFF_SIZE 0x1000
-#endif /* !defined(LWGSM_USART_DMA_RX_BUFF_SIZE) */
+#if !defined(LWCELL_USART_DMA_RX_BUFF_SIZE)
+#define LWCELL_USART_DMA_RX_BUFF_SIZE 0x1000
+#endif /* !defined(LWCELL_USART_DMA_RX_BUFF_SIZE) */
 
-#if !defined(LWGSM_MEM_SIZE)
-#define LWGSM_MEM_SIZE 0x1000
-#endif /* !defined(LWGSM_MEM_SIZE) */
+#if !defined(LWCELL_MEM_SIZE)
+#define LWCELL_MEM_SIZE 0x1000
+#endif /* !defined(LWCELL_MEM_SIZE) */
 
 static QueueHandle_t gsm_uart_queue;
 
 static uint8_t initialized = 0;
 
-char* uart_buffer[LWGSM_USART_DMA_RX_BUFF_SIZE];
+char* uart_buffer[LWCELL_USART_DMA_RX_BUFF_SIZE];
 
 /**
  * \brief           Send data to GSM device, function called from GSM stack when we have data to send
@@ -92,10 +92,10 @@ uart_event_task(void* pvParameters) {
                     buffer_len = uart_read_bytes(GSM_UART_NUM, (void*)uart_buffer, buffer_len, portMAX_DELAY);
                     ESP_LOG_BUFFER_HEXDUMP("<", uart_buffer, buffer_len, ESP_LOG_DEBUG);
                     if (buffer_len) {
-#if LWGSM_CFG_INPUT_USE_PROCESS
-                        lwgsm_input_process(uart_buffer, buffer_len);
+#if LWCELL_CFG_INPUT_USE_PROCESS
+                        lwcell_input_process(uart_buffer, buffer_len);
 #else
-                        lwgsm_input(uart_buffer, buffer_len);
+                        lwcell_input(uart_buffer, buffer_len);
 #endif
                     }
                     break;
@@ -127,10 +127,10 @@ configure_uart(uint32_t baudrate) {
                                  .stop_bits = UART_STOP_BITS_1,
                                  .source_clk = UART_SCLK_REF_TICK,
                                  .flow_ctrl = UART_HW_FLOWCTRL_DISABLE};
-    ESP_ERROR_CHECK(uart_driver_install(GSM_UART_NUM, LWGSM_USART_DMA_RX_BUFF_SIZE * 2,
-                                        LWGSM_USART_DMA_RX_BUFF_SIZE * 2, 20, &gsm_uart_queue, 0));
+    ESP_ERROR_CHECK(uart_driver_install(GSM_UART_NUM, LWCELL_USART_DMA_RX_BUFF_SIZE * 2,
+                                        LWCELL_USART_DMA_RX_BUFF_SIZE * 2, 20, &gsm_uart_queue, 0));
     ESP_ERROR_CHECK(uart_param_config(GSM_UART_NUM, &uart_config));
-    ESP_ERROR_CHECK(uart_set_pin(GSM_UART_NUM, CONFIG_LWGSM_TX, CONFIG_LWGSM_RX, 0, 0));
+    ESP_ERROR_CHECK(uart_set_pin(GSM_UART_NUM, CONFIG_LWCELL_TX, CONFIG_LWCELL_RX, 0, 0));
 }
 
 /**
@@ -140,14 +140,14 @@ configure_uart(uint32_t baudrate) {
  *                  It is important that every configuration except AT baudrate is configured only once!
  *
  * \note            This function may be called from different threads in GSM stack when using OS.
- *                  When \ref LWGSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
+ *                  When \ref LWCELL_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
- * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
+ * \return          lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_ll_init(lwgsm_ll_t* ll) {
-#if !LWGSM_CFG_MEM_CUSTOM
+lwcellr_t
+lwcell_ll_init(lwcell_ll_t* ll) {
+#if !LWCELL_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000]; /* Create memory for dynamic allocations with specific size */
 
@@ -156,12 +156,12 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
      * If device has internal/external memory available,
      * multiple memories may be used
      */
-    lwgsm_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
+    lwcell_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
     if (!initialized) {
-        lwgsm_mem_assignmemory(mem_regions,
-                               LWGSM_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
+        lwcell_mem_assignmemory(mem_regions,
+                               LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
     }
-#endif /* !LWGSM_CFG_MEM_CUSTOM */
+#endif /* !LWCELL_CFG_MEM_CUSTOM */
 
     /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {
@@ -170,21 +170,21 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
 
     /* Step 3: Configure AT port to be able to send/receive data to/from GSM device */
     configure_uart(ll->uart.baudrate); /* Initialize UART for communication */
-    xTaskCreate(uart_event_task, "uart_lwgsm_task0", 4096, NULL, 5, NULL);
+    xTaskCreate(uart_event_task, "uart_lwcell_task0", 4096, NULL, 5, NULL);
     initialized = 1;
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
  * \brief           Callback function to de-init low-level communication part
- * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_ll_deinit(lwgsm_ll_t* ll) {
+lwcellr_t
+lwcell_ll_deinit(lwcell_ll_t* ll) {
     ESP_ERROR_CHECK(uart_driver_delete(GSM_UART_NUM));
     initialized = 0; /* Clear initialized flag */
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 #endif /* !__DOXYGEN__ */

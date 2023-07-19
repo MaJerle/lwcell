@@ -10,13 +10,13 @@ target_sources(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}/main.c
 
     # Port
-    ${CMAKE_CURRENT_LIST_DIR}/../../lwgsm/src/system/lwgsm_sys_win32.c
-    ${CMAKE_CURRENT_LIST_DIR}/../../lwgsm/src/system/lwgsm_ll_win32.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../lwcell/src/system/lwcell_sys_win32.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../lwcell/src/system/lwcell_ll_win32.c
 
     # Snippets
     ${CMAKE_CURRENT_LIST_DIR}/../../snippets/sim_manager.c
     ${CMAKE_CURRENT_LIST_DIR}/../../snippets/network_utils.c
-    ${CMAKE_CURRENT_LIST_DIR}/../../snippets/examples_common_lwgsm_callback_func.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../snippets/examples_common_lwcell_callback_func.c
 )
 
 # Add include paths
@@ -24,7 +24,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}/
 
     # Port
-    ${CMAKE_CURRENT_LIST_DIR}/../../lwgsm/src/include/system/port/win32
+    ${CMAKE_CURRENT_LIST_DIR}/../../lwcell/src/include/system/port/win32
 
     # Snippets
     ${CMAKE_CURRENT_LIST_DIR}/../../snippets/include
@@ -44,9 +44,9 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -Wpedantic
 )
 
-# Add subdir with lwgsm and link to the project
-add_subdirectory("../../lwgsm" lwgsm)
-target_link_libraries(${PROJECT_NAME} lwgsm)
+# Add subdir with lwcell and link to the project
+add_subdirectory("../../lwcell" lwcell)
+target_link_libraries(${PROJECT_NAME} lwcell)
 
 # Project specific sources and libs
 if (${PROJECT_NAME} STREQUAL "call_rtos")
@@ -60,13 +60,13 @@ target_sources(${PROJECT_NAME} PUBLIC   ${CMAKE_CURRENT_LIST_DIR}/../../snippets
 endif()
 if (${PROJECT_NAME} STREQUAL "mqtt_client_api_rtos")
 target_sources(${PROJECT_NAME} PUBLIC   ${CMAKE_CURRENT_LIST_DIR}/../../snippets/mqtt_client_api.c)
-target_link_libraries(${PROJECT_NAME}   lwgsm_api)
-target_link_libraries(${PROJECT_NAME}   lwgsm_apps)
+target_link_libraries(${PROJECT_NAME}   lwcell_api)
+target_link_libraries(${PROJECT_NAME}   lwcell_apps)
 endif()
 if (${PROJECT_NAME} STREQUAL "netconn_client_rtos")
 target_sources(${PROJECT_NAME} PUBLIC   ${CMAKE_CURRENT_LIST_DIR}/../../snippets/netconn_client.c)
-target_link_libraries(${PROJECT_NAME}   lwgsm_api)
-target_link_libraries(${PROJECT_NAME}   lwgsm_apps)
+target_link_libraries(${PROJECT_NAME}   lwcell_api)
+target_link_libraries(${PROJECT_NAME}   lwcell_apps)
 endif()
 if (${PROJECT_NAME} STREQUAL "sms_send_receive_rtos")
 target_sources(${PROJECT_NAME} PUBLIC   ${CMAKE_CURRENT_LIST_DIR}/../../snippets/sms_send_receive.c)

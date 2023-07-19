@@ -1,6 +1,6 @@
-.. _api_lwgsm_ftp:
+.. _api_lwcell_ftp:
 
 File Transfer Protocol
 ======================
 
-.. doxygengroup:: LWGSM_FTP
+.. doxygengroup:: LWCELL_FTP

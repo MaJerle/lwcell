@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_parser.c
+ * \file            lwcell_parser.c
  * \brief           Parse incoming data from AT port
  */
 
@@ -26,13 +26,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_parser.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_parser.h"
+#include "lwcell/lwcell_private.h"
 
 /**
  * \brief           Parse number from string
@@ -41,7 +41,7 @@
  * \return          Parsed number
  */
 int32_t
-lwgsmi_parse_number(const char** str) {
+lwcelli_parse_number(const char** str) {
     int32_t val = 0;
     uint8_t minus = 0;
     const char* p = *str; /*  */
@@ -68,8 +68,8 @@ lwgsmi_parse_number(const char** str) {
         minus = 1;
         ++p;
     }
-    while (LWGSM_CHARISNUM(*p)) { /* Parse until character is valid number */
-        val = val * 10 + LWGSM_CHARTONUM(*p);
+    while (LWCELL_CHARISNUM(*p)) { /* Parse until character is valid number */
+        val = val * 10 + LWCELL_CHARTONUM(*p);
         ++p;
     }
     if (*p == '"') { /* Skip trailling quotes */
@@ -87,7 +87,7 @@ lwgsmi_parse_number(const char** str) {
  * \return          Parsed number
  */
 uint32_t
-lwgsmi_parse_hexnumber(const char** str) {
+lwcelli_parse_hexnumber(const char** str) {
     int32_t val = 0;
     const char* p = *str; /*  */
 
@@ -100,8 +100,8 @@ lwgsmi_parse_hexnumber(const char** str) {
     if (*p == '"') { /* Skip leading quotes */
         ++p;
     }
-    while (LWGSM_CHARISHEXNUM(*p)) { /* Parse until character is valid number */
-        val = val * 16 + LWGSM_CHARHEXTONUM(*p);
+    while (LWCELL_CHARISHEXNUM(*p)) { /* Parse until character is valid number */
+        val = val * 16 + LWCELL_CHARHEXTONUM(*p);
         ++p;
     }
     if (*p == ',') { /* Go to next entry if possible */
@@ -123,7 +123,7 @@ lwgsmi_parse_hexnumber(const char** str) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
+lwcelli_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
     const char* p = *src;
     size_t i;
 
@@ -164,10 +164,10 @@ lwgsmi_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) {
  * \param[in]       src: Pointer to pointer to input string
  */
 void
-lwgsmi_check_and_trim(const char** src) {
+lwcelli_check_and_trim(const char** src) {
     const char* t = *src;
     if (*t != '"' && *t != '\r' && *t != ',') { /* Check if trim required */
-        lwgsmi_parse_string(src, NULL, 0, 1);   /* Trim to the end */
+        lwcelli_parse_string(src, NULL, 0, 1);   /* Trim to the end */
     }
 }
 
@@ -178,7 +178,7 @@ lwgsmi_check_and_trim(const char** src) {
  * \return          `1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
+lwcelli_parse_ip(const char** src, lwcell_ip_t* ip) {
     const char* p = *src;
 
     if (*p == ',') {
@@ -187,14 +187,14 @@ lwgsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
     if (*p == '"') {
         ++p;
     }
-    if (LWGSM_CHARISNUM(*p)) {
-        ip->ip[0] = lwgsmi_parse_number(&p);
+    if (LWCELL_CHARISNUM(*p)) {
+        ip->ip[0] = lwcelli_parse_number(&p);
         ++p;
-        ip->ip[1] = lwgsmi_parse_number(&p);
+        ip->ip[1] = lwcelli_parse_number(&p);
         ++p;
-        ip->ip[2] = lwgsmi_parse_number(&p);
+        ip->ip[2] = lwcelli_parse_number(&p);
         ++p;
-        ip->ip[3] = lwgsmi_parse_number(&p);
+        ip->ip[3] = lwcelli_parse_number(&p);
     }
     if (*p == '"') {
         ++p;
@@ -211,23 +211,23 @@ lwgsmi_parse_ip(const char** src, lwgsm_ip_t* ip) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_mac(const char** src, lwgsm_mac_t* mac) {
+lwcelli_parse_mac(const char** src, lwcell_mac_t* mac) {
     const char* p = *src;
 
     if (*p == '"') {
         ++p;
     }
-    mac->mac[0] = lwgsmi_parse_hexnumber(&p);
+    mac->mac[0] = lwcelli_parse_hexnumber(&p);
     ++p;
-    mac->mac[1] = lwgsmi_parse_hexnumber(&p);
+    mac->mac[1] = lwcelli_parse_hexnumber(&p);
     ++p;
-    mac->mac[2] = lwgsmi_parse_hexnumber(&p);
+    mac->mac[2] = lwcelli_parse_hexnumber(&p);
     ++p;
-    mac->mac[3] = lwgsmi_parse_hexnumber(&p);
+    mac->mac[3] = lwcelli_parse_hexnumber(&p);
     ++p;
-    mac->mac[4] = lwgsmi_parse_hexnumber(&p);
+    mac->mac[4] = lwcelli_parse_hexnumber(&p);
     ++p;
-    mac->mac[5] = lwgsmi_parse_hexnumber(&p);
+    mac->mac[5] = lwcelli_parse_hexnumber(&p);
     if (*p == '"') {
         ++p;
     }
@@ -243,10 +243,10 @@ lwgsmi_parse_mac(const char** src, lwgsm_mac_t* mac) {
  * \param[in,out]   src: Pointer to pointer to string to parse from
  * \return          Parsed memory
  */
-lwgsm_mem_t
-lwgsmi_parse_memory(const char** src) {
+lwcell_mem_t
+lwcelli_parse_memory(const char** src) {
     size_t i, sl;
-    lwgsm_mem_t mem = LWGSM_MEM_UNKNOWN;
+    lwcell_mem_t mem = LWCELL_MEM_UNKNOWN;
     const char* s = *src;
 
     if (*s == ',') {
@@ -257,17 +257,17 @@ lwgsmi_parse_memory(const char** src) {
     }
 
     /* Scan all memories available for modem */
-    for (i = 0; i < lwgsm_dev_mem_map_size; ++i) {
-        sl = strlen(lwgsm_dev_mem_map[i].mem_str);
-        if (!strncmp(s, lwgsm_dev_mem_map[i].mem_str, sl)) {
-            mem = lwgsm_dev_mem_map[i].mem;
+    for (i = 0; i < lwcell_dev_mem_map_size; ++i) {
+        sl = strlen(lwcell_dev_mem_map[i].mem_str);
+        if (!strncmp(s, lwcell_dev_mem_map[i].mem_str, sl)) {
+            mem = lwcell_dev_mem_map[i].mem;
             s += sl;
             break;
         }
     }
 
-    if (mem == LWGSM_MEM_UNKNOWN) {
-        lwgsmi_parse_string(&s, NULL, 0, 1); /* Skip string */
+    if (mem == LWCELL_MEM_UNKNOWN) {
+        lwcelli_parse_string(&s, NULL, 0, 1); /* Skip string */
     }
     if (*s == '"') {
         ++s;
@@ -283,9 +283,9 @@ lwgsmi_parse_memory(const char** src) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
+lwcelli_parse_memories_string(const char** src, uint32_t* mem_dst) {
     const char* str = *src;
-    lwgsm_mem_t mem;
+    lwcell_mem_t mem;
 
     *mem_dst = 0;
     if (*str == ',') {
@@ -295,8 +295,8 @@ lwgsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
         ++str;
     }
     do {
-        mem = lwgsmi_parse_memory(&str);            /* Parse memory string */
-        *mem_dst |= LWGSM_U32(1 << LWGSM_U32(mem)); /* Set as bit field */
+        mem = lwcelli_parse_memory(&str);            /* Parse memory string */
+        *mem_dst |= LWCELL_U32(1 << LWCELL_U32(mem)); /* Set as bit field */
     } while (*str && *str != ')');
     if (*str == ')') {
         ++str;
@@ -312,33 +312,33 @@ lwgsmi_parse_memories_string(const char** src, uint32_t* mem_dst) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_creg(const char* str, uint8_t skip_first) {
+lwcelli_parse_creg(const char* str, uint8_t skip_first) {
     if (*str == '+') {
         str += 7;
     }
 
     if (skip_first) {
-        lwgsmi_parse_number(&str);
+        lwcelli_parse_number(&str);
     }
-    lwgsm.m.network.status = (lwgsm_network_reg_status_t)lwgsmi_parse_number(&str);
+    lwcell.m.network.status = (lwcell_network_reg_status_t)lwcelli_parse_number(&str);
 
     /*
      * In case we are connected to network,
      * scan for current network info
      */
-    if (lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED
-        || lwgsm.m.network.status == LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
+    if (lwcell.m.network.status == LWCELL_NETWORK_REG_STATUS_CONNECTED
+        || lwcell.m.network.status == LWCELL_NETWORK_REG_STATUS_CONNECTED_ROAMING) {
         /* Try to get operator */
         /* Notify user in case we are not able to add new command to queue */
-        lwgsm_operator_get(&lwgsm.m.network.curr_operator, NULL, NULL, 0);
-#if LWGSM_CFG_NETWORK
-    } else if (lwgsm_network_is_attached()) {
-        lwgsm_network_check_status(NULL, NULL, 0); /* Do the update */
-#endif                                             /* LWGSM_CFG_NETWORK */
+        lwcell_operator_get(&lwcell.m.network.curr_operator, NULL, NULL, 0);
+#if LWCELL_CFG_NETWORK
+    } else if (lwcell_network_is_attached()) {
+        lwcell_network_check_status(NULL, NULL, 0); /* Do the update */
+#endif                                             /* LWCELL_CFG_NETWORK */
     }
 
     /* Send callback event */
-    lwgsmi_send_cb(LWGSM_EVT_NETWORK_REG_CHANGED);
+    lwcelli_send_cb(LWCELL_EVT_NETWORK_REG_CHANGED);
 
     return 1;
 }
@@ -349,26 +349,26 @@ lwgsmi_parse_creg(const char* str, uint8_t skip_first) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_csq(const char* str) {
+lwcelli_parse_csq(const char* str) {
     int16_t rssi;
     if (*str == '+') {
         str += 6;
     }
 
-    rssi = lwgsmi_parse_number(&str);
+    rssi = lwcelli_parse_number(&str);
     if (rssi < 32) {
         rssi = -(113 - (rssi * 2));
     } else {
         rssi = 0;
     }
-    lwgsm.m.rssi = rssi;                 /* Save RSSI to global variable */
-    if (lwgsm.msg->cmd_def == LWGSM_CMD_CSQ_GET && lwgsm.msg->msg.csq.rssi != NULL) {
-        *lwgsm.msg->msg.csq.rssi = rssi; /* Save to user variable */
+    lwcell.m.rssi = rssi;                 /* Save RSSI to global variable */
+    if (lwcell.msg->cmd_def == LWCELL_CMD_CSQ_GET && lwcell.msg->msg.csq.rssi != NULL) {
+        *lwcell.msg->msg.csq.rssi = rssi; /* Save to user variable */
     }
 
     /* Report CSQ status */
-    lwgsm.evt.evt.rssi.rssi = rssi;
-    lwgsmi_send_cb(LWGSM_EVT_SIGNAL_STRENGTH); /* RSSI event type */
+    lwcell.evt.evt.rssi.rssi = rssi;
+    lwcelli_send_cb(LWCELL_EVT_SIGNAL_STRENGTH); /* RSSI event type */
 
     return 1;
 }
@@ -380,39 +380,39 @@ lwgsmi_parse_csq(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cpin(const char* str, uint8_t send_evt) {
-    lwgsm_sim_state_t state;
+lwcelli_parse_cpin(const char* str, uint8_t send_evt) {
+    lwcell_sim_state_t state;
     if (*str == '+') {
         str += 7;
     }
     if (!strncmp(str, "READY", 5)) {
-        state = LWGSM_SIM_STATE_READY;
+        state = LWCELL_SIM_STATE_READY;
     } else if (!strncmp(str, "NOT READY", 9)) {
-        state = LWGSM_SIM_STATE_NOT_READY;
+        state = LWCELL_SIM_STATE_NOT_READY;
     } else if (!strncmp(str, "NOT INSERTED", 14)) {
-        state = LWGSM_SIM_STATE_NOT_INSERTED;
+        state = LWCELL_SIM_STATE_NOT_INSERTED;
     } else if (!strncmp(str, "SIM PIN", 7)) {
-        state = LWGSM_SIM_STATE_PIN;
+        state = LWCELL_SIM_STATE_PIN;
     } else if (!strncmp(str, "SIM PUK", 7)) {
-        state = LWGSM_SIM_STATE_PUK;
+        state = LWCELL_SIM_STATE_PUK;
     } else {
-        state = LWGSM_SIM_STATE_NOT_READY;
+        state = LWCELL_SIM_STATE_NOT_READY;
     }
 
     /* React only on change */
-    if (state != lwgsm.m.sim.state) {
-        lwgsm.m.sim.state = state;
+    if (state != lwcell.m.sim.state) {
+        lwcell.m.sim.state = state;
         /*
          * In case SIM is ready,
          * start with basic info about SIM
          */
-        if (lwgsm.m.sim.state == LWGSM_SIM_STATE_READY) {
-            lwgsmi_get_sim_info(0);
+        if (lwcell.m.sim.state == LWCELL_SIM_STATE_READY) {
+            lwcelli_get_sim_info(0);
         }
 
         if (send_evt) {
-            lwgsm.evt.evt.cpin.state = lwgsm.m.sim.state;
-            lwgsmi_send_cb(LWGSM_EVT_SIM_STATE_CHANGED);
+            lwcell.evt.evt.cpin.state = lwcell.m.sim.state;
+            lwcelli_send_cb(LWCELL_EVT_SIM_STATE_CHANGED);
         }
     }
     return 1;
@@ -424,37 +424,37 @@ lwgsmi_parse_cpin(const char* str, uint8_t send_evt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cops(const char* str) {
+lwcelli_parse_cops(const char* str) {
     if (*str == '+') {
         str += 7;
     }
 
-    lwgsm.m.network.curr_operator.mode = (lwgsm_operator_mode_t)lwgsmi_parse_number(&str);
+    lwcell.m.network.curr_operator.mode = (lwcell_operator_mode_t)lwcelli_parse_number(&str);
     if (*str != '\r') {
-        lwgsm.m.network.curr_operator.format = (lwgsm_operator_format_t)lwgsmi_parse_number(&str);
+        lwcell.m.network.curr_operator.format = (lwcell_operator_format_t)lwcelli_parse_number(&str);
         if (*str != '\r') {
-            switch (lwgsm.m.network.curr_operator.format) {
-                case LWGSM_OPERATOR_FORMAT_LONG_NAME:
-                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.long_name,
-                                        sizeof(lwgsm.m.network.curr_operator.data.long_name), 1);
+            switch (lwcell.m.network.curr_operator.format) {
+                case LWCELL_OPERATOR_FORMAT_LONG_NAME:
+                    lwcelli_parse_string(&str, lwcell.m.network.curr_operator.data.long_name,
+                                        sizeof(lwcell.m.network.curr_operator.data.long_name), 1);
                     break;
-                case LWGSM_OPERATOR_FORMAT_SHORT_NAME:
-                    lwgsmi_parse_string(&str, lwgsm.m.network.curr_operator.data.short_name,
-                                        sizeof(lwgsm.m.network.curr_operator.data.short_name), 1);
+                case LWCELL_OPERATOR_FORMAT_SHORT_NAME:
+                    lwcelli_parse_string(&str, lwcell.m.network.curr_operator.data.short_name,
+                                        sizeof(lwcell.m.network.curr_operator.data.short_name), 1);
                     break;
-                case LWGSM_OPERATOR_FORMAT_NUMBER:
-                    lwgsm.m.network.curr_operator.data.num = LWGSM_U32(lwgsmi_parse_number(&str));
+                case LWCELL_OPERATOR_FORMAT_NUMBER:
+                    lwcell.m.network.curr_operator.data.num = LWCELL_U32(lwcelli_parse_number(&str));
                     break;
                 default: break;
             }
         }
     } else {
-        lwgsm.m.network.curr_operator.format = LWGSM_OPERATOR_FORMAT_INVALID;
+        lwcell.m.network.curr_operator.format = LWCELL_OPERATOR_FORMAT_INVALID;
     }
 
-    if (CMD_IS_DEF(LWGSM_CMD_COPS_GET) && lwgsm.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
-        LWGSM_MEMCPY(lwgsm.msg->msg.cops_get.curr, &lwgsm.m.network.curr_operator,
-                     sizeof(*lwgsm.msg->msg.cops_get.curr));
+    if (CMD_IS_DEF(LWCELL_CMD_COPS_GET) && lwcell.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
+        LWCELL_MEMCPY(lwcell.msg->msg.cops_get.curr, &lwcell.m.network.curr_operator,
+                     sizeof(*lwcell.msg->msg.cops_get.curr));
     }
     return 1;
 }
@@ -467,7 +467,7 @@ lwgsmi_parse_cops(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
+lwcelli_parse_cops_scan(uint8_t ch, uint8_t reset) {
     static union {
         struct {
             uint8_t bo  : 1; /*!< Bracket open flag (Bracket Open) */
@@ -479,7 +479,7 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     } u;
 
     if (reset) {                           /* Check for reset status */
-        LWGSM_MEMSET(&u, 0x00, sizeof(u)); /* Reset everything */
+        LWCELL_MEMSET(&u, 0x00, sizeof(u)); /* Reset everything */
         u.f.ch_prev = 0;
         return 1;
     }
@@ -493,7 +493,7 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
     }
 
     if (u.f.ccd ||                                                        /* Ignore data after 2 commas in a row */
-        lwgsm.msg->msg.cops_scan.opsi >= lwgsm.msg->msg.cops_scan.opsl) { /* or if array is full */
+        lwcell.msg->msg.cops_scan.opsi >= lwcell.msg->msg.cops_scan.opsl) { /* or if array is full */
         return 1;
     }
 
@@ -502,37 +502,37 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
             u.f.bo = 0;                      /* Clear bracket open flag */
             u.f.tn = 0;                      /* Go to next term */
             u.f.tp = 0;                      /* Go to beginning of next term */
-            ++lwgsm.msg->msg.cops_scan.opsi; /* Increase index */
-            if (lwgsm.msg->msg.cops_scan.opf != NULL) {
-                *lwgsm.msg->msg.cops_scan.opf = lwgsm.msg->msg.cops_scan.opsi;
+            ++lwcell.msg->msg.cops_scan.opsi; /* Increase index */
+            if (lwcell.msg->msg.cops_scan.opf != NULL) {
+                *lwcell.msg->msg.cops_scan.opf = lwcell.msg->msg.cops_scan.opsi;
             }
         } else if (ch == ',') {
             ++u.f.tn;           /* Go to next term */
             u.f.tp = 0;         /* Go to beginning of next term */
         } else if (ch != '"') { /* We have valid data */
-            size_t i = lwgsm.msg->msg.cops_scan.opsi;
+            size_t i = lwcell.msg->msg.cops_scan.opsi;
             switch (u.f.tn) {
                 case 0: { /* Parse status info */
-                    lwgsm.msg->msg.cops_scan.ops[i].stat =
-                        (lwgsm_operator_status_t)(10 * (size_t)lwgsm.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
+                    lwcell.msg->msg.cops_scan.ops[i].stat =
+                        (lwcell_operator_status_t)(10 * (size_t)lwcell.msg->msg.cops_scan.ops[i].stat + (ch - '0'));
                     break;
                 }
                 case 1: { /*!< Parse long name */
-                    if (u.f.tp < sizeof(lwgsm.msg->msg.cops_scan.ops[i].long_name) - 1) {
-                        lwgsm.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = ch;
-                        lwgsm.msg->msg.cops_scan.ops[i].long_name[++u.f.tp] = 0;
+                    if (u.f.tp < sizeof(lwcell.msg->msg.cops_scan.ops[i].long_name) - 1) {
+                        lwcell.msg->msg.cops_scan.ops[i].long_name[u.f.tp] = ch;
+                        lwcell.msg->msg.cops_scan.ops[i].long_name[++u.f.tp] = 0;
                     }
                     break;
                 }
                 case 2: { /*!< Parse short name */
-                    if (u.f.tp < sizeof(lwgsm.msg->msg.cops_scan.ops[i].short_name) - 1) {
-                        lwgsm.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = ch;
-                        lwgsm.msg->msg.cops_scan.ops[i].short_name[++u.f.tp] = 0;
+                    if (u.f.tp < sizeof(lwcell.msg->msg.cops_scan.ops[i].short_name) - 1) {
+                        lwcell.msg->msg.cops_scan.ops[i].short_name[u.f.tp] = ch;
+                        lwcell.msg->msg.cops_scan.ops[i].short_name[++u.f.tp] = 0;
                     }
                     break;
                 }
                 case 3: { /*!< Parse number */
-                    lwgsm.msg->msg.cops_scan.ops[i].num = (10 * lwgsm.msg->msg.cops_scan.ops[i].num) + (ch - '0');
+                    lwcell.msg->msg.cops_scan.ops[i].num = (10 * lwcell.msg->msg.cops_scan.ops[i].num) + (ch - '0');
                     break;
                 }
                 default: break;
@@ -556,19 +556,19 @@ lwgsmi_parse_cops_scan(uint8_t ch, uint8_t reset) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_datetime(const char** src, struct tm* dt) {
-    dt->tm_mday = lwgsmi_parse_number(src);
-    dt->tm_mon = lwgsmi_parse_number(src) - 1;
-    dt->tm_year = LWGSM_U16(100) + lwgsmi_parse_number(src);
-    dt->tm_hour = lwgsmi_parse_number(src);
-    dt->tm_min = lwgsmi_parse_number(src);
-    dt->tm_sec = lwgsmi_parse_number(src);
+lwcelli_parse_datetime(const char** src, struct tm* dt) {
+    dt->tm_mday = lwcelli_parse_number(src);
+    dt->tm_mon = lwcelli_parse_number(src) - 1;
+    dt->tm_year = LWCELL_U16(100) + lwcelli_parse_number(src);
+    dt->tm_hour = lwcelli_parse_number(src);
+    dt->tm_min = lwcelli_parse_number(src);
+    dt->tm_sec = lwcelli_parse_number(src);
 
-    lwgsmi_check_and_trim(src); /* Trim text to the end */
+    lwcelli_check_and_trim(src); /* Trim text to the end */
     return 1;
 }
 
-#if LWGSM_CFG_CALL || __DOXYGEN__
+#if LWCELL_CFG_CALL || __DOXYGEN__
 
 /**
  * \brief           Parse received +CLCC with call status info
@@ -577,30 +577,30 @@ lwgsmi_parse_datetime(const char** src, struct tm* dt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_clcc(const char* str, uint8_t send_evt) {
+lwcelli_parse_clcc(const char* str, uint8_t send_evt) {
     if (*str == '+') {
         str += 7;
     }
 
-    lwgsm.m.call.id = lwgsmi_parse_number(&str);
-    lwgsm.m.call.dir = (lwgsm_call_dir_t)lwgsmi_parse_number(&str);
-    lwgsm.m.call.state = (lwgsm_call_state_t)lwgsmi_parse_number(&str);
-    lwgsm.m.call.type = (lwgsm_call_type_t)lwgsmi_parse_number(&str);
-    lwgsm.m.call.is_multipart = (lwgsm_call_type_t)lwgsmi_parse_number(&str);
-    lwgsmi_parse_string(&str, lwgsm.m.call.number, sizeof(lwgsm.m.call.number), 1);
-    lwgsm.m.call.addr_type = lwgsmi_parse_number(&str);
-    lwgsmi_parse_string(&str, lwgsm.m.call.name, sizeof(lwgsm.m.call.name), 1);
+    lwcell.m.call.id = lwcelli_parse_number(&str);
+    lwcell.m.call.dir = (lwcell_call_dir_t)lwcelli_parse_number(&str);
+    lwcell.m.call.state = (lwcell_call_state_t)lwcelli_parse_number(&str);
+    lwcell.m.call.type = (lwcell_call_type_t)lwcelli_parse_number(&str);
+    lwcell.m.call.is_multipart = (lwcell_call_type_t)lwcelli_parse_number(&str);
+    lwcelli_parse_string(&str, lwcell.m.call.number, sizeof(lwcell.m.call.number), 1);
+    lwcell.m.call.addr_type = lwcelli_parse_number(&str);
+    lwcelli_parse_string(&str, lwcell.m.call.name, sizeof(lwcell.m.call.name), 1);
 
     if (send_evt) {
-        lwgsm.evt.evt.call_changed.call = &lwgsm.m.call;
-        lwgsmi_send_cb(LWGSM_EVT_CALL_CHANGED);
+        lwcell.evt.evt.call_changed.call = &lwcell.m.call;
+        lwcelli_send_cb(LWCELL_EVT_CALL_CHANGED);
     }
     return 1;
 }
 
-#endif /* LWGSM_CFG_CALL || __DOXYGEN__ */
+#endif /* LWCELL_CFG_CALL || __DOXYGEN__ */
 
-#if LWGSM_CFG_SMS || __DOXYGEN__
+#if LWCELL_CFG_SMS || __DOXYGEN__
 
 /**
  * \brief           Parse string and check for type of SMS state
@@ -609,23 +609,23 @@ lwgsmi_parse_clcc(const char* str, uint8_t send_evt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
-    lwgsm_sms_status_t s;
+lwcelli_parse_sms_status(const char** src, lwcell_sms_status_t* stat) {
+    lwcell_sms_status_t s;
     char t[11];
 
-    lwgsmi_parse_string(src, t, sizeof(t), 1); /* Parse string and advance */
+    lwcelli_parse_string(src, t, sizeof(t), 1); /* Parse string and advance */
     if (!strcmp(t, "REC UNREAD")) {
-        s = LWGSM_SMS_STATUS_UNREAD;
+        s = LWCELL_SMS_STATUS_UNREAD;
     } else if (!strcmp(t, "REC READ")) {
-        s = LWGSM_SMS_STATUS_READ;
+        s = LWCELL_SMS_STATUS_READ;
     } else if (!strcmp(t, "STO UNSENT")) {
-        s = LWGSM_SMS_STATUS_UNSENT;
+        s = LWCELL_SMS_STATUS_UNSENT;
     } else if (!strcmp(t, "REC SENT")) {
-        s = LWGSM_SMS_STATUS_SENT;
+        s = LWCELL_SMS_STATUS_SENT;
     } else {
-        s = LWGSM_SMS_STATUS_ALL; /* Error! */
+        s = LWCELL_SMS_STATUS_ALL; /* Error! */
     }
-    if (s != LWGSM_SMS_STATUS_ALL) {
+    if (s != LWCELL_SMS_STATUS_ALL) {
         *stat = s;
         return 1;
     }
@@ -639,13 +639,13 @@ lwgsmi_parse_sms_status(const char** src, lwgsm_sms_status_t* stat) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsmi_parse_cmgs(const char* str, size_t* num) {
+lwcelli_parse_cmgs(const char* str, size_t* num) {
     if (*str == '+') {
         str += 7;
     }
 
     if (num != NULL) {
-        *num = (size_t)lwgsmi_parse_number(&str);
+        *num = (size_t)lwcelli_parse_number(&str);
     }
     return 1;
 }
@@ -657,18 +657,18 @@ lwgsmi_parse_cmgs(const char* str, size_t* num) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cmgr(const char* str) {
-    lwgsm_sms_entry_t* e;
+lwcelli_parse_cmgr(const char* str) {
+    lwcell_sms_entry_t* e;
     if (*str == '+') {
         str += 7;
     }
 
-    e = lwgsm.msg->msg.sms_read.entry;
+    e = lwcell.msg->msg.sms_read.entry;
     e->length = 0;
-    lwgsmi_parse_sms_status(&str, &e->status);
-    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
-    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    lwgsmi_parse_datetime(&str, &e->dt);
+    lwcelli_parse_sms_status(&str, &e->status);
+    lwcelli_parse_string(&str, e->number, sizeof(e->number), 1);
+    lwcelli_parse_string(&str, e->name, sizeof(e->name), 1);
+    lwcelli_parse_datetime(&str, &e->dt);
 
     return 1;
 }
@@ -680,10 +680,10 @@ lwgsmi_parse_cmgr(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cmgl(const char* str) {
-    lwgsm_sms_entry_t* e;
+lwcelli_parse_cmgl(const char* str) {
+    lwcell_sms_entry_t* e;
 
-    if (!CMD_IS_DEF(LWGSM_CMD_CMGL) || lwgsm.msg->msg.sms_list.ei >= lwgsm.msg->msg.sms_list.etr) {
+    if (!CMD_IS_DEF(LWCELL_CMD_CMGL) || lwcell.msg->msg.sms_list.ei >= lwcell.msg->msg.sms_list.etr) {
         return 0;
     }
 
@@ -691,14 +691,14 @@ lwgsmi_parse_cmgl(const char* str) {
         str += 7;
     }
 
-    e = &lwgsm.msg->msg.sms_list.entries[lwgsm.msg->msg.sms_list.ei];
+    e = &lwcell.msg->msg.sms_list.entries[lwcell.msg->msg.sms_list.ei];
     e->length = 0;
-    e->mem = lwgsm.msg->msg.sms_list.mem;         /* Manually set memory */
-    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str)); /* Scan position */
-    lwgsmi_parse_sms_status(&str, &e->status);
-    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
-    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    lwgsmi_parse_datetime(&str, &e->dt);
+    e->mem = lwcell.msg->msg.sms_list.mem;         /* Manually set memory */
+    e->pos = LWCELL_SZ(lwcelli_parse_number(&str)); /* Scan position */
+    lwcelli_parse_sms_status(&str, &e->status);
+    lwcelli_parse_string(&str, e->number, sizeof(e->number), 1);
+    lwcelli_parse_string(&str, e->name, sizeof(e->name), 1);
+    lwcelli_parse_datetime(&str, &e->dt);
 
     return 1;
 }
@@ -710,16 +710,16 @@ lwgsmi_parse_cmgl(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cmti(const char* str, uint8_t send_evt) {
+lwcelli_parse_cmti(const char* str, uint8_t send_evt) {
     if (*str == '+') {
         str += 7;
     }
 
-    lwgsm.evt.evt.sms_recv.mem = lwgsmi_parse_memory(&str); /* Parse memory string */
-    lwgsm.evt.evt.sms_recv.pos = lwgsmi_parse_number(&str); /* Parse number */
+    lwcell.evt.evt.sms_recv.mem = lwcelli_parse_memory(&str); /* Parse memory string */
+    lwcell.evt.evt.sms_recv.pos = lwcelli_parse_number(&str); /* Parse number */
 
     if (send_evt) {
-        lwgsmi_send_cb(LWGSM_EVT_SMS_RECV);
+        lwcelli_send_cb(LWCELL_EVT_SMS_RECV);
     }
     return 1;
 }
@@ -731,7 +731,7 @@ lwgsmi_parse_cmti(const char* str, uint8_t send_evt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cpms(const char* str, uint8_t opt) {
+lwcelli_parse_cpms(const char* str, uint8_t opt) {
     uint8_t i;
     if (*str == '+') {
         str += 7;
@@ -739,7 +739,7 @@ lwgsmi_parse_cpms(const char* str, uint8_t opt) {
     switch (opt) {                    /* Check expected input string */
         case 0: {                     /* Get list of CPMS options: +CPMS: (("","","",..),("....")("...")) */
             for (i = 0; i < 3; ++i) { /* 3 different memories for "operation","receive","sent" */
-                if (!lwgsmi_parse_memories_string(&str, &lwgsm.m.sms.mem[i].mem_available)) {
+                if (!lwcelli_parse_memories_string(&str, &lwcell.m.sms.mem[i].mem_available)) {
                     return 0;
                 }
             }
@@ -747,16 +747,16 @@ lwgsmi_parse_cpms(const char* str, uint8_t opt) {
         }
         case 1: {                     /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
             for (i = 0; i < 3; ++i) { /* 3 memories expected */
-                lwgsm.m.sms.mem[i].current = lwgsmi_parse_memory(&str); /* Parse memory string and save it as current */
-                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);    /* Get used memory size */
-                lwgsm.m.sms.mem[i].total = lwgsmi_parse_number(&str);   /* Get total memory size */
+                lwcell.m.sms.mem[i].current = lwcelli_parse_memory(&str); /* Parse memory string and save it as current */
+                lwcell.m.sms.mem[i].used = lwcelli_parse_number(&str);    /* Get used memory size */
+                lwcell.m.sms.mem[i].total = lwcelli_parse_number(&str);   /* Get total memory size */
             }
             break;
         }
         case 2: {                     /* Received statement of set info: +CPMS: 10,20,2,20 */
             for (i = 0; i < 3; ++i) { /* 3 memories expected */
-                lwgsm.m.sms.mem[i].used = lwgsmi_parse_number(&str);  /* Get used memory size */
-                lwgsm.m.sms.mem[i].total = lwgsmi_parse_number(&str); /* Get total memory size */
+                lwcell.m.sms.mem[i].used = lwcelli_parse_number(&str);  /* Get used memory size */
+                lwcell.m.sms.mem[i].total = lwcelli_parse_number(&str); /* Get total memory size */
             }
             break;
         }
@@ -765,9 +765,9 @@ lwgsmi_parse_cpms(const char* str, uint8_t opt) {
     return 1;
 }
 
-#endif /* LWGSM_CFG_SMS || __DOXYGEN__ */
+#endif /* LWCELL_CFG_SMS || __DOXYGEN__ */
 
-#if LWGSM_CFG_PHONEBOOK || __DOXYGEN__
+#if LWCELL_CFG_PHONEBOOK || __DOXYGEN__
 
 /**
  * \brief           Parse +CPBS statement
@@ -776,23 +776,23 @@ lwgsmi_parse_cpms(const char* str, uint8_t opt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cpbs(const char* str, uint8_t opt) {
+lwcelli_parse_cpbs(const char* str, uint8_t opt) {
     if (*str == '+') {
         str += 7;
     }
     switch (opt) { /* Check expected input string */
         case 0: {  /* Get list of CPBS options: ("M1","M2","M3",...) */
-            return lwgsmi_parse_memories_string(&str, &lwgsm.m.pb.mem.mem_available);
+            return lwcelli_parse_memories_string(&str, &lwcell.m.pb.mem.mem_available);
         }
         case 1: { /* Received statement of current info: +CPBS: "ME",10,20 */
-            lwgsm.m.pb.mem.current = lwgsmi_parse_memory(&str); /* Parse memory string and save it as current */
-            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);    /* Get used memory size */
-            lwgsm.m.pb.mem.total = lwgsmi_parse_number(&str);   /* Get total memory size */
+            lwcell.m.pb.mem.current = lwcelli_parse_memory(&str); /* Parse memory string and save it as current */
+            lwcell.m.pb.mem.used = lwcelli_parse_number(&str);    /* Get used memory size */
+            lwcell.m.pb.mem.total = lwcelli_parse_number(&str);   /* Get total memory size */
             break;
         }
         case 2: {                                             /* Received statement of set info: +CPBS: 10,20 */
-            lwgsm.m.pb.mem.used = lwgsmi_parse_number(&str);  /* Get used memory size */
-            lwgsm.m.pb.mem.total = lwgsmi_parse_number(&str); /* Get total memory size */
+            lwcell.m.pb.mem.used = lwcelli_parse_number(&str);  /* Get used memory size */
+            lwcell.m.pb.mem.total = lwcelli_parse_number(&str); /* Get total memory size */
             break;
         }
     }
@@ -805,10 +805,10 @@ lwgsmi_parse_cpbs(const char* str, uint8_t opt) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cpbr(const char* str) {
-    lwgsm_pb_entry_t* e;
+lwcelli_parse_cpbr(const char* str) {
+    lwcell_pb_entry_t* e;
 
-    if (!CMD_IS_DEF(LWGSM_CMD_CPBR) || lwgsm.msg->msg.pb_list.ei >= lwgsm.msg->msg.pb_list.etr) {
+    if (!CMD_IS_DEF(LWCELL_CMD_CPBR) || lwcell.msg->msg.pb_list.ei >= lwcell.msg->msg.pb_list.etr) {
         return 0;
     }
 
@@ -816,15 +816,15 @@ lwgsmi_parse_cpbr(const char* str) {
         str += 7;
     }
 
-    e = &lwgsm.msg->msg.pb_list.entries[lwgsm.msg->msg.pb_list.ei];
-    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));
-    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
-    e->type = (lwgsm_number_type_t)lwgsmi_parse_number(&str);
-    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
+    e = &lwcell.msg->msg.pb_list.entries[lwcell.msg->msg.pb_list.ei];
+    e->pos = LWCELL_SZ(lwcelli_parse_number(&str));
+    lwcelli_parse_string(&str, e->number, sizeof(e->number), 1);
+    e->type = (lwcell_number_type_t)lwcelli_parse_number(&str);
+    lwcelli_parse_string(&str, e->name, sizeof(e->name), 1);
 
-    ++lwgsm.msg->msg.pb_list.ei;
-    if (lwgsm.msg->msg.pb_list.er != NULL) {
-        *lwgsm.msg->msg.pb_list.er = lwgsm.msg->msg.pb_list.ei;
+    ++lwcell.msg->msg.pb_list.ei;
+    if (lwcell.msg->msg.pb_list.er != NULL) {
+        *lwcell.msg->msg.pb_list.er = lwcell.msg->msg.pb_list.ei;
     }
     return 1;
 }
@@ -835,10 +835,10 @@ lwgsmi_parse_cpbr(const char* str) {
  * \return          1 on success, 0 otherwise
  */
 uint8_t
-lwgsmi_parse_cpbf(const char* str) {
-    lwgsm_pb_entry_t* e;
+lwcelli_parse_cpbf(const char* str) {
+    lwcell_pb_entry_t* e;
 
-    if (!CMD_IS_DEF(LWGSM_CMD_CPBF) || lwgsm.msg->msg.pb_search.ei >= lwgsm.msg->msg.pb_search.etr) {
+    if (!CMD_IS_DEF(LWCELL_CMD_CPBF) || lwcell.msg->msg.pb_search.ei >= lwcell.msg->msg.pb_search.etr) {
         return 0;
     }
 
@@ -846,22 +846,22 @@ lwgsmi_parse_cpbf(const char* str) {
         str += 7;
     }
 
-    e = &lwgsm.msg->msg.pb_search.entries[lwgsm.msg->msg.pb_search.ei];
-    e->pos = LWGSM_SZ(lwgsmi_parse_number(&str));
-    lwgsmi_parse_string(&str, e->name, sizeof(e->name), 1);
-    e->type = (lwgsm_number_type_t)lwgsmi_parse_number(&str);
-    lwgsmi_parse_string(&str, e->number, sizeof(e->number), 1);
+    e = &lwcell.msg->msg.pb_search.entries[lwcell.msg->msg.pb_search.ei];
+    e->pos = LWCELL_SZ(lwcelli_parse_number(&str));
+    lwcelli_parse_string(&str, e->name, sizeof(e->name), 1);
+    e->type = (lwcell_number_type_t)lwcelli_parse_number(&str);
+    lwcelli_parse_string(&str, e->number, sizeof(e->number), 1);
 
-    ++lwgsm.msg->msg.pb_search.ei;
-    if (lwgsm.msg->msg.pb_search.er != NULL) {
-        *lwgsm.msg->msg.pb_search.er = lwgsm.msg->msg.pb_search.ei;
+    ++lwcell.msg->msg.pb_search.ei;
+    if (lwcell.msg->msg.pb_search.er != NULL) {
+        *lwcell.msg->msg.pb_search.er = lwcell.msg->msg.pb_search.ei;
     }
     return 1;
 }
 
-#endif /* LWGSM_CFG_PHONEBOOK || __DOXYGEN__ */
+#endif /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
 
-#if LWGSM_CFG_CONN
+#if LWCELL_CFG_CONN
 
 /**
  * \brief           Parse connection info line from CIPSTATUS command
@@ -871,9 +871,9 @@ lwgsmi_parse_cpbf(const char* str) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan) {
+lwcelli_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan) {
     uint8_t num;
-    lwgsm_conn_t* conn;
+    lwcell_conn_t* conn;
     char s_tmp[16];
     uint8_t tmp_pdp_state;
 
@@ -892,34 +892,34 @@ lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* cont
         }
 
         /* Check if we have to update status for application */
-        if (lwgsm.m.network.is_attached != tmp_pdp_state) {
-            lwgsm.m.network.is_attached = tmp_pdp_state;
+        if (lwcell.m.network.is_attached != tmp_pdp_state) {
+            lwcell.m.network.is_attached = tmp_pdp_state;
 
             /* Notify upper layer */
-            lwgsmi_send_cb(lwgsm.m.network.is_attached ? LWGSM_EVT_NETWORK_ATTACHED : LWGSM_EVT_NETWORK_DETACHED);
+            lwcelli_send_cb(lwcell.m.network.is_attached ? LWCELL_EVT_NETWORK_ATTACHED : LWCELL_EVT_NETWORK_DETACHED);
         }
 
         return 1;
     }
 
     /* Parse connection line */
-    num = LWGSM_U8(lwgsmi_parse_number(&str));
-    conn = &lwgsm.m.conns[num];
+    num = LWCELL_U8(lwcelli_parse_number(&str));
+    conn = &lwcell.m.conns[num];
 
-    conn->status.f.bearer = LWGSM_U8(lwgsmi_parse_number(&str));
-    lwgsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1); /* Parse TCP/UPD */
+    conn->status.f.bearer = LWCELL_U8(lwcelli_parse_number(&str));
+    lwcelli_parse_string(&str, s_tmp, sizeof(s_tmp), 1); /* Parse TCP/UPD */
     if (strlen(s_tmp)) {
         if (!strcmp(s_tmp, "TCP")) {
-            conn->type = LWGSM_CONN_TYPE_TCP;
+            conn->type = LWCELL_CONN_TYPE_TCP;
         } else if (!strcmp(s_tmp, "UDP")) {
-            conn->type = LWGSM_CONN_TYPE_UDP;
+            conn->type = LWCELL_CONN_TYPE_UDP;
         }
     }
-    lwgsmi_parse_ip(&str, &conn->remote_ip);
-    conn->remote_port = lwgsmi_parse_number(&str);
+    lwcelli_parse_ip(&str, &conn->remote_ip);
+    conn->remote_port = lwcelli_parse_number(&str);
 
     /* Get connection status */
-    lwgsmi_parse_string(&str, s_tmp, sizeof(s_tmp), 1);
+    lwcelli_parse_string(&str, s_tmp, sizeof(s_tmp), 1);
 
     /* TODO: Implement all connection states */
     if (!strcmp(s_tmp, "INITIAL")) {
@@ -934,12 +934,12 @@ lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* cont
 
     } else if (!strcmp(s_tmp, "CLOSED")) {            /* Connection closed */
         if (conn->status.f.active) {                  /* Check if connection is not */
-            lwgsmi_conn_closed_process(conn->num, 0); /* Process closed event */
+            lwcelli_conn_closed_process(conn->num, 0); /* Process closed event */
         }
     }
 
     /* Save last parsed connection */
-    lwgsm.m.active_conns_cur_parse_num = num;
+    lwcell.m.active_conns_cur_parse_num = num;
 
     return 1;
 }
@@ -950,10 +950,10 @@ lwgsmi_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* cont
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsmi_parse_ipd(const char* str) {
+lwcelli_parse_ipd(const char* str) {
     uint8_t conn;
     size_t len;
-    lwgsm_conn_p c;
+    lwcell_conn_p c;
 
     if (*str == '+') {
         ++str;
@@ -964,20 +964,20 @@ lwgsmi_parse_ipd(const char* str) {
         }
     }
 
-    conn = lwgsmi_parse_number(&str);                             /* Parse number for connection number */
-    len = lwgsmi_parse_number(&str);                              /* Parse number for number of bytes to read */
+    conn = lwcelli_parse_number(&str);                             /* Parse number for connection number */
+    len = lwcelli_parse_number(&str);                              /* Parse number for number of bytes to read */
 
-    c = conn < LWGSM_CFG_MAX_CONNS ? &lwgsm.m.conns[conn] : NULL; /* Get connection handle */
+    c = conn < LWCELL_CFG_MAX_CONNS ? &lwcell.m.conns[conn] : NULL; /* Get connection handle */
     if (c == NULL) {                                              /* Invalid connection number */
         return 0;
     }
 
-    lwgsm.m.ipd.read = 1;      /* Start reading network data */
-    lwgsm.m.ipd.tot_len = len; /* Total number of bytes in this received packet */
-    lwgsm.m.ipd.rem_len = len; /* Number of remaining bytes to read */
-    lwgsm.m.ipd.conn = c;      /* Pointer to connection we have data for */
+    lwcell.m.ipd.read = 1;      /* Start reading network data */
+    lwcell.m.ipd.tot_len = len; /* Total number of bytes in this received packet */
+    lwcell.m.ipd.rem_len = len; /* Number of remaining bytes to read */
+    lwcell.m.ipd.conn = c;      /* Pointer to connection we have data for */
 
     return 1;
 }
 
-#endif /* LWGSM_CFG_CONN */
+#endif /* LWCELL_CFG_CONN */

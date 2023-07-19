@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_opts.h
+ * \file            lwcell_opts.h
  * \brief           GSM application options
  */
 
@@ -26,47 +26,47 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM.
+ * This file is part of LwCELL.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.0
  */
-#ifndef LWGSM_HDR_OPTS_H
-#define LWGSM_HDR_OPTS_H
+#ifndef LWCELL_HDR_OPTS_H
+#define LWCELL_HDR_OPTS_H
 
-/* Rename this file to "lwgsm_opts.h" for your application */
+/* Rename this file to "lwcell_opts.h" for your application */
 
 /*
- * Open "include/lwgsm/lwgsm_opt.h" and
+ * Open "include/lwcell/lwcell_opt.h" and
  * copy & replace here settings you want to change values
  */
 #if !__DOXYGEN__
-#define LWGSM_CFG_DBG               LWGSM_DBG_ON
-#define LWGSM_CFG_DBG_TYPES_ON      LWGSM_DBG_TYPE_TRACE | LWGSM_DBG_TYPE_STATE
-#define LWGSM_CFG_DBG_MQTT          LWGSM_DBG_OFF
+#define LWCELL_CFG_DBG               LWCELL_DBG_ON
+#define LWCELL_CFG_DBG_TYPES_ON      LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_TYPE_STATE
+#define LWCELL_CFG_DBG_MQTT          LWCELL_DBG_OFF
 
-#define LWGSM_CFG_CONN_MAX_DATA_LEN 1460
-#define LWGSM_CFG_INPUT_USE_PROCESS 1
-#define LWGSM_CFG_AT_ECHO           0
+#define LWCELL_CFG_CONN_MAX_DATA_LEN 1460
+#define LWCELL_CFG_INPUT_USE_PROCESS 1
+#define LWCELL_CFG_AT_ECHO           0
 
-#define LWGSM_CFG_NETWORK           1
+#define LWCELL_CFG_NETWORK           1
 
-#define LWGSM_CFG_CONN              1
-#define LWGSM_CFG_SMS               1
-#define LWGSM_CFG_CALL              1
-#define LWGSM_CFG_PHONEBOOK         1
-#define LWGSM_CFG_USSD              1
+#define LWCELL_CFG_CONN              1
+#define LWCELL_CFG_SMS               1
+#define LWCELL_CFG_CALL              1
+#define LWCELL_CFG_PHONEBOOK         1
+#define LWCELL_CFG_USSD              1
 
-#define LWGSM_CFG_USE_API_FUNC_EVT  1
+#define LWCELL_CFG_USE_API_FUNC_EVT  1
 
-#define LWGSM_CFG_NETCONN           1
+#define LWCELL_CFG_NETCONN           1
 
-#define LWGSM_CFG_MEM_CUSTOM        1
+#define LWCELL_CFG_MEM_CUSTOM        1
 
 #if defined(WIN32)
-#define LWGSM_CFG_SYS_PORT LWGSM_SYS_PORT_WIN32
+#define LWCELL_CFG_SYS_PORT LWCELL_SYS_PORT_WIN32
 #endif
 
 #endif /* !__DOXYGEN__ */
 
-#endif /* LWGSM_HDR_OPTS_H */
+#endif /* LWCELL_HDR_OPTS_H */

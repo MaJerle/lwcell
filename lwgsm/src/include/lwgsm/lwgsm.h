@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm.h
+ * \file            lwcell.h
  * \brief           Lightweight GSM-AT library
  */
 
@@ -26,43 +26,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_HDR_H
-#define LWGSM_HDR_H
+#ifndef LWCELL_HDR_H
+#define LWCELL_HDR_H
 
 /* Get most important include files */
-#include "lwgsm/lwgsm_includes.h"
+#include "lwcell/lwcell_includes.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \defgroup        LWGSM Lightweight GSM-AT parser library
+ * \defgroup        LWCELL Lightweight GSM-AT parser library
  * \brief           Lightweight GSM-AT parser library
  * \{
  */
 
-lwgsmr_t lwgsm_init(lwgsm_evt_fn evt_func, const uint32_t blocking);
-lwgsmr_t lwgsm_reset(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_reset_with_delay(uint32_t delay, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_init(lwcell_evt_fn evt_func, const uint32_t blocking);
+lwcellr_t lwcell_reset(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_reset_with_delay(uint32_t delay, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                                 const uint32_t blocking);
 
-lwgsmr_t lwgsm_set_func_mode(uint8_t mode, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_set_func_mode(uint8_t mode, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                              const uint32_t blocking);
 
-lwgsmr_t lwgsm_core_lock(void);
-lwgsmr_t lwgsm_core_unlock(void);
+lwcellr_t lwcell_core_lock(void);
+lwcellr_t lwcell_core_unlock(void);
 
-lwgsmr_t lwgsm_device_set_present(uint8_t present, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_device_set_present(uint8_t present, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                                   const uint32_t blocking);
-uint8_t lwgsm_device_is_present(void);
+uint8_t lwcell_device_is_present(void);
 
-uint8_t lwgsm_delay(uint32_t ms);
+uint8_t lwcell_delay(uint32_t ms);
 
 /**
  * \}
@@ -72,4 +72,4 @@ uint8_t lwgsm_delay(uint32_t ms);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_H */
+#endif /* LWCELL_HDR_H */

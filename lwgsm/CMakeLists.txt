@@ -1,72 +1,72 @@
 cmake_minimum_required(VERSION 3.22)
 
 # Library core sources
-set(lwgsm_core_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_buff.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_call.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_conn.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_debug.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_device_info.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_evt.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_http.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_input.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_int.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_mem.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_network.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_operator.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_parser.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_pbuf.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_phonebook.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_sim.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_sms.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_threads.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_timeout.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_unicode.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_ussd.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/lwgsm/lwgsm_utils.c
+set(lwcell_core_SRCS
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_buff.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_call.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_conn.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_debug.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_device_info.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_evt.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_http.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_input.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_int.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_mem.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_network.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_operator.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_parser.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_pbuf.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_phonebook.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_sim.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_sms.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_threads.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_timeout.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_unicode.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_ussd.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_utils.c
     )
     
 # API sources
-set(lwgsm_api_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/src/api/lwgsm_netconn.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/api/lwgsm_network_api.c
+set(lwcell_api_SRCS
+    ${CMAKE_CURRENT_LIST_DIR}/src/api/lwcell_netconn.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/api/lwcell_network_api.c
     )
 
 # MQTT
-set(lwgsm_mqtt_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwgsm_mqtt_client.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwgsm_mqtt_client_api.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwgsm_mqtt_client_evt.c
+set(lwcell_mqtt_SRCS
+    ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwcell_mqtt_client.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwcell_mqtt_client_api.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwcell_mqtt_client_evt.c
     )
 
 # All apps source files
-set(lwgsm_allapps_SRCS
-    ${lwgsm_mqtt_SRCS}
+set(lwcell_allapps_SRCS
+    ${lwcell_mqtt_SRCS}
     )
 
 # Setup include directories
-set(lwgsm_include_DIRS
+set(lwcell_include_DIRS
     ${CMAKE_CURRENT_LIST_DIR}/src/include
     )
     
 # Add system port to core if user defined
-if (DEFINED LWGSM_SYS_PORT)
-    set(lwgsm_core_SRCS ${lwgsm_core_SRCS} ${CMAKE_CURRENT_LIST_DIR}/src/system/lwgsm_sys_${LWGSM_SYS_PORT}.c)
-    set(lwgsm_include_DIRS ${lwgsm_include_DIRS} ${CMAKE_CURRENT_LIST_DIR}/src/include/system/port/${LWGSM_SYS_PORT})
+if (DEFINED LWCELL_SYS_PORT)
+    set(lwcell_core_SRCS ${lwcell_core_SRCS} ${CMAKE_CURRENT_LIST_DIR}/src/system/lwcell_sys_${LWCELL_SYS_PORT}.c)
+    set(lwcell_include_DIRS ${lwcell_include_DIRS} ${CMAKE_CURRENT_LIST_DIR}/src/include/system/port/${LWCELL_SYS_PORT})
 endif()
 
 # Register core library to the system
-add_library(lwgsm INTERFACE)
-target_sources(lwgsm PUBLIC ${lwgsm_core_SRCS})
-target_include_directories(lwgsm INTERFACE ${lwgsm_include_DIRS})
+add_library(lwcell INTERFACE)
+target_sources(lwcell PUBLIC ${lwcell_core_SRCS})
+target_include_directories(lwcell INTERFACE ${lwcell_include_DIRS})
 
 # Register API to the system
-add_library(lwgsm_api INTERFACE)
-target_sources(lwgsm_api PUBLIC ${lwgsm_api_SRCS})
-target_include_directories(lwgsm_api INTERFACE ${lwgsm_include_DIRS})
+add_library(lwcell_api INTERFACE)
+target_sources(lwcell_api PUBLIC ${lwcell_api_SRCS})
+target_include_directories(lwcell_api INTERFACE ${lwcell_include_DIRS})
 
 # Register apps to the system
-add_library(lwgsm_apps INTERFACE)
-target_sources(lwgsm_apps PUBLIC ${lwgsm_allapps_SRCS})
-target_include_directories(lwgsm_apps INTERFACE ${lwgsm_include_DIRS})	
+add_library(lwcell_apps INTERFACE)
+target_sources(lwcell_apps PUBLIC ${lwcell_allapps_SRCS})
+target_include_directories(lwcell_apps INTERFACE ${lwcell_include_DIRS})	

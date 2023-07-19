@@ -3,7 +3,7 @@
 Inter thread communication
 ==========================
 
-LwGSM is only available with operating system. 
+LwCELL is only available with operating system. 
 For successful resources management, it uses ``2`` threads within library and allows multiple application threads to post new command to be processed.
 
 .. figure:: ../static/images/thread_communication.svg
@@ -12,7 +12,7 @@ For successful resources management, it uses ``2`` threads within library and al
 
 	Inter-thread architecture block diagram
 
-*Producing* and *Processing* threads are part of library, its implementation is in ``lwgsm_threads.c`` file.
+*Producing* and *Processing* threads are part of library, its implementation is in ``lwcell_threads.c`` file.
 
 Processing thread
 ^^^^^^^^^^^^^^^^^

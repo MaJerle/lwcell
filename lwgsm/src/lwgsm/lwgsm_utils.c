@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_utils.c
+ * \file            lwcell_utils.c
  * \brief           Utilities
  */
 
@@ -26,14 +26,14 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
 #include <stdint.h>
-#include "lwgsm/lwgsm_private.h"
-#include "lwgsm/lwgsm_utils.h"
+#include "lwcell/lwcell_private.h"
+#include "lwcell/lwcell_utils.h"
 
 /**
  * \brief           Convert `unsigned 32-bit` number to string
@@ -46,7 +46,7 @@
  * \return          Pointer to output variable
  */
 char*
-lwgsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
+lwcell_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
     char* tmp = out;
     uint8_t i, y;
 
@@ -103,11 +103,11 @@ lwgsm_u32_to_gen_str(uint32_t num, char* out, uint8_t is_hex, uint8_t width) {
  * \return          Pointer to output variable
  */
 char*
-lwgsm_i32_to_gen_str(int32_t num, char* out) {
+lwcell_i32_to_gen_str(int32_t num, char* out) {
     if (num < 0) {
         *out++ = '-';
-        return lwgsm_u32_to_gen_str(LWGSM_U32(-num), out, 0, 0) - 1;
+        return lwcell_u32_to_gen_str(LWCELL_U32(-num), out, 0, 0) - 1;
     } else {
-        return lwgsm_u32_to_gen_str(LWGSM_U32(num), out, 0, 0);
+        return lwcell_u32_to_gen_str(LWCELL_U32(num), out, 0, 0);
     }
 }

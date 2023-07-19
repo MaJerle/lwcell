@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_buff.c
+ * \file            lwcell_buff.c
  * \brief           Ring buffer manager
  */
 
@@ -26,22 +26,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_buff.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_buff.h"
+#include "lwcell/lwcell_private.h"
 
 /* --- Buffer unique part starts --- */
 /* Prefix for all buffer functions and typedefs */
-#define BUF_PREF(x)     lwgsm_##x
+#define BUF_PREF(x)     lwcell_##x
 /* --- Buffer unique part ends --- */
 
 /* Buffer utility macros */
-#define BUF_MEMSET      LWGSM_MEMSET
-#define BUF_MEMCPY      LWGSM_MEMCPY
+#define BUF_MEMSET      LWCELL_MEMSET
+#define BUF_MEMCPY      LWCELL_MEMCPY
 #define BUF_IS_VALID(b) ((b) != NULL && (b)->buff != NULL && (b)->size > 0)
 #define BUF_MIN(x, y)   ((x) < (y) ? (x) : (y))
 #define BUF_MAX(x, y)   ((x) > (y) ? (x) : (y))
@@ -60,7 +60,7 @@ BUF_PREF(buff_init)(BUF_PREF(buff_t) * buff, size_t size) {
     BUF_MEMSET(buff, 0, sizeof(*buff));
 
     buff->size = size;                                         /* Set default values */
-    buff->buff = lwgsm_mem_malloc(sizeof(*buff->buff) * size); /* Allocate memory for buffer */
+    buff->buff = lwcell_mem_malloc(sizeof(*buff->buff) * size); /* Allocate memory for buffer */
 
     if (buff->buff == NULL) { /* Check allocation */
         return 0;
@@ -75,7 +75,7 @@ BUF_PREF(buff_init)(BUF_PREF(buff_t) * buff, size_t size) {
 void
 BUF_PREF(buff_free)(BUF_PREF(buff_t) * buff) {
     if (BUF_IS_VALID(buff)) {
-        lwgsm_mem_free_s((void**)&buff->buff);
+        lwcell_mem_free_s((void**)&buff->buff);
     }
 }
 

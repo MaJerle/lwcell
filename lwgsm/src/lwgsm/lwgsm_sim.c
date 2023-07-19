@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_sim.c
+ * \file            lwcell_sim.c
  * \brief           SIM API
  */
 
@@ -26,25 +26,25 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_sim.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_sim.h"
+#include "lwcell/lwcell_private.h"
 
 /**
  * \brief           Get current cached SIM state from stack
- * \note            Information is always valid, starting after successful device reset using \ref lwgsm_reset function call
- * \return          Member of \ref lwgsm_sim_state_t enumeration
+ * \note            Information is always valid, starting after successful device reset using \ref lwcell_reset function call
+ * \return          Member of \ref lwcell_sim_state_t enumeration
  */
-lwgsm_sim_state_t
-lwgsm_sim_get_current_state(void) {
-    lwgsm_sim_state_t state;
-    lwgsm_core_lock();
-    state = lwgsm.m.sim.state;
-    lwgsm_core_unlock();
+lwcell_sim_state_t
+lwcell_sim_get_current_state(void) {
+    lwcell_sim_state_t state;
+    lwcell_core_lock();
+    state = lwcell.m.sim.state;
+    lwcell_core_unlock();
     return state;
 }
 
@@ -54,45 +54,45 @@ lwgsm_sim_get_current_state(void) {
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_sim_pin_enter(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_sim_pin_enter(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(pin != NULL);
+    LWCELL_ASSERT(pin != NULL);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_SET;
-    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CPIN_GET;
-    LWGSM_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPIN_SET;
+    LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPIN_GET;
+    LWCELL_MSG_VAR_REF(msg).msg.cpin_enter.pin = pin;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 30000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 30000);
 }
 
 /**
  * \brief           Add pin number to open SIM card
  * \note            Use this function only if your SIM card doesn't have PIN code.
- *                  If you wish to change current pin, use \ref lwgsm_sim_pin_change instead
+ *                  If you wish to change current pin, use \ref lwcell_sim_pin_change instead
  * \param[in]       pin: Current SIM pin code
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_sim_pin_add(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_sim_pin_add(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(pin != NULL);
+    LWCELL_ASSERT(pin != NULL);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_ADD;
-    LWGSM_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPIN_ADD;
+    LWCELL_MSG_VAR_REF(msg).msg.cpin_add.pin = pin;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }
 
 /**
@@ -102,23 +102,23 @@ lwgsm_sim_pin_add(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* cons
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_sim_pin_change(const char* pin, const char* new_pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_sim_pin_change(const char* pin, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                      const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(pin != NULL);
-    LWGSM_ASSERT(new_pin != NULL);
+    LWCELL_ASSERT(pin != NULL);
+    LWCELL_ASSERT(new_pin != NULL);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_CHANGE;
-    LWGSM_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
-    LWGSM_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPIN_CHANGE;
+    LWCELL_MSG_VAR_REF(msg).msg.cpin_change.current_pin = pin;
+    LWCELL_MSG_VAR_REF(msg).msg.cpin_change.new_pin = new_pin;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }
 
 /**
@@ -127,20 +127,20 @@ lwgsm_sim_pin_change(const char* pin, const char* new_pin, const lwgsm_api_cmd_e
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_sim_pin_remove(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_sim_pin_remove(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(pin != NULL);
+    LWCELL_ASSERT(pin != NULL);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPIN_REMOVE;
-    LWGSM_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPIN_REMOVE;
+    LWCELL_MSG_VAR_REF(msg).msg.cpin_remove.pin = pin;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }
 
 /**
@@ -150,21 +150,21 @@ lwgsm_sim_pin_remove(const char* pin, const lwgsm_api_cmd_evt_fn evt_fn, void* c
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_sim_puk_enter(const char* puk, const char* new_pin, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t
+lwcell_sim_puk_enter(const char* puk, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                     const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(puk != NULL);
-    LWGSM_ASSERT(new_pin != NULL);
+    LWCELL_ASSERT(puk != NULL);
+    LWCELL_ASSERT(new_pin != NULL);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CPUK_SET;
-    LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
-    LWGSM_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPUK_SET;
+    LWCELL_MSG_VAR_REF(msg).msg.cpuk_enter.puk = puk;
+    LWCELL_MSG_VAR_REF(msg).msg.cpuk_enter.pin = new_pin;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 10000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 10000);
 }

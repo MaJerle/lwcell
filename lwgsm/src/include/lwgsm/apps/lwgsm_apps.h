@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_apps.h
+ * \file            lwcell_apps.h
  * \brief           Applications main header file
  */
 
@@ -26,22 +26,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_APPS_HDR_H
-#define LWGSM_APPS_HDR_H
+#ifndef LWCELL_APPS_HDR_H
+#define LWCELL_APPS_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \defgroup        LWGSM_APPS Applications
+ * \defgroup        LWCELL_APPS Applications
  * \brief           Applications based on GSM stack
  * \{
  */
@@ -54,4 +54,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_APPS_HDR_H */
+#endif /* LWCELL_APPS_HDR_H */

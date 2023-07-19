@@ -1,4 +1,4 @@
-.. _api_lwgsm_sys:
+.. _api_lwcell_sys:
 
 System functions
 ================
@@ -17,4 +17,4 @@ It includes support for:
 .. tip::
 	Check :ref:`um_porting_guide` for actual implementation guidelines.
 
-.. doxygengroup:: LWGSM_SYS
+.. doxygengroup:: LWCELL_SYS

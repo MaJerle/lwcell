@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_debug.c
+ * \file            lwcell_debug.c
  * \brief           Debugging inside GSM stack
  */
 
@@ -26,18 +26,18 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_debug.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_debug.h"
+#include "lwcell/lwcell_private.h"
 
-#if LWGSM_CFG_DBG || __DOXYGEN__
+#if LWCELL_CFG_DBG || __DOXYGEN__
 
 const char*
-lwgsmi_dbg_msg_to_string(lwgsm_cmd_t cmd) {
+lwcelli_dbg_msg_to_string(lwcell_cmd_t cmd) {
     static char tmp_arr[100];
     if (cmd) {
         sprintf(tmp_arr, "%d", (int)cmd);
@@ -46,4 +46,4 @@ lwgsmi_dbg_msg_to_string(lwgsm_cmd_t cmd) {
     return "";
 }
 
-#endif /* LWGSM_CFG_DBG || __DOXYGEN__ */
+#endif /* LWCELL_CFG_DBG || __DOXYGEN__ */

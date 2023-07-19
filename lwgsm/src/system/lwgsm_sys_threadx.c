@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_sys_threadx.c
+ * \file            lwcell_sys_threadx.c
  * \brief           System dependant functions
  */
 
@@ -26,33 +26,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT parser library.
+ * This file is part of LwCELL - Lightweight GSM-AT parser library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_mem.h"
-#include "system/lwgsm_sys.h"
+#include "lwcell/lwcell_mem.h"
+#include "system/lwcell_sys.h"
 #include "tx_api.h"
 
 /* Custom memory ThreadX implementation must be done to use this feature */
-#if LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION && !LWGSM_CFG_MEM_CUSTOM
-#error "LWGSM_CFG_MEM_CUSTOM must be enabled to use LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION feature"
+#if LWCELL_CFG_THREADX_IDLE_THREAD_EXTENSION && !LWCELL_CFG_MEM_CUSTOM
+#error "LWCELL_CFG_MEM_CUSTOM must be enabled to use LWCELL_CFG_THREADX_IDLE_THREAD_EXTENSION feature"
 #endif
 
 #if !__DOXYGEN__
 
-/* Main LwGSM byte pool handle */
-TX_BYTE_POOL* lwgsm_threadx_byte_pool;
+/* Main LwCELL byte pool handle */
+TX_BYTE_POOL* lwcell_threadx_byte_pool;
 
 /* If user will not provide its own byte pool from app, create one here */
-#if !LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
+#if !LWCELL_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
 
 /* ThreadX memory pool definition */
-#if !defined(LWGSM_MEM_SIZE)
-#define LWGSM_MEM_SIZE 0x2000
+#if !defined(LWCELL_MEM_SIZE)
+#define LWCELL_MEM_SIZE 0x2000
 #endif
-static UCHAR byte_pool_mem[LWGSM_MEM_SIZE];
+static UCHAR byte_pool_mem[LWCELL_MEM_SIZE];
 static TX_BYTE_POOL byte_pool;
 
 #else
@@ -61,13 +61,13 @@ static TX_BYTE_POOL byte_pool;
  * \brief           Set byte pool handle for memory allocation
  * Byte pools are usually externally created by users
  *
- * This function shall be called before \ref lwgsm_init
+ * This function shall be called before \ref lwcell_init
  *
  * \param[in]       bp: Handle to external byte pool
  */
 void
-lwgsm_sys_preinit_threadx_set_bytepool_handle(TX_BYTE_POOL* bp) {
-    lwgsm_threadx_byte_pool = bp;
+lwcell_sys_preinit_threadx_set_bytepool_handle(TX_BYTE_POOL* bp) {
+    lwcell_threadx_byte_pool = bp;
 }
 
 #endif
@@ -80,172 +80,172 @@ static TX_MUTEX sys_mutex;
 #define MS_TO_TICKS(ms)    ((ms)*TX_TIMER_TICKS_PER_SECOND / 1000)
 
 uint8_t
-lwgsm_sys_init(void) {
+lwcell_sys_init(void) {
     UINT status = TX_SUCCESS;
 
-#if !LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
-    status = tx_byte_pool_create(&byte_pool, "lwgsm_byte_pool", byte_pool_mem, LWGSM_MEM_SIZE);
+#if !LWCELL_CFG_THREADX_CUSTOM_MEM_BYTE_POOL
+    status = tx_byte_pool_create(&byte_pool, "lwcell_byte_pool", byte_pool_mem, LWCELL_MEM_SIZE);
     if (status == TX_SUCCESS) {
-        status = lwgsm_sys_mutex_create(&sys_mutex) ? TX_SUCCESS : TX_NO_MEMORY;
+        status = lwcell_sys_mutex_create(&sys_mutex) ? TX_SUCCESS : TX_NO_MEMORY;
     }
-    lwgsm_threadx_byte_pool = &byte_pool;
-#else  /* LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL */
-    lwgsm_sys_mutex_create(&sys_mutex);
-#endif /* !LWGSM_CFG_THREADX_CUSTOM_MEM_BYTE_POOL */
+    lwcell_threadx_byte_pool = &byte_pool;
+#else  /* LWCELL_CFG_THREADX_CUSTOM_MEM_BYTE_POOL */
+    lwcell_sys_mutex_create(&sys_mutex);
+#endif /* !LWCELL_CFG_THREADX_CUSTOM_MEM_BYTE_POOL */
     return status == TX_SUCCESS ? 1 : 0;
 }
 
 uint32_t
-lwgsm_sys_now(void) {
+lwcell_sys_now(void) {
     return TICKS_TO_MS(tx_time_get());
 }
 
 uint8_t
-lwgsm_sys_protect(void) {
-    return lwgsm_sys_mutex_lock(&sys_mutex);
+lwcell_sys_protect(void) {
+    return lwcell_sys_mutex_lock(&sys_mutex);
 }
 
 uint8_t
-lwgsm_sys_unprotect(void) {
-    return lwgsm_sys_mutex_unlock(&sys_mutex);
+lwcell_sys_unprotect(void) {
+    return lwcell_sys_mutex_unlock(&sys_mutex);
 }
 
 uint8_t
-lwgsm_sys_mutex_create(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_create(lwcell_sys_mutex_t* p) {
     return tx_mutex_create(p, TX_NULL, TX_INHERIT) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mutex_delete(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_delete(lwcell_sys_mutex_t* p) {
     return tx_mutex_delete(p) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mutex_lock(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_lock(lwcell_sys_mutex_t* p) {
     return tx_mutex_get(p, TX_WAIT_FOREVER) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mutex_unlock(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_unlock(lwcell_sys_mutex_t* p) {
     return tx_mutex_put(p) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_isvalid(lwcell_sys_mutex_t* p) {
     return p->tx_mutex_id != TX_CLEAR_ID ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p) {
+lwcell_sys_mutex_invalid(lwcell_sys_mutex_t* p) {
     /* No need actions since all invalid are following delete, and delete make sure it is invalid */
     return 1;
 }
 
 uint8_t
-lwgsm_sys_sem_create(lwgsm_sys_sem_t* p, uint8_t cnt) {
-    return tx_semaphore_create(p, "lwgsm_sem", cnt) == TX_SUCCESS ? 1 : 0;
+lwcell_sys_sem_create(lwcell_sys_sem_t* p, uint8_t cnt) {
+    return tx_semaphore_create(p, "lwcell_sem", cnt) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p) {
+lwcell_sys_sem_delete(lwcell_sys_sem_t* p) {
     return tx_semaphore_delete(p) == TX_SUCCESS ? 1 : 0;
 }
 
 uint32_t
-lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout) {
+lwcell_sys_sem_wait(lwcell_sys_sem_t* p, uint32_t timeout) {
     ULONG start = tx_time_get();
     return tx_semaphore_get(p, !timeout ? TX_WAIT_FOREVER : MS_TO_TICKS(timeout)) == TX_SUCCESS
                ? TICKS_TO_MS(tx_time_get() - start)
-               : LWGSM_SYS_TIMEOUT;
+               : LWCELL_SYS_TIMEOUT;
 }
 
 uint8_t
-lwgsm_sys_sem_release(lwgsm_sys_sem_t* p) {
+lwcell_sys_sem_release(lwcell_sys_sem_t* p) {
     return tx_semaphore_put(p) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p) {
+lwcell_sys_sem_isvalid(lwcell_sys_sem_t* p) {
     return p->tx_semaphore_id != TX_CLEAR_ID ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p) {
+lwcell_sys_sem_invalid(lwcell_sys_sem_t* p) {
     /* No need actions since all invalid are following delete, and delete make sure it is invalid */
     return 1;
 }
 
 uint8_t
-lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size) {
+lwcell_sys_mbox_create(lwcell_sys_mbox_t* b, size_t size) {
     uint8_t rt = 0;
     ULONG queue_total_size = size * sizeof(void*);
-    void* queue_mem = lwgsm_mem_malloc(queue_total_size);
+    void* queue_mem = lwcell_mem_malloc(queue_total_size);
     if (queue_mem != NULL) {
         if (tx_queue_create(b, TX_NULL, sizeof(void*) / sizeof(ULONG), queue_mem, queue_total_size) == TX_SUCCESS) {
             rt = 1;
         } else {
-            lwgsm_mem_free(queue_mem);
+            lwcell_mem_free(queue_mem);
         }
     }
     return rt;
 }
 
 uint8_t
-lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b) {
+lwcell_sys_mbox_delete(lwcell_sys_mbox_t* b) {
     (VOID) tx_queue_delete(b);
-    lwgsm_mem_free(b->tx_queue_start);
+    lwcell_mem_free(b->tx_queue_start);
     return 1;
 }
 
 uint32_t
-lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m) {
+lwcell_sys_mbox_put(lwcell_sys_mbox_t* b, void* m) {
     ULONG start = tx_time_get();
     (VOID) tx_queue_send(b, &m, TX_WAIT_FOREVER);
     return tx_time_get() - start;
 }
 
 uint32_t
-lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout) {
+lwcell_sys_mbox_get(lwcell_sys_mbox_t* b, void** m, uint32_t timeout) {
     ULONG start = tx_time_get();
     return tx_queue_receive(b, m, !timeout ? TX_WAIT_FOREVER : MS_TO_TICKS(timeout)) == TX_SUCCESS
                ? TICKS_TO_MS(tx_time_get() - start)
-               : LWGSM_SYS_TIMEOUT;
+               : LWCELL_SYS_TIMEOUT;
 }
 
 uint8_t
-lwgsm_sys_mbox_putnow(lwgsm_sys_mbox_t* b, void* m) {
+lwcell_sys_mbox_putnow(lwcell_sys_mbox_t* b, void* m) {
     return tx_queue_send(b, &m, TX_NO_WAIT) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m) {
+lwcell_sys_mbox_getnow(lwcell_sys_mbox_t* b, void** m) {
     return tx_queue_receive(b, m, TX_NO_WAIT) == TX_SUCCESS ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b) {
+lwcell_sys_mbox_isvalid(lwcell_sys_mbox_t* b) {
     return b->tx_queue_id != TX_CLEAR_ID ? 1 : 0;
 }
 
 uint8_t
-lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b) {
+lwcell_sys_mbox_invalid(lwcell_sys_mbox_t* b) {
     /* No need actions since all invalid are following delete, and delete make sure it is invalid */
     return 1;
 }
 
-#if LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION
+#if LWCELL_CFG_THREADX_IDLE_THREAD_EXTENSION
 
 uint8_t
-lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg,
-                        size_t stack_size, lwgsm_sys_thread_prio_t prio) {
+lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func, void* const arg,
+                        size_t stack_size, lwcell_sys_thread_prio_t prio) {
     void* stack_ptr = NULL;
-    lwgsm_sys_thread_t* t_handle;
+    lwcell_sys_thread_t* t_handle;
     uint8_t t_handle_dynamic = 0;
 
     /* First process thread object */
     if (t != NULL) {
         t_handle = t; /* Use static handle from parameter */
-    } else if (tx_byte_allocate(lwgsm_threadx_byte_pool, (void*)&t_handle, sizeof(*t_handle), TX_NO_WAIT)
+    } else if (tx_byte_allocate(lwcell_threadx_byte_pool, (void*)&t_handle, sizeof(*t_handle), TX_NO_WAIT)
                == TX_SUCCESS) {
         t_handle_dynamic = 1; /* Handle has been dynamically allocated */
     } else {
@@ -253,7 +253,7 @@ lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_threa
     }
 
     /* Allocate memory for stack */
-    if (tx_byte_allocate(lwgsm_threadx_byte_pool, &stack_ptr, stack_size, TX_NO_WAIT) != TX_SUCCESS) {
+    if (tx_byte_allocate(lwcell_threadx_byte_pool, &stack_ptr, stack_size, TX_NO_WAIT) != TX_SUCCESS) {
         goto cleanup;
     }
 
@@ -296,7 +296,7 @@ cleanup:
 }
 
 uint8_t
-lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
+lwcell_sys_thread_terminate(lwcell_sys_thread_t* t) {
     uint8_t rt = 0;
 
     /*
@@ -309,30 +309,30 @@ lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
     return rt;
 }
 
-#else /* LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION */
+#else /* LWCELL_CFG_THREADX_IDLE_THREAD_EXTENSION */
 
 uint8_t
-lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func, void* const arg,
-                        size_t stack_size, lwgsm_sys_thread_prio_t prio) {
+lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func, void* const arg,
+                        size_t stack_size, lwcell_sys_thread_prio_t prio) {
 
     typedef VOID (*threadx_entry_t)(ULONG);
     uint8_t rt = 0;
 
-    void* stack_mem = lwgsm_mem_malloc(stack_size);
+    void* stack_mem = lwcell_mem_malloc(stack_size);
     if (stack_mem != NULL) {
         if (tx_thread_create(t, (CHAR*)name, (VOID(*)(ULONG))(thread_func), (ULONG)arg, stack_mem, stack_size, prio,
                              prio, TX_NO_TIME_SLICE, TX_AUTO_START)
             == TX_SUCCESS) {
             rt = 1;
         } else {
-            lwgsm_mem_free(stack_mem);
+            lwcell_mem_free(stack_mem);
         }
     }
     return rt;
 }
 
 uint8_t
-lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
+lwcell_sys_thread_terminate(lwcell_sys_thread_t* t) {
     uint8_t rt = 0;
 
     /*  t == NULL means temrinate itself.
@@ -342,7 +342,7 @@ lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
     if ((t != NULL) && (t != tx_thread_identify())) {
         if (tx_thread_terminate(t) == TX_SUCCESS) {
             if (tx_thread_delete(t) == TX_SUCCESS) {
-                lwgsm_mem_free(t->tx_thread_stack_start);
+                lwcell_mem_free(t->tx_thread_stack_start);
                 rt = 1;
             }
         }
@@ -350,10 +350,10 @@ lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t) {
     return rt;
 }
 
-#endif /* !LWGSM_CFG_THREADX_IDLE_THREAD_EXTENSION */
+#endif /* !LWCELL_CFG_THREADX_IDLE_THREAD_EXTENSION */
 
 uint8_t
-lwgsm_sys_thread_yield(void) {
+lwcell_sys_thread_yield(void) {
     tx_thread_relinquish();
     return 0;
 }

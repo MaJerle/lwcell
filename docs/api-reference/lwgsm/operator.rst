@@ -1,6 +1,6 @@
-.. _api_lwgsm_operator:
+.. _api_lwcell_operator:
 
 Network operator
 ================
 
-.. doxygengroup:: LWGSM_OPERATOR
+.. doxygengroup:: LWCELL_OPERATOR

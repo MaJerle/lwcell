@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_network_api.c
+ * \file            lwcell_network_api.c
  * \brief           API functions for multi-thread network functions
  */
 
@@ -26,16 +26,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_network_api.h"
-#include "lwgsm/lwgsm_network.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_network_api.h"
+#include "lwcell/lwcell_network.h"
+#include "lwcell/lwcell_private.h"
 
-#if LWGSM_CFG_NETWORK || __DOXYGEN__
+#if LWCELL_CFG_NETWORK || __DOXYGEN__
 
 /* Network credentials used during connect operation */
 static const char* network_apn;
@@ -48,46 +48,46 @@ static uint32_t network_counter;
  * \param[in]       apn: APN domain. Set to `NULL` if not used
  * \param[in]       user: APN username. Set to `NULL` if not used
  * \param[in]       pass: APN password. Set to `NULL` if not used
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  */
-lwgsmr_t
-lwgsm_network_set_credentials(const char* apn, const char* user, const char* pass) {
+lwcellr_t
+lwcell_network_set_credentials(const char* apn, const char* user, const char* pass) {
     network_apn = apn;
     network_user = user;
     network_pass = pass;
 
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
  * \brief           Request manager to attach to network
  * \note            This function is blocking and cannot be called from event functions
- * \return          \ref lwgsmOK on success (when attached), member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK on success (when attached), member of \ref lwcellr_t otherwise
  */
-lwgsmr_t
-lwgsm_network_request_attach(void) {
-    lwgsmr_t res = lwgsmOK;
+lwcellr_t
+lwcell_network_request_attach(void) {
+    lwcellr_t res = lwcellOK;
     uint8_t do_conn = 0;
 
     /* Check if we need to connect */
-    lwgsm_core_lock();
+    lwcell_core_lock();
     if (network_counter == 0) {
-        if (!lwgsm_network_is_attached()) {
+        if (!lwcell_network_is_attached()) {
             do_conn = 1;
         }
     }
     if (!do_conn) {
         ++network_counter;
     }
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
 
     /* Connect to network */
     if (do_conn) {
-        res = lwgsm_network_attach(network_apn, network_user, network_pass, NULL, NULL, 1);
-        if (res == lwgsmOK) {
-            lwgsm_core_lock();
+        res = lwcell_network_attach(network_apn, network_user, network_pass, NULL, NULL, 1);
+        if (res == lwcellOK) {
+            lwcell_core_lock();
             ++network_counter;
-            lwgsm_core_unlock();
+            lwcell_core_unlock();
         }
     }
     return res;
@@ -100,15 +100,15 @@ lwgsm_network_request_attach(void) {
  * otherwise it will disable network access
  *
  * \note            This function is blocking and cannot be called from event functions
- * \return          \ref lwgsmOK on success (when attached), member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK on success (when attached), member of \ref lwcellr_t otherwise
  */
-lwgsmr_t
-lwgsm_network_request_detach(void) {
-    lwgsmr_t res = lwgsmOK;
+lwcellr_t
+lwcell_network_request_detach(void) {
+    lwcellr_t res = lwcellOK;
     uint8_t do_disconn = 0;
 
     /* Check if we need to disconnect */
-    lwgsm_core_lock();
+    lwcell_core_lock();
     if (network_counter > 0) {
         if (network_counter == 1) {
             do_disconn = 1;
@@ -116,18 +116,18 @@ lwgsm_network_request_detach(void) {
             --network_counter;
         }
     }
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
 
     /* Connect to network */
     if (do_disconn) {
-        res = lwgsm_network_detach(NULL, NULL, 1);
-        if (res == lwgsmOK) {
-            lwgsm_core_lock();
+        res = lwcell_network_detach(NULL, NULL, 1);
+        if (res == lwcellOK) {
+            lwcell_core_lock();
             --network_counter;
-            lwgsm_core_unlock();
+            lwcell_core_unlock();
         }
     }
     return res;
 }
 
-#endif /* LWGSM_CFG_NETWORK || __DOXYGEN__ */
+#endif /* LWCELL_CFG_NETWORK || __DOXYGEN__ */

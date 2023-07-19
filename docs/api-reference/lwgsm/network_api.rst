@@ -1,4 +1,4 @@
-.. _api_lwgsm_network_api:
+.. _api_lwcell_network_api:
 
 Network API
 ===========
@@ -8,4 +8,4 @@ It allows multiple threads to request to join to network (internet access).
 
 Network API module controls when network connection shall be active or can be closed.
 
-.. doxygengroup:: LWGSM_NETWORK_API
+.. doxygengroup:: LWCELL_NETWORK_API

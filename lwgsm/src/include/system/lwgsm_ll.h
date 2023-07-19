@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ll.h
+ * \file            lwcell_ll.h
  * \brief           Low-level communication implementation
  */
 
@@ -26,22 +26,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_LL_HDR_H
-#define LWGSM_LL_HDR_H
+#ifndef LWCELL_LL_HDR_H
+#define LWCELL_LL_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \defgroup        LWGSM_LL Low-level functions
+ * \defgroup        LWCELL_LL Low-level functions
  * \brief           Low-level communication functions
  * \{
  */
@@ -53,19 +53,19 @@ extern "C" {
  *                  It is important that every configuration except AT baudrate is configured only once!
  *
  * \note            This function may be called from different threads in GSM stack when using OS.
- *                  When \ref LWGSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
+ *                  When \ref LWCELL_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
- * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
+ * \return          lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t lwgsm_ll_init(lwgsm_ll_t* ll);
+lwcellr_t lwcell_ll_init(lwcell_ll_t* ll);
 
 /**
  * \brief           Callback function to de-init low-level communication part
- * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t lwgsm_ll_deinit(lwgsm_ll_t* ll);
+lwcellr_t lwcell_ll_deinit(lwcell_ll_t* ll);
 
 /**
  * \}
@@ -75,4 +75,4 @@ lwgsmr_t lwgsm_ll_deinit(lwgsm_ll_t* ll);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_LL_HDR_H */
+#endif /* LWCELL_LL_HDR_H */

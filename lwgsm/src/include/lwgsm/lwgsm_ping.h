@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ping.h
+ * \file            lwcell_ping.h
  * \brief           PING API
  */
 
@@ -26,23 +26,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_PING_HDR_H
-#define LWGSM_PING_HDR_H
+#ifndef LWCELL_PING_HDR_H
+#define LWCELL_PING_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_PING PING API
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_PING PING API
  * \brief           PING manager
  * \{
  */
@@ -55,4 +55,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_PING_HDR_H */
+#endif /* LWCELL_PING_HDR_H */

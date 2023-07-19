@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_mem_lwmem.c
+ * \file            lwcell_mem_lwmem.c
  * \brief           Dynamic memory manager implemented with LwMEM
  */
 
@@ -26,41 +26,41 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT parser library.
+ * This file is part of LwCELL - Lightweight GSM-AT parser library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 #include "tx_api.h"
 
 #if !__DOXYGEN__
 
-/* Byte pool is defined externally, in the lwgsm_sys_threadx.c file */
-extern TX_BYTE_POOL* lwgsm_threadx_byte_pool;
+/* Byte pool is defined externally, in the lwcell_sys_threadx.c file */
+extern TX_BYTE_POOL* lwcell_threadx_byte_pool;
 
 void*
-lwgsm_mem_malloc(size_t size) {
+lwcell_mem_malloc(size_t size) {
     void* pointer;
-    return tx_byte_allocate(lwgsm_threadx_byte_pool, &pointer, size, TX_NO_WAIT) == TX_SUCCESS ? pointer : NULL;
+    return tx_byte_allocate(lwcell_threadx_byte_pool, &pointer, size, TX_NO_WAIT) == TX_SUCCESS ? pointer : NULL;
 }
 
 void*
-lwgsm_mem_realloc(void* ptr, size_t size) {
+lwcell_mem_realloc(void* ptr, size_t size) {
     /* No need to support it */
     return NULL;
 }
 
 void*
-lwgsm_mem_calloc(size_t num, size_t size) {
+lwcell_mem_calloc(size_t num, size_t size) {
     size_t total = num * size;
-    void* pointer = lwgsm_mem_malloc(total);
+    void* pointer = lwcell_mem_malloc(total);
     TX_MEMSET(pointer, 0, total);
     return pointer;
 }
 
 void
-lwgsm_mem_free(void* ptr) {
+lwcell_mem_free(void* ptr) {
     (VOID) tx_byte_release(ptr);
 }
 

@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_device_info.h
+ * \file            lwcell_device_info.h
  * \brief           Basic device information
  */
 
@@ -26,34 +26,34 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_DEVICE_INFO_HDR_H
-#define LWGSM_DEVICE_INFO_HDR_H
+#ifndef LWCELL_DEVICE_INFO_HDR_H
+#define LWCELL_DEVICE_INFO_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_DEVICE_INFO Device information
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_DEVICE_INFO Device information
  * \brief           Basic device information
  * \{
  */
 
-lwgsmr_t lwgsm_device_get_manufacturer(char* manuf, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_device_get_manufacturer(char* manuf, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                                        const uint32_t blocking);
-lwgsmr_t lwgsm_device_get_model(char* model, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_device_get_model(char* model, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                                 const uint32_t blocking);
-lwgsmr_t lwgsm_device_get_revision(char* rev, size_t len, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_device_get_revision(char* rev, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                                    const uint32_t blocking);
-lwgsmr_t lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t lwcell_device_get_serial_number(char* serial, size_t len, const lwcell_api_cmd_evt_fn evt_fn,
                                         void* const evt_arg, const uint32_t blocking);
 
 /**
@@ -64,4 +64,4 @@ lwgsmr_t lwgsm_device_get_serial_number(char* serial, size_t len, const lwgsm_ap
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_DEVICE_INFO_HDR_H */
+#endif /* LWCELL_DEVICE_INFO_HDR_H */

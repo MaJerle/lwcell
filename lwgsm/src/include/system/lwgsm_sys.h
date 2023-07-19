@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_sys.h
+ * \file            lwcell_sys.h
  * \brief           Main system include file which decides later include file
  */
 
@@ -26,23 +26,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_MAIN_SYS_HDR_H
-#define LWGSM_MAIN_SYS_HDR_H
+#ifndef LWCELL_MAIN_SYS_HDR_H
+#define LWCELL_MAIN_SYS_HDR_H
 
 #include <stdlib.h>
-#include "lwgsm/lwgsm_opt.h"
+#include "lwcell/lwcell_opt.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \defgroup        LWGSM_SYS System functions
+ * \defgroup        LWCELL_SYS System functions
  * \brief           System based function for OS management, timings, etc
  * \{
  */
@@ -50,7 +50,7 @@ extern "C" {
 /**
  * \brief           Thread function prototype
  */
-typedef void (*lwgsm_sys_thread_fn)(void*);
+typedef void (*lwcell_sys_thread_fn)(void*);
 
 #if __DOXYGEN__
 /**
@@ -58,26 +58,26 @@ typedef void (*lwgsm_sys_thread_fn)(void*);
  *
  * It is used by middleware as base type of mutex.
  */
-typedef void* lwgsm_sys_lwgsm_sys_mutex_t;
+typedef void* lwcell_sys_lwcell_sys_mutex_t;
 
 /**
  * \brief           System semaphore type
  *
  * It is used by middleware as base type of mutex.
  */
-typedef void* lwgsm_sys_sem_t;
+typedef void* lwcell_sys_sem_t;
 
 /**
  * \brief           System message queue type
  *
  * It is used by middleware as base type of mutex.
  */
-typedef void* lwgsm_sys_mbox_t;
+typedef void* lwcell_sys_mbox_t;
 
 /**
  * \brief           System thread ID type
  */
-typedef void* lwgsm_sys_thread_t;
+typedef void* lwcell_sys_thread_t;
 
 /**
  * \brief           System thread priority type
@@ -85,28 +85,28 @@ typedef void* lwgsm_sys_thread_t;
  * It is used as priority type for system function,
  * to start new threads by middleware.
  */
-typedef int lwgsm_sys_thread_prio_t;
+typedef int lwcell_sys_thread_prio_t;
 
 /**
  * \brief           Mutex invalid value
  *
- * Value assigned to \ref lwgsm_sys_mutex_t type when it is not valid.
+ * Value assigned to \ref lwcell_sys_mutex_t type when it is not valid.
  */
-#define LWGSM_SYS_MUTEX_NULL  ((lwgsm_sys_mutex_t)0)
+#define LWCELL_SYS_MUTEX_NULL  ((lwcell_sys_mutex_t)0)
 
 /**
  * \brief           Semaphore invalid value
  *
- * Value assigned to \ref lwgsm_sys_sem_t type when it is not valid.
+ * Value assigned to \ref lwcell_sys_sem_t type when it is not valid.
  */
-#define LWGSM_SYS_SEM_NULL    ((lwgsm_sys_sem_t)0)
+#define LWCELL_SYS_SEM_NULL    ((lwcell_sys_sem_t)0)
 
 /**
  * \brief           Message box invalid value
  *
- * Value assigned to \ref lwgsm_sys_mbox_t type when it is not valid.
+ * Value assigned to \ref lwcell_sys_mbox_t type when it is not valid.
  */
-#define LWGSM_SYS_MBOX_NULL   ((lwgsm_sys_mbox_t)0)
+#define LWCELL_SYS_MBOX_NULL   ((lwcell_sys_mbox_t)0)
 
 /**
  * \brief           OS timeout value
@@ -114,7 +114,7 @@ typedef int lwgsm_sys_thread_prio_t;
  * Value returned by operating system functions (mutex wait, sem wait, mbox wait)
  * when it returns timeout and does not give valid value to application
  */
-#define LWGSM_SYS_TIMEOUT     ((uint32_t)osWaitForever)
+#define LWCELL_SYS_TIMEOUT     ((uint32_t)osWaitForever)
 
 /**
  * \brief           Default thread priority value used by middleware to start built-in threads
@@ -122,21 +122,21 @@ typedef int lwgsm_sys_thread_prio_t;
  * Threads can well operate with normal (default) priority and do not require
  * any special feature in terms of priority for proper operation.
  */
-#define LWGSM_SYS_THREAD_PRIO (osPriorityNormal)
+#define LWCELL_SYS_THREAD_PRIO (osPriorityNormal)
 
 /**
  * \brief           Stack size in units of bytes for system threads
  *
  * It is used as default stack size for all built-in threads.
  */
-#define lwgsm_sys_THREAD_SS   (1024)
+#define lwcell_sys_THREAD_SS   (1024)
 #else
 /* Include system port file from portable folder */
-#include "lwgsm_sys_port.h"
+#include "lwcell_sys_port.h"
 #endif /* __DOXYGEN__ */
 
 /**
- * \anchor          LWGSM_SYS_CORE
+ * \anchor          LWCELL_SYS_CORE
  * \name            Main
  */
 
@@ -148,13 +148,13 @@ typedef int lwgsm_sys_thread_prio_t;
  *
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_init(void);
+uint8_t lwcell_sys_init(void);
 
 /**
  * \brief           Get current time in units of milliseconds
  * \return          Current time in units of milliseconds
  */
-uint32_t lwgsm_sys_now(void);
+uint32_t lwcell_sys_now(void);
 
 /**
  * \brief           Protect middleware core
@@ -166,25 +166,25 @@ uint32_t lwgsm_sys_now(void);
  * \note            Most operating systems support recursive mutexes.
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_protect(void);
+uint8_t lwcell_sys_protect(void);
 
 /**
  * \brief           Unprotect middleware core
  *
- * This function must follow number of calls of \ref lwgsm_sys_protect
+ * This function must follow number of calls of \ref lwcell_sys_protect
  * and unlock access only when counter reached back zero.
  *
  * \note            Most operating systems support recursive mutexes.
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_unprotect(void);
+uint8_t lwcell_sys_unprotect(void);
 
 /**
  * \}
  */
 
 /**
- * \anchor          LWGSM_SYS_MUTEX
+ * \anchor          LWCELL_SYS_MUTEX
  * \name            Mutex
  */
 
@@ -194,49 +194,49 @@ uint8_t lwgsm_sys_unprotect(void);
  * \param[out]      p: Pointer to mutex structure to allocate
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mutex_create(lwgsm_sys_mutex_t* p);
+uint8_t lwcell_sys_mutex_create(lwcell_sys_mutex_t* p);
 
 /**
  * \brief           Delete recursive mutex from system
  * \param[in]       p: Pointer to mutex structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mutex_delete(lwgsm_sys_mutex_t* p);
+uint8_t lwcell_sys_mutex_delete(lwcell_sys_mutex_t* p);
 
 /**
  * \brief           Lock recursive mutex, wait forever to lock
  * \param[in]       p: Pointer to mutex structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mutex_lock(lwgsm_sys_mutex_t* p);
+uint8_t lwcell_sys_mutex_lock(lwcell_sys_mutex_t* p);
 
 /**
  * \brief           Unlock recursive mutex
  * \param[in]       p: Pointer to mutex structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mutex_unlock(lwgsm_sys_mutex_t* p);
+uint8_t lwcell_sys_mutex_unlock(lwcell_sys_mutex_t* p);
 
 /**
  * \brief           Check if mutex structure is valid system
  * \param[in]       p: Pointer to mutex structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mutex_isvalid(lwgsm_sys_mutex_t* p);
+uint8_t lwcell_sys_mutex_isvalid(lwcell_sys_mutex_t* p);
 
 /**
  * \brief           Set recursive mutex structure as invalid
  * \param[in]       p: Pointer to mutex structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p);
+uint8_t lwcell_sys_mutex_invalid(lwcell_sys_mutex_t* p);
 
 /**
  * \}
  */
 
 /**
- * \anchor          LWGSM_SYS_SEM
+ * \anchor          LWCELL_SYS_SEM
  * \name            Semaphores
  */
 
@@ -249,51 +249,51 @@ uint8_t lwgsm_sys_mutex_invalid(lwgsm_sys_mutex_t* p);
  *                     `1`: Keep token available
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_sem_create(lwgsm_sys_sem_t* p, uint8_t cnt);
+uint8_t lwcell_sys_sem_create(lwcell_sys_sem_t* p, uint8_t cnt);
 
 /**
  * \brief           Delete binary semaphore
  * \param[in]       p: Pointer to semaphore structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_sem_delete(lwgsm_sys_sem_t* p);
+uint8_t lwcell_sys_sem_delete(lwcell_sys_sem_t* p);
 
 /**
  * \brief           Wait for semaphore to be available
  * \param[in]       p: Pointer to semaphore structure
  * \param[in]       timeout: Timeout to wait in milliseconds. When `0` is applied, wait forever
  * \return          Number of milliseconds waited for semaphore to become available or
- *                      \ref LWGSM_SYS_TIMEOUT if not available within given time
+ *                      \ref LWCELL_SYS_TIMEOUT if not available within given time
  */
-uint32_t lwgsm_sys_sem_wait(lwgsm_sys_sem_t* p, uint32_t timeout);
+uint32_t lwcell_sys_sem_wait(lwcell_sys_sem_t* p, uint32_t timeout);
 
 /**
  * \brief           Release semaphore
  * \param[in]       p: Pointer to semaphore structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_sem_release(lwgsm_sys_sem_t* p);
+uint8_t lwcell_sys_sem_release(lwcell_sys_sem_t* p);
 
 /**
  * \brief           Check if semaphore is valid
  * \param[in]       p: Pointer to semaphore structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_sem_isvalid(lwgsm_sys_sem_t* p);
+uint8_t lwcell_sys_sem_isvalid(lwcell_sys_sem_t* p);
 
 /**
  * \brief           Invalid semaphore
  * \param[in]       p: Pointer to semaphore structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p);
+uint8_t lwcell_sys_sem_invalid(lwcell_sys_sem_t* p);
 
 /**
  * \}
  */
 
 /**
- * \anchor          LWGSM_SYS_MBOX
+ * \anchor          LWCELL_SYS_MBOX
  * \name            Message queues
  */
 
@@ -303,14 +303,14 @@ uint8_t lwgsm_sys_sem_invalid(lwgsm_sys_sem_t* p);
  * \param[in]       size: Number of entries for message queue to hold
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mbox_create(lwgsm_sys_mbox_t* b, size_t size);
+uint8_t lwcell_sys_mbox_create(lwcell_sys_mbox_t* b, size_t size);
 
 /**
  * \brief           Delete message queue
  * \param[in]       b: Pointer to message queue structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b);
+uint8_t lwcell_sys_mbox_delete(lwcell_sys_mbox_t* b);
 
 /**
  * \brief           Put a new entry to message queue and wait until memory available
@@ -318,7 +318,7 @@ uint8_t lwgsm_sys_mbox_delete(lwgsm_sys_mbox_t* b);
  * \param[in]       m: Pointer to entry to insert to message queue
  * \return          Time in units of milliseconds needed to put a message to queue
  */
-uint32_t lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m);
+uint32_t lwcell_sys_mbox_put(lwcell_sys_mbox_t* b, void* m);
 
 /**
  * \brief           Get a new entry from message queue with timeout
@@ -326,9 +326,9 @@ uint32_t lwgsm_sys_mbox_put(lwgsm_sys_mbox_t* b, void* m);
  * \param[in]       m: Pointer to pointer to result to save value from message queue to
  * \param[in]       timeout: Maximal timeout to wait for new message. When `0` is applied, wait for unlimited time
  * \return          Time in units of milliseconds needed to put a message to queue
- *                      or \ref LWGSM_SYS_TIMEOUT if it was not successful
+ *                      or \ref LWCELL_SYS_TIMEOUT if it was not successful
  */
-uint32_t lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout);
+uint32_t lwcell_sys_mbox_get(lwcell_sys_mbox_t* b, void** m, uint32_t timeout);
 
 /**
  * \brief           Put a new entry to message queue without timeout (now or fail)
@@ -336,7 +336,7 @@ uint32_t lwgsm_sys_mbox_get(lwgsm_sys_mbox_t* b, void** m, uint32_t timeout);
  * \param[in]       m: Pointer to message to save to queue
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mbox_putnow(lwgsm_sys_mbox_t* b, void* m);
+uint8_t lwcell_sys_mbox_putnow(lwcell_sys_mbox_t* b, void* m);
 
 /**
  * \brief           Get an entry from message queue immediately
@@ -344,28 +344,28 @@ uint8_t lwgsm_sys_mbox_putnow(lwgsm_sys_mbox_t* b, void* m);
  * \param[in]       m: Pointer to pointer to result to save value from message queue to
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mbox_getnow(lwgsm_sys_mbox_t* b, void** m);
+uint8_t lwcell_sys_mbox_getnow(lwcell_sys_mbox_t* b, void** m);
 
 /**
  * \brief           Check if message queue is valid
  * \param[in]       b: Pointer to message queue structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mbox_isvalid(lwgsm_sys_mbox_t* b);
+uint8_t lwcell_sys_mbox_isvalid(lwcell_sys_mbox_t* b);
 
 /**
  * \brief           Invalid message queue
  * \param[in]       b: Pointer to message queue structure
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b);
+uint8_t lwcell_sys_mbox_invalid(lwcell_sys_mbox_t* b);
 
 /**
  * \}
  */
 
 /**
- * \anchor          LWGSM_SYS_THREAD
+ * \anchor          LWCELL_SYS_THREAD
  * \name            Threads
  */
 
@@ -380,8 +380,8 @@ uint8_t lwgsm_sys_mbox_invalid(lwgsm_sys_mbox_t* b);
  * \param[in]       prio: Thread priority
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_sys_thread_fn thread_func,
-                                void* const arg, size_t stack_size, lwgsm_sys_thread_prio_t prio);
+uint8_t lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func,
+                                void* const arg, size_t stack_size, lwcell_sys_thread_prio_t prio);
 
 /**
  * \brief           Terminate thread (shut it down and remove)
@@ -389,13 +389,13 @@ uint8_t lwgsm_sys_thread_create(lwgsm_sys_thread_t* t, const char* name, lwgsm_s
  *                      If set to `NULL`, terminate current thread (thread from where function is called)
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_thread_terminate(lwgsm_sys_thread_t* t);
+uint8_t lwcell_sys_thread_terminate(lwcell_sys_thread_t* t);
 
 /**
  * \brief           Yield current thread
  * \return          `1` on success, `0` otherwise
  */
-uint8_t lwgsm_sys_thread_yield(void);
+uint8_t lwcell_sys_thread_yield(void);
 
 /**
  * \}
@@ -409,4 +409,4 @@ uint8_t lwgsm_sys_thread_yield(void);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_MAIN_SYS_HDR_H */
+#endif /* LWCELL_MAIN_SYS_HDR_H */

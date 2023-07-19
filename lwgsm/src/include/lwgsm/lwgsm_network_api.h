@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_network_api.h
+ * \file            lwcell_network_api.h
  * \brief           API functions for multi-thread network functions
  */
 
@@ -26,30 +26,30 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_NETWORK_API_HDR_H
-#define LWGSM_NETWORK_API_HDR_H
+#ifndef LWCELL_NETWORK_API_HDR_H
+#define LWCELL_NETWORK_API_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM_API
- * \defgroup        LWGSM_NETWORK_API Network API
+ * \ingroup         LWCELL_API
+ * \defgroup        LWCELL_NETWORK_API Network API
  * \brief           Network API functions for multi-thread operations
  * \{
  */
 
-lwgsmr_t lwgsm_network_set_credentials(const char* apn, const char* user, const char* pass);
-lwgsmr_t lwgsm_network_request_attach(void);
-lwgsmr_t lwgsm_network_request_detach(void);
+lwcellr_t lwcell_network_set_credentials(const char* apn, const char* user, const char* pass);
+lwcellr_t lwcell_network_request_attach(void);
+lwcellr_t lwcell_network_request_detach(void);
 
 /**
  * \}
@@ -59,4 +59,4 @@ lwgsmr_t lwgsm_network_request_detach(void);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_NETWORK_API_HDR_H */
+#endif /* LWCELL_NETWORK_API_HDR_H */

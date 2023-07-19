@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_mem.h
+ * \file            lwcell_mem.h
  * \brief           Memory manager
  */
 
@@ -26,28 +26,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_MEM_HDR_H
-#define LWGSM_MEM_HDR_H
+#ifndef LWCELL_MEM_HDR_H
+#define LWCELL_MEM_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_MEM Memory manager
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_MEM Memory manager
  * \brief           Dynamic memory manager
  * \{
  */
 
-#if !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__
+#if !LWCELL_CFG_MEM_CUSTOM || __DOXYGEN__
 
 /**
  * \brief           Single memory region descriptor
@@ -55,17 +55,17 @@ extern "C" {
 typedef struct {
     void* start_addr; /*!< Start address of region */
     size_t size;      /*!< Size in units of bytes of region */
-} lwgsm_mem_region_t;
+} lwcell_mem_region_t;
 
-uint8_t lwgsm_mem_assignmemory(const lwgsm_mem_region_t* regions, size_t size);
+uint8_t lwcell_mem_assignmemory(const lwcell_mem_region_t* regions, size_t size);
 
-#endif /* !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
+#endif /* !LWCELL_CFG_MEM_CUSTOM || __DOXYGEN__ */
 
-void* lwgsm_mem_malloc(size_t size);
-void* lwgsm_mem_realloc(void* ptr, size_t size);
-void* lwgsm_mem_calloc(size_t num, size_t size);
-void lwgsm_mem_free(void* ptr);
-uint8_t lwgsm_mem_free_s(void** ptr);
+void* lwcell_mem_malloc(size_t size);
+void* lwcell_mem_realloc(void* ptr, size_t size);
+void* lwcell_mem_calloc(size_t num, size_t size);
+void lwcell_mem_free(void* ptr);
+uint8_t lwcell_mem_free_s(void** ptr);
 
 /**
  * \}
@@ -75,4 +75,4 @@ uint8_t lwgsm_mem_free_s(void** ptr);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_MEM_HDR_H */
+#endif /* LWCELL_MEM_HDR_H */

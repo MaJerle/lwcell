@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.22)
 # Core project settings
 #
 set(PROJ_PATH                       ${CMAKE_CURRENT_SOURCE_DIR})
-project(lwgsm_stm32f429zi_nucleo_netconn_client_rtos)
+project(lwcell_stm32f429zi_nucleo_netconn_client_rtos)
 enable_language(C CXX ASM)
 message("Build type: "              ${CMAKE_BUILD_TYPE})
 
@@ -46,41 +46,41 @@ set(src_freertos_SRCS
     ${PROJ_PATH}/../../lib/FreeRTOS/tasks.c
     ${PROJ_PATH}/../../lib/FreeRTOS/timers.c)
 
-set(src_lwgsm_api_SRCS 
-    ${PROJ_PATH}/../../../lwgsm/src/api/lwgsm_netconn.c
-    ${PROJ_PATH}/../../../lwgsm/src/api/lwgsm_network_api.c)
+set(src_lwcell_api_SRCS 
+    ${PROJ_PATH}/../../../lwcell/src/api/lwcell_netconn.c
+    ${PROJ_PATH}/../../../lwcell/src/api/lwcell_network_api.c)
 
-set(src_lwgsm_SRCS 
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_buff.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_call.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_conn.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_debug.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_device_info.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_evt.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_ftp.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_http.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_input.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_int.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_mem.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_network.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_operator.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_parser.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_pbuf.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_phonebook.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_ping.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_sim.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_sms.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_threads.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_timeout.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_unicode.c
-    ${PROJ_PATH}/../../../lwgsm/src/lwgsm/lwgsm_utils.c)
+set(src_lwcell_SRCS 
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_buff.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_call.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_conn.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_debug.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_device_info.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_evt.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_ftp.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_http.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_input.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_int.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_mem.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_network.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_operator.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_parser.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_pbuf.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_phonebook.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_ping.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_sim.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_sms.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_threads.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_timeout.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_unicode.c
+    ${PROJ_PATH}/../../../lwcell/src/lwcell/lwcell_utils.c)
 
-set(src_lwgsm_ll_SRCS 
-    ${PROJ_PATH}/../../../lwgsm/src/system/lwgsm_ll_stm32f429zi_nucleo.c
-    ${PROJ_PATH}/../../../lwgsm/src/system/lwgsm_sys_cmsis_os.c)
+set(src_lwcell_ll_SRCS 
+    ${PROJ_PATH}/../../../lwcell/src/system/lwcell_ll_stm32f429zi_nucleo.c
+    ${PROJ_PATH}/../../../lwcell/src/system/lwcell_sys_cmsis_os.c)
 
-set(src_lwgsm_snippets_SRCS 
+set(src_lwcell_snippets_SRCS 
     ${PROJ_PATH}/../../../snippets/netconn_client.c
     ${PROJ_PATH}/../../../snippets/network_utils.c
     ${PROJ_PATH}/../../../snippets/sim_manager.c)
@@ -109,8 +109,8 @@ set(src_startup_SRCS
 set(include_c_DIRS
     ${PROJ_PATH}/inc
     ${PROJ_PATH}/../../../snippets/include
-    ${PROJ_PATH}/../../../lwgsm/src/include
-    ${PROJ_PATH}/../../../lwgsm/src/include/system/port/cmsis_os
+    ${PROJ_PATH}/../../../lwcell/src/include
+    ${PROJ_PATH}/../../../lwcell/src/include/system/port/cmsis_os
     ${PROJ_PATH}/../../lib/st/CMSIS/Device/ST/STM32F4xx/Include
     ${PROJ_PATH}/../../lib/st/STM32F4xx_HAL_Driver/Inc
     ${PROJ_PATH}/../../lib/st/CMSIS/Include
@@ -157,10 +157,10 @@ link_directories(${EXECUTABLE} ${link_DIRS})
 #
 add_executable(${EXECUTABLE} 
     ${src_freertos_SRCS}
-    ${src_lwgsm_api_SRCS}
-    ${src_lwgsm_SRCS}
-    ${src_lwgsm_ll_SRCS}
-    ${src_lwgsm_snippets_SRCS}
+    ${src_lwcell_api_SRCS}
+    ${src_lwcell_SRCS}
+    ${src_lwcell_ll_SRCS}
+    ${src_lwcell_snippets_SRCS}
     ${src_stm32f4xx_hal_driver_SRCS}
     ${src_user_SRCS}
     ${src_startup_SRCS})

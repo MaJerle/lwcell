@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_operator.h
+ * \file            lwcell_operator.h
  * \brief           Operator API
  */
 
@@ -26,33 +26,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_OPERATOR_HDR_H
-#define LWGSM_OPERATOR_HDR_H
+#ifndef LWCELL_OPERATOR_HDR_H
+#define LWCELL_OPERATOR_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_OPERATOR Network operator API
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_OPERATOR Network operator API
  * \brief           network operator API
  * \{
  */
 
-lwgsmr_t lwgsm_operator_get(lwgsm_operator_curr_t* curr, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_operator_get(lwcell_operator_curr_t* curr, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                             const uint32_t blocking);
-lwgsmr_t lwgsm_operator_set(lwgsm_operator_mode_t mode, lwgsm_operator_format_t format, const char* name, uint32_t num,
-                            const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_operator_set(lwcell_operator_mode_t mode, lwcell_operator_format_t format, const char* name, uint32_t num,
+                            const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-lwgsmr_t lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t lwcell_operator_scan(lwcell_operator_t* ops, size_t opsl, size_t* opf, const lwcell_api_cmd_evt_fn evt_fn,
                              void* const evt_arg, const uint32_t blocking);
 
 /**
@@ -63,4 +63,4 @@ lwgsmr_t lwgsm_operator_scan(lwgsm_operator_t* ops, size_t opsl, size_t* opf, co
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_OPERATOR_HDR_H */
+#endif /* LWCELL_OPERATOR_HDR_H */

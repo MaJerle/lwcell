@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ll_stm32.c
+ * \file            lwcell_ll_stm32.c
  * \brief           Generic STM32 driver, included in various STM32 driver variants
  */
 
@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
@@ -35,39 +35,39 @@
 /*
  * How it works
  *
- * On first call to \ref lwgsm_ll_init, new thread is created and processed in usart_ll_thread function.
+ * On first call to \ref lwcell_ll_init, new thread is created and processed in usart_ll_thread function.
  * USART is configured in RX DMA mode and any incoming bytes are processed inside thread function.
  * DMA and USART implement interrupt handlers to notify main thread about new data ready to send to upper layer.
  *
  * More about UART + RX DMA: https://github.com/MaJerle/stm32-usart-dma-rx-tx
  *
- * \ref LWGSM_CFG_INPUT_USE_PROCESS must be enabled in `lwgsm_config.h` to use this driver.
+ * \ref LWCELL_CFG_INPUT_USE_PROCESS must be enabled in `lwcell_config.h` to use this driver.
  */
-#include "lwgsm/lwgsm_input.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_types.h"
-#include "system/lwgsm_ll.h"
+#include "lwcell/lwcell_input.h"
+#include "lwcell/lwcell_mem.h"
+#include "lwcell/lwcell_types.h"
+#include "system/lwcell_ll.h"
 
 #if !__DOXYGEN__
 
-#if !LWGSM_CFG_INPUT_USE_PROCESS
-#error "LWGSM_CFG_INPUT_USE_PROCESS must be enabled in `lwgsm_config.h` to use this driver."
-#endif /* LWGSM_CFG_INPUT_USE_PROCESS */
+#if !LWCELL_CFG_INPUT_USE_PROCESS
+#error "LWCELL_CFG_INPUT_USE_PROCESS must be enabled in `lwcell_config.h` to use this driver."
+#endif /* LWCELL_CFG_INPUT_USE_PROCESS */
 
-#if !defined(LWGSM_USART_DMA_RX_BUFF_SIZE)
-#define LWGSM_USART_DMA_RX_BUFF_SIZE 0x1000
-#endif /* !defined(LWGSM_USART_DMA_RX_BUFF_SIZE) */
+#if !defined(LWCELL_USART_DMA_RX_BUFF_SIZE)
+#define LWCELL_USART_DMA_RX_BUFF_SIZE 0x1000
+#endif /* !defined(LWCELL_USART_DMA_RX_BUFF_SIZE) */
 
-#if !defined(LWGSM_MEM_SIZE)
-#define LWGSM_MEM_SIZE 0x1000
-#endif /* !defined(LWGSM_MEM_SIZE) */
+#if !defined(LWCELL_MEM_SIZE)
+#define LWCELL_MEM_SIZE 0x1000
+#endif /* !defined(LWCELL_MEM_SIZE) */
 
-#if !defined(LWGSM_USART_RDR_NAME)
-#define LWGSM_USART_RDR_NAME RDR
-#endif /* !defined(LWGSM_USART_RDR_NAME) */
+#if !defined(LWCELL_USART_RDR_NAME)
+#define LWCELL_USART_RDR_NAME RDR
+#endif /* !defined(LWCELL_USART_RDR_NAME) */
 
 /* USART memory */
-static uint8_t usart_mem[LWGSM_USART_DMA_RX_BUFF_SIZE];
+static uint8_t usart_mem[LWCELL_USART_DMA_RX_BUFF_SIZE];
 static uint8_t is_running, initialized;
 static size_t old_pos;
 
@@ -85,7 +85,7 @@ static void
 usart_ll_thread(void* arg) {
     size_t pos;
 
-    LWGSM_UNUSED(arg);
+    LWCELL_UNUSED(arg);
 
     while (1) {
         void* d;
@@ -93,18 +93,18 @@ usart_ll_thread(void* arg) {
         osMessageQueueGet(usart_ll_mbox_id, &d, NULL, osWaitForever);
 
         /* Read data */
-#if defined(LWGSM_USART_DMA_RX_STREAM)
-        pos = sizeof(usart_mem) - LL_DMA_GetDataLength(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
+#if defined(LWCELL_USART_DMA_RX_STREAM)
+        pos = sizeof(usart_mem) - LL_DMA_GetDataLength(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
 #else
-        pos = sizeof(usart_mem) - LL_DMA_GetDataLength(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_CH);
-#endif /* defined(LWGSM_USART_DMA_RX_STREAM) */
+        pos = sizeof(usart_mem) - LL_DMA_GetDataLength(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
+#endif /* defined(LWCELL_USART_DMA_RX_STREAM) */
         if (pos != old_pos && is_running) {
             if (pos > old_pos) {
-                lwgsm_input_process(&usart_mem[old_pos], pos - old_pos);
+                lwcell_input_process(&usart_mem[old_pos], pos - old_pos);
             } else {
-                lwgsm_input_process(&usart_mem[old_pos], sizeof(usart_mem) - old_pos);
+                lwcell_input_process(&usart_mem[old_pos], sizeof(usart_mem) - old_pos);
                 if (pos > 0) {
-                    lwgsm_input_process(&usart_mem[0], pos);
+                    lwcell_input_process(&usart_mem[0], pos);
                 }
             }
             old_pos = pos;
@@ -126,14 +126,14 @@ configure_uart(uint32_t baudrate) {
 
     if (!initialized) {
         /* Enable peripheral clocks */
-        LWGSM_USART_CLK;
-        LWGSM_USART_DMA_CLK;
-        LWGSM_USART_TX_PORT_CLK;
-        LWGSM_USART_RX_PORT_CLK;
+        LWCELL_USART_CLK;
+        LWCELL_USART_DMA_CLK;
+        LWCELL_USART_TX_PORT_CLK;
+        LWCELL_USART_RX_PORT_CLK;
 
-#if defined(LWGSM_RESET_PIN)
-        LWGSM_RESET_PORT_CLK;
-#endif /* defined(LWGSM_RESET_PIN) */
+#if defined(LWCELL_RESET_PIN)
+        LWCELL_RESET_PORT_CLK;
+#endif /* defined(LWCELL_RESET_PIN) */
 
         /* Global pin configuration */
         LL_GPIO_StructInit(&gpio_init);
@@ -142,27 +142,27 @@ configure_uart(uint32_t baudrate) {
         gpio_init.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
         gpio_init.Mode = LL_GPIO_MODE_OUTPUT;
 
-#if defined(LWGSM_RESET_PIN)
+#if defined(LWCELL_RESET_PIN)
         /* Configure RESET pin */
-        gpio_init.Pin = LWGSM_RESET_PIN;
-        LL_GPIO_Init(LWGSM_RESET_PORT, &gpio_init);
-#endif /* defined(LWGSM_RESET_PIN) */
+        gpio_init.Pin = LWCELL_RESET_PIN;
+        LL_GPIO_Init(LWCELL_RESET_PORT, &gpio_init);
+#endif /* defined(LWCELL_RESET_PIN) */
 
         /* Configure USART pins */
         gpio_init.Mode = LL_GPIO_MODE_ALTERNATE;
 
         /* TX PIN */
-        gpio_init.Alternate = LWGSM_USART_TX_PIN_AF;
-        gpio_init.Pin = LWGSM_USART_TX_PIN;
-        LL_GPIO_Init(LWGSM_USART_TX_PORT, &gpio_init);
+        gpio_init.Alternate = LWCELL_USART_TX_PIN_AF;
+        gpio_init.Pin = LWCELL_USART_TX_PIN;
+        LL_GPIO_Init(LWCELL_USART_TX_PORT, &gpio_init);
 
         /* RX PIN */
-        gpio_init.Alternate = LWGSM_USART_RX_PIN_AF;
-        gpio_init.Pin = LWGSM_USART_RX_PIN;
-        LL_GPIO_Init(LWGSM_USART_RX_PORT, &gpio_init);
+        gpio_init.Alternate = LWCELL_USART_RX_PIN_AF;
+        gpio_init.Pin = LWCELL_USART_RX_PIN;
+        LL_GPIO_Init(LWCELL_USART_RX_PORT, &gpio_init);
 
         /* Configure UART */
-        LL_USART_DeInit(LWGSM_USART);
+        LL_USART_DeInit(LWCELL_USART);
         LL_USART_StructInit(&usart_init);
         usart_init.BaudRate = baudrate;
         usart_init.DataWidth = LL_USART_DATAWIDTH_8B;
@@ -171,28 +171,28 @@ configure_uart(uint32_t baudrate) {
         usart_init.Parity = LL_USART_PARITY_NONE;
         usart_init.StopBits = LL_USART_STOPBITS_1;
         usart_init.TransferDirection = LL_USART_DIRECTION_TX_RX;
-        LL_USART_Init(LWGSM_USART, &usart_init);
+        LL_USART_Init(LWCELL_USART, &usart_init);
 
         /* Enable USART interrupts and DMA request */
-        LL_USART_EnableIT_IDLE(LWGSM_USART);
-        LL_USART_EnableIT_PE(LWGSM_USART);
-        LL_USART_EnableIT_ERROR(LWGSM_USART);
-        LL_USART_EnableDMAReq_RX(LWGSM_USART);
+        LL_USART_EnableIT_IDLE(LWCELL_USART);
+        LL_USART_EnableIT_PE(LWCELL_USART);
+        LL_USART_EnableIT_ERROR(LWCELL_USART);
+        LL_USART_EnableDMAReq_RX(LWCELL_USART);
 
         /* Enable USART interrupts */
-        NVIC_SetPriority(LWGSM_USART_IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0x07, 0x00));
-        NVIC_EnableIRQ(LWGSM_USART_IRQ);
+        NVIC_SetPriority(LWCELL_USART_IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0x07, 0x00));
+        NVIC_EnableIRQ(LWCELL_USART_IRQ);
 
         /* Configure DMA */
         is_running = 0;
-#if defined(LWGSM_USART_DMA_RX_STREAM)
-        LL_DMA_DeInit(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
-        dma_init.Channel = LWGSM_USART_DMA_RX_CH;
+#if defined(LWCELL_USART_DMA_RX_STREAM)
+        LL_DMA_DeInit(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
+        dma_init.Channel = LWCELL_USART_DMA_RX_CH;
 #else
-        LL_DMA_DeInit(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_CH);
-        dma_init.PeriphRequest = LWGSM_USART_DMA_RX_REQ_NUM;
-#endif /* defined(LWGSM_USART_DMA_RX_STREAM) */
-        dma_init.PeriphOrM2MSrcAddress = (uint32_t)&LWGSM_USART->LWGSM_USART_RDR_NAME;
+        LL_DMA_DeInit(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
+        dma_init.PeriphRequest = LWCELL_USART_DMA_RX_REQ_NUM;
+#endif /* defined(LWCELL_USART_DMA_RX_STREAM) */
+        dma_init.PeriphOrM2MSrcAddress = (uint32_t)&LWCELL_USART->LWCELL_USART_RDR_NAME;
         dma_init.MemoryOrM2MDstAddress = (uint32_t)usart_mem;
         dma_init.Direction = LL_DMA_DIRECTION_PERIPH_TO_MEMORY;
         dma_init.Mode = LL_DMA_MODE_CIRCULAR;
@@ -202,45 +202,45 @@ configure_uart(uint32_t baudrate) {
         dma_init.MemoryOrM2MDstDataSize = LL_DMA_MDATAALIGN_BYTE;
         dma_init.NbData = sizeof(usart_mem);
         dma_init.Priority = LL_DMA_PRIORITY_MEDIUM;
-#if defined(LWGSM_USART_DMA_RX_STREAM)
-        LL_DMA_Init(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM, &dma_init);
+#if defined(LWCELL_USART_DMA_RX_STREAM)
+        LL_DMA_Init(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM, &dma_init);
 #else
-        LL_DMA_Init(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_CH, &dma_init);
-#endif /* defined(LWGSM_USART_DMA_RX_STREAM) */
+        LL_DMA_Init(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH, &dma_init);
+#endif /* defined(LWCELL_USART_DMA_RX_STREAM) */
 
         /* Enable DMA interrupts */
-#if defined(LWGSM_USART_DMA_RX_STREAM)
-        LL_DMA_EnableIT_HT(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
-        LL_DMA_EnableIT_TC(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
-        LL_DMA_EnableIT_TE(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
-        LL_DMA_EnableIT_FE(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
-        LL_DMA_EnableIT_DME(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
+#if defined(LWCELL_USART_DMA_RX_STREAM)
+        LL_DMA_EnableIT_HT(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
+        LL_DMA_EnableIT_TC(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
+        LL_DMA_EnableIT_TE(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
+        LL_DMA_EnableIT_FE(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
+        LL_DMA_EnableIT_DME(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
 #else
-        LL_DMA_EnableIT_HT(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_CH);
-        LL_DMA_EnableIT_TC(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_CH);
-        LL_DMA_EnableIT_TE(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_CH);
-#endif /* defined(LWGSM_USART_DMA_RX_STREAM) */
+        LL_DMA_EnableIT_HT(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
+        LL_DMA_EnableIT_TC(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
+        LL_DMA_EnableIT_TE(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
+#endif /* defined(LWCELL_USART_DMA_RX_STREAM) */
 
         /* Enable DMA interrupts */
-        NVIC_SetPriority(LWGSM_USART_DMA_RX_IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0x07, 0x00));
-        NVIC_EnableIRQ(LWGSM_USART_DMA_RX_IRQ);
+        NVIC_SetPriority(LWCELL_USART_DMA_RX_IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0x07, 0x00));
+        NVIC_EnableIRQ(LWCELL_USART_DMA_RX_IRQ);
 
         old_pos = 0;
         is_running = 1;
 
         /* Start DMA and USART */
-#if defined(LWGSM_USART_DMA_RX_STREAM)
-        LL_DMA_EnableStream(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_STREAM);
+#if defined(LWCELL_USART_DMA_RX_STREAM)
+        LL_DMA_EnableStream(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
 #else
-        LL_DMA_EnableChannel(LWGSM_USART_DMA, LWGSM_USART_DMA_RX_CH);
-#endif /* defined(LWGSM_USART_DMA_RX_STREAM) */
-        LL_USART_Enable(LWGSM_USART);
+        LL_DMA_EnableChannel(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
+#endif /* defined(LWCELL_USART_DMA_RX_STREAM) */
+        LL_USART_Enable(LWCELL_USART);
     } else {
         osDelay(10);
-        LL_USART_Disable(LWGSM_USART);
+        LL_USART_Disable(LWCELL_USART);
         usart_init.BaudRate = baudrate;
-        LL_USART_Init(LWGSM_USART, &usart_init);
-        LL_USART_Enable(LWGSM_USART);
+        LL_USART_Init(LWCELL_USART, &usart_init);
+        LL_USART_Enable(LWCELL_USART);
     }
 
     /* Create mbox and start thread */
@@ -253,20 +253,20 @@ configure_uart(uint32_t baudrate) {
     }
 }
 
-#if defined(LWGSM_RESET_PIN)
+#if defined(LWCELL_RESET_PIN)
 /**
  * \brief           Hardware reset callback
  */
 static uint8_t
 reset_device(uint8_t state) {
     if (state) { /* Activate reset line */
-        LL_GPIO_ResetOutputPin(LWGSM_RESET_PORT, LWGSM_RESET_PIN);
+        LL_GPIO_ResetOutputPin(LWCELL_RESET_PORT, LWCELL_RESET_PIN);
     } else {
-        LL_GPIO_SetOutputPin(LWGSM_RESET_PORT, LWGSM_RESET_PIN);
+        LL_GPIO_SetOutputPin(LWCELL_RESET_PORT, LWCELL_RESET_PIN);
     }
     return 1;
 }
-#endif /* defined(LWGSM_RESET_PIN) */
+#endif /* defined(LWCELL_RESET_PIN) */
 
 /**
  * \brief           Send data to GSM device
@@ -279,8 +279,8 @@ send_data(const void* data, size_t len) {
     const uint8_t* d = data;
 
     for (size_t i = 0; i < len; ++i, ++d) {
-        LL_USART_TransmitData8(LWGSM_USART, *d);
-        while (!LL_USART_IsActiveFlag_TXE(LWGSM_USART)) {}
+        LL_USART_TransmitData8(LWCELL_USART, *d);
+        while (!LL_USART_IsActiveFlag_TXE(LWCELL_USART)) {}
     }
     return len;
 }
@@ -288,40 +288,40 @@ send_data(const void* data, size_t len) {
 /**
  * \brief           Callback function called from initialization process
  * \note            This function may be called multiple times if AT baudrate is changed from application
- * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
+ * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
  * \param[in]       baudrate: Baudrate to use on AT port
- * \return          Member of \ref lwgsmr_t enumeration
+ * \return          Member of \ref lwcellr_t enumeration
  */
-lwgsmr_t
-lwgsm_ll_init(lwgsm_ll_t* ll) {
-#if !LWGSM_CFG_MEM_CUSTOM
-    static uint8_t memory[LWGSM_MEM_SIZE];
-    lwgsm_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
+lwcellr_t
+lwcell_ll_init(lwcell_ll_t* ll) {
+#if !LWCELL_CFG_MEM_CUSTOM
+    static uint8_t memory[LWCELL_MEM_SIZE];
+    lwcell_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
 
     if (!initialized) {
-        lwgsm_mem_assignmemory(mem_regions, LWGSM_ARRAYSIZE(mem_regions)); /* Assign memory for allocations */
+        lwcell_mem_assignmemory(mem_regions, LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations */
     }
-#endif /* !LWGSM_CFG_MEM_CUSTOM */
+#endif /* !LWCELL_CFG_MEM_CUSTOM */
 
     if (!initialized) {
         ll->send_fn = send_data; /* Set callback function to send data */
-#if defined(LWGSM_RESET_PIN)
+#if defined(LWCELL_RESET_PIN)
         ll->reset_fn = reset_device; /* Set callback for hardware reset */
-#endif                               /* defined(LWGSM_RESET_PIN) */
+#endif                               /* defined(LWCELL_RESET_PIN) */
     }
 
     configure_uart(ll->uart.baudrate); /* Initialize UART for communication */
     initialized = 1;
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
  * \brief           Callback function to de-init low-level communication part
- * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_ll_deinit(lwgsm_ll_t* ll) {
+lwcellr_t
+lwcell_ll_deinit(lwcell_ll_t* ll) {
     if (usart_ll_mbox_id != NULL) {
         osMessageQueueId_t tmp = usart_ll_mbox_id;
         usart_ll_mbox_id = NULL;
@@ -333,20 +333,20 @@ lwgsm_ll_deinit(lwgsm_ll_t* ll) {
         osThreadTerminate(tmp);
     }
     initialized = 0;
-    LWGSM_UNUSED(ll);
-    return lwgsmOK;
+    LWCELL_UNUSED(ll);
+    return lwcellOK;
 }
 
 /**
  * \brief           UART global interrupt handler
  */
 void
-LWGSM_USART_IRQHANDLER(void) {
-    LL_USART_ClearFlag_IDLE(LWGSM_USART);
-    LL_USART_ClearFlag_PE(LWGSM_USART);
-    LL_USART_ClearFlag_FE(LWGSM_USART);
-    LL_USART_ClearFlag_ORE(LWGSM_USART);
-    LL_USART_ClearFlag_NE(LWGSM_USART);
+LWCELL_USART_IRQHANDLER(void) {
+    LL_USART_ClearFlag_IDLE(LWCELL_USART);
+    LL_USART_ClearFlag_PE(LWCELL_USART);
+    LL_USART_ClearFlag_FE(LWCELL_USART);
+    LL_USART_ClearFlag_ORE(LWCELL_USART);
+    LL_USART_ClearFlag_NE(LWCELL_USART);
 
     if (usart_ll_mbox_id != NULL) {
         void* d = (void*)1;
@@ -358,9 +358,9 @@ LWGSM_USART_IRQHANDLER(void) {
  * \brief           UART DMA stream/channel handler
  */
 void
-LWGSM_USART_DMA_RX_IRQHANDLER(void) {
-    LWGSM_USART_DMA_RX_CLEAR_TC;
-    LWGSM_USART_DMA_RX_CLEAR_HT;
+LWCELL_USART_DMA_RX_IRQHANDLER(void) {
+    LWCELL_USART_DMA_RX_CLEAR_TC;
+    LWCELL_USART_DMA_RX_CLEAR_HT;
 
     if (usart_ll_mbox_id != NULL) {
         void* d = (void*)1;

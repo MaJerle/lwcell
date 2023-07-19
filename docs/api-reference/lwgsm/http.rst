@@ -1,6 +1,6 @@
-.. _api_lwgsm_http:
+.. _api_lwcell_http:
 
 HTTP
 ====
 
-.. doxygengroup:: LWGSM_HTTP
+.. doxygengroup:: LWCELL_HTTP

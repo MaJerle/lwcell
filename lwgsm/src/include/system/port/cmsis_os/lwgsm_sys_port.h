@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_sys_port.h
+ * \file            lwcell_sys_port.h
  * \brief           System dependent functions for CMSIS-OS based operating system
  */
 
@@ -26,42 +26,42 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_SYSTEM_PORT_HDR_H
-#define LWGSM_SYSTEM_PORT_HDR_H
+#ifndef LWCELL_SYSTEM_PORT_HDR_H
+#define LWCELL_SYSTEM_PORT_HDR_H
 
 #include <stdint.h>
 #include <stdlib.h>
 #include "cmsis_os.h"
-#include "lwgsm/lwgsm_opt.h"
+#include "lwcell/lwcell_opt.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#if LWGSM_CFG_OS && !__DOXYGEN__
+#if LWCELL_CFG_OS && !__DOXYGEN__
 
-typedef osMutexId_t lwgsm_sys_mutex_t;
-typedef osSemaphoreId_t lwgsm_sys_sem_t;
-typedef osMessageQueueId_t lwgsm_sys_mbox_t;
-typedef osThreadId_t lwgsm_sys_thread_t;
-typedef osPriority_t lwgsm_sys_thread_prio_t;
+typedef osMutexId_t lwcell_sys_mutex_t;
+typedef osSemaphoreId_t lwcell_sys_sem_t;
+typedef osMessageQueueId_t lwcell_sys_mbox_t;
+typedef osThreadId_t lwcell_sys_thread_t;
+typedef osPriority_t lwcell_sys_thread_prio_t;
 
-#define LWGSM_SYS_MUTEX_NULL  ((lwgsm_sys_mutex_t)0)
-#define LWGSM_SYS_SEM_NULL    ((lwgsm_sys_sem_t)0)
-#define LWGSM_SYS_MBOX_NULL   ((lwgsm_sys_mbox_t)0)
-#define LWGSM_SYS_TIMEOUT     ((uint32_t)osWaitForever)
-#define LWGSM_SYS_THREAD_PRIO (osPriorityNormal)
-#define LWGSM_SYS_THREAD_SS   (512)
+#define LWCELL_SYS_MUTEX_NULL  ((lwcell_sys_mutex_t)0)
+#define LWCELL_SYS_SEM_NULL    ((lwcell_sys_sem_t)0)
+#define LWCELL_SYS_MBOX_NULL   ((lwcell_sys_mbox_t)0)
+#define LWCELL_SYS_TIMEOUT     ((uint32_t)osWaitForever)
+#define LWCELL_SYS_THREAD_PRIO (osPriorityNormal)
+#define LWCELL_SYS_THREAD_SS   (512)
 
-#endif /* LWGSM_CFG_OS && !__DOXYGEN__ */
+#endif /* LWCELL_CFG_OS && !__DOXYGEN__ */
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_SYSTEM_PORT_HDR_H */
+#endif /* LWCELL_SYSTEM_PORT_HDR_H */

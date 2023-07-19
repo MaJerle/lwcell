@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ussd.h
+ * \file            lwcell_ussd.h
  * \brief           Unstructured Supplementary Service Data
  */
 
@@ -26,28 +26,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_USSD_HDR_H
-#define LWGSM_USSD_HDR_H
+#ifndef LWCELL_USSD_HDR_H
+#define LWCELL_USSD_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_USSD Unstructured Supplementary Service Data
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_USSD Unstructured Supplementary Service Data
  * \brief           Unstructured Supplementary Service Data
  * \{
  */
 
-lwgsmr_t lwgsm_ussd_run(const char* code, char* resp, size_t resp_len, const lwgsm_api_cmd_evt_fn evt_fn,
+lwcellr_t lwcell_ussd_run(const char* code, char* resp, size_t resp_len, const lwcell_api_cmd_evt_fn evt_fn,
                         void* const evt_arg, const uint32_t blocking);
 
 /**
@@ -58,4 +58,4 @@ lwgsmr_t lwgsm_ussd_run(const char* code, char* resp, size_t resp_len, const lwg
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_HTTP_H */
+#endif /* LWCELL_HDR_HTTP_H */

@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_opts_template.h
+ * \file            lwcell_opts_template.h
  * \brief           Template config file
  */
 
@@ -26,19 +26,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_OPTS_HDR_H
-#define LWGSM_OPTS_HDR_H
+#ifndef LWCELL_OPTS_HDR_H
+#define LWCELL_OPTS_HDR_H
 
-/* Rename this file to "lwgsm_opts.h" for your application */
+/* Rename this file to "lwcell_opts.h" for your application */
 
 /*
- * Open "include/lwgsm/lwgsm_opt.h" and
+ * Open "include/lwcell/lwcell_opt.h" and
  * copy & replace here settings you want to change values
  */
 
-#endif /* LWGSM_OPTS_HDR_H */
+#endif /* LWCELL_OPTS_HDR_H */

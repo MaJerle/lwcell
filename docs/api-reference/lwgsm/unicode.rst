@@ -1,4 +1,4 @@
-.. _api_lwgsm_unicode:
+.. _api_lwcell_unicode:
 
 Unicode
 =======
@@ -9,4 +9,4 @@ between ``1`` and ``4`` bytes long.
 .. note::
     This is simple implementation and does not support string encoding.
 
-.. doxygengroup:: LWGSM_UNICODE
+.. doxygengroup:: LWCELL_UNICODE

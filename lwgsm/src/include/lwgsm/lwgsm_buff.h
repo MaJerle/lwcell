@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_buff.h
+ * \file            lwcell_buff.h
  * \brief           Ring buffer manager
  */
 
@@ -26,23 +26,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_BUFF_HDR_H
-#define LWGSM_BUFF_HDR_H
+#ifndef LWCELL_BUFF_HDR_H
+#define LWCELL_BUFF_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_BUFF Ring buffer
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_BUFF Ring buffer
  * \brief           Generic ring buffer
  * \{
  */
@@ -56,7 +56,7 @@ extern "C" {
  *
  * \note            Modification of this macro must be done in header and source file aswell
  */
-#define BUF_PREF(x) lwgsm_##x
+#define BUF_PREF(x) lwcell_##x
 /* --- Buffer unique part ends --- */
 
 uint8_t BUF_PREF(buff_init)(BUF_PREF(buff_t) * buff, size_t size);
@@ -92,4 +92,4 @@ size_t BUF_PREF(buff_advance)(BUF_PREF(buff_t) * buff, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_BUFF_HDR_H */
+#endif /* LWCELL_BUFF_HDR_H */

@@ -1,9 +1,9 @@
-LwGSM |version| documentation
+LwCELL |version| documentation
 =============================
 
 Welcome to the documentation for version |version|.
 
-LwGSM is generic, platform independent, library to control *SIM800/SIM900* or *SIM7000/SIM7020 (NB-Iot LTE)* devices from *SIMCom*.
+LwCELL is generic, platform independent, library to control *SIM800/SIM900* or *SIM7000/SIM7020 (NB-Iot LTE)* devices from *SIMCom*.
 Its objective is to run on master system, while SIMCom device runs official AT commands firmware developed and maintained by *SIMCom*.
 
 .. image:: static/images/logo.svg
@@ -12,7 +12,7 @@ Its objective is to run on master system, while SIMCom device runs official AT c
 .. rst-class:: center
 .. rst-class:: index_links
 
-	:ref:`download_library` :ref:`getting_started` `Open Github <https://github.com/MaJerle/lwgsm>`_ `Donate <https://paypal.me/tilz0R>`_
+	:ref:`download_library` :ref:`getting_started` `Open Github <https://github.com/MaJerle/lwcell>`_ `Donate <https://paypal.me/tilz0R>`_
 
 Features
 ^^^^^^^^
@@ -89,7 +89,7 @@ Table of contents
     LwESP - ESP-AT library <https://github.com/MaJerle/lwesp>
     LwEVT - Event manager <https://github.com/MaJerle/lwevt>
     LwGPS - GPS NMEA parser <https://github.com/MaJerle/lwgps>
-    LwGSM - GSM-AT library <https://github.com/MaJerle/lwgsm>
+    LwCELL - GSM-AT library <https://github.com/MaJerle/lwcell>
     LwJSON - JSON parser <https://github.com/MaJerle/lwjson>
     LwMEM - Memory manager <https://github.com/MaJerle/lwmem>
     LwOW - OneWire with UART <https://github.com/MaJerle/lwow>

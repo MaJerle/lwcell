@@ -1,6 +1,6 @@
-.. _api_lwgsm_ussd:
+.. _api_lwcell_ussd:
 
 Unstructured Supplementary Service Data
 =======================================
 
-.. doxygengroup:: LWGSM_USSD
+.. doxygengroup:: LWCELL_USSD

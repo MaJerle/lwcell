@@ -17,7 +17,7 @@ and it can be called from one of these ``3`` threads:
 
 - *Producing thread*
 - *Processing thread*
-- *Input thread*, when :c:macro:`LWGSM_CFG_INPUT_USE_PROCESS` is enabled and :cpp:func:`lwgsm_input_process` function is called 
+- *Input thread*, when :c:macro:`LWCELL_CFG_INPUT_USE_PROCESS` is enabled and :cpp:func:`lwcell_input_process` function is called 
 
 .. tip::
     Check :ref:`um_inter_thread_comm` for more details about *Producing* and *Processing* thread.
@@ -35,19 +35,19 @@ It is used by the application to receive any kind of event, except the one relat
 * and many more..
 
 .. tip::
-    Check :ref:`api_lwgsm_evt` section for different kind of events
+    Check :ref:`api_lwcell_evt` section for different kind of events
 
 By default, global event function is single function.
 If the application tries to split different events with different callback functions,
-it is possible to do so by using :cpp:func:`lwgsm_evt_register` function to register a new,
+it is possible to do so by using :cpp:func:`lwcell_evt_register` function to register a new,
 custom, event function.
 
 .. tip::
-    Implementation of :ref:`api_app_netconn` leverages :cpp:func:`lwgsm_evt_register` to 
+    Implementation of :ref:`api_app_netconn` leverages :cpp:func:`lwcell_evt_register` to 
     receive event when station disconnected from wifi access point.
     Check its source file for actual implementation.
 
-.. literalinclude:: ../../lwgsm/src/api/lwgsm_netconn.c
+.. literalinclude:: ../../lwcell/src/api/lwcell_netconn.c
     :language: c
     :linenos:
     :caption: Netconn API module actual implementation
@@ -59,10 +59,10 @@ This events are subset of global event callback.
 They work exactly the same way as global, but only receive events related to connections.
 
 .. tip::
-    Connection related events start with ``LWGSM_EVT_CONN_*``, such as :c:member:`LWGSM_EVT_CONN_RECV`. 
-    Check :ref:`api_lwgsm_evt` for list of all connection events.
+    Connection related events start with ``LWCELL_EVT_CONN_*``, such as :c:member:`LWCELL_EVT_CONN_RECV`. 
+    Check :ref:`api_lwcell_evt` for list of all connection events.
 
-Connection events callback function is set when client (application starts connection) starts a new connection with :cpp:func:`lwgsm_conn_start` function
+Connection events callback function is set when client (application starts connection) starts a new connection with :cpp:func:`lwcell_conn_start` function
 
 .. literalinclude:: ../../snippets/client.c
     :language: c

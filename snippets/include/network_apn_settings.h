@@ -1,7 +1,7 @@
 #ifndef SNIPPET_HDR_NETWORK_APN_SETTINGS_H
 #define SNIPPET_HDR_NETWORK_APN_SETTINGS_H
 
-#include "lwgsm/lwgsm_network_api.h"
+#include "lwcell/lwcell_network_api.h"
 
 #ifdef __cplusplus
 extern "C" {

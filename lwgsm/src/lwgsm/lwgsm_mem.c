@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_mem.c
+ * \file            lwcell_mem.c
  * \brief           Memory manager
  */
 
@@ -26,16 +26,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
 #include <limits.h>
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_mem.h"
+#include "lwcell/lwcell_private.h"
 
-#if !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__
+#if !LWCELL_CFG_MEM_CUSTOM || __DOXYGEN__
 
 #if !__DOXYGEN__
 typedef struct mem_block {
@@ -47,9 +47,9 @@ typedef struct mem_block {
 /**
  * \brief           Memory alignment bits and absolute number
  */
-#define MEM_ALIGN_BITS           LWGSM_SZ(LWGSM_CFG_MEM_ALIGNMENT - 1)
-#define MEM_ALIGN_NUM            LWGSM_SZ(LWGSM_CFG_MEM_ALIGNMENT)
-#define MEM_ALIGN(x)             LWGSM_MEM_ALIGN(x)
+#define MEM_ALIGN_BITS           LWCELL_SZ(LWCELL_CFG_MEM_ALIGNMENT - 1)
+#define MEM_ALIGN_NUM            LWCELL_SZ(LWCELL_CFG_MEM_ALIGNMENT)
+#define MEM_ALIGN(x)             LWCELL_MEM_ALIGN(x)
 
 #define MEMBLOCK_METASIZE        MEM_ALIGN(sizeof(mem_block_t))
 
@@ -121,7 +121,7 @@ mem_insertfreeblock(mem_block_t* nb) {
  * \param[in]       len: Number of regions to assign
  */
 static uint8_t
-mem_assignmem(const lwgsm_mem_region_t* regions, size_t len) {
+mem_assignmem(const lwcell_mem_region_t* regions, size_t len) {
     uint8_t* mem_start_addr;
     size_t mem_size;
     mem_block_t *first_block, *prev_end_block = NULL;
@@ -150,8 +150,8 @@ mem_assignmem(const lwgsm_mem_region_t* regions, size_t len) {
          * if necessary, decrease memory region size
          */
         mem_start_addr = (uint8_t*)regions->start_addr;  /* Actual heap memory address */
-        if (LWGSM_SZ(mem_start_addr) & MEM_ALIGN_BITS) { /* Check alignment boundary */
-            mem_start_addr += MEM_ALIGN_NUM - (LWGSM_SZ(mem_start_addr) & MEM_ALIGN_BITS);
+        if (LWCELL_SZ(mem_start_addr) & MEM_ALIGN_BITS) { /* Check alignment boundary */
+            mem_start_addr += MEM_ALIGN_NUM - (LWCELL_SZ(mem_start_addr) & MEM_ALIGN_BITS);
             mem_size -= mem_start_addr - (uint8_t*)regions->start_addr;
         }
 
@@ -282,8 +282,8 @@ mem_alloc(size_t size) {
 
 /**
  * \brief           Free memory
- * \param[in]       ptr: Pointer to memory previously returned using \ref lwgsm_mem_malloc,
- *                      \ref lwgsm_mem_calloc or \ref lwgsm_mem_realloc functions
+ * \param[in]       ptr: Pointer to memory previously returned using \ref lwcell_mem_malloc,
+ *                      \ref lwcell_mem_calloc or \ref lwcell_mem_realloc functions
  */
 static void
 mem_free(void* ptr) {
@@ -322,7 +322,7 @@ mem_calloc(size_t num, size_t size) {
     size_t tot_len = num * size;
 
     if ((ptr = mem_alloc(tot_len)) != NULL) { /* Try to allocate memory */
-        LWGSM_MEMSET(ptr, 0x00, tot_len);     /* Reset entire memory */
+        LWCELL_MEMSET(ptr, 0x00, tot_len);     /* Reset entire memory */
     }
     return ptr;
 }
@@ -331,7 +331,7 @@ mem_calloc(size_t num, size_t size) {
  * \brief           Reallocate memory to specific size
  * \note            After new memory is allocated, content of old one is copied to new memory
  * \param[in]       ptr: Pointer to current allocated memory to resize, returned using
- *                      \ref lwgsm_mem_malloc, \ref lwgsm_mem_calloc or \ref lwgsm_mem_realloc functions
+ *                      \ref lwcell_mem_malloc, \ref lwcell_mem_calloc or \ref lwcell_mem_realloc functions
  * \param[in]       size: Number of bytes to allocate on new memory
  * \return          Memory address on success, `NULL` otherwise
  */
@@ -347,7 +347,7 @@ mem_realloc(void* ptr, size_t size) {
     old_size = MEM_BLOCK_USER_SIZE(ptr); /* Get size of old pointer */
     new_ptr = mem_alloc(size);           /* Try to allocate new memory block */
     if (new_ptr != NULL) {
-        LWGSM_MEMCPY(new_ptr, ptr, LWGSM_MIN(size, old_size)); /* Copy old data to new array */
+        LWCELL_MEMCPY(new_ptr, ptr, LWCELL_MIN(size, old_size)); /* Copy old data to new array */
         mem_free(ptr);                                         /* Free old pointer */
     }
     return new_ptr;
@@ -357,39 +357,39 @@ mem_realloc(void* ptr, size_t size) {
  * \brief           Allocate memory of specific size
  * \param[in]       size: Number of bytes to allocate
  * \return          Memory address on success, `NULL` otherwise
- * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \note            Function is not available when \ref LWCELL_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void*
-lwgsm_mem_malloc(size_t size) {
+lwcell_mem_malloc(size_t size) {
     void* ptr;
-    lwgsm_core_lock();
+    lwcell_core_lock();
     ptr = mem_calloc(1, size); /* Allocate memory and return pointer */
-    lwgsm_core_unlock();
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL, "[LWGSM MEM] Allocation failed: %d bytes\r\n",
+    lwcell_core_unlock();
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL, "[LWCELL MEM] Allocation failed: %d bytes\r\n",
                  (int)size);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
-                 "[LWGSM MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr != NULL,
+                 "[LWCELL MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
 /**
  * \brief           Reallocate memory to specific size
  * \note            After new memory is allocated, content of old one is copied to new memory
- * \param[in]       ptr: Pointer to current allocated memory to resize, returned using \ref lwgsm_mem_malloc,
- *                      \ref lwgsm_mem_calloc or \ref lwgsm_mem_realloc functions
+ * \param[in]       ptr: Pointer to current allocated memory to resize, returned using \ref lwcell_mem_malloc,
+ *                      \ref lwcell_mem_calloc or \ref lwcell_mem_realloc functions
  * \param[in]       size: Number of bytes to allocate on new memory
  * \return          Memory address on success, `NULL` otherwise
- * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \note            Function is not available when \ref LWCELL_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void*
-lwgsm_mem_realloc(void* ptr, size_t size) {
-    lwgsm_core_lock();
+lwcell_mem_realloc(void* ptr, size_t size) {
+    lwcell_core_lock();
     ptr = mem_realloc(ptr, size); /* Reallocate and return pointer */
-    lwgsm_core_unlock();
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL, "[LWGSM MEM] Reallocation failed: %d bytes\r\n",
+    lwcell_core_unlock();
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL, "[LWCELL MEM] Reallocation failed: %d bytes\r\n",
                  (int)size);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
-                 "[LWGSM MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr != NULL,
+                 "[LWCELL MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
@@ -398,37 +398,37 @@ lwgsm_mem_realloc(void* ptr, size_t size) {
  * \param[in]       num: Number of elements to allocate
  * \param[in]       size: Size of each element
  * \return          Memory address on success, `NULL` otherwise
- * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \note            Function is not available when \ref LWCELL_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void*
-lwgsm_mem_calloc(size_t num, size_t size) {
+lwcell_mem_calloc(size_t num, size_t size) {
     void* ptr;
-    lwgsm_core_lock();
+    lwcell_core_lock();
     ptr = mem_calloc(num, size); /* Allocate memory and clear it to 0. Then return pointer */
-    lwgsm_core_unlock();
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr == NULL, "[LWGSM MEM] Callocation failed: %d bytes\r\n",
+    lwcell_core_unlock();
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL, "[LWCELL MEM] Callocation failed: %d bytes\r\n",
                  (int)size * (int)num);
-    LWGSM_DEBUGW(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, ptr != NULL,
-                 "[LWGSM MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr != NULL,
+                 "[LWCELL MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
     return ptr;
 }
 
 /**
  * \brief           Free memory
- * \param[in]       ptr: Pointer to memory previously returned using \ref lwgsm_mem_malloc,
- *                      \ref lwgsm_mem_calloc or \ref lwgsm_mem_realloc functions
- * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1` and must be implemented by user
+ * \param[in]       ptr: Pointer to memory previously returned using \ref lwcell_mem_malloc,
+ *                      \ref lwcell_mem_calloc or \ref lwcell_mem_realloc functions
+ * \note            Function is not available when \ref LWCELL_CFG_MEM_CUSTOM is `1` and must be implemented by user
  */
 void
-lwgsm_mem_free(void* ptr) {
+lwcell_mem_free(void* ptr) {
     if (ptr == NULL) {
         return;
     }
-    LWGSM_DEBUGF(LWGSM_CFG_DBG_MEM | LWGSM_DBG_TYPE_TRACE, "[LWGSM MEM] Free size: %d, address: %p\r\n",
+    LWCELL_DEBUGF(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, "[LWCELL MEM] Free size: %d, address: %p\r\n",
                  (int)MEM_BLOCK_USER_SIZE(ptr), ptr);
-    lwgsm_core_lock();
+    lwcell_core_lock();
     mem_free(ptr);
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
 }
 
 /**
@@ -437,16 +437,16 @@ lwgsm_mem_free(void* ptr) {
  * \param[in]       regions: Pointer to list of regions to use for allocations
  * \param[in]       len: Number of regions to use
  * \return          `1` on success, `0` otherwise
- * \note            Function is not available when \ref LWGSM_CFG_MEM_CUSTOM is `1`
+ * \note            Function is not available when \ref LWCELL_CFG_MEM_CUSTOM is `1`
  */
 uint8_t
-lwgsm_mem_assignmemory(const lwgsm_mem_region_t* regions, size_t len) {
+lwcell_mem_assignmemory(const lwcell_mem_region_t* regions, size_t len) {
     uint8_t ret;
     ret = mem_assignmem(regions, len); /* Assign memory */
     return ret;
 }
 
-#endif /* !LWGSM_CFG_MEM_CUSTOM || __DOXYGEN__ */
+#endif /* !LWCELL_CFG_MEM_CUSTOM || __DOXYGEN__ */
 
 /**
  * \brief           Free memory in safe way by invalidating pointer after freeing
@@ -454,9 +454,9 @@ lwgsm_mem_assignmemory(const lwgsm_mem_region_t* regions, size_t len) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_mem_free_s(void** ptr) {
+lwcell_mem_free_s(void** ptr) {
     if (ptr != NULL && *ptr != NULL) {
-        lwgsm_mem_free(*ptr);
+        lwcell_mem_free(*ptr);
         *ptr = NULL;
         return 1;
     }

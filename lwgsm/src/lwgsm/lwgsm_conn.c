@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_conn.c
+ * \file            lwcell_conn.c
  * \brief           Connection API
  */
 
@@ -26,15 +26,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_conn.h"
-#include "lwgsm/lwgsm_private.h"
+#include "lwcell/lwcell_conn.h"
+#include "lwcell/lwcell_private.h"
 
-#if LWGSM_CFG_CONN || __DOXYGEN__
+#if LWCELL_CFG_CONN || __DOXYGEN__
 
 /**
  * \brief           Check if connection is closed or in closing state
@@ -42,13 +42,13 @@
  */
 #define CONN_CHECK_CLOSED_IN_CLOSING(conn)                                                                             \
     do {                                                                                                               \
-        lwgsmr_t r = lwgsmOK;                                                                                          \
-        lwgsm_core_lock();                                                                                             \
+        lwcellr_t r = lwcellOK;                                                                                          \
+        lwcell_core_lock();                                                                                             \
         if (conn->status.f.in_closing || !conn->status.f.active) {                                                     \
-            r = lwgsmCLOSED;                                                                                           \
+            r = lwcellCLOSED;                                                                                           \
         }                                                                                                              \
-        lwgsm_core_unlock();                                                                                           \
-        if (r != lwgsmOK) {                                                                                            \
+        lwcell_core_unlock();                                                                                           \
+        if (r != lwcellOK) {                                                                                            \
             return r;                                                                                                  \
         }                                                                                                              \
     } while (0)
@@ -59,15 +59,15 @@
  */
 static void
 conn_timeout_cb(void* arg) {
-    lwgsm_conn_p conn = arg;                  /* Argument is actual connection */
+    lwcell_conn_p conn = arg;                  /* Argument is actual connection */
 
     if (conn->status.f.active) {              /* Handle only active connections */
-        lwgsm.evt.type = LWGSM_EVT_CONN_POLL; /* Poll connection event */
-        lwgsm.evt.evt.conn_poll.conn = conn;  /* Set connection pointer */
-        lwgsmi_send_conn_cb(conn, NULL);      /* Send connection callback */
+        lwcell.evt.type = LWCELL_EVT_CONN_POLL; /* Poll connection event */
+        lwcell.evt.evt.conn_poll.conn = conn;  /* Set connection pointer */
+        lwcelli_send_conn_cb(conn, NULL);      /* Send connection callback */
 
-        lwgsmi_conn_start_timeout(conn);      /* Schedule new timeout */
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Poll event: %p\r\n", (void*)conn);
+        lwcelli_conn_start_timeout(conn);      /* Schedule new timeout */
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Poll event: %p\r\n", (void*)conn);
     }
 }
 
@@ -76,8 +76,8 @@ conn_timeout_cb(void* arg) {
  * \param[in]       conn: Connection handle as user argument
  */
 void
-lwgsmi_conn_start_timeout(lwgsm_conn_p conn) {
-    lwgsm_timeout_add(LWGSM_CFG_CONN_POLL_INTERVAL, conn_timeout_cb, conn); /* Add connection timeout */
+lwcelli_conn_start_timeout(lwcell_conn_p conn) {
+    lwcell_timeout_add(LWCELL_CFG_CONN_POLL_INTERVAL, conn_timeout_cb, conn); /* Add connection timeout */
 }
 
 /**
@@ -86,11 +86,11 @@ lwgsmi_conn_start_timeout(lwgsm_conn_p conn) {
  * \return          Connection current validation ID
  */
 uint8_t
-lwgsmi_conn_get_val_id(lwgsm_conn_p conn) {
+lwcelli_conn_get_val_id(lwcell_conn_p conn) {
     uint8_t val_id;
-    lwgsm_core_lock();
+    lwcell_core_lock();
     val_id = conn->val_id;
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
 
     return val_id;
 }
@@ -106,16 +106,16 @@ lwgsmi_conn_get_val_id(lwgsm_conn_p conn) {
  * \param[out]      bw: Pointer to output variable to save number of sent data when successfully sent
  * \param[in]       fau: "Free After Use" flag. Set to `1` if stack should free the memory after data sent
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-static lwgsmr_t
-conn_send(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, const void* data, size_t btw,
+static lwcellr_t
+conn_send(lwcell_conn_p conn, const lwcell_ip_t* const ip, lwcell_port_t port, const void* data, size_t btw,
           size_t* const bw, uint8_t fau, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(conn != NULL);
-    LWGSM_ASSERT(data != NULL);
-    LWGSM_ASSERT(btw > 0);
+    LWCELL_ASSERT(conn != NULL);
+    LWCELL_ASSERT(data != NULL);
+    LWCELL_ASSERT(btw > 0);
 
     if (bw != NULL) {
         *bw = 0;
@@ -123,30 +123,30 @@ conn_send(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, cons
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn); /* Check if we can continue */
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSEND;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CIPSEND;
 
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.conn = conn;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.data = data;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.btw = btw;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.bw = bw;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.remote_ip = ip;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.remote_port = port;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.fau = fau;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_send.val_id = lwgsmi_conn_get_val_id(conn);
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.conn = conn;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.data = data;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.btw = btw;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.bw = bw;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.remote_ip = ip;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.remote_port = port;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.fau = fau;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_send.val_id = lwcelli_conn_get_val_id(conn);
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 60000);
 }
 
 /**
  * \brief           Flush buffer on connection
  * \param[in]       conn: Connection to flush buffer on
- * \return          \ref lwgsmOK if data flushed and put to queue, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK if data flushed and put to queue, member of \ref lwcellr_t otherwise
  */
-static lwgsmr_t
-flush_buff(lwgsm_conn_p conn) {
-    lwgsmr_t res = lwgsmOK;
-    lwgsm_core_lock();
+static lwcellr_t
+flush_buff(lwcell_conn_p conn) {
+    lwcellr_t res = lwcellOK;
+    lwcell_core_lock();
     if (conn != NULL && conn->buff.buff != NULL) { /* Do we have something ready? */
         /*
          * If there is nothing to write or if write was not successful,
@@ -155,16 +155,16 @@ flush_buff(lwgsm_conn_p conn) {
         if (conn->buff.ptr > 0) { /* Anything to send at the moment? */
             res = conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0);
         } else {
-            res = lwgsmERR;
+            res = lwcellERR;
         }
-        if (res != lwgsmOK) {
-            LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Free write buffer: %p\r\n",
+        if (res != lwcellOK) {
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer: %p\r\n",
                          (void*)conn->buff.buff);
-            lwgsm_mem_free_s((void**)&conn->buff.buff);
+            lwcell_mem_free_s((void**)&conn->buff.buff);
         }
         conn->buff.buff = NULL;
     }
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
     return res;
 }
 
@@ -172,71 +172,71 @@ flush_buff(lwgsm_conn_p conn) {
  * \brief           Initialize connection module
  */
 void
-lwgsmi_conn_init(void) {}
+lwcelli_conn_init(void) {}
 
 /**
  * \brief           Start a new connection of specific type
  * \param[out]      conn: Pointer to connection handle to set new connection reference in case of successful connection
- * \param[in]       type: Connection type. This parameter can be a value of \ref lwgsm_conn_type_t enumeration
+ * \param[in]       type: Connection type. This parameter can be a value of \ref lwcell_conn_type_t enumeration
  * \param[in]       host: Connection host. In case of IP, write it as string, ex. "192.168.1.1"
  * \param[in]       port: Connection port
  * \param[in]       arg: Pointer to user argument passed to connection if successfully connected
  * \param[in]       conn_evt_fn: Callback function for this connection
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_conn_start(lwgsm_conn_p* conn, lwgsm_conn_type_t type, const char* const host, lwgsm_port_t port, void* const arg,
-                 lwgsm_evt_fn conn_evt_fn, const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_conn_start(lwcell_conn_p* conn, lwcell_conn_type_t type, const char* const host, lwcell_port_t port, void* const arg,
+                 lwcell_evt_fn conn_evt_fn, const uint32_t blocking) {
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(host != NULL);
-    LWGSM_ASSERT(port > 0);
-    LWGSM_ASSERT(conn_evt_fn != NULL);
+    LWCELL_ASSERT(host != NULL);
+    LWCELL_ASSERT(port > 0);
+    LWCELL_ASSERT(conn_evt_fn != NULL);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSTART;
-    LWGSM_MSG_VAR_REF(msg).cmd = LWGSM_CMD_CIPSTATUS;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_start.num = LWGSM_CFG_MAX_CONNS; /* Set maximal value as invalid number */
-    LWGSM_MSG_VAR_REF(msg).msg.conn_start.conn = conn;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_start.type = type;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_start.host = host;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_start.port = port;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_start.evt_func = conn_evt_fn;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CIPSTART;
+    LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CIPSTATUS;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_start.num = LWCELL_CFG_MAX_CONNS; /* Set maximal value as invalid number */
+    LWCELL_MSG_VAR_REF(msg).msg.conn_start.conn = conn;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_start.type = type;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_start.host = host;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_start.port = port;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_start.evt_func = conn_evt_fn;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_start.arg = arg;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 60000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 60000);
 }
 
 /**
  * \brief           Close specific or all connections
  * \param[in]       conn: Connection handle to close. Set to NULL if you want to close all connections.
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
-    lwgsmr_t res = lwgsmOK;
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_conn_close(lwcell_conn_p conn, const uint32_t blocking) {
+    lwcellr_t res = lwcellOK;
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_ASSERT(conn != NULL);
+    LWCELL_ASSERT(conn != NULL);
 
     CONN_CHECK_CLOSED_IN_CLOSING(conn); /* Check if we can continue */
 
     /* Proceed with close event at this point! */
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPCLOSE;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
-    LWGSM_MSG_VAR_REF(msg).msg.conn_close.val_id = lwgsmi_conn_get_val_id(conn);
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CIPCLOSE;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
+    LWCELL_MSG_VAR_REF(msg).msg.conn_close.val_id = lwcelli_conn_get_val_id(conn);
 
     flush_buff(conn);                  /* First flush buffer */
-    res = lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 1000);
-    if (res == lwgsmOK && !blocking) { /* Function succedded in non-blocking mode */
-        lwgsm_core_lock();
-        LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Connection %d set to closing state\r\n",
+    res = lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 1000);
+    if (res == lwcellOK && !blocking) { /* Function succedded in non-blocking mode */
+        lwcell_core_lock();
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Connection %d set to closing state\r\n",
                      (int)conn->num);
         conn->status.f.in_closing = 1; /* Connection is in closing mode but not yet closed */
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
     return res;
 }
@@ -251,12 +251,12 @@ lwgsm_conn_close(lwgsm_conn_p conn, const uint32_t blocking) {
  * \param[in]       btw: Number of bytes to send
  * \param[out]      bw: Pointer to output variable to save number of sent data when successfully sent
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_conn_sendto(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t port, const void* data, size_t btw,
+lwcellr_t
+lwcell_conn_sendto(lwcell_conn_p conn, const lwcell_ip_t* const ip, lwcell_port_t port, const void* data, size_t btw,
                   size_t* bw, const uint32_t blocking) {
-    LWGSM_ASSERT(conn != NULL);
+    LWCELL_ASSERT(conn != NULL);
 
     flush_buff(conn); /* Flush currently written memory if exists */
     return conn_send(conn, ip, port, data, btw, bw, 0, blocking);
@@ -268,31 +268,31 @@ lwgsm_conn_sendto(lwgsm_conn_p conn, const lwgsm_ip_t* const ip, lwgsm_port_t po
  * \param[in]       data: Data to send
  * \param[in]       btw: Number of bytes to send
  * \param[out]      bw: Pointer to output variable to save number of sent data when successfully sent.
- *                      Parameter value might not be accurate if you combine \ref lwgsm_conn_write and \ref lwgsm_conn_send functions
+ *                      Parameter value might not be accurate if you combine \ref lwcell_conn_write and \ref lwcell_conn_send functions
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_conn_send(lwgsm_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking) {
-    lwgsmr_t res;
+lwcellr_t
+lwcell_conn_send(lwcell_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking) {
+    lwcellr_t res;
     const uint8_t* d = data;
 
-    LWGSM_ASSERT(conn != NULL);
-    LWGSM_ASSERT(data != NULL);
-    LWGSM_ASSERT(btw > 0);
+    LWCELL_ASSERT(conn != NULL);
+    LWCELL_ASSERT(data != NULL);
+    LWCELL_ASSERT(btw > 0);
 
-    lwgsm_core_lock();
+    lwcell_core_lock();
     if (conn->buff.buff != NULL) { /* Check if memory available */
         size_t to_copy;
-        to_copy = LWGSM_MIN(btw, conn->buff.len - conn->buff.ptr);
+        to_copy = LWCELL_MIN(btw, conn->buff.len - conn->buff.ptr);
         if (to_copy > 0) {
-            LWGSM_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, to_copy);
+            LWCELL_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, to_copy);
             conn->buff.ptr += to_copy;
             d += to_copy;
             btw -= to_copy;
         }
     }
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
     res = flush_buff(conn); /* Flush currently written memory if exists */
     if (btw > 0) {          /* Check for remaining data */
         res = conn_send(conn, NULL, 0, d, btw, bw, 0, blocking);
@@ -312,58 +312,58 @@ lwgsm_conn_send(lwgsm_conn_p conn, const void* data, size_t btw, size_t* const b
  *
  * \param[in]       conn: Connection handle
  * \param[in]       pbuf: Packet buffer received on connection
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_conn_recved(lwgsm_conn_p conn, lwgsm_pbuf_p pbuf) {
-    LWGSM_UNUSED(conn);
-    LWGSM_UNUSED(pbuf);
-    return lwgsmOK;
+lwcellr_t
+lwcell_conn_recved(lwcell_conn_p conn, lwcell_pbuf_p pbuf) {
+    LWCELL_UNUSED(conn);
+    LWCELL_UNUSED(pbuf);
+    return lwcellOK;
 }
 
 /**
  * \brief           Set argument variable for connection
  * \param[in]       conn: Connection handle to set argument
  * \param[in]       arg: Pointer to argument
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
- * \sa              lwgsm_conn_get_arg
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
+ * \sa              lwcell_conn_get_arg
  */
-lwgsmr_t
-lwgsm_conn_set_arg(lwgsm_conn_p conn, void* const arg) {
-    lwgsm_core_lock();
+lwcellr_t
+lwcell_conn_set_arg(lwcell_conn_p conn, void* const arg) {
+    lwcell_core_lock();
     conn->arg = arg; /* Set argument for connection */
-    lwgsm_core_unlock();
-    return lwgsmOK;
+    lwcell_core_unlock();
+    return lwcellOK;
 }
 
 /**
  * \brief           Get user defined connection argument
  * \param[in]       conn: Connection handle to get argument
  * \return          User argument
- * \sa              lwgsm_conn_set_arg
+ * \sa              lwcell_conn_set_arg
  */
 void*
-lwgsm_conn_get_arg(lwgsm_conn_p conn) {
+lwcell_conn_get_arg(lwcell_conn_p conn) {
     void* arg;
-    lwgsm_core_lock();
+    lwcell_core_lock();
     arg = conn->arg; /* Set argument for connection */
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
     return arg;
 }
 
 /**
  * \brief           Gets connections status
  * \param[in]       blocking: Status whether command should be blocking or not
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_get_conns_status(const uint32_t blocking) {
-    LWGSM_MSG_VAR_DEFINE(msg);
+lwcellr_t
+lwcell_get_conns_status(const uint32_t blocking) {
+    LWCELL_MSG_VAR_DEFINE(msg);
 
-    LWGSM_MSG_VAR_ALLOC(msg, blocking);
-    LWGSM_MSG_VAR_REF(msg).cmd_def = LWGSM_CMD_CIPSTATUS;
+    LWCELL_MSG_VAR_ALLOC(msg, blocking);
+    LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CIPSTATUS;
 
-    return lwgsmi_send_msg_to_producer_mbox(&LWGSM_MSG_VAR_REF(msg), lwgsmi_initiate_cmd, 1000);
+    return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 1000);
 }
 
 /**
@@ -372,12 +372,12 @@ lwgsm_get_conns_status(const uint32_t blocking) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_conn_is_client(lwgsm_conn_p conn) {
+lwcell_conn_is_client(lwcell_conn_p conn) {
     uint8_t res = 0;
-    if (conn != NULL && lwgsmi_is_valid_conn_ptr(conn)) {
-        lwgsm_core_lock();
+    if (conn != NULL && lwcelli_is_valid_conn_ptr(conn)) {
+        lwcell_core_lock();
         res = conn->status.f.active && conn->status.f.client;
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
     return res;
 }
@@ -388,12 +388,12 @@ lwgsm_conn_is_client(lwgsm_conn_p conn) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_conn_is_active(lwgsm_conn_p conn) {
+lwcell_conn_is_active(lwcell_conn_p conn) {
     uint8_t res = 0;
-    if (conn != NULL && lwgsmi_is_valid_conn_ptr(conn)) {
-        lwgsm_core_lock();
+    if (conn != NULL && lwcelli_is_valid_conn_ptr(conn)) {
+        lwcell_core_lock();
         res = conn->status.f.active;
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
     return res;
 }
@@ -404,12 +404,12 @@ lwgsm_conn_is_active(lwgsm_conn_p conn) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_conn_is_closed(lwgsm_conn_p conn) {
+lwcell_conn_is_closed(lwcell_conn_p conn) {
     uint8_t res = 0;
-    if (conn != NULL && lwgsmi_is_valid_conn_ptr(conn)) {
-        lwgsm_core_lock();
+    if (conn != NULL && lwcelli_is_valid_conn_ptr(conn)) {
+        lwcell_core_lock();
         res = !conn->status.f.active;
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
     return res;
 }
@@ -420,9 +420,9 @@ lwgsm_conn_is_closed(lwgsm_conn_p conn) {
  * \return          Connection number in case of success or -1 on failure
  */
 int8_t
-lwgsm_conn_getnum(lwgsm_conn_p conn) {
+lwcell_conn_getnum(lwcell_conn_p conn) {
     int8_t res = -1;
-    if (conn != NULL && lwgsmi_is_valid_conn_ptr(conn)) {
+    if (conn != NULL && lwcelli_is_valid_conn_ptr(conn)) {
         /* Protection not needed as every connection has always the same number */
         res = conn->num; /* Get number */
     }
@@ -434,14 +434,14 @@ lwgsm_conn_getnum(lwgsm_conn_p conn) {
  * \param[in]       evt: Event which happened for connection
  * \return          Connection pointer on success, `NULL` otherwise
  */
-lwgsm_conn_p
-lwgsm_conn_get_from_evt(lwgsm_evt_t* evt) {
+lwcell_conn_p
+lwcell_conn_get_from_evt(lwcell_evt_t* evt) {
     switch (evt->type) {
-        case LWGSM_EVT_CONN_ACTIVE: return lwgsm_evt_conn_active_get_conn(evt);
-        case LWGSM_EVT_CONN_CLOSE: return lwgsm_evt_conn_close_get_conn(evt);
-        case LWGSM_EVT_CONN_RECV: return lwgsm_evt_conn_recv_get_conn(evt);
-        case LWGSM_EVT_CONN_SEND: return lwgsm_evt_conn_send_get_conn(evt);
-        case LWGSM_EVT_CONN_POLL: return lwgsm_evt_conn_poll_get_conn(evt);
+        case LWCELL_EVT_CONN_ACTIVE: return lwcell_evt_conn_active_get_conn(evt);
+        case LWCELL_EVT_CONN_CLOSE: return lwcell_evt_conn_close_get_conn(evt);
+        case LWCELL_EVT_CONN_RECV: return lwcell_evt_conn_recv_get_conn(evt);
+        case LWCELL_EVT_CONN_SEND: return lwcell_evt_conn_send_get_conn(evt);
+        case LWCELL_EVT_CONN_POLL: return lwcell_evt_conn_poll_get_conn(evt);
         default: return NULL;
     }
 }
@@ -455,16 +455,16 @@ lwgsm_conn_get_from_evt(lwgsm_evt_t* evt) {
  * \param[in]       flush: Flush flag. Set to `1` if you want to send data immediately after copying
  * \param[out]      mem_available: Available memory size in current write buffer.
  *                  When the buffer length is reached, current one is sent and a new one is automatically created.
- *                  If function returns \ref lwgsmOK and `*mem_available = 0`, there was a problem
+ *                  If function returns \ref lwcellOK and `*mem_available = 0`, there was a problem
  *                  allocating a new buffer for next operation
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available) {
+lwcellr_t
+lwcell_conn_write(lwcell_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available) {
     size_t len;
     const uint8_t* d = data;
 
-    LWGSM_ASSERT(conn != NULL);
+    LWCELL_ASSERT(conn != NULL);
 
     /*
      * Steps during write process:
@@ -481,8 +481,8 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
 
     /* Step 1 */
     if (conn->buff.buff != NULL) {
-        len = LWGSM_MIN(conn->buff.len - conn->buff.ptr, btw);
-        LWGSM_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, len);
+        len = LWCELL_MIN(conn->buff.len - conn->buff.ptr, btw);
+        LWCELL_MEMCPY(&conn->buff.buff[conn->buff.ptr], d, len);
 
         d += len;
         btw -= len;
@@ -491,52 +491,52 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
         /* Step 1.1 */
         if (conn->buff.ptr == conn->buff.len || flush) {
             /* Try to send to processing queue in non-blocking way */
-            if (conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0) != lwgsmOK) {
-                LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Free write buffer: %p\r\n",
+            if (conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0) != lwcellOK) {
+                LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer: %p\r\n",
                              conn->buff.buff);
-                lwgsm_mem_free_s((void**)&conn->buff.buff);
+                lwcell_mem_free_s((void**)&conn->buff.buff);
             }
             conn->buff.buff = NULL;
         }
     }
 
     /* Step 2 */
-    while (btw >= LWGSM_CFG_CONN_MAX_DATA_LEN) {
+    while (btw >= LWCELL_CFG_CONN_MAX_DATA_LEN) {
         uint8_t* buff;
-        buff = lwgsm_mem_malloc(sizeof(*buff) * LWGSM_CFG_CONN_MAX_DATA_LEN);
+        buff = lwcell_mem_malloc(sizeof(*buff) * LWCELL_CFG_CONN_MAX_DATA_LEN);
         if (buff != NULL) {
-            LWGSM_MEMCPY(buff, d, LWGSM_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
-            if (conn_send(conn, NULL, 0, buff, LWGSM_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != lwgsmOK) {
-                LWGSM_DEBUGF(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, "[LWGSM CONN] Free write buffer: %p\r\n",
+            LWCELL_MEMCPY(buff, d, LWCELL_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
+            if (conn_send(conn, NULL, 0, buff, LWCELL_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != lwcellOK) {
+                LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer: %p\r\n",
                              (void*)buff);
-                lwgsm_mem_free_s((void**)&buff);
-                return lwgsmERRMEM;
+                lwcell_mem_free_s((void**)&buff);
+                return lwcellERRMEM;
             }
         } else {
-            return lwgsmERRMEM;
+            return lwcellERRMEM;
         }
 
-        btw -= LWGSM_CFG_CONN_MAX_DATA_LEN; /* Decrease remaining length */
-        d += LWGSM_CFG_CONN_MAX_DATA_LEN;   /* Advance data pointer */
+        btw -= LWCELL_CFG_CONN_MAX_DATA_LEN; /* Decrease remaining length */
+        d += LWCELL_CFG_CONN_MAX_DATA_LEN;   /* Advance data pointer */
     }
 
     /* Step 3 */
     if (conn->buff.buff == NULL) {
-        conn->buff.buff = lwgsm_mem_malloc(sizeof(*conn->buff.buff) * LWGSM_CFG_CONN_MAX_DATA_LEN);
-        conn->buff.len = LWGSM_CFG_CONN_MAX_DATA_LEN;
+        conn->buff.buff = lwcell_mem_malloc(sizeof(*conn->buff.buff) * LWCELL_CFG_CONN_MAX_DATA_LEN);
+        conn->buff.len = LWCELL_CFG_CONN_MAX_DATA_LEN;
         conn->buff.ptr = 0;
 
-        LWGSM_DEBUGW(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, conn->buff.buff != NULL,
-                     "[LWGSM CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
-        LWGSM_DEBUGW(LWGSM_CFG_DBG_CONN | LWGSM_DBG_TYPE_TRACE, conn->buff.buff == NULL,
-                     "[LWGSM CONN] Cannot allocate new write buffer\r\n");
+        LWCELL_DEBUGW(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, conn->buff.buff != NULL,
+                     "[LWCELL CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
+        LWCELL_DEBUGW(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, conn->buff.buff == NULL,
+                     "[LWCELL CONN] Cannot allocate new write buffer\r\n");
     }
     if (btw > 0) {
         if (conn->buff.buff != NULL) {
-            LWGSM_MEMCPY(conn->buff.buff, d, btw); /* Copy data to memory */
+            LWCELL_MEMCPY(conn->buff.buff, d, btw); /* Copy data to memory */
             conn->buff.ptr = btw;
         } else {
-            return lwgsmERRMEM;
+            return lwcellERRMEM;
         }
     }
 
@@ -553,7 +553,7 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
             *mem_available = 0;
         }
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**
@@ -562,14 +562,14 @@ lwgsm_conn_write(lwgsm_conn_p conn, const void* data, size_t btw, uint8_t flush,
  * \return          Count of received bytes on connection
  */
 size_t
-lwgsm_conn_get_total_recved_count(lwgsm_conn_p conn) {
+lwcell_conn_get_total_recved_count(lwcell_conn_p conn) {
     size_t tot;
 
-    LWGSM_ASSERT(conn != NULL);
+    LWCELL_ASSERT(conn != NULL);
 
-    lwgsm_core_lock();
+    lwcell_core_lock();
     tot = conn->total_recved; /* Get total received bytes */
-    lwgsm_core_unlock();
+    lwcell_core_unlock();
 
     return tot;
 }
@@ -581,11 +581,11 @@ lwgsm_conn_get_total_recved_count(lwgsm_conn_p conn) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwgsm_conn_get_remote_ip(lwgsm_conn_p conn, lwgsm_ip_t* ip) {
+lwcell_conn_get_remote_ip(lwcell_conn_p conn, lwcell_ip_t* ip) {
     if (conn != NULL && ip != NULL) {
-        lwgsm_core_lock();
-        LWGSM_MEMCPY(ip, &conn->remote_ip, sizeof(*ip)); /* Copy data */
-        lwgsm_core_unlock();
+        lwcell_core_lock();
+        LWCELL_MEMCPY(ip, &conn->remote_ip, sizeof(*ip)); /* Copy data */
+        lwcell_core_unlock();
         return 1;
     }
     return 0;
@@ -596,13 +596,13 @@ lwgsm_conn_get_remote_ip(lwgsm_conn_p conn, lwgsm_ip_t* ip) {
  * \param[in]       conn: Connection handle
  * \return          Port number on success, `0` otherwise
  */
-lwgsm_port_t
-lwgsm_conn_get_remote_port(lwgsm_conn_p conn) {
-    lwgsm_port_t port = 0;
+lwcell_port_t
+lwcell_conn_get_remote_port(lwcell_conn_p conn) {
+    lwcell_port_t port = 0;
     if (conn != NULL) {
-        lwgsm_core_lock();
+        lwcell_core_lock();
         port = conn->remote_port;
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
     return port;
 }
@@ -612,15 +612,15 @@ lwgsm_conn_get_remote_port(lwgsm_conn_p conn) {
  * \param[in]       conn: Connection handle
  * \return          Port number on success, `0` otherwise
  */
-lwgsm_port_t
-lwgsm_conn_get_local_port(lwgsm_conn_p conn) {
-    lwgsm_port_t port = 0;
+lwcell_port_t
+lwcell_conn_get_local_port(lwcell_conn_p conn) {
+    lwcell_port_t port = 0;
     if (conn != NULL) {
-        lwgsm_core_lock();
+        lwcell_core_lock();
         port = conn->local_port;
-        lwgsm_core_unlock();
+        lwcell_core_unlock();
     }
     return port;
 }
 
-#endif /* LWGSM_CFG_CONN || __DOXYGEN__ */
+#endif /* LWCELL_CFG_CONN || __DOXYGEN__ */

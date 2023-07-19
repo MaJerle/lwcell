@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ll_win32.c
+ * \file            lwcell_ll_win32.c
  * \brief           Low-level communication with GSM device for WIN32
  */
 
@@ -26,17 +26,17 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#include "lwgsm/lwgsm_input.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_types.h"
-#include "lwgsm/lwgsm_utils.h"
-#include "system/lwgsm_ll.h"
-#include "system/lwgsm_sys.h"
+#include "lwcell/lwcell_input.h"
+#include "lwcell/lwcell_mem.h"
+#include "lwcell/lwcell_types.h"
+#include "lwcell/lwcell_utils.h"
+#include "system/lwcell_ll.h"
+#include "system/lwcell_sys.h"
 #include "windows.h"
 
 #if !__DOXYGEN__
@@ -58,7 +58,7 @@ static size_t
 send_data(const void* data, size_t len) {
     DWORD written;
     if (com_port != NULL) {
-#if !LWGSM_CFG_AT_ECHO
+#if !LWCELL_CFG_AT_ECHO
         const uint8_t* d = data;
         HANDLE hConsole;
 
@@ -68,7 +68,7 @@ send_data(const void* data, size_t len) {
             printf("%c", d[i]);
         }
         SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-#endif /* !LWGSM_CFG_AT_ECHO */
+#endif /* !LWCELL_CFG_AT_ECHO */
 
         /* Write data to AT port */
         WriteFile(com_port, data, len, &written, NULL);
@@ -135,7 +135,7 @@ configure_uart(uint32_t baudrate) {
 
     /* On first function call, create a thread to read data from COM port */
     if (!initialized) {
-        lwgsm_sys_thread_create(&thread_handle, "lwgsm_ll_thread", uart_thread, NULL, 0, 0);
+        lwcell_sys_thread_create(&thread_handle, "lwcell_ll_thread", uart_thread, NULL, 0, 0);
     }
     return 1;
 }
@@ -146,15 +146,15 @@ configure_uart(uint32_t baudrate) {
 static void
 uart_thread(void* param) {
     DWORD bytes_read;
-    lwgsm_sys_sem_t sem;
+    lwcell_sys_sem_t sem;
     FILE* file = NULL;
 
-    LWGSM_UNUSED(param);
+    LWCELL_UNUSED(param);
 
-    lwgsm_sys_sem_create(&sem, 0); /* Create semaphore for delay functions */
+    lwcell_sys_sem_create(&sem, 0); /* Create semaphore for delay functions */
 
     while (com_port == NULL) {
-        lwgsm_sys_sem_wait(&sem, 1); /* Add some delay with yield */
+        lwcell_sys_sem_wait(&sem, 1); /* Add some delay with yield */
     }
 
     fopen_s(&file, "log_file.txt", "w+"); /* Open debug file in write mode */
@@ -175,11 +175,11 @@ uart_thread(void* param) {
                 SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
                 /* Send received data to input processing module */
-#if LWGSM_CFG_INPUT_USE_PROCESS
-                lwgsm_input_process(data_buffer, (size_t)bytes_read);
-#else  /* LWGSM_CFG_INPUT_USE_PROCESS */
-                lwgsm_input(data_buffer, (size_t)bytes_read);
-#endif /* !LWGSM_CFG_INPUT_USE_PROCESS */
+#if LWCELL_CFG_INPUT_USE_PROCESS
+                lwcell_input_process(data_buffer, (size_t)bytes_read);
+#else  /* LWCELL_CFG_INPUT_USE_PROCESS */
+                lwcell_input(data_buffer, (size_t)bytes_read);
+#endif /* !LWCELL_CFG_INPUT_USE_PROCESS */
 
                 /* Write received data to output debug file */
                 if (file != NULL) {
@@ -190,7 +190,7 @@ uart_thread(void* param) {
         } while (bytes_read == (DWORD)sizeof(data_buffer));
 
         /* Implement delay to allow other tasks processing */
-        lwgsm_sys_sem_wait(&sem, 1);
+        lwcell_sys_sem_wait(&sem, 1);
     }
 }
 
@@ -201,14 +201,14 @@ uart_thread(void* param) {
  *                  It is important that every configuration except AT baudrate is configured only once!
  *
  * \note            This function may be called from different threads in GSM stack when using OS.
- *                  When \ref LWGSM_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
+ *                  When \ref LWCELL_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
  *
- * \param[in,out]   ll: Pointer to \ref lwgsm_ll_t structure to fill data for communication functions
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t enumeration otherwise
+ * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
-lwgsmr_t
-lwgsm_ll_init(lwgsm_ll_t* ll) {
-#if !LWGSM_CFG_MEM_CUSTOM
+lwcellr_t
+lwcell_ll_init(lwcell_ll_t* ll) {
+#if !LWCELL_CFG_MEM_CUSTOM
     /* Step 1: Configure memory for dynamic allocations */
     static uint8_t memory[0x10000]; /* Create memory for dynamic allocations with specific size */
 
@@ -217,12 +217,12 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
      * If device has internal/external memory available,
      * multiple memories may be used
      */
-    lwgsm_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
+    lwcell_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
     if (!initialized) {
-        lwgsm_mem_assignmemory(mem_regions,
-                               LWGSM_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
+        lwcell_mem_assignmemory(mem_regions,
+                               LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
     }
-#endif /* !LWGSM_CFG_MEM_CUSTOM */
+#endif /* !LWCELL_CFG_MEM_CUSTOM */
 
     /* Step 2: Set AT port send function to use when we have data to transmit */
     if (!initialized) {
@@ -231,10 +231,10 @@ lwgsm_ll_init(lwgsm_ll_t* ll) {
 
     /* Step 3: Configure AT port to be able to send/receive data to/from GSM device */
     if (!configure_uart(ll->uart.baudrate)) { /* Initialize UART for communication */
-        return lwgsmERR;
+        return lwcellERR;
     }
     initialized = 1;
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 #endif /* !__DOXYGEN__ */

@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_call.h
+ * \file            lwcell_call.h
  * \brief           Call API
  */
 
@@ -26,34 +26,34 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_CALL_HDR_H
-#define LWGSM_CALL_HDR_H
+#ifndef LWCELL_CALL_HDR_H
+#define LWCELL_CALL_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_CALL Call API
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_CALL Call API
  * \brief           Call manager
  * \{
  */
 
-lwgsmr_t lwgsm_call_enable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_call_disable(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_call_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_call_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-lwgsmr_t lwgsm_call_start(const char* number, const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg,
+lwcellr_t lwcell_call_start(const char* number, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                           const uint32_t blocking);
-lwgsmr_t lwgsm_call_answer(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwgsmr_t lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_call_answer(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_call_hangup(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}
@@ -63,4 +63,4 @@ lwgsmr_t lwgsm_call_hangup(const lwgsm_api_cmd_evt_fn evt_fn, void* const evt_ar
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_CALL_HDR_H */
+#endif /* LWCELL_CALL_HDR_H */

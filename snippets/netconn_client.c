@@ -1,8 +1,8 @@
 #include "netconn_client.h"
-#include "lwgsm/lwgsm.h"
-#include "lwgsm/lwgsm_network_api.h"
+#include "lwcell/lwcell.h"
+#include "lwcell/lwcell_network_api.h"
 
-#if LWGSM_CFG_NETCONN
+#if LWCELL_CFG_NETCONN
 
 /**
  * \brief           Host and port settings
@@ -25,14 +25,14 @@ static const char request_header[] = ""
  */
 void
 netconn_client_thread(void const* arg) {
-    lwgsmr_t res;
-    lwgsm_pbuf_p pbuf;
-    lwgsm_netconn_p client;
-    lwgsm_sys_sem_t* sem = (void*)arg;
+    lwcellr_t res;
+    lwcell_pbuf_p pbuf;
+    lwcell_netconn_p client;
+    lwcell_sys_sem_t* sem = (void*)arg;
 
     /* Request attach to network */
-    while (lwgsm_network_request_attach() != lwgsmOK) {
-        lwgsm_delay(1000);
+    while (lwcell_network_request_attach() != lwcellOK) {
+        lwcell_delay(1000);
     }
 
     /*
@@ -40,21 +40,21 @@ netconn_client_thread(void const* arg) {
      * connection and initialize system message boxes
      * to accept received packet buffers
      */
-    if ((client = lwgsm_netconn_new(LWGSM_NETCONN_TYPE_TCP)) != NULL) {
+    if ((client = lwcell_netconn_new(LWCELL_NETCONN_TYPE_TCP)) != NULL) {
         /*
          * Connect to external server as client
          * with custom NETCONN_CONN_HOST and CONN_PORT values
          *
          * Function will block thread until we are successfully connected (or not) to server
          */
-        if ((res = lwgsm_netconn_connect(client, NETCONN_HOST, NETCONN_PORT)) == lwgsmOK) {
+        if ((res = lwcell_netconn_connect(client, NETCONN_HOST, NETCONN_PORT)) == lwcellOK) {
             printf("Connected to %s\r\n", NETCONN_HOST);
 
             /* Send data to server */
-            if ((res = lwgsm_netconn_write(client, request_header, sizeof(request_header) - 1)) == lwgsmOK) {
-                res = lwgsm_netconn_flush(client); /* Flush data to output */
+            if ((res = lwcell_netconn_write(client, request_header, sizeof(request_header) - 1)) == lwcellOK) {
+                res = lwcell_netconn_flush(client); /* Flush data to output */
             }
-            if (res == lwgsmOK) { /* Were data sent? */
+            if (res == lwcellOK) { /* Were data sent? */
                 printf("Data were successfully sent to server\r\n");
 
                 /*
@@ -73,17 +73,17 @@ netconn_client_thread(void const* arg) {
                      * Returned status will give you info in case connection
                      * was closed too early from remote side
                      */
-                    res = lwgsm_netconn_receive(client, &pbuf);
+                    res = lwcell_netconn_receive(client, &pbuf);
                     if (res
-                        == lwgsmCLOSED) { /* Was the connection closed? This can be checked by return status of receive function */
+                        == lwcellCLOSED) { /* Was the connection closed? This can be checked by return status of receive function */
                         printf("Connection closed by remote side...\r\n");
                         break;
-                    } else if (res == lwgsmTIMEOUT) {
+                    } else if (res == lwcellTIMEOUT) {
                         printf("Netconn timeout while receiving data. You may try multiple readings before deciding to "
                                "close manually\r\n");
                     }
 
-                    if (res == lwgsmOK && pbuf != NULL) { /* Make sure we have valid packet buffer */
+                    if (res == lwcellOK && pbuf != NULL) { /* Make sure we have valid packet buffer */
                         /*
                          * At this point read and manipulate
                          * with received buffer and check if you expect more data
@@ -91,8 +91,8 @@ netconn_client_thread(void const* arg) {
                          * After you are done using it, it is important
                          * you free the memory otherwise memory leaks will appear
                          */
-                        printf("Received new data packet of %d bytes\r\n", (int)lwgsm_pbuf_length(pbuf, 1));
-                        lwgsm_pbuf_free_s(&pbuf); /* Free the memory after usage */
+                        printf("Received new data packet of %d bytes\r\n", (int)lwcell_pbuf_length(pbuf, 1));
+                        lwcell_pbuf_free_s(&pbuf); /* Free the memory after usage */
                     }
                 } while (1);
             } else {
@@ -103,20 +103,20 @@ netconn_client_thread(void const* arg) {
              * Check if connection was closed by remote server
              * and in case it wasn't, close it manually
              */
-            if (res != lwgsmCLOSED) {
-                lwgsm_netconn_close(client);
+            if (res != lwcellCLOSED) {
+                lwcell_netconn_close(client);
             }
         } else {
             printf("Cannot connect to remote host %s:%d!\r\n", NETCONN_HOST, NETCONN_PORT);
         }
-        lwgsm_netconn_delete(client); /* Delete netconn structure */
+        lwcell_netconn_delete(client); /* Delete netconn structure */
     }
-    lwgsm_network_request_detach(); /* Detach from network */
+    lwcell_network_request_detach(); /* Detach from network */
 
-    if (lwgsm_sys_sem_isvalid(sem)) {
-        lwgsm_sys_sem_release(sem);
+    if (lwcell_sys_sem_isvalid(sem)) {
+        lwcell_sys_sem_release(sem);
     }
-    lwgsm_sys_thread_terminate(NULL); /* Terminate current thread */
+    lwcell_sys_thread_terminate(NULL); /* Terminate current thread */
 }
 
-#endif /* LWGSM_CFG_NETCONN */
+#endif /* LWCELL_CFG_NETCONN */

@@ -1,12 +1,12 @@
-lwgsm_pbuf_p a, b;
+lwcell_pbuf_p a, b;
 
 /* Create 2 pbufs of different sizes */
-a = lwgsm_pbuf_new(10);
-b = lwgsm_pbuf_new(20);
+a = lwcell_pbuf_new(10);
+b = lwcell_pbuf_new(20);
 
 /* Link them together with concat operation */
 /* Reference on b will stay as is, won't be increased */
-lwgsm_pbuf_cat(a, b);
+lwcell_pbuf_cat(a, b);
 
 /*
  * Operating with b variable has from now on undefined behavior,
@@ -20,4 +20,4 @@ b = NULL;
  * When application doesn't need pbufs anymore,
  * free a and it will also free b
  */
-lwgsm_pbuf_free(a);
+lwcell_pbuf_free(a);

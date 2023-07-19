@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_netconn.h
+ * \file            lwcell_netconn.h
  * \brief           API functions for sequential calls
  */
 
@@ -26,69 +26,69 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_NETCONN_HDR_H
-#define LWGSM_NETCONN_HDR_H
+#ifndef LWCELL_NETCONN_HDR_H
+#define LWCELL_NETCONN_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM_API
- * \defgroup        LWGSM_NETCONN Network connection
+ * \ingroup         LWCELL_API
+ * \defgroup        LWCELL_NETCONN Network connection
  * \brief           Network connection
  * \{
  */
 
-struct lwgsm_netconn;
+struct lwcell_netconn;
 
 /**
  * \brief           Netconn object structure
  */
-typedef struct lwgsm_netconn* lwgsm_netconn_p;
+typedef struct lwcell_netconn* lwcell_netconn_p;
 
 /**
  * \brief           Receive data with no timeout
- * \note            Used with \ref lwgsm_netconn_set_receive_timeout function
+ * \note            Used with \ref lwcell_netconn_set_receive_timeout function
  */
-#define LWGSM_NETCONN_RECEIVE_NO_WAIT 0xFFFFFFFF
+#define LWCELL_NETCONN_RECEIVE_NO_WAIT 0xFFFFFFFF
 
-/* Immediate flush for TCP write. Used with \ref lwgsm_netconn_write_ex*/
-#define LWGSM_NETCONN_FLAG_FLUSH      ((uint16_t)0x0001) /*!< Immediate flush after netconn write */
+/* Immediate flush for TCP write. Used with \ref lwcell_netconn_write_ex*/
+#define LWCELL_NETCONN_FLAG_FLUSH      ((uint16_t)0x0001) /*!< Immediate flush after netconn write */
 
 /**
  * \brief           Netconn connection type
  */
 typedef enum {
-    LWGSM_NETCONN_TYPE_TCP = LWGSM_CONN_TYPE_TCP, /*!< TCP connection */
-    LWGSM_NETCONN_TYPE_UDP = LWGSM_CONN_TYPE_UDP, /*!< UDP connection */
-    LWGSM_NETCONN_TYPE_SSL = LWGSM_CONN_TYPE_SSL, /*!< TCP connection over SSL */
-} lwgsm_netconn_type_t;
+    LWCELL_NETCONN_TYPE_TCP = LWCELL_CONN_TYPE_TCP, /*!< TCP connection */
+    LWCELL_NETCONN_TYPE_UDP = LWCELL_CONN_TYPE_UDP, /*!< UDP connection */
+    LWCELL_NETCONN_TYPE_SSL = LWCELL_CONN_TYPE_SSL, /*!< TCP connection over SSL */
+} lwcell_netconn_type_t;
 
-lwgsm_netconn_p lwgsm_netconn_new(lwgsm_netconn_type_t type);
-lwgsmr_t lwgsm_netconn_delete(lwgsm_netconn_p nc);
-lwgsmr_t lwgsm_netconn_connect(lwgsm_netconn_p nc, const char* host, lwgsm_port_t port);
-lwgsmr_t lwgsm_netconn_receive(lwgsm_netconn_p nc, lwgsm_pbuf_p* pbuf);
-lwgsmr_t lwgsm_netconn_close(lwgsm_netconn_p nc);
-int8_t lwgsm_netconn_getconnnum(lwgsm_netconn_p nc);
-void lwgsm_netconn_set_receive_timeout(lwgsm_netconn_p nc, uint32_t timeout);
-uint32_t lwgsm_netconn_get_receive_timeout(lwgsm_netconn_p nc);
+lwcell_netconn_p lwcell_netconn_new(lwcell_netconn_type_t type);
+lwcellr_t lwcell_netconn_delete(lwcell_netconn_p nc);
+lwcellr_t lwcell_netconn_connect(lwcell_netconn_p nc, const char* host, lwcell_port_t port);
+lwcellr_t lwcell_netconn_receive(lwcell_netconn_p nc, lwcell_pbuf_p* pbuf);
+lwcellr_t lwcell_netconn_close(lwcell_netconn_p nc);
+int8_t lwcell_netconn_getconnnum(lwcell_netconn_p nc);
+void lwcell_netconn_set_receive_timeout(lwcell_netconn_p nc, uint32_t timeout);
+uint32_t lwcell_netconn_get_receive_timeout(lwcell_netconn_p nc);
 
 /* TCP only */
-lwgsmr_t lwgsm_netconn_write(lwgsm_netconn_p nc, const void* data, size_t btw);
-lwgsmr_t lwgsm_netconn_write_ex(lwgsm_netconn_p nc, const void* data, size_t btw, uint16_t flags);
-lwgsmr_t lwgsm_netconn_flush(lwgsm_netconn_p nc);
+lwcellr_t lwcell_netconn_write(lwcell_netconn_p nc, const void* data, size_t btw);
+lwcellr_t lwcell_netconn_write_ex(lwcell_netconn_p nc, const void* data, size_t btw, uint16_t flags);
+lwcellr_t lwcell_netconn_flush(lwcell_netconn_p nc);
 
 /* UDP only */
-lwgsmr_t lwgsm_netconn_send(lwgsm_netconn_p nc, const void* data, size_t btw);
-lwgsmr_t lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_port_t port, const void* data,
+lwcellr_t lwcell_netconn_send(lwcell_netconn_p nc, const void* data, size_t btw);
+lwcellr_t lwcell_netconn_sendto(lwcell_netconn_p nc, const lwcell_ip_t* ip, lwcell_port_t port, const void* data,
                               size_t btw);
 
 /**
@@ -99,4 +99,4 @@ lwgsmr_t lwgsm_netconn_sendto(lwgsm_netconn_p nc, const lwgsm_ip_t* ip, lwgsm_po
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_NETCONN_HDR_H */
+#endif /* LWCELL_NETCONN_HDR_H */

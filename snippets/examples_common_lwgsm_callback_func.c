@@ -1,38 +1,38 @@
 #include <stdio.h>
-#include "examples_common_lwgsm_callback_func.h"
+#include "examples_common_lwcell_callback_func.h"
 #include "network_utils.h"
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 
 /**
- * \brief           Core LwGSM callback function for all examples in the repository.
+ * \brief           Core LwCELL callback function for all examples in the repository.
  * 
  * This reduces redundancy of the same code being written multiple times.
  * 
  * \param[in]       evt: Event data
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  */
-lwgsmr_t
-examples_common_lwgsm_callback_func(lwgsm_evt_t* evt) {
-    switch (lwgsm_evt_get_type(evt)) {
-        case LWGSM_EVT_INIT_FINISH: {
+lwcellr_t
+examples_common_lwcell_callback_func(lwcell_evt_t* evt) {
+    switch (lwcell_evt_get_type(evt)) {
+        case LWCELL_EVT_INIT_FINISH: {
             printf("Library initialized!\r\n");
             break;
         }
 
         /* Process and print registration change */
-        case LWGSM_EVT_NETWORK_REG_CHANGED: { 
+        case LWCELL_EVT_NETWORK_REG_CHANGED: { 
             network_utils_process_reg_change(evt);
             break;
         }
 
         /* Process current network operator */
-        case LWGSM_EVT_NETWORK_OPERATOR_CURRENT: {
+        case LWCELL_EVT_NETWORK_OPERATOR_CURRENT: {
             network_utils_process_curr_operator(evt);
             break;
         }
 
         /* Process signal strength */
-        case LWGSM_EVT_SIGNAL_STRENGTH: {
+        case LWCELL_EVT_SIGNAL_STRENGTH: {
             network_utils_process_rssi(evt);
             break;
         }
@@ -40,5 +40,5 @@ examples_common_lwgsm_callback_func(lwgsm_evt_t* evt) {
         /* Other user events here... */
         default: break;
     }
-    return lwgsmOK;
+    return lwcellOK;
 }

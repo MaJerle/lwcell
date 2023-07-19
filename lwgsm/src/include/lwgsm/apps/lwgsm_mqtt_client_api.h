@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_mqtt_client_api.h
+ * \file            lwcell_mqtt_client_api.h
  * \brief           MQTT client API
  */
 
@@ -26,24 +26,24 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_APP_MQTT_CLIENT_API_HDR_H
-#define LWGSM_APP_MQTT_CLIENT_API_HDR_H
+#ifndef LWCELL_APP_MQTT_CLIENT_API_HDR_H
+#define LWCELL_APP_MQTT_CLIENT_API_HDR_H
 
-#include "lwgsm/apps/lwgsm_mqtt_client.h"
-#include "lwgsm/lwgsm_includes.h"
+#include "lwcell/apps/lwcell_mqtt_client.h"
+#include "lwcell/lwcell_includes.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM_APPS
- * \defgroup        LWGSM_APP_MQTT_CLIENT_API MQTT client API
+ * \ingroup         LWCELL_APPS
+ * \defgroup        LWCELL_APP_MQTT_CLIENT_API MQTT client API
  * \brief           Sequential, single thread MQTT client API
  * \{
  */
@@ -51,42 +51,42 @@ extern "C" {
 /**
  * \brief           MQTT API client structure
  */
-struct lwgsm_mqtt_client_api;
+struct lwcell_mqtt_client_api;
 
 /**
  * \brief           MQTT API RX buffer
  */
-typedef struct lwgsm_mqtt_client_api_buf {
+typedef struct lwcell_mqtt_client_api_buf {
     char* topic;          /*!< Topic data */
     size_t topic_len;     /*!< Topic length */
     uint8_t* payload;     /*!< Payload data */
     size_t payload_len;   /*!< Payload length */
-    lwgsm_mqtt_qos_t qos; /*!< Quality of service */
-} lwgsm_mqtt_client_api_buf_t;
+    lwcell_mqtt_qos_t qos; /*!< Quality of service */
+} lwcell_mqtt_client_api_buf_t;
 
 /**
- * \brief           Pointer to \ref lwgsm_mqtt_client_api structure
+ * \brief           Pointer to \ref lwcell_mqtt_client_api structure
  */
-typedef struct lwgsm_mqtt_client_api* lwgsm_mqtt_client_api_p;
+typedef struct lwcell_mqtt_client_api* lwcell_mqtt_client_api_p;
 
 /**
- * \brief           Pointer to \ref lwgsm_mqtt_client_api_buf_t structure
+ * \brief           Pointer to \ref lwcell_mqtt_client_api_buf_t structure
  */
-typedef struct lwgsm_mqtt_client_api_buf* lwgsm_mqtt_client_api_buf_p;
+typedef struct lwcell_mqtt_client_api_buf* lwcell_mqtt_client_api_buf_p;
 
-lwgsm_mqtt_client_api_p lwgsm_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len);
-void lwgsm_mqtt_client_api_delete(lwgsm_mqtt_client_api_p client);
-lwgsm_mqtt_conn_status_t lwgsm_mqtt_client_api_connect(lwgsm_mqtt_client_api_p client, const char* host,
-                                                       lwgsm_port_t port, const lwgsm_mqtt_client_info_t* info);
-lwgsmr_t lwgsm_mqtt_client_api_close(lwgsm_mqtt_client_api_p client);
-lwgsmr_t lwgsm_mqtt_client_api_subscribe(lwgsm_mqtt_client_api_p client, const char* topic, lwgsm_mqtt_qos_t qos);
-lwgsmr_t lwgsm_mqtt_client_api_unsubscribe(lwgsm_mqtt_client_api_p client, const char* topic);
-lwgsmr_t lwgsm_mqtt_client_api_publish(lwgsm_mqtt_client_api_p client, const char* topic, const void* data, size_t btw,
-                                       lwgsm_mqtt_qos_t qos, uint8_t retain);
-uint8_t lwgsm_mqtt_client_api_is_connected(lwgsm_mqtt_client_api_p client);
-lwgsmr_t lwgsm_mqtt_client_api_receive(lwgsm_mqtt_client_api_p client, lwgsm_mqtt_client_api_buf_p* p,
+lwcell_mqtt_client_api_p lwcell_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len);
+void lwcell_mqtt_client_api_delete(lwcell_mqtt_client_api_p client);
+lwcell_mqtt_conn_status_t lwcell_mqtt_client_api_connect(lwcell_mqtt_client_api_p client, const char* host,
+                                                       lwcell_port_t port, const lwcell_mqtt_client_info_t* info);
+lwcellr_t lwcell_mqtt_client_api_close(lwcell_mqtt_client_api_p client);
+lwcellr_t lwcell_mqtt_client_api_subscribe(lwcell_mqtt_client_api_p client, const char* topic, lwcell_mqtt_qos_t qos);
+lwcellr_t lwcell_mqtt_client_api_unsubscribe(lwcell_mqtt_client_api_p client, const char* topic);
+lwcellr_t lwcell_mqtt_client_api_publish(lwcell_mqtt_client_api_p client, const char* topic, const void* data, size_t btw,
+                                       lwcell_mqtt_qos_t qos, uint8_t retain);
+uint8_t lwcell_mqtt_client_api_is_connected(lwcell_mqtt_client_api_p client);
+lwcellr_t lwcell_mqtt_client_api_receive(lwcell_mqtt_client_api_p client, lwcell_mqtt_client_api_buf_p* p,
                                        uint32_t timeout);
-void lwgsm_mqtt_client_api_buf_free(lwgsm_mqtt_client_api_buf_p p);
+void lwcell_mqtt_client_api_buf_free(lwcell_mqtt_client_api_buf_p p);
 
 /**
  * \}
@@ -96,4 +96,4 @@ void lwgsm_mqtt_client_api_buf_free(lwgsm_mqtt_client_api_buf_p p);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_HDR_APP_MQTT_CLIENT_H */
+#endif /* LWCELL_HDR_APP_MQTT_CLIENT_H */

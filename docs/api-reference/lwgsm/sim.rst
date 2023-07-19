@@ -1,6 +1,6 @@
-.. _api_lwgsm_sim:
+.. _api_lwcell_sim:
 
 SIM card
 ========
 
-.. doxygengroup:: LWGSM_SIM
+.. doxygengroup:: LWCELL_SIM

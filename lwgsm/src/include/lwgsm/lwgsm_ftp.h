@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_ftp.h
+ * \file            lwcell_ftp.h
  * \brief           FTP API
  */
 
@@ -26,23 +26,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_FTP_HDR_H
-#define LWGSM_FTP_HDR_H
+#ifndef LWCELL_FTP_HDR_H
+#define LWCELL_FTP_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_FTP File transfer protocol
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_FTP File transfer protocol
  * \brief           File Transfer Protocol (FTP) manager
  *
  * Currently it is under development
@@ -58,4 +58,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_FTP_HDR_H */
+#endif /* LWCELL_FTP_HDR_H */

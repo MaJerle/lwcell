@@ -1,5 +1,5 @@
 /**
- * \file            lwgsm_timeout.h
+ * \file            lwcell_timeout.h
  * \brief           Timeout manager
  */
 
@@ -26,29 +26,29 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight GSM-AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
-#ifndef LWGSM_TIMEOUT_HDR_H
-#define LWGSM_TIMEOUT_HDR_H
+#ifndef LWCELL_TIMEOUT_HDR_H
+#define LWCELL_TIMEOUT_HDR_H
 
-#include "lwgsm/lwgsm_types.h"
+#include "lwcell/lwcell_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         LWGSM
- * \defgroup        LWGSM_TIMEOUT Timeout manager
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_TIMEOUT Timeout manager
  * \brief           Timeout manager
  * \{
  */
 
-lwgsmr_t lwgsm_timeout_add(uint32_t time, lwgsm_timeout_fn fn, void* arg);
-lwgsmr_t lwgsm_timeout_remove(lwgsm_timeout_fn fn);
+lwcellr_t lwcell_timeout_add(uint32_t time, lwcell_timeout_fn fn, void* arg);
+lwcellr_t lwcell_timeout_remove(lwcell_timeout_fn fn);
 
 /**
  * \}
@@ -58,4 +58,4 @@ lwgsmr_t lwgsm_timeout_remove(lwgsm_timeout_fn fn);
 }
 #endif /* __cplusplus */
 
-#endif /* LWGSM_TIMEOUT_HDR_H */
+#endif /* LWCELL_TIMEOUT_HDR_H */
