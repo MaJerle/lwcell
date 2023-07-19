@@ -54,8 +54,8 @@ lwcell_input(const void* data, size_t len) {
     }
     lwcell_buff_write(&lwcell.buff, data, len);         /* Write data to buffer */
     lwcell_sys_mbox_putnow(&lwcell.mbox_process, NULL); /* Write empty box, don't care if write fails */
-    lwcell_recv_total_len += len;                      /* Update total number of received bytes */
-    ++lwcell_recv_calls;                               /* Update number of calls */
+    lwcell_recv_total_len += len;                       /* Update total number of received bytes */
+    ++lwcell_recv_calls;                                /* Update number of calls */
     return lwcellOK;
 }
 

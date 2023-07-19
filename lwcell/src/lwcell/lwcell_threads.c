@@ -65,7 +65,7 @@ lwcell_thread_produce(void* const arg) {
         lwcell_core_lock();
 
         res = lwcellOK; /* Start with OK */
-        e->msg = msg;  /* Set message handle */
+        e->msg = msg;   /* Set message handle */
 
         /*
          * This check is performed when adding command to queue
@@ -98,7 +98,7 @@ lwcell_thread_produce(void* const arg) {
             lwcell_core_unlock();
             lwcell_sys_sem_wait(&e->sem_sync, 0); /* First call */
             lwcell_core_lock();
-            res = msg->fn(msg);        /* Process this message, check if command started at least */
+            res = msg->fn(msg);         /* Process this message, check if command started at least */
             time = ~LWCELL_SYS_TIMEOUT; /* Reset time */
             if (res == lwcellOK) {      /* We have valid data and data were sent */
                 lwcell_core_unlock();
@@ -120,8 +120,8 @@ lwcell_thread_produce(void* const arg) {
                 LWCELL_CFG_DBG_THREAD | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_SEVERE, res == lwcellTIMEOUT,
                 "[LWCELL THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
             LWCELL_DEBUGW(LWCELL_CFG_DBG_THREAD | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_SEVERE,
-                         res != lwcellOK && res != lwcellTIMEOUT,
-                         "[LWCELL THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
+                          res != lwcellOK && res != lwcellTIMEOUT,
+                          "[LWCELL THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
 
             /*
              * Manually release semaphore in all cases:
@@ -206,7 +206,7 @@ lwcell_thread_process(void* const arg) {
             LWCELL_UNUSED(time); /* Unused variable */
         }
         lwcelli_process_buffer(); /* Process input data */
-#else                            /* LWCELL_CFG_INPUT_USE_PROCESS */
+#else                             /* LWCELL_CFG_INPUT_USE_PROCESS */
     while (1) {
         /*
          * Check for next timeout event only here
@@ -217,6 +217,6 @@ lwcell_thread_process(void* const arg) {
         time = lwcelli_get_from_mbox_with_timeout_checks(&e->mbox_process, (void**)&msg, 0);
         LWCELL_THREAD_PROCESS_HOOK(); /* Execute process thread hook */
         LWCELL_UNUSED(time);
-#endif                           /* !LWCELL_CFG_INPUT_USE_PROCESS */
+#endif                            /* !LWCELL_CFG_INPUT_USE_PROCESS */
     }
 }

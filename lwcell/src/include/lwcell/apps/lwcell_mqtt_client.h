@@ -90,8 +90,8 @@ typedef struct {
     uint16_t keep_alive; /*!< Keep-alive parameter in units of seconds.
                                                     When set to `0`, functionality is disabled (not recommended) */
 
-    const char* will_topic;    /*!< Will topic */
-    const char* will_message;  /*!< Will message */
+    const char* will_topic;     /*!< Will topic */
+    const char* will_message;   /*!< Will message */
     lwcell_mqtt_qos_t will_qos; /*!< Will topic quality of service */
 } lwcell_mqtt_client_info_t;
 
@@ -147,7 +147,7 @@ typedef struct {
     union {
         struct {
             lwcell_mqtt_conn_status_t status; /*!< Connection status with MQTT */
-        } connect;                           /*!< Event for connecting to server */
+        } connect;                            /*!< Event for connecting to server */
 
         struct {
             uint8_t is_accepted; /*!< Status if client was accepted to MQTT prior disconnect event */
@@ -155,23 +155,23 @@ typedef struct {
 
         struct {
             void* arg;       /*!< User argument for callback function */
-            lwcellr_t res;    /*!< Response status */
+            lwcellr_t res;   /*!< Response status */
         } sub_unsub_scribed; /*!< Event for (un)subscribe to/from topics */
 
         struct {
-            void* arg;    /*!< User argument for callback function */
+            void* arg;     /*!< User argument for callback function */
             lwcellr_t res; /*!< Response status */
-        } publish;        /*!< Published event */
+        } publish;         /*!< Published event */
 
         struct {
-            const uint8_t* topic; /*!< Pointer to topic identifier */
-            size_t topic_len;     /*!< Length of topic */
-            const void* payload;  /*!< Topic payload */
-            size_t payload_len;   /*!< Length of topic payload */
-            uint8_t dup;          /*!< Duplicate flag if message was sent again */
+            const uint8_t* topic;  /*!< Pointer to topic identifier */
+            size_t topic_len;      /*!< Length of topic */
+            const void* payload;   /*!< Topic payload */
+            size_t payload_len;    /*!< Length of topic payload */
+            uint8_t dup;           /*!< Duplicate flag if message was sent again */
             lwcell_mqtt_qos_t qos; /*!< Received packet quality of service */
-        } publish_recv;           /*!< Publish received event */
-    } evt;                        /*!< Event data parameters */
+        } publish_recv;            /*!< Publish received event */
+    } evt;                         /*!< Event data parameters */
 } lwcell_mqtt_evt_t;
 
 /**
@@ -185,15 +185,16 @@ lwcell_mqtt_client_p lwcell_mqtt_client_new(size_t tx_buff_len, size_t rx_buff_l
 void lwcell_mqtt_client_delete(lwcell_mqtt_client_p client);
 
 lwcellr_t lwcell_mqtt_client_connect(lwcell_mqtt_client_p client, const char* host, lwcell_port_t port,
-                                   lwcell_mqtt_evt_fn evt_fn, const lwcell_mqtt_client_info_t* info);
+                                     lwcell_mqtt_evt_fn evt_fn, const lwcell_mqtt_client_info_t* info);
 lwcellr_t lwcell_mqtt_client_disconnect(lwcell_mqtt_client_p client);
 uint8_t lwcell_mqtt_client_is_connected(lwcell_mqtt_client_p client);
 
-lwcellr_t lwcell_mqtt_client_subscribe(lwcell_mqtt_client_p client, const char* topic, lwcell_mqtt_qos_t qos, void* arg);
+lwcellr_t lwcell_mqtt_client_subscribe(lwcell_mqtt_client_p client, const char* topic, lwcell_mqtt_qos_t qos,
+                                       void* arg);
 lwcellr_t lwcell_mqtt_client_unsubscribe(lwcell_mqtt_client_p client, const char* topic, void* arg);
 
 lwcellr_t lwcell_mqtt_client_publish(lwcell_mqtt_client_p client, const char* topic, const void* payload, uint16_t len,
-                                   lwcell_mqtt_qos_t qos, uint8_t retain, void* arg);
+                                     lwcell_mqtt_qos_t qos, uint8_t retain, void* arg);
 
 void* lwcell_mqtt_client_get_arg(lwcell_mqtt_client_p client);
 void lwcell_mqtt_client_set_arg(lwcell_mqtt_client_p client, void* arg);

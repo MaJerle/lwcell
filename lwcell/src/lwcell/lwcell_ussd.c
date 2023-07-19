@@ -48,7 +48,7 @@
  */
 lwcellr_t
 lwcell_ussd_run(const char* code, char* resp, size_t resp_len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-               const uint32_t blocking) {
+                const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(code != NULL && strlen(code) > 0);

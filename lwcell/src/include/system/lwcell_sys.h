@@ -381,7 +381,7 @@ uint8_t lwcell_sys_mbox_invalid(lwcell_sys_mbox_t* b);
  * \return          `1` on success, `0` otherwise
  */
 uint8_t lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func,
-                                void* const arg, size_t stack_size, lwcell_sys_thread_prio_t prio);
+                                 void* const arg, size_t stack_size, lwcell_sys_thread_prio_t prio);
 
 /**
  * \brief           Terminate thread (shut it down and remove)

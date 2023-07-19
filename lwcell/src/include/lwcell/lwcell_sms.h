@@ -51,19 +51,19 @@ lwcellr_t lwcell_sms_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_
 lwcellr_t lwcell_sms_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 lwcellr_t lwcell_sms_send(const char* num, const char* text, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                        const uint32_t blocking);
-lwcellr_t lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t update,
-                        const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwcellr_t lwcell_sms_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
                           const uint32_t blocking);
+lwcellr_t lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t update,
+                          const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_sms_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                            const uint32_t blocking);
 lwcellr_t lwcell_sms_delete_all(lwcell_sms_status_t status, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                              const uint32_t blocking);
-lwcellr_t lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* entries, size_t etr, size_t* er,
-                        uint8_t update, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                        const uint32_t blocking);
+                                const uint32_t blocking);
+lwcellr_t lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* entries, size_t etr,
+                          size_t* er, uint8_t update, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                          const uint32_t blocking);
 lwcellr_t lwcell_sms_set_preferred_storage(lwcell_mem_t mem1, lwcell_mem_t mem2, lwcell_mem_t mem3,
-                                         const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                                         const uint32_t blocking);
+                                           const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                                           const uint32_t blocking);
 
 /**
  * \}

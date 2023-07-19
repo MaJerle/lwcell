@@ -42,12 +42,12 @@
 
 #if !__DOXYGEN__
 #define CHECK_ENABLED()                                                                                                \
-    if (!(check_enabled() == lwcellOK)) {                                                                               \
-        return lwcellERRNOTENABLED;                                                                                     \
+    if (!(check_enabled() == lwcellOK)) {                                                                              \
+        return lwcellERRNOTENABLED;                                                                                    \
     }
 #define CHECK_READY()                                                                                                  \
-    if (!(check_ready() == lwcellOK)) {                                                                                 \
-        return lwcellERR;                                                                                               \
+    if (!(check_ready() == lwcellOK)) {                                                                                \
+        return lwcellERR;                                                                                              \
     }
 #endif /* !__DOXYGEN__ */
 
@@ -144,7 +144,7 @@ lwcell_sms_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, cons
  */
 lwcellr_t
 lwcell_sms_send(const char* num, const char* text, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-               const uint32_t blocking) {
+                const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(num != NULL && num[0] > 0);
@@ -175,8 +175,8 @@ lwcell_sms_send(const char* num, const char* text, const lwcell_api_cmd_evt_fn e
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  */
 lwcellr_t
-lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t update, const lwcell_api_cmd_evt_fn evt_fn,
-               void* const evt_arg, const uint32_t blocking) {
+lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t update,
+                const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(entry != NULL);
@@ -192,7 +192,7 @@ lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t
     entry->mem = mem; /* Set memory */
     entry->pos = pos; /* Set device position */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CMGR;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_SET; /* First set memory */
@@ -217,7 +217,7 @@ lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t
  */
 lwcellr_t
 lwcell_sms_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                 const uint32_t blocking) {
+                  const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED(); /* Check if enabled */
@@ -227,7 +227,7 @@ lwcell_sms_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_
     LWCELL_MSG_VAR_ALLOC(msg, blocking);
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CMGD;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_SET; /* First set memory */
@@ -248,7 +248,7 @@ lwcell_sms_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_
  */
 lwcellr_t
 lwcell_sms_delete_all(lwcell_sms_status_t status, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                     const uint32_t blocking) {
+                      const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED(); /* Check if enabled */
@@ -279,7 +279,7 @@ lwcell_sms_delete_all(lwcell_sms_status_t status, const lwcell_api_cmd_evt_fn ev
  */
 lwcellr_t
 lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* entries, size_t etr, size_t* er,
-               uint8_t update, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                uint8_t update, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(entries != NULL);
@@ -296,7 +296,7 @@ lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* 
     }
     LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr); /* Reset data structure */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CMGL;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_SET; /* First set memory */
@@ -323,8 +323,8 @@ lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* 
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  */
 lwcellr_t
-lwcell_sms_set_preferred_storage(lwcell_mem_t mem1, lwcell_mem_t mem2, lwcell_mem_t mem3, const lwcell_api_cmd_evt_fn evt_fn,
-                                void* const evt_arg, const uint32_t blocking) {
+lwcell_sms_set_preferred_storage(lwcell_mem_t mem1, lwcell_mem_t mem2, lwcell_mem_t mem3,
+                                 const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     CHECK_ENABLED(); /* Check if enabled */

@@ -92,7 +92,7 @@ extern "C" {
  * \return          `1` on success, `0` otherwise
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_disconnect_is_accepted(client, evt)                                                      \
+#define lwcell_mqtt_client_evt_disconnect_is_accepted(client, evt)                                                     \
     ((lwcell_mqtt_conn_status_t)(evt)->evt.disconnect.is_accepted)
 
 /**
@@ -114,7 +114,7 @@ extern "C" {
  * \return          User argument
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_subscribe_get_argument(client, evt)       ((void*)(evt)->evt.sub_unsub_scribed.arg)
+#define lwcell_mqtt_client_evt_subscribe_get_argument(client, evt)     ((void*)(evt)->evt.sub_unsub_scribed.arg)
 
 /**
  * \brief           Get result of subscribe event
@@ -123,7 +123,7 @@ extern "C" {
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_subscribe_get_result(client, evt)         ((lwcellr_t)(evt)->evt.sub_unsub_scribed.res)
+#define lwcell_mqtt_client_evt_subscribe_get_result(client, evt)       ((lwcellr_t)(evt)->evt.sub_unsub_scribed.res)
 
 /**
  * \brief           Get user argument used on \ref lwcell_mqtt_client_unsubscribe
@@ -132,7 +132,7 @@ extern "C" {
  * \return          User argument
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_unsubscribe_get_argument(client, evt)     ((void*)(evt)->evt.sub_unsub_scribed.arg)
+#define lwcell_mqtt_client_evt_unsubscribe_get_argument(client, evt)   ((void*)(evt)->evt.sub_unsub_scribed.arg)
 
 /**
  * \brief           Get result of unsubscribe event
@@ -141,7 +141,7 @@ extern "C" {
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_unsubscribe_get_result(client, evt)       ((lwcellr_t)(evt)->evt.sub_unsub_scribed.res)
+#define lwcell_mqtt_client_evt_unsubscribe_get_result(client, evt)     ((lwcellr_t)(evt)->evt.sub_unsub_scribed.res)
 
 /**
  * \}
@@ -162,7 +162,7 @@ extern "C" {
  * \return          Topic name
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_publish_recv_get_topic(client, evt)       ((const void*)(evt)->evt.publish_recv.topic)
+#define lwcell_mqtt_client_evt_publish_recv_get_topic(client, evt)     ((const void*)(evt)->evt.publish_recv.topic)
 
 /**
  * \brief           Get topic length from received publish packet
@@ -171,7 +171,7 @@ extern "C" {
  * \return          Topic length
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_publish_recv_get_topic_len(client, evt)   (LWCELL_SZ((evt)->evt.publish_recv.topic_len))
+#define lwcell_mqtt_client_evt_publish_recv_get_topic_len(client, evt) (LWCELL_SZ((evt)->evt.publish_recv.topic_len))
 
 /**
  * \brief           Get payload from received publish packet
@@ -180,7 +180,7 @@ extern "C" {
  * \return          Packet payload
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_publish_recv_get_payload(client, evt)     ((const void*)(evt)->evt.publish_recv.payload)
+#define lwcell_mqtt_client_evt_publish_recv_get_payload(client, evt)   ((const void*)(evt)->evt.publish_recv.payload)
 
 /**
  * \brief           Get payload length from received publish packet
@@ -189,7 +189,8 @@ extern "C" {
  * \return          Payload length
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_publish_recv_get_payload_len(client, evt) (LWCELL_SZ((evt)->evt.publish_recv.payload_len))
+#define lwcell_mqtt_client_evt_publish_recv_get_payload_len(client, evt)                                               \
+    (LWCELL_SZ((evt)->evt.publish_recv.payload_len))
 
 /**
  * \brief           Check if packet is duplicated
@@ -198,7 +199,7 @@ extern "C" {
  * \return          `1` if duplicated, `0` otherwise
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_publish_recv_is_duplicate(client, evt)    (LWCELL_U8((evt)->evt.publish_recv.dup))
+#define lwcell_mqtt_client_evt_publish_recv_is_duplicate(client, evt) (LWCELL_U8((evt)->evt.publish_recv.dup))
 
 /**
  * \brief           Get received quality of service
@@ -207,7 +208,7 @@ extern "C" {
  * \return          Member of \ref lwcell_mqtt_qos_t enumeration
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_publish_recv_get_qos(client, evt)         ((evt)->evt.publish_recv.qos)
+#define lwcell_mqtt_client_evt_publish_recv_get_qos(client, evt)      ((evt)->evt.publish_recv.qos)
 
 /**
  * \}
@@ -228,7 +229,7 @@ extern "C" {
  * \return          User argument
  * \hideinitializer
  */
-#define lwcell_mqtt_client_evt_publish_get_argument(client, evt)         ((void*)(evt)->evt.publish.arg)
+#define lwcell_mqtt_client_evt_publish_get_argument(client, evt)      ((void*)(evt)->evt.publish.arg)
 
 /**
 * \brief           Get result of publish event
@@ -237,7 +238,7 @@ extern "C" {
 * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
 * \hideinitializer
 */
-#define lwcell_mqtt_client_evt_publish_get_result(client, evt)           ((lwcellr_t)(evt)->evt.publish.res)
+#define lwcell_mqtt_client_evt_publish_get_result(client, evt)        ((lwcellr_t)(evt)->evt.publish.res)
 
 /**
  * \}

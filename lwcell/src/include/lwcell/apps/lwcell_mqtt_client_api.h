@@ -57,10 +57,10 @@ struct lwcell_mqtt_client_api;
  * \brief           MQTT API RX buffer
  */
 typedef struct lwcell_mqtt_client_api_buf {
-    char* topic;          /*!< Topic data */
-    size_t topic_len;     /*!< Topic length */
-    uint8_t* payload;     /*!< Payload data */
-    size_t payload_len;   /*!< Payload length */
+    char* topic;           /*!< Topic data */
+    size_t topic_len;      /*!< Topic length */
+    uint8_t* payload;      /*!< Payload data */
+    size_t payload_len;    /*!< Payload length */
     lwcell_mqtt_qos_t qos; /*!< Quality of service */
 } lwcell_mqtt_client_api_buf_t;
 
@@ -77,15 +77,15 @@ typedef struct lwcell_mqtt_client_api_buf* lwcell_mqtt_client_api_buf_p;
 lwcell_mqtt_client_api_p lwcell_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len);
 void lwcell_mqtt_client_api_delete(lwcell_mqtt_client_api_p client);
 lwcell_mqtt_conn_status_t lwcell_mqtt_client_api_connect(lwcell_mqtt_client_api_p client, const char* host,
-                                                       lwcell_port_t port, const lwcell_mqtt_client_info_t* info);
+                                                         lwcell_port_t port, const lwcell_mqtt_client_info_t* info);
 lwcellr_t lwcell_mqtt_client_api_close(lwcell_mqtt_client_api_p client);
 lwcellr_t lwcell_mqtt_client_api_subscribe(lwcell_mqtt_client_api_p client, const char* topic, lwcell_mqtt_qos_t qos);
 lwcellr_t lwcell_mqtt_client_api_unsubscribe(lwcell_mqtt_client_api_p client, const char* topic);
-lwcellr_t lwcell_mqtt_client_api_publish(lwcell_mqtt_client_api_p client, const char* topic, const void* data, size_t btw,
-                                       lwcell_mqtt_qos_t qos, uint8_t retain);
+lwcellr_t lwcell_mqtt_client_api_publish(lwcell_mqtt_client_api_p client, const char* topic, const void* data,
+                                         size_t btw, lwcell_mqtt_qos_t qos, uint8_t retain);
 uint8_t lwcell_mqtt_client_api_is_connected(lwcell_mqtt_client_api_p client);
 lwcellr_t lwcell_mqtt_client_api_receive(lwcell_mqtt_client_api_p client, lwcell_mqtt_client_api_buf_p* p,
-                                       uint32_t timeout);
+                                         uint32_t timeout);
 void lwcell_mqtt_client_api_buf_free(lwcell_mqtt_client_api_buf_p p);
 
 /**

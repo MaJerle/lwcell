@@ -159,7 +159,7 @@ lwcell_ll_init(lwcell_ll_t* ll) {
     lwcell_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
     if (!initialized) {
         lwcell_mem_assignmemory(mem_regions,
-                               LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
+                                LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
     }
 #endif /* !LWCELL_CFG_MEM_CUSTOM */
 

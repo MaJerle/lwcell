@@ -154,9 +154,9 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
         if ((m) != NULL && (m)->msg.conn_send.fau) {                                                                   \
             (m)->msg.conn_send.fau = 0;                                                                                \
             if ((m)->msg.conn_send.data != NULL) {                                                                     \
-                LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer fau: %p\r\n",  \
-                             (void*)(m)->msg.conn_send.data);                                                          \
-                lwcell_mem_free_s((void**)&((m)->msg.conn_send.data));                                                  \
+                LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE,                                             \
+                              "[LWCELL CONN] Free write buffer fau: %p\r\n", (void*)(m)->msg.conn_send.data);          \
+                lwcell_mem_free_s((void**)&((m)->msg.conn_send.data));                                                 \
             }                                                                                                          \
         }                                                                                                              \
     } while (0)
@@ -169,11 +169,11 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
 #define CONN_SEND_DATA_SEND_EVT(m, err)                                                                                \
     do {                                                                                                               \
         CONN_SEND_DATA_FREE(m);                                                                                        \
-        lwcell.evt.type = LWCELL_EVT_CONN_SEND;                                                                          \
-        lwcell.evt.evt.conn_data_send.res = err;                                                                        \
-        lwcell.evt.evt.conn_data_send.conn = (m)->msg.conn_send.conn;                                                   \
-        lwcell.evt.evt.conn_data_send.sent = (m)->msg.conn_send.sent_all;                                               \
-        lwcelli_send_conn_cb((m)->msg.conn_send.conn, NULL);                                                            \
+        lwcell.evt.type = LWCELL_EVT_CONN_SEND;                                                                        \
+        lwcell.evt.evt.conn_data_send.res = err;                                                                       \
+        lwcell.evt.evt.conn_data_send.conn = (m)->msg.conn_send.conn;                                                  \
+        lwcell.evt.evt.conn_data_send.sent = (m)->msg.conn_send.sent_all;                                              \
+        lwcelli_send_conn_cb((m)->msg.conn_send.conn, NULL);                                                           \
     } while (0)
 
 /**
@@ -183,8 +183,8 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
  */
 #define RESET_SEND_EVT(m, err)                                                                                         \
     do {                                                                                                               \
-        lwcell.evt.evt.reset.res = err;                                                                                 \
-        lwcelli_send_cb(LWCELL_EVT_RESET);                                                                               \
+        lwcell.evt.evt.reset.res = err;                                                                                \
+        lwcelli_send_cb(LWCELL_EVT_RESET);                                                                             \
     } while (0)
 
 /**
@@ -194,8 +194,8 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
  */
 #define RESTORE_SEND_EVT(m, err)                                                                                       \
     do {                                                                                                               \
-        lwcell.evt.evt.restore.res = err;                                                                               \
-        lwcelli_send_cb(LWCELL_EVT_RESTORE);                                                                             \
+        lwcell.evt.evt.restore.res = err;                                                                              \
+        lwcelli_send_cb(LWCELL_EVT_RESTORE);                                                                           \
     } while (0)
 
 /**
@@ -205,10 +205,10 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
  */
 #define OPERATOR_SCAN_SEND_EVT(m, err)                                                                                 \
     do {                                                                                                               \
-        lwcell.evt.evt.operator_scan.res = err;                                                                         \
-        lwcell.evt.evt.operator_scan.ops = (m)->msg.cops_scan.ops;                                                      \
-        lwcell.evt.evt.operator_scan.opf = *(m)->msg.cops_scan.opf;                                                     \
-        lwcelli_send_cb(LWCELL_EVT_OPERATOR_SCAN);                                                                       \
+        lwcell.evt.evt.operator_scan.res = err;                                                                        \
+        lwcell.evt.evt.operator_scan.ops = (m)->msg.cops_scan.ops;                                                     \
+        lwcell.evt.evt.operator_scan.opf = *(m)->msg.cops_scan.opf;                                                    \
+        lwcelli_send_cb(LWCELL_EVT_OPERATOR_SCAN);                                                                     \
     } while (0)
 
 /**
@@ -218,10 +218,10 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
 */
 #define SMS_SEND_DELETE_EVT(m, err)                                                                                    \
     do {                                                                                                               \
-        lwcell.evt.evt.sms_delete.res = err;                                                                            \
-        lwcell.evt.evt.sms_delete.mem = (m)->msg.sms_delete.mem;                                                        \
-        lwcell.evt.evt.sms_delete.pos = (m)->msg.sms_delete.pos;                                                        \
-        lwcelli_send_cb(LWCELL_EVT_SMS_DELETE);                                                                          \
+        lwcell.evt.evt.sms_delete.res = err;                                                                           \
+        lwcell.evt.evt.sms_delete.mem = (m)->msg.sms_delete.mem;                                                       \
+        lwcell.evt.evt.sms_delete.pos = (m)->msg.sms_delete.pos;                                                       \
+        lwcelli_send_cb(LWCELL_EVT_SMS_DELETE);                                                                        \
     } while (0)
 
 /**
@@ -231,9 +231,9 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
  */
 #define SMS_SEND_READ_EVT(m, err)                                                                                      \
     do {                                                                                                               \
-        lwcell.evt.evt.sms_read.res = err;                                                                              \
-        lwcell.evt.evt.sms_read.entry = (m)->msg.sms_read.entry;                                                        \
-        lwcelli_send_cb(LWCELL_EVT_SMS_READ);                                                                            \
+        lwcell.evt.evt.sms_read.res = err;                                                                             \
+        lwcell.evt.evt.sms_read.entry = (m)->msg.sms_read.entry;                                                       \
+        lwcelli_send_cb(LWCELL_EVT_SMS_READ);                                                                          \
     } while (0)
 
 /**
@@ -243,11 +243,11 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
  */
 #define SMS_SEND_LIST_EVT(mm, err)                                                                                     \
     do {                                                                                                               \
-        lwcell.evt.evt.sms_list.mem = lwcell.m.sms.mem[0].current;                                                       \
-        lwcell.evt.evt.sms_list.entries = (mm)->msg.sms_list.entries;                                                   \
-        lwcell.evt.evt.sms_list.size = (mm)->msg.sms_list.ei;                                                           \
-        lwcell.evt.evt.sms_list.res = err;                                                                              \
-        lwcelli_send_cb(LWCELL_EVT_SMS_LIST);                                                                            \
+        lwcell.evt.evt.sms_list.mem = lwcell.m.sms.mem[0].current;                                                     \
+        lwcell.evt.evt.sms_list.entries = (mm)->msg.sms_list.entries;                                                  \
+        lwcell.evt.evt.sms_list.size = (mm)->msg.sms_list.ei;                                                          \
+        lwcell.evt.evt.sms_list.res = err;                                                                             \
+        lwcelli_send_cb(LWCELL_EVT_SMS_LIST);                                                                          \
     } while (0)
 
 /**
@@ -257,9 +257,9 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
  */
 #define SMS_SEND_SEND_EVT(m, err)                                                                                      \
     do {                                                                                                               \
-        lwcell.evt.evt.sms_send.pos = (m)->msg.sms_send.pos;                                                            \
-        lwcell.evt.evt.sms_send.res = err;                                                                              \
-        lwcelli_send_cb(LWCELL_EVT_SMS_SEND);                                                                            \
+        lwcell.evt.evt.sms_send.pos = (m)->msg.sms_send.pos;                                                           \
+        lwcell.evt.evt.sms_send.res = err;                                                                             \
+        lwcelli_send_cb(LWCELL_EVT_SMS_SEND);                                                                          \
     } while (0)
 
 /**
@@ -296,12 +296,12 @@ lwcelli_send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
     if (d == NULL) {
         return;
     }
-    AT_PORT_SEND_QUOTE_COND(q);                       /* Send quote */
-    ch = is_ip ? '.' : ':';                           /* Get delimiter character */
-    for (uint8_t i = 0; i < (is_ip ? 4 : 6); ++i) {   /* Process byte by byte */
-        if (is_ip) {                                  /* In case of IP ... */
+    AT_PORT_SEND_QUOTE_COND(q);                        /* Send quote */
+    ch = is_ip ? '.' : ':';                            /* Get delimiter character */
+    for (uint8_t i = 0; i < (is_ip ? 4 : 6); ++i) {    /* Process byte by byte */
+        if (is_ip) {                                   /* In case of IP ... */
             lwcell_u8_to_str(ip->ip[i], str);          /* ... go to decimal format ... */
-        } else {                                      /* ... in case of MAC ... */
+        } else {                                       /* ... in case of MAC ... */
             lwcell_u8_to_hex_str(mac->mac[i], str, 2); /* ... go to HEX format */
         }
         AT_PORT_SEND_STR(str);         /* Send str */
@@ -526,14 +526,15 @@ lwcelli_send_cb(lwcell_evt_type_t type) {
  */
 lwcellr_t
 lwcelli_send_conn_cb(lwcell_conn_t* conn, lwcell_evt_fn evt) {
-    if (conn->status.f.in_closing && lwcell.evt.type != LWCELL_EVT_CONN_CLOSE) { /* Do not continue if in closing mode */
+    if (conn->status.f.in_closing
+        && lwcell.evt.type != LWCELL_EVT_CONN_CLOSE) { /* Do not continue if in closing mode */
         /* return lwcellOK; */
     }
 
     if (evt != NULL) {                                   /* Try with user connection */
-        return evt(&lwcell.evt);                          /* Call temporary function */
+        return evt(&lwcell.evt);                         /* Call temporary function */
     } else if (conn != NULL && conn->evt_func != NULL) { /* Connection custom callback? */
-        return conn->evt_func(&lwcell.evt);               /* Process callback function */
+        return conn->evt_func(&lwcell.evt);              /* Process callback function */
     } else if (conn == NULL) {
         return lwcellOK;
     }
@@ -572,7 +573,7 @@ lwcelli_tcpip_process_send_data(void) {
 
     AT_PORT_SEND_BEGIN_AT();
     AT_PORT_SEND_CONST_STR("+CIPSEND=");
-    lwcelli_send_number(LWCELL_U32(c->num), 0, 0);                        /* Send connection number */
+    lwcelli_send_number(LWCELL_U32(c->num), 0, 0);                         /* Send connection number */
     lwcelli_send_number(LWCELL_U32(lwcell.msg->msg.conn_send.sent), 0, 1); /* Send length number */
 
     /* On UDP connections, IP address and port may be selected */
@@ -602,16 +603,16 @@ lwcelli_tcpip_process_data_sent(uint8_t sent) {
             *lwcell.msg->msg.conn_send.bw += lwcell.msg->msg.conn_send.sent;
         }
         lwcell.msg->msg.conn_send.tries = 0;
-    } else {                              /* We were not successful */
+    } else {                               /* We were not successful */
         ++lwcell.msg->msg.conn_send.tries; /* Increase number of tries */
         if (lwcell.msg->msg.conn_send.tries
             == LWCELL_CFG_MAX_SEND_RETRIES) { /* In case we reached max number of retransmissions */
-            return 1;                        /* Return 1 and indicate error */
+            return 1;                         /* Return 1 and indicate error */
         }
     }
-    if (lwcell.msg->msg.conn_send.btw > 0) {                /* Do we still have data to send? */
+    if (lwcell.msg->msg.conn_send.btw > 0) {                 /* Do we still have data to send? */
         if (lwcelli_tcpip_process_send_data() != lwcellOK) { /* Check if we can continue */
-            return 1;                                      /* Finish at this point */
+            return 1;                                        /* Finish at this point */
         }
         return 0; /* We still have data to send */
     }
@@ -700,7 +701,7 @@ lwcelli_conn_closed_process(uint8_t conn_num, uint8_t forced) {
     /* Check if write buffer is set */
     if (conn->buff.buff != NULL) {
         LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer: %p\r\n",
-                     conn->buff.buff);
+                      conn->buff.buff);
         lwcell_mem_free_s((void**)&conn->buff.buff);
     }
 
@@ -757,12 +758,12 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
         } else if (!strncmp(rcv->data, "+PDP: DEACT", 11)) {
             /* PDP has been deactivated */
             lwcell_network_check_status(NULL, NULL, 0); /* Update status */
-#endif                                                 /* LWCELL_CFG_NETWORK */
+#endif                                                  /* LWCELL_CFG_NETWORK */
 #if LWCELL_CFG_CONN
         } else if (!strncmp(rcv->data, "+RECEIVE", 8)) {
-            lwcelli_parse_ipd(rcv->data);                                            /* Parse IPD */
-#endif                                                                              /* LWCELL_CFG_CONN */
-        } else if (!strncmp(rcv->data, "+CREG", 5)) {                               /* Check for +CREG indication */
+            lwcelli_parse_ipd(rcv->data);                                              /* Parse IPD */
+#endif                                                                                 /* LWCELL_CFG_CONN */
+        } else if (!strncmp(rcv->data, "+CREG", 5)) {                                  /* Check for +CREG indication */
             lwcelli_parse_creg(rcv->data, LWCELL_U8(CMD_IS_CUR(LWCELL_CMD_CREG_GET))); /* Parse +CREG response */
         } else if (!strncmp(rcv->data, "+CPIN", 5)) { /* Check for +CPIN indication for SIM */
             lwcelli_parse_cpin(rcv->data, 1 /* !CMD_IS_DEF(LWCELL_CMD_CPIN_SET) */); /* Parse +CPIN response */
@@ -791,11 +792,11 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
             lwcelli_parse_cpms(rcv->data, 1); /* Parse +CPMS with SMS memories info */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPMS_SET) && !strncmp(rcv->data, "+CPMS", 5)) {
             lwcelli_parse_cpms(rcv->data, 2); /* Parse +CPMS with SMS memories info */
-#endif                                       /* LWCELL_CFG_SMS */
+#endif                                        /* LWCELL_CFG_SMS */
 #if LWCELL_CFG_CALL
         } else if (!strncmp(rcv->data, "+CLCC", 5)) {
             lwcelli_parse_clcc(rcv->data, 1); /* Parse +CLCC response with call info change */
-#endif                                       /* LWCELL_CFG_CALL */
+#endif                                        /* LWCELL_CFG_CALL */
 #if LWCELL_CFG_PHONEBOOK
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBS_GET_OPT) && !strncmp(rcv->data, "+CPBS", 5)) {
             lwcelli_parse_cpbs(rcv->data, 0); /* Parse +CPBS response */
@@ -807,7 +808,7 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
             lwcelli_parse_cpbr(rcv->data); /* Parse +CPBR statement */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
             lwcelli_parse_cpbf(rcv->data); /* Parse +CPBR statement */
-#endif                                    /* LWCELL_CFG_PHONEBOOK */
+#endif                                     /* LWCELL_CFG_PHONEBOOK */
         }
 
         /* Messages not starting with '+' sign */
@@ -836,7 +837,7 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
                 lwcelli_process_cipsend_response(rcv, &stat);
             }
             lwcelli_conn_closed_process(num, forced); /* Connection closed, process */
-#endif                                               /* LWCELL_CFG_CONN */
+#endif                                                /* LWCELL_CFG_CONN */
 #if LWCELL_CFG_CALL
         } else if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
             lwcell.m.call.ready = 1;
@@ -847,14 +848,14 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
             lwcelli_send_cb(LWCELL_EVT_CALL_NO_CARRIER); /* Send call no carrier event */
         } else if (rcv->data[0] == 'B' && !strncmp(rcv->data, "BUSY" CRLF, 4 + CRLF_LEN)) {
             lwcelli_send_cb(LWCELL_EVT_CALL_BUSY); /* Send call busy message */
-#endif                                           /* LWCELL_CFG_CALL */
+#endif                                             /* LWCELL_CFG_CALL */
 #if LWCELL_CFG_SMS
         } else if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready" CRLF, 9 + CRLF_LEN)) {
-            lwcell.m.sms.ready = 1;               /* SMS ready flag */
+            lwcell.m.sms.ready = 1;                /* SMS ready flag */
             lwcelli_send_cb(LWCELL_EVT_SMS_READY); /* Send SMS ready event */
-#endif                                           /* LWCELL_CFG_SMS */
-        } else if ((CMD_IS_CUR(LWCELL_CMD_CGMI_GET) || CMD_IS_CUR(LWCELL_CMD_CGMM_GET) || CMD_IS_CUR(LWCELL_CMD_CGSN_GET)
-                    || CMD_IS_CUR(LWCELL_CMD_CGMR_GET))
+#endif                                             /* LWCELL_CFG_SMS */
+        } else if ((CMD_IS_CUR(LWCELL_CMD_CGMI_GET) || CMD_IS_CUR(LWCELL_CMD_CGMM_GET)
+                    || CMD_IS_CUR(LWCELL_CMD_CGSN_GET) || CMD_IS_CUR(LWCELL_CMD_CGMR_GET))
                    && !stat.is_ok && !stat.is_error && strncmp(rcv->data, "AT+", 3)) {
             const char* tmp = rcv->data;
             size_t tocopy;
@@ -1015,9 +1016,9 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
         if (lwcell.msg != NULL) { /* Do we have active message? */
             res = lwcelli_process_sub_cmd(lwcell.msg, &stat);
             if (res != lwcellCONT) { /* Shall we continue with next subcommand under this one? */
-                if (stat.is_ok) {   /* Check OK status */
+                if (stat.is_ok) {    /* Check OK status */
                     res = lwcell.msg->res = lwcellOK;
-                } else {                        /* Or error status */
+                } else {                         /* Or error status */
                     res = lwcell.msg->res = res; /* Set the error status */
                 }
             } else {
@@ -1029,7 +1030,7 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
              * release synchronization semaphore
              * from user thread and start with next command
              */
-            if (res != lwcellCONT) {                     /* Do we have to continue to wait for command? */
+            if (res != lwcellCONT) {                      /* Do we have to continue to wait for command? */
                 lwcell_sys_sem_release(&lwcell.sem_sync); /* Release semaphore */
             }
         }
@@ -1102,28 +1103,29 @@ lwcelli_process(const void* data, size_t data_len) {
         } else if (lwcell.m.ipd.read) { /* Read connection data */
             size_t len;
 
-            if (lwcell.m.ipd.buff != NULL) {                           /* Do we have active buffer? */
+            if (lwcell.m.ipd.buff != NULL) {                            /* Do we have active buffer? */
                 lwcell.m.ipd.buff->payload[lwcell.m.ipd.buff_ptr] = ch; /* Save data character */
             }
             ++lwcell.m.ipd.buff_ptr;
             --lwcell.m.ipd.rem_len;
 
             /* Try to read more data directly from buffer */
-            len = LWCELL_MIN(d_len, LWCELL_MIN(lwcell.m.ipd.rem_len, lwcell.m.ipd.buff != NULL
-                                                                      ? (lwcell.m.ipd.buff->len - lwcell.m.ipd.buff_ptr)
-                                                                      : lwcell.m.ipd.rem_len));
+            len = LWCELL_MIN(d_len, LWCELL_MIN(lwcell.m.ipd.rem_len, lwcell.m.ipd.buff != NULL ? (
+                                                                         lwcell.m.ipd.buff->len - lwcell.m.ipd.buff_ptr)
+                                                                                               : lwcell.m.ipd.rem_len));
             LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] New length to read: %d bytes\r\n",
-                         (int)len);
+                          (int)len);
             if (len > 0) {
                 if (lwcell.m.ipd.buff != NULL) { /* Is buffer valid? */
                     LWCELL_MEMCPY(&lwcell.m.ipd.buff->payload[lwcell.m.ipd.buff_ptr], d, len);
-                    LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] Bytes read: %d\r\n", (int)len);
+                    LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] Bytes read: %d\r\n",
+                                  (int)len);
                 } else { /* Simply skip the data in buffer */
                     LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] Bytes skipped: %d\r\n",
-                                 (int)len);
+                                  (int)len);
                 }
-                d_len -= len;                /* Decrease effective length */
-                d += len;                    /* Skip remaining length */
+                d_len -= len;                 /* Decrease effective length */
+                d += len;                     /* Skip remaining length */
                 lwcell.m.ipd.buff_ptr += len; /* Forward buffer pointer */
                 lwcell.m.ipd.rem_len -= len;  /* Decrease remaining length */
             }
@@ -1134,8 +1136,9 @@ lwcelli_process(const void* data, size_t data_len) {
                 lwcellr_t res = lwcellOK;
 
                 /* Call user callback function with received data */
-                if (lwcell.m.ipd.buff != NULL) {                                  /* Do we have valid buffer? */
-                    lwcell.m.ipd.conn->total_recved += lwcell.m.ipd.buff->tot_len; /* Increase number of bytes received */
+                if (lwcell.m.ipd.buff != NULL) { /* Do we have valid buffer? */
+                    lwcell.m.ipd.conn->total_recved +=
+                        lwcell.m.ipd.buff->tot_len; /* Increase number of bytes received */
 
                     /*
                      * Send data buffer to upper layer
@@ -1152,7 +1155,7 @@ lwcelli_process(const void* data, size_t data_len) {
                     LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] Free packet buffer\r\n");
                     if (res == lwcellOKIGNOREMORE) { /* We should ignore more data */
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE,
-                                     "[LWCELL IPD] Ignoring more data from this IPD if available\r\n");
+                                      "[LWCELL IPD] Ignoring more data from this IPD if available\r\n");
                         lwcell.m.ipd.buff = NULL; /* Set to NULL to ignore more data if possibly available */
                     }
 
@@ -1162,19 +1165,21 @@ lwcelli_process(const void* data, size_t data_len) {
                      *  - Previous one was successful and more data to read and
                      *  - Connection is not in closing state
                      */
-                    if (lwcell.m.ipd.buff != NULL && lwcell.m.ipd.rem_len > 0 && !lwcell.m.ipd.conn->status.f.in_closing) {
+                    if (lwcell.m.ipd.buff != NULL && lwcell.m.ipd.rem_len > 0
+                        && !lwcell.m.ipd.conn->status.f.in_closing) {
                         size_t new_len = LWCELL_MIN(lwcell.m.ipd.rem_len,
-                                                   LWCELL_CFG_CONN_MAX_DATA_LEN); /* Calculate new buffer length */
+                                                    LWCELL_CFG_CONN_MAX_DATA_LEN); /* Calculate new buffer length */
 
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE,
-                                     "[LWCELL IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
+                                      "[LWCELL IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
                         do {
                             lwcell.m.ipd.buff = lwcell_pbuf_new(new_len); /* Allocate new packet buffer */
-                        } while (lwcell.m.ipd.buff == NULL && (new_len = (new_len >> 1)) >= LWCELL_CFG_CONN_MIN_DATA_LEN);
+                        } while (lwcell.m.ipd.buff == NULL
+                                 && (new_len = (new_len >> 1)) >= LWCELL_CFG_CONN_MIN_DATA_LEN);
 
                         LWCELL_DEBUGW(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_WARNING,
-                                     lwcell.m.ipd.buff == NULL, "[LWCELL IPD] Buffer allocation failed for %d bytes\r\n",
-                                     (int)new_len);
+                                      lwcell.m.ipd.buff == NULL,
+                                      "[LWCELL IPD] Buffer allocation failed for %d bytes\r\n", (int)new_len);
                     } else {
                         lwcell.m.ipd.buff = NULL; /* Reset it */
                     }
@@ -1200,7 +1205,7 @@ lwcelli_process(const void* data, size_t data_len) {
         } else if (CMD_IS_CUR(LWCELL_CMD_CMGR) && lwcell.msg->msg.sms_read.read) {
             lwcell_sms_entry_t* e = lwcell.msg->msg.sms_read.entry;
             if (lwcell.msg->msg.sms_read.read == 2) { /* Read only if set to 2 */
-                if (e != NULL) {                     /* Check if valid entry */
+                if (e != NULL) {                      /* Check if valid entry */
                     if (e->length < (sizeof(e->data) - 1)) {
                         e->data[e->length++] = ch;
                     }
@@ -1255,21 +1260,21 @@ lwcelli_process(const void* data, size_t data_len) {
             lwcellr_t res = lwcellERR;
             if (LWCELL_ISVALIDASCII(ch)) { /* Manually check if valid ASCII character */
                 res = lwcellOK;
-                unicode.t = 1;                             /* Manually set total to 1 */
-                unicode.r = 0;                             /* Reset remaining bytes */
-            } else if (ch >= 0x80) {                       /* Process only if more than ASCII can hold */
+                unicode.t = 1;                              /* Manually set total to 1 */
+                unicode.r = 0;                              /* Reset remaining bytes */
+            } else if (ch >= 0x80) {                        /* Process only if more than ASCII can hold */
                 res = lwcelli_unicode_decode(&unicode, ch); /* Try to decode unicode format */
             }
 
             if (res == lwcellERR) { /* In case of an ERROR */
                 unicode.r = 0;
             }
-            if (res == lwcellOK) {     /* Can we process the character(s) */
+            if (res == lwcellOK) {    /* Can we process the character(s) */
                 if (unicode.t == 1) { /* Totally 1 character? */
                     RECV_ADD(ch);     /* Any ASCII valid character */
                     if (ch == '\n') {
                         lwcelli_parse_received(&recv_buff); /* Parse received string */
-                        RECV_RESET();                      /* Reset received string */
+                        RECV_RESET();                       /* Reset received string */
                     }
 
 #if LWCELL_CFG_CONN
@@ -1277,8 +1282,8 @@ lwcelli_process(const void* data, size_t data_len) {
                     if (ch == '\n' && lwcell.m.ipd.read) {
                         size_t len;
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE,
-                                     "[LWCELL IPD] Data on connection %d with total size %d byte(s)\r\n",
-                                     (int)lwcell.m.ipd.conn->num, (int)lwcell.m.ipd.tot_len);
+                                      "[LWCELL IPD] Data on connection %d with total size %d byte(s)\r\n",
+                                      (int)lwcell.m.ipd.conn->num, (int)lwcell.m.ipd.tot_len);
 
                         len = LWCELL_MIN(lwcell.m.ipd.rem_len, LWCELL_CFG_CONN_MAX_DATA_LEN);
 
@@ -1293,13 +1298,13 @@ lwcelli_process(const void* data, size_t data_len) {
                                 lwcell.m.ipd.buff = lwcell_pbuf_new(len); /* Allocate new packet buffer */
                             } while (lwcell.m.ipd.buff == NULL && (len = (len >> 1)) >= LWCELL_CFG_CONN_MIN_DATA_LEN);
                             LWCELL_DEBUGW(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_WARNING,
-                                         lwcell.m.ipd.buff == NULL,
-                                         "[LWCELL IPD] Buffer allocation failed for %d byte(s)\r\n", (int)len);
+                                          lwcell.m.ipd.buff == NULL,
+                                          "[LWCELL IPD] Buffer allocation failed for %d byte(s)\r\n", (int)len);
                         } else {
                             lwcell.m.ipd.buff = NULL; /* Ignore reading on closed connection */
                             LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE,
-                                         "[LWCELL IPD] Connection %d closed or in closing, skipping %d byte(s)\r\n",
-                                         (int)lwcell.m.ipd.conn->num, (int)len);
+                                          "[LWCELL IPD] Connection %d closed or in closing, skipping %d byte(s)\r\n",
+                                          (int)lwcell.m.ipd.conn->num, (int)len);
                         }
                         lwcell.m.ipd.conn->status.f.data_received = 1; /* We have first received data */
                         lwcell.m.ipd.buff_ptr = 0;                     /* Reset buffer write pointer */
@@ -1332,14 +1337,14 @@ lwcelli_process(const void* data, size_t data_len) {
                         }
                     } else if (CMD_IS_CUR(LWCELL_CMD_COPS_GET_OPT)) {
                         if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+COPS:", 6)) {
-                            RECV_RESET();                      /* Reset incoming buffer */
+                            RECV_RESET();                       /* Reset incoming buffer */
                             lwcelli_parse_cops_scan(0, 1);      /* Reset parser state */
                             lwcell.msg->msg.cops_scan.read = 1; /* Start reading incoming bytes */
                         }
 #if LWCELL_CFG_USSD
                     } else if (CMD_IS_CUR(LWCELL_CMD_CUSD)) {
                         if (RECV_LEN() > 5 && !strncmp(recv_buff.data, "+CUSD:", 6)) {
-                            RECV_RESET();                 /* Reset incoming buffer */
+                            RECV_RESET();                  /* Reset incoming buffer */
                             lwcell.msg->msg.ussd.read = 1; /* Start reading incoming bytes */
                         }
 #endif /* LWCELL_CFG_USSD */
@@ -1355,7 +1360,7 @@ lwcelli_process(const void* data, size_t data_len) {
                     }
                 }
             } else if (res != lwcellINPROG) { /* Not in progress? */
-                RECV_RESET();                /* Invalid character in sequence */
+                RECV_RESET();                 /* Invalid character in sequence */
             }
         }
 
@@ -1394,7 +1399,7 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
     if (CMD_IS_DEF(LWCELL_CMD_RESET)) {
         switch (CMD_GET_CUR()) { /* Check current command */
             case LWCELL_CMD_RESET: {
-                lwcelli_reset_everything(1);                                       /* Reset everything */
+                lwcelli_reset_everything(1);                                         /* Reset everything */
                 SET_NEW_CMD(LWCELL_CFG_AT_ECHO ? LWCELL_CMD_ATE1 : LWCELL_CMD_ATE0); /* Set ECHO mode */
                 lwcell_delay(LWCELL_CFG_RESET_DELAY_AFTER); /* Delay for some time before we can continue after reset */
                 break;
@@ -1558,12 +1563,12 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         lwcell.m.call.enabled = stat->is_ok; /* Set enabled status */
         lwcell.evt.evt.call_enable.res = lwcell.m.call.enabled ? lwcellOK : lwcellERR;
         lwcelli_send_cb(LWCELL_EVT_CALL_ENABLE); /* Send to user */
-#endif                                         /* LWCELL_CFG_CALL */
+#endif                                           /* LWCELL_CFG_CALL */
 #if LWCELL_CFG_PHONEBOOK
     } else if (CMD_IS_DEF(LWCELL_CMD_PHONEBOOK_ENABLE)) {
         lwcell.m.pb.enabled = stat->is_ok; /* Set enabled status */
         lwcell.evt.evt.pb_enable.res = lwcell.m.pb.enabled ? lwcellOK : lwcellERR;
-        lwcelli_send_cb(LWCELL_EVT_PB_ENABLE);                 /* Send to user */
+        lwcelli_send_cb(LWCELL_EVT_PB_ENABLE);                /* Send to user */
     } else if (CMD_IS_DEF(LWCELL_CMD_CPBW_SET)) {             /* Write phonebook entry */
         if (CMD_IS_CUR(LWCELL_CMD_CPBS_GET) && stat->is_ok) { /* Get current memory */
             SET_NEW_CMD(LWCELL_CMD_CPBS_SET);                 /* Set current memory */
@@ -1645,7 +1650,7 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         } else if (msg->i == 3 && CMD_IS_CUR(LWCELL_CMD_CIPSTATUS)) {
             /* After second CIP status, define what to do next */
             switch (msg->msg.conn_start.conn_res) {
-                case LWCELL_CONN_CONNECT_OK: {                                     /* Successfully connected */
+                case LWCELL_CONN_CONNECT_OK: {                                      /* Successfully connected */
                     lwcell_conn_t* conn = &lwcell.m.conns[msg->msg.conn_start.num]; /* Get connection number */
 
                     lwcell.evt.type = LWCELL_EVT_CONN_ACTIVE; /* Connection just active */
@@ -1724,7 +1729,7 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
  */
 lwcellr_t
 lwcelli_initiate_cmd(lwcell_msg_t* msg) {
-    switch (CMD_GET_CUR()) {    /* Check current message we want to send over AT */
+    switch (CMD_GET_CUR()) {     /* Check current message we want to send over AT */
         case LWCELL_CMD_RESET: { /* Reset modem with AT commands */
             /* Try with hardware reset */
             if (lwcell.ll.reset_fn != NULL && lwcell.ll.reset_fn(1)) {
@@ -1937,7 +1942,7 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
             /* Do we have network connection? */
             /* Check if we are connected to network */
 
-            msg->msg.conn_start.num = 0;                             /* Start with max value = invalidated */
+            msg->msg.conn_start.num = 0;                              /* Start with max value = invalidated */
             for (int16_t i = LWCELL_CFG_MAX_CONNS - 1; i >= 0; --i) { /* Find available connection */
                 if (!lwcell.m.conns[i].status.f.active) {
                     c = &lwcell.m.conns[i];
@@ -2072,22 +2077,23 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
             AT_PORT_SEND_CONST_STR("+CPMS=");
             if (CMD_IS_DEF(LWCELL_CMD_CMGR)) { /* Read SMS original command? */
                 lwcelli_send_dev_memory(msg->msg.sms_read.mem == LWCELL_MEM_CURRENT ? lwcell.m.sms.mem[0].current
-                                                                                  : msg->msg.sms_read.mem,
-                                       1, 0);
+                                                                                    : msg->msg.sms_read.mem,
+                                        1, 0);
             } else if (CMD_IS_DEF(LWCELL_CMD_CMGD)) { /* Delete SMS original command? */
                 lwcelli_send_dev_memory(msg->msg.sms_delete.mem == LWCELL_MEM_CURRENT ? lwcell.m.sms.mem[0].current
-                                                                                    : msg->msg.sms_delete.mem,
-                                       1, 0);
+                                                                                      : msg->msg.sms_delete.mem,
+                                        1, 0);
             } else if (CMD_IS_DEF(LWCELL_CMD_CMGL)) { /* List SMS original command? */
                 lwcelli_send_dev_memory(msg->msg.sms_list.mem == LWCELL_MEM_CURRENT ? lwcell.m.sms.mem[0].current
-                                                                                  : msg->msg.sms_list.mem,
-                                       1, 0);
+                                                                                    : msg->msg.sms_list.mem,
+                                        1, 0);
             } else if (CMD_IS_DEF(
                            LWCELL_CMD_CPMS_SET)) { /* Do we want to set memory for read/delete,sent/write,receive? */
-                for (size_t i = 0; i < 3; ++i) {  /* Write 3 memories */
-                    lwcelli_send_dev_memory(msg->msg.sms_memory.mem[i] == LWCELL_MEM_CURRENT ? lwcell.m.sms.mem[i].current
-                                                                                           : msg->msg.sms_memory.mem[i],
-                                           1, !!i);
+                for (size_t i = 0; i < 3; ++i) {   /* Write 3 memories */
+                    lwcelli_send_dev_memory(msg->msg.sms_memory.mem[i] == LWCELL_MEM_CURRENT
+                                                ? lwcell.m.sms.mem[i].current
+                                                : msg->msg.sms_memory.mem[i],
+                                            1, !!i);
                 }
             }
             AT_PORT_SEND_END_AT();
@@ -2248,7 +2254,7 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-#endif                            /* LWCELL_CFG_USSD */
+#endif                             /* LWCELL_CFG_USSD */
         default: return lwcellERR; /* Invalid command */
     }
     return lwcellOK; /* Valid command */
@@ -2281,7 +2287,7 @@ lwcelli_send_msg_to_producer_mbox(lwcell_msg_t* msg, lwcellr_t (*process_fn)(lwc
         return res;
     }
 
-    if (msg->is_blocking) {                        /* In case message is blocking */
+    if (msg->is_blocking) {                         /* In case message is blocking */
         if (!lwcell_sys_sem_create(&msg->sem, 0)) { /* Create semaphore and lock it immediately */
             LWCELL_MSG_VAR_FREE(msg);               /* Release memory and return */
             return lwcellERRMEM;
@@ -2296,7 +2302,7 @@ lwcelli_send_msg_to_producer_mbox(lwcell_msg_t* msg, lwcellr_t (*process_fn)(lwc
         lwcell_sys_mbox_put(&lwcell.mbox_producer, msg); /* Write message to producer queue and wait forever */
     } else {
         if (!lwcell_sys_mbox_putnow(&lwcell.mbox_producer, msg)) { /* Write message to producer queue immediately */
-            LWCELL_MSG_VAR_FREE(msg);                             /* Release message */
+            LWCELL_MSG_VAR_FREE(msg);                              /* Release message */
             return lwcellERRMEM;
         }
     }

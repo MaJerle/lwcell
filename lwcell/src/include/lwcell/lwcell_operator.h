@@ -48,12 +48,13 @@ extern "C" {
  */
 
 lwcellr_t lwcell_operator_get(lwcell_operator_curr_t* curr, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                            const uint32_t blocking);
-lwcellr_t lwcell_operator_set(lwcell_operator_mode_t mode, lwcell_operator_format_t format, const char* name, uint32_t num,
-                            const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+                              const uint32_t blocking);
+lwcellr_t lwcell_operator_set(lwcell_operator_mode_t mode, lwcell_operator_format_t format, const char* name,
+                              uint32_t num, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                              const uint32_t blocking);
 
 lwcellr_t lwcell_operator_scan(lwcell_operator_t* ops, size_t opsl, size_t* opf, const lwcell_api_cmd_evt_fn evt_fn,
-                             void* const evt_arg, const uint32_t blocking);
+                               void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

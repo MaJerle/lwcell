@@ -45,7 +45,7 @@
  */
 lwcellr_t
 lwcell_device_get_manufacturer(char* manuf, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                              const uint32_t blocking) {
+                               const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(manuf != NULL);
@@ -71,7 +71,7 @@ lwcell_device_get_manufacturer(char* manuf, size_t len, const lwcell_api_cmd_evt
  */
 lwcellr_t
 lwcell_device_get_model(char* model, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                       const uint32_t blocking) {
+                        const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(model != NULL);
@@ -97,7 +97,7 @@ lwcell_device_get_model(char* model, size_t len, const lwcell_api_cmd_evt_fn evt
  */
 lwcellr_t
 lwcell_device_get_revision(char* rev, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                          const uint32_t blocking) {
+                           const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(rev != NULL);
@@ -123,7 +123,7 @@ lwcell_device_get_revision(char* rev, size_t len, const lwcell_api_cmd_evt_fn ev
  */
 lwcellr_t
 lwcell_device_get_serial_number(char* serial, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                               const uint32_t blocking) {
+                                const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(serial != NULL);
