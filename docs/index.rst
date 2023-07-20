@@ -3,8 +3,8 @@ LwCELL |version| documentation
 
 Welcome to the documentation for version |version|.
 
-LwCELL is generic, platform independent, library to control *SIM800/SIM900* or *SIM7000/SIM7020 (NB-Iot LTE)* devices from *SIMCom*.
-Its objective is to run on master system, while SIMCom device runs official AT commands firmware developed and maintained by *SIMCom*.
+LwCELL is lightweight, platform independent, cellular modem AT commands parser, targeting (as of today) communicion with *SIMCOM* based modules *SIM800/SIM900* or *SIM70xx*.
+Module is written in C11 and is independent from used platform. Its main targets are embedded system devices like ARM Cortex-M, AVR, PIC and others, but can easily work under *Windows*, *Linux* or *MAC* environments.
 
 .. image:: static/images/logo.svg
     :align: center
@@ -23,7 +23,7 @@ Features
     * Development of library under Win32 platform
     * Provided examples for ARM Cortex-M or Win32 platforms
 
-* Written in C language (C99)
+* Written in C language (C11)
 * Allows different configurations to optimize user requirements
 * Supports implementation with operating systems with advanced inter-thread communications
 

@@ -1,6 +1,7 @@
 # Lightweight Cellular AT parser
 
-LwCELL is lightweight, platform independent, AT commands parser, targeting for communicion with SIMCOM based modules SIM800/SIM900 or SIM70xx. Module is written in C99 and is independent from used platform. Its main targets are embedded system devices like ARM Cortex-M, AVR, PIC and others, but can easily work under `Windows`, `Linux` or `MAC` environments.
+LwCELL is lightweight, platform independent, cellular modem AT commands parser, targeting (as of today) communicion with SIMCOM based modules SIM800/SIM900 or SIM70xx.
+Module is written in C11 and is independent from used platform. Its main targets are embedded system devices like ARM Cortex-M, AVR, PIC and others, but can easily work under `Windows`, `Linux` or `MAC` environments.
 
 <h3>Read first: <a href="https://docs.majerle.eu/projects/lwcell/">Documentation</a></h3>
 
@@ -10,7 +11,7 @@ LwCELL is lightweight, platform independent, AT commands parser, targeting for c
 * Platform independent and very easy to port
     * Development of library under Win32 platform
     * Provided examples for ARM Cortex-M or Win32 platforms
-* Written in C language (C99)
+* Written in C language (C11)
 * Allows different configurations to optimize user requirements
 * Supports implementation with operating systems with advanced inter-thread communications
     * Currently only OS mode is supported
