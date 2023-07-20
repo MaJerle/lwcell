@@ -3,7 +3,7 @@
 Porting guide
 =============
 
-High level of *LwCELL* library is platform independent, written in ANSI C99,
+High level of *LwCELL* library is platform independent, written in C (C11),
 however there is an important part where middleware needs to communicate with target *GSM* device
 and it must work under different optional operating systems selected by final customer.
 
