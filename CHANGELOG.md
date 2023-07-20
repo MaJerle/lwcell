@@ -12,6 +12,7 @@
 - Update code style with astyle
 - Add `.clang-format` draft
 - Delete `lwgsm_datetime_t` and use generic `struct tm` instead
+- Rename project from `lwgsm` to `lwcell`, indicating cellular
 
 ## v0.1.1
 
