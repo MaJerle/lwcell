@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.22)
 project(LwLibPROJECT)
 
 if(NOT PROJECT_IS_TOP_LEVEL)
-    add_subdirectory(lwgsm)
+    add_subdirectory(lwcell)
 else()
     # Set as executable
     add_executable(${PROJECT_NAME})
@@ -14,12 +14,12 @@ else()
         ${CMAKE_CURRENT_LIST_DIR}/dev/main.c
 
         # Development additional files
-        ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_mem_lwmem.c
+        ${CMAKE_CURRENT_LIST_DIR}/lwcell/src/system/lwcell_mem_lwmem.c
         ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/lwmem/lwmem.c
         ${CMAKE_CURRENT_LIST_DIR}/../lwmem/lwmem/src/system/lwmem_sys_win32.c
 
         # Port specific
-        ${CMAKE_CURRENT_LIST_DIR}/lwgsm/src/system/lwgsm_ll_win32.c
+        ${CMAKE_CURRENT_LIST_DIR}/lwcell/src/system/lwcell_ll_win32.c
     )
 
     # Add key include paths
@@ -34,7 +34,7 @@ else()
         WIN32
         _DEBUG
         CONSOLE
-        LWGSM_DEV
+        LWCELL_DEV
     )
 
     # Compiler options
@@ -44,12 +44,12 @@ else()
         -Wpedantic
     )
 
-    # Add subdir with lwgsm and link to the project
-    set(LWGSM_SYS_PORT "win32")
-    add_subdirectory(lwgsm)
-    target_link_libraries(${PROJECT_NAME} lwgsm)
-    target_link_libraries(${PROJECT_NAME} lwgsm_api)
-    target_link_libraries(${PROJECT_NAME} lwgsm_apps)
+    # Add subdir with lwcell and link to the project
+    set(LWCELL_SYS_PORT "win32")
+    add_subdirectory(lwcell)
+    target_link_libraries(${PROJECT_NAME} lwcell)
+    target_link_libraries(${PROJECT_NAME} lwcell_api)
+    target_link_libraries(${PROJECT_NAME} lwcell_apps)
     add_subdirectory(snippets)
-    target_link_libraries(${PROJECT_NAME} lwgsm_snippets)
+    target_link_libraries(${PROJECT_NAME} lwcell_snippets)
 endif()

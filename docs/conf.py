@@ -22,7 +22,7 @@ import subprocess, os
 subprocess.call('doxygen doxyfile.doxy', shell=True)
 # -- Project information -----------------------------------------------------
 
-project = 'LwGSM'
+project = 'LwCELL'
 copyright = '2023, Tilen MAJERLE'
 author = 'Tilen MAJERLE'
 
@@ -137,8 +137,8 @@ master_doc = 'index'
 
 # --- Breathe configuration -----------------------------------------------------
 breathe_projects = {
-	"lwgsm": "_build/xml/"
+	"lwcell": "_build/xml/"
 }
-breathe_default_project = "lwgsm"
+breathe_default_project = "lwcell"
 breathe_default_members = ('members', 'undoc-members')
 breathe_show_enumvalue_initializer = True

@@ -1,6 +1,6 @@
-.. _api_lwgsm_types:
+.. _api_lwcell_types:
 
 Structures and enumerations
 ===========================
 
-.. doxygengroup:: LWGSM_TYPES
+.. doxygengroup:: LWCELL_TYPES

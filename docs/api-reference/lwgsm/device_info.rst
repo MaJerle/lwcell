@@ -1,6 +1,6 @@
-.. _api_lwgsm_device_info:
+.. _api_lwcell_device_info:
 
 Device info
 ===========
 
-.. doxygengroup:: LWGSM_DEVICE_INFO
+.. doxygengroup:: LWCELL_DEVICE_INFO

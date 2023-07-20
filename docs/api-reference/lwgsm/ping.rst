@@ -1,6 +1,6 @@
-.. _api_lwgsm_ping:
+.. _api_lwcell_ping:
 
 Ping support
 ============
 
-.. doxygengroup:: LWGSM_PING
+.. doxygengroup:: LWCELL_PING

@@ -1,9 +1,9 @@
 #include "windows.h"
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 
-#include "lwgsm/apps/lwgsm_mqtt_client_api.h"
-#include "lwgsm/lwgsm_mem.h"
-#include "lwgsm/lwgsm_network_api.h"
+#include "lwcell/apps/lwcell_mqtt_client_api.h"
+#include "lwcell/lwcell_mem.h"
+#include "lwcell/lwcell_network_api.h"
 
 #include "mqtt_client_api.h"
 #include "netconn_client.h"
@@ -16,20 +16,20 @@
 static void main_thread(void* arg);
 DWORD main_thread_id;
 
-static lwgsmr_t lwgsm_evt(lwgsm_evt_t* evt);
+static lwcellr_t lwcell_evt(lwcell_evt_t* evt);
 
-lwgsm_operator_t operators[10];
+lwcell_operator_t operators[10];
 size_t operators_len;
 
-static lwgsm_sms_entry_t sms_entry;
+static lwcell_sms_entry_t sms_entry;
 
-lwgsm_sms_entry_t sms_entries[10];
+lwcell_sms_entry_t sms_entries[10];
 size_t sms_entries_read;
 
-lwgsm_pb_entry_t pb_entries[10];
+lwcell_pb_entry_t pb_entries[10];
 size_t pb_entries_read;
 
-lwgsm_operator_curr_t operator_curr;
+lwcell_operator_curr_t operator_curr;
 
 char model_str[20];
 
@@ -68,21 +68,21 @@ main() {
 
     /* Do nothing at this point but do not close the program */
     while (1) {
-        lwgsm_delay(1000);
+        lwcell_delay(1000);
     }
 }
 
 void
-pin_evt(lwgsmr_t res, void* arg) {
-    LWGSM_UNUSED(res);
-    LWGSM_UNUSED(arg);
+pin_evt(lwcellr_t res, void* arg) {
+    LWCELL_UNUSED(res);
+    LWCELL_UNUSED(arg);
     printf("PIN EVT function!\r\n");
 }
 
 void
-puk_evt(lwgsmr_t res, void* arg) {
-    LWGSM_UNUSED(res);
-    LWGSM_UNUSED(arg);
+puk_evt(lwcellr_t res, void* arg) {
+    LWCELL_UNUSED(res);
+    LWCELL_UNUSED(arg);
     printf("PUK EVT function!\r\n");
 }
 
@@ -96,7 +96,7 @@ input_thread(void* arg) {
 
 #define IS_LINE(s)      (strncmp(buff, (s), sizeof(s) - 1) == 0)
 
-    LWGSM_UNUSED(arg);
+    LWCELL_UNUSED(arg);
 
     /* Notify user */
     printf("Start by writing commands..\r\n");
@@ -107,95 +107,95 @@ input_thread(void* arg) {
         fgets(buff, sizeof(buff), stdin);
         
         if (IS_LINE("reset")) {
-            lwgsm_reset(NULL, NULL, 1);
+            lwcell_reset(NULL, NULL, 1);
         } else if (IS_LINE("devicemanufacturer")) {
-            lwgsm_device_get_manufacturer(model_str, sizeof(model_str), NULL, NULL, 1);
+            lwcell_device_get_manufacturer(model_str, sizeof(model_str), NULL, NULL, 1);
             printf("Manuf: %s\r\n", model_str);
         } else if (IS_LINE("devicemodel")) {
-            lwgsm_device_get_model(model_str, sizeof(model_str), NULL, NULL, 1);
+            lwcell_device_get_model(model_str, sizeof(model_str), NULL, NULL, 1);
             printf("Model: %s\r\n", model_str);
         } else if (IS_LINE("deviceserial")) {
-            lwgsm_device_get_serial_number(model_str, sizeof(model_str), NULL, NULL, 1);
+            lwcell_device_get_serial_number(model_str, sizeof(model_str), NULL, NULL, 1);
             printf("Serial: %s\r\n", model_str);
         } else if (IS_LINE("devicerevision")) {
-            lwgsm_device_get_revision(model_str, sizeof(model_str), NULL, NULL, 1);
+            lwcell_device_get_revision(model_str, sizeof(model_str), NULL, NULL, 1);
             printf("Revision: %s\r\n", model_str);
         } else if (IS_LINE("simstatus")) {
-            switch (lwgsm_sim_get_current_state()) {
-                case LWGSM_SIM_STATE_READY: printf("SIM state ready!\r\n"); break;
-                case LWGSM_SIM_STATE_PIN: printf("SIM state PIN\r\n"); break;
-                case LWGSM_SIM_STATE_PUK: printf("SIM state PIN\r\n"); break;
-                case LWGSM_SIM_STATE_NOT_READY: printf("SIM state not ready\r\n"); break;
-                case LWGSM_SIM_STATE_NOT_INSERTED: printf("SIM state not inserted\r\n"); break;
+            switch (lwcell_sim_get_current_state()) {
+                case LWCELL_SIM_STATE_READY: printf("SIM state ready!\r\n"); break;
+                case LWCELL_SIM_STATE_PIN: printf("SIM state PIN\r\n"); break;
+                case LWCELL_SIM_STATE_PUK: printf("SIM state PIN\r\n"); break;
+                case LWCELL_SIM_STATE_NOT_READY: printf("SIM state not ready\r\n"); break;
+                case LWCELL_SIM_STATE_NOT_INSERTED: printf("SIM state not inserted\r\n"); break;
                 default: printf("Unknown pin state\r\n"); break;
             }
         } else if (IS_LINE("simpinadd")) {
-            lwgsm_sim_pin_add(sim.pin, NULL, NULL, 1);
+            lwcell_sim_pin_add(sim.pin, NULL, NULL, 1);
         } else if (IS_LINE("simpinchange")) {
-            lwgsm_sim_pin_change(sim.pin, "1234", NULL, NULL, 1);
-            lwgsm_sim_pin_change("1234", sim.pin, NULL, NULL, 1);
+            lwcell_sim_pin_change(sim.pin, "1234", NULL, NULL, 1);
+            lwcell_sim_pin_change("1234", sim.pin, NULL, NULL, 1);
         } else if (IS_LINE("simpinremove")) {
-            lwgsm_sim_pin_remove(sim.pin, NULL, NULL, 1);
+            lwcell_sim_pin_remove(sim.pin, NULL, NULL, 1);
         } else if (IS_LINE("simpinenter")) {
-            lwgsm_sim_pin_enter(sim.pin, NULL, NULL, 1);
+            lwcell_sim_pin_enter(sim.pin, NULL, NULL, 1);
         } else if (IS_LINE("simpuk")) {
-            lwgsm_sim_puk_enter(sim.puk, sim.pin, puk_evt, NULL, 1);
+            lwcell_sim_puk_enter(sim.puk, sim.pin, puk_evt, NULL, 1);
         } else if (IS_LINE("operatorscan")) {
-            lwgsm_operator_scan(operators, LWGSM_ARRAYSIZE(operators), &operators_len, NULL, NULL, 1);
+            lwcell_operator_scan(operators, LWCELL_ARRAYSIZE(operators), &operators_len, NULL, NULL, 1);
         } else if (IS_LINE("join")) {
-            lwgsm_network_request_attach();
+            lwcell_network_request_attach();
         } else if (IS_LINE("quit")) {
-            lwgsm_network_request_detach();
+            lwcell_network_request_detach();
         } else if (IS_LINE("netconnclient")) {
-            lwgsm_sys_sem_t sem;
-            lwgsm_sys_sem_create(&sem, 0);
-            lwgsm_sys_thread_create(NULL, "netconn_client", (lwgsm_sys_thread_fn)netconn_client_thread, &sem, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO);
-            lwgsm_sys_sem_wait(&sem, 0);
-            lwgsm_sys_sem_delete(&sem);
-#if LWGSM_CFG_SMS
+            lwcell_sys_sem_t sem;
+            lwcell_sys_sem_create(&sem, 0);
+            lwcell_sys_thread_create(NULL, "netconn_client", (lwcell_sys_thread_fn)netconn_client_thread, &sem, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
+            lwcell_sys_sem_wait(&sem, 0);
+            lwcell_sys_sem_delete(&sem);
+#if LWCELL_CFG_SMS
         } else if (IS_LINE("smsenable")) {
-            lwgsm_sms_enable(NULL, NULL, 1);
+            lwcell_sms_enable(NULL, NULL, 1);
         } else if (IS_LINE("smsdisable")) {
-            lwgsm_sms_disable(NULL, NULL, 1);
+            lwcell_sms_disable(NULL, NULL, 1);
         } else if (IS_LINE("smssend")) {
-            lwgsm_sms_send("+38631779982", "Hello world!", NULL, NULL, 1);
+            lwcell_sms_send("+38631779982", "Hello world!", NULL, NULL, 1);
         } else if (IS_LINE("smslist")) {
-            lwgsm_sms_list(LWGSM_MEM_CURRENT, LWGSM_SMS_STATUS_ALL, sms_entries, LWGSM_ARRAYSIZE(sms_entries), &sms_entries_read, 0, NULL, NULL, 1);
+            lwcell_sms_list(LWCELL_MEM_CURRENT, LWCELL_SMS_STATUS_ALL, sms_entries, LWCELL_ARRAYSIZE(sms_entries), &sms_entries_read, 0, NULL, NULL, 1);
         } else if (IS_LINE("smsdeleteall")) {
-            lwgsm_sms_delete_all(LWGSM_SMS_STATUS_ALL, NULL, NULL, 1);
+            lwcell_sms_delete_all(LWCELL_SMS_STATUS_ALL, NULL, NULL, 1);
         } else if (IS_LINE("smsthread")) {
-            lwgsm_sys_thread_create(NULL, "sms_recv_send", (lwgsm_sys_thread_fn)sms_send_receive_thread, NULL, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO);
-#endif /* LWGSM_CFG_SMS */
-#if LWGSM_CFG_CALL
+            lwcell_sys_thread_create(NULL, "sms_recv_send", (lwcell_sys_thread_fn)sms_send_receive_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
+#endif /* LWCELL_CFG_SMS */
+#if LWCELL_CFG_CALL
         } else if (IS_LINE("callenable")) {
-            lwgsm_call_enable(NULL, NULL, 1);
+            lwcell_call_enable(NULL, NULL, 1);
         } else if (IS_LINE("calldisable")) {
-            lwgsm_call_disable(NULL, NULL, 1);
+            lwcell_call_disable(NULL, NULL, 1);
         } else if (IS_LINE("callstart")) {
-            lwgsm_call_start("+38631779982", NULL, NULL, 1);
+            lwcell_call_start("+38631779982", NULL, NULL, 1);
         } else if (IS_LINE("callhangup")) {
-            lwgsm_call_hangup(NULL, NULL, 1);
+            lwcell_call_hangup(NULL, NULL, 1);
         } else if (IS_LINE("callanswer")) {
-            lwgsm_call_answer(NULL, NULL, 1);
-#endif /* LWGSM_CFG_CALL */
-#if LWGSM_CFG_PHONEBOOK
+            lwcell_call_answer(NULL, NULL, 1);
+#endif /* LWCELL_CFG_CALL */
+#if LWCELL_CFG_PHONEBOOK
         } else if (IS_LINE("pbenable")) {
-            lwgsm_pb_enable(NULL, NULL, 1);
+            lwcell_pb_enable(NULL, NULL, 1);
         } else if (IS_LINE("pbread")) {
-            lwgsm_pb_read(LWGSM_MEM_CURRENT, 1, pb_entries, NULL, NULL, 1);
+            lwcell_pb_read(LWCELL_MEM_CURRENT, 1, pb_entries, NULL, NULL, 1);
         } else if (IS_LINE("pblist")) {
-            lwgsm_pb_list(LWGSM_MEM_CURRENT, 1, pb_entries, LWGSM_ARRAYSIZE(pb_entries), &pb_entries_read, NULL, NULL, 1);
-#endif /* LWGSM_CFG_PHONEBOOK */
+            lwcell_pb_list(LWCELL_MEM_CURRENT, 1, pb_entries, LWCELL_ARRAYSIZE(pb_entries), &pb_entries_read, NULL, NULL, 1);
+#endif /* LWCELL_CFG_PHONEBOOK */
         } else if (IS_LINE("mqttthread")) {
-            lwgsm_sys_thread_create(NULL, "mqtt_client_api", (lwgsm_sys_thread_fn)mqtt_client_api_thread, NULL, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO);
+            lwcell_sys_thread_create(NULL, "mqtt_client_api", (lwcell_sys_thread_fn)mqtt_client_api_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
         } else if (IS_LINE("client")) {
             client_connect();
-#if LWGSM_CFG_USSD
+#if LWCELL_CFG_USSD
         } else if (IS_LINE("ussd")) {
             char response[128];
-            lwgsm_ussd_run("*123#", response, sizeof(response), NULL, NULL, 1);
+            lwcell_ussd_run("*123#", response, sizeof(response), NULL, NULL, 1);
             printf("Command finished!\r\n");
-#endif /* LWGSM_CFG_USSD */
+#endif /* LWCELL_CFG_USSD */
         } else {
             printf("Unknown input!\r\n");
         }
@@ -207,109 +207,109 @@ input_thread(void* arg) {
  */
 static void
 main_thread(void* arg) {
-    lwgsm_sim_state_t sim_state, sim_prev_state;
+    lwcell_sim_state_t sim_state, sim_prev_state;
 
-    LWGSM_UNUSED(arg);
+    LWCELL_UNUSED(arg);
 
     /* Init GSM library */
-    lwgsm_init(lwgsm_evt, 1);
+    lwcell_init(lwcell_evt, 1);
 
     /* Set global network credentials */
-    lwgsm_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
+    lwcell_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
     /* Start input thread */
-    lwgsm_sys_thread_create(NULL, "input", (lwgsm_sys_thread_fn)input_thread, NULL, 0, LWGSM_SYS_THREAD_PRIO);
+    lwcell_sys_thread_create(NULL, "input", (lwcell_sys_thread_fn)input_thread, NULL, 0, LWCELL_SYS_THREAD_PRIO);
 
-    sim_prev_state = LWGSM_SIM_STATE_END;
+    sim_prev_state = LWCELL_SIM_STATE_END;
     while (1) {
         /* Check for sim card */
-        if ((sim_state = lwgsm_sim_get_current_state()) != sim_prev_state) {
-            if (sim_state == LWGSM_SIM_STATE_READY) {
+        if ((sim_state = lwcell_sim_get_current_state()) != sim_prev_state) {
+            if (sim_state == LWCELL_SIM_STATE_READY) {
                 printf("SIM pin is now ready\r\n");
-            } else if (sim_state == LWGSM_SIM_STATE_PIN) {
+            } else if (sim_state == LWCELL_SIM_STATE_PIN) {
                 printf("GSM state PIN\r\n");
-                lwgsm_sim_pin_enter(sim.pin, pin_evt, NULL, 1);
-            } else if (sim_state == LWGSM_SIM_STATE_PUK) {
+                lwcell_sim_pin_enter(sim.pin, pin_evt, NULL, 1);
+            } else if (sim_state == LWCELL_SIM_STATE_PUK) {
                 printf("GSM state PUK\r\n");
-                lwgsm_sim_puk_enter(sim.puk, sim.pin, puk_evt, NULL, 1);
-            } else if (sim_state == LWGSM_SIM_STATE_NOT_READY) {
+                lwcell_sim_puk_enter(sim.puk, sim.pin, puk_evt, NULL, 1);
+            } else if (sim_state == LWCELL_SIM_STATE_NOT_READY) {
                 printf("GSM SIM state not ready!\r\n");
-            } else if (sim_state == LWGSM_SIM_STATE_NOT_INSERTED) {
+            } else if (sim_state == LWCELL_SIM_STATE_NOT_INSERTED) {
                 printf("GSM SIM not inserted!\r\n");
             }
             sim_prev_state = sim_state;
         }
 
         /* Some delay */
-        lwgsm_delay(1000);
+        lwcell_delay(1000);
     }
 
     /* Terminate thread */
-    lwgsm_sys_thread_terminate(NULL);
+    lwcell_sys_thread_terminate(NULL);
 }
 
 /**
  * \brief           Global GSM event function callback
  * \param[in]       cb: Event information
- * \return          lwgsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          lwcellOK on success, member of \ref lwcellr_t otherwise
  */
-static lwgsmr_t
-lwgsm_evt(lwgsm_evt_t* evt) {
-    switch (lwgsm_evt_get_type(evt)) {
-        case LWGSM_EVT_INIT_FINISH: {
+static lwcellr_t
+lwcell_evt(lwcell_evt_t* evt) {
+    switch (lwcell_evt_get_type(evt)) {
+        case LWCELL_EVT_INIT_FINISH: {
             break;
         }
-        case LWGSM_EVT_RESET: {
-            if (lwgsm_evt_reset_get_result(evt) == lwgsmOK) {
+        case LWCELL_EVT_RESET: {
+            if (lwcell_evt_reset_get_result(evt) == lwcellOK) {
                 printf("Reset sequence finished with success!\r\n");
             }
             break;
         }
-        case LWGSM_EVT_SIM_STATE_CHANGED: {            
+        case LWCELL_EVT_SIM_STATE_CHANGED: {            
             break;
         }
-        case LWGSM_EVT_DEVICE_IDENTIFIED: {
+        case LWCELL_EVT_DEVICE_IDENTIFIED: {
             printf("Device has been identified!\r\n");
             break;
         }
-        case LWGSM_EVT_SIGNAL_STRENGTH: {
-            int16_t rssi = lwgsm_evt_signal_strength_get_rssi(evt);
+        case LWCELL_EVT_SIGNAL_STRENGTH: {
+            int16_t rssi = lwcell_evt_signal_strength_get_rssi(evt);
             printf("Signal strength: %d\r\n", (int)rssi);
             break;
         }
-        case LWGSM_EVT_NETWORK_REG_CHANGED: {
-            lwgsm_network_reg_status_t status = lwgsm_network_get_reg_status();
+        case LWCELL_EVT_NETWORK_REG_CHANGED: {
+            lwcell_network_reg_status_t status = lwcell_network_get_reg_status();
             printf("Network registration changed. New status: %d! ", (int)status);
             switch (status) {
-                case LWGSM_NETWORK_REG_STATUS_CONNECTED: printf("Connected to home network!\r\n"); break;
-                case LWGSM_NETWORK_REG_STATUS_CONNECTED_ROAMING: printf("Connected to network and roaming!\r\n"); break;
-                case LWGSM_NETWORK_REG_STATUS_SEARCHING: printf("Searching for network!\r\n"); break;
-                case LWGSM_NETWORK_REG_STATUS_SIM_ERR: printf("SIM error\r\n"); break;
+                case LWCELL_NETWORK_REG_STATUS_CONNECTED: printf("Connected to home network!\r\n"); break;
+                case LWCELL_NETWORK_REG_STATUS_CONNECTED_ROAMING: printf("Connected to network and roaming!\r\n"); break;
+                case LWCELL_NETWORK_REG_STATUS_SEARCHING: printf("Searching for network!\r\n"); break;
+                case LWCELL_NETWORK_REG_STATUS_SIM_ERR: printf("SIM error\r\n"); break;
                 default: break;
             }
             break;
         }
-        case LWGSM_EVT_NETWORK_OPERATOR_CURRENT: {
-            const lwgsm_operator_curr_t* op = lwgsm_evt_network_operator_get_current(evt);
+        case LWCELL_EVT_NETWORK_OPERATOR_CURRENT: {
+            const lwcell_operator_curr_t* op = lwcell_evt_network_operator_get_current(evt);
             if (op != NULL) {
-                if (op->format == LWGSM_OPERATOR_FORMAT_LONG_NAME) {
+                if (op->format == LWCELL_OPERATOR_FORMAT_LONG_NAME) {
                     printf("Operator long name: %s\r\n", op->data.long_name);
-                } else if (op->format == LWGSM_OPERATOR_FORMAT_SHORT_NAME) {
+                } else if (op->format == LWCELL_OPERATOR_FORMAT_SHORT_NAME) {
                     printf("Operator short name: %s\r\n", op->data.short_name);
-                } else if (op->format == LWGSM_OPERATOR_FORMAT_NUMBER) {
+                } else if (op->format == LWCELL_OPERATOR_FORMAT_NUMBER) {
                     printf("Operator number: %d\r\n", (int)op->data.num);
                 }
             }
             break;
         }
-        case LWGSM_EVT_OPERATOR_SCAN: {
-            lwgsm_operator_t* ops;
+        case LWCELL_EVT_OPERATOR_SCAN: {
+            lwcell_operator_t* ops;
             size_t length;
 
             printf("Operator scan finished!\r\n");
-            if (lwgsm_evt_operator_scan_get_result(evt) == lwgsmOK) {
-                ops = lwgsm_evt_operator_scan_get_entries(evt);
-                length = lwgsm_evt_operator_scan_get_length(evt);
+            if (lwcell_evt_operator_scan_get_result(evt) == lwcellOK) {
+                ops = lwcell_evt_operator_scan_get_entries(evt);
+                length = lwcell_evt_operator_scan_get_length(evt);
 
                 for (size_t i = 0; i < length; i++) {
                     printf("Operator %2d: %s: %s\r\n", (int)i, ops[i].short_name, ops[i].long_name);
@@ -319,66 +319,66 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             }
             break;
         }
-#if LWGSM_CFG_NETWORK
-        case LWGSM_EVT_NETWORK_ATTACHED: {
-            lwgsm_ip_t ip;
+#if LWCELL_CFG_NETWORK
+        case LWCELL_EVT_NETWORK_ATTACHED: {
+            lwcell_ip_t ip;
 
             printf("\r\n---\r\n--- Network attached! ---\r\n---\r\n");
-            if (lwgsm_network_copy_ip(&ip) == lwgsmOK) {
+            if (lwcell_network_copy_ip(&ip) == lwcellOK) {
                 printf("\r\n---\r\n--- IP: %d.%d.%d.%d ---\r\n---\r\n",
                     (int)ip.ip[0], (int)ip.ip[1], (int)ip.ip[2], (int)ip.ip[3]
                 );
             }
             break;
         }
-        case LWGSM_EVT_NETWORK_DETACHED: {
+        case LWCELL_EVT_NETWORK_DETACHED: {
             printf("\r\n---\r\n--- Network detached! ---\r\n---\r\n");
             break;
         }
-#endif /* LWGSM_CFG_NETWORK */
-#if LWGSM_CFG_CALL
-        case LWGSM_EVT_CALL_READY: {
+#endif /* LWCELL_CFG_NETWORK */
+#if LWCELL_CFG_CALL
+        case LWCELL_EVT_CALL_READY: {
             printf("Call is ready!\r\n");
             break;
         }
-        case LWGSM_EVT_CALL_CHANGED: {
-            const lwgsm_call_t* call = evt->evt.call_changed.call;
+        case LWCELL_EVT_CALL_CHANGED: {
+            const lwcell_call_t* call = evt->evt.call_changed.call;
             printf("Call changed!\r\n");
-            if (call->state == LWGSM_CALL_STATE_ACTIVE) {
+            if (call->state == LWCELL_CALL_STATE_ACTIVE) {
                 printf("Call active!\r\n");
-            } else if (call->state == LWGSM_CALL_STATE_INCOMING) {
+            } else if (call->state == LWCELL_CALL_STATE_INCOMING) {
                 printf("Incoming call. Answering...\r\n");
             }
             break;
         }
-#endif /* LWGSM_CFG_CALL */
-#if LWGSM_CFG_SMS
-        case LWGSM_EVT_SMS_READY: {
+#endif /* LWCELL_CFG_CALL */
+#if LWCELL_CFG_SMS
+        case LWCELL_EVT_SMS_READY: {
             printf("SMS is ready!\r\n");
-            //lwgsm_sms_send("+38640167724", "Device reset and ready for more operations!", 0);
+            //lwcell_sms_send("+38640167724", "Device reset and ready for more operations!", 0);
             break;
         }
-        case LWGSM_EVT_SMS_SEND: {
-            if (evt->evt.sms_send.res == lwgsmOK) {
+        case LWCELL_EVT_SMS_SEND: {
+            if (evt->evt.sms_send.res == lwcellOK) {
                 printf("SMS sent successfully!\r\n");
             } else {
                 printf("SMS was not sent!\r\n");
             }
             break;
         }
-        case LWGSM_EVT_SMS_RECV: {
+        case LWCELL_EVT_SMS_RECV: {
             printf("SMS received: %d\r\n", (int)evt->evt.sms_recv.pos);
-            lwgsm_sms_read(evt->evt.sms_recv.mem, evt->evt.sms_recv.pos, &sms_entry, 0, NULL, NULL, 0);
-            //lwgsm_sms_delete(evt->evt.sms_recv.mem, evt->evt.sms_recv.pos, NULL, NULL, 0);
+            lwcell_sms_read(evt->evt.sms_recv.mem, evt->evt.sms_recv.pos, &sms_entry, 0, NULL, NULL, 0);
+            //lwcell_sms_delete(evt->evt.sms_recv.mem, evt->evt.sms_recv.pos, NULL, NULL, 0);
             break;
         }
-        case LWGSM_EVT_SMS_READ: {
-            lwgsm_sms_entry_t* e = evt->evt.sms_read.entry;
+        case LWCELL_EVT_SMS_READ: {
+            lwcell_sms_entry_t* e = evt->evt.sms_read.entry;
             printf("SMS read: num: %s, name: %s, data: %s\r\n", e->number, e->name, e->data);
             break;
         }
-        case LWGSM_EVT_SMS_LIST: {
-            lwgsm_sms_entry_t* e = evt->evt.sms_list.entries;
+        case LWCELL_EVT_SMS_LIST: {
+            lwcell_sms_entry_t* e = evt->evt.sms_list.entries;
             size_t i;
 
             for (i = 0; i < evt->evt.sms_list.size; i++) {
@@ -388,10 +388,10 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             }
             break;
         }
-#endif /* LWGSM_CFG_SMS */
-#if LWGSM_CFG_PHONEBOOK
-        case LWGSM_EVT_PB_LIST: {
-            lwgsm_pb_entry_t* e = evt->evt.pb_list.entries;
+#endif /* LWCELL_CFG_SMS */
+#if LWCELL_CFG_PHONEBOOK
+        case LWCELL_EVT_PB_LIST: {
+            lwcell_pb_entry_t* e = evt->evt.pb_list.entries;
             size_t i;
 
             for (i = 0; i < evt->evt.pb_list.size; i++) {
@@ -401,8 +401,8 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             }
             break;
         }
-        case LWGSM_EVT_PB_SEARCH: {
-            lwgsm_pb_entry_t* e = evt->evt.pb_search.entries;
+        case LWCELL_EVT_PB_SEARCH: {
+            lwcell_pb_entry_t* e = evt->evt.pb_search.entries;
             size_t i;
 
             for (i = 0; i < evt->evt.pb_search.size; i++) {
@@ -412,16 +412,16 @@ lwgsm_evt(lwgsm_evt_t* evt) {
             }
             break;
         }
-#endif /* LWGSM_CFG_PHONECALL */
+#endif /* LWCELL_CFG_PHONECALL */
         default: break;
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
-#if LWGSM_CFG_MEM_CUSTOM && 0
+#if LWCELL_CFG_MEM_CUSTOM && 0
 
 void *
-lwgsm_mem_malloc(size_t size) {
+lwcell_mem_malloc(size_t size) {
     void* ptr;
 
     while (WaitForSingleObject(allocation_mutex, INFINITE) != WAIT_OBJECT_0) {}
@@ -431,7 +431,7 @@ lwgsm_mem_malloc(size_t size) {
 }
 
 void *
-lwgsm_mem_realloc(void* ptr, size_t size) {
+lwcell_mem_realloc(void* ptr, size_t size) {
     void* p;
 
     while (WaitForSingleObject(allocation_mutex, INFINITE) != WAIT_OBJECT_0) {}
@@ -441,7 +441,7 @@ lwgsm_mem_realloc(void* ptr, size_t size) {
 }
 
 void *
-lwgsm_mem_calloc(size_t num, size_t size) {
+lwcell_mem_calloc(size_t num, size_t size) {
     void* ptr;
 
     while (WaitForSingleObject(allocation_mutex, INFINITE) != WAIT_OBJECT_0) {}
@@ -451,9 +451,9 @@ lwgsm_mem_calloc(size_t num, size_t size) {
 }
 
 void
-lwgsm_mem_free(void* ptr) {
+lwcell_mem_free(void* ptr) {
     while (WaitForSingleObject(allocation_mutex, INFINITE) != WAIT_OBJECT_0) {}
     free(ptr);
     ReleaseMutex(allocation_mutex);
 }
-#endif /* LWGSM_CFG_MEM_CUSTOM */
+#endif /* LWCELL_CFG_MEM_CUSTOM */

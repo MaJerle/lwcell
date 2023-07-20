@@ -1,6 +1,6 @@
-.. _api_lwgsm_evt:
+.. _api_lwcell_evt:
 
 Event management
 ================
 
-.. doxygengroup:: LWGSM_EVT
+.. doxygengroup:: LWCELL_EVT

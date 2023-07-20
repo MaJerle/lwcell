@@ -1,4 +1,4 @@
-.. _api_lwgsm_timeout:
+.. _api_lwcell_timeout:
 
 Timeout manager
 ===============
@@ -15,4 +15,4 @@ When timeout elapses, GSM middleware will call timeout callback.
 
 This feature can be considered as single-shot software timer.
 
-.. doxygengroup:: LWGSM_TIMEOUT
+.. doxygengroup:: LWCELL_TIMEOUT

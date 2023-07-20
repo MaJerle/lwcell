@@ -11,18 +11,18 @@ This guide is describing how to start with the library quickly and effectively
 Download library
 ^^^^^^^^^^^^^^^^
 
-Library is primarly hosted on `Github <https://github.com/MaJerle/lwgsm>`_.
+Library is primarly hosted on `Github <https://github.com/MaJerle/lwcell>`_.
 
 You can get it by:
 
-* Downloading latest release from `releases area <https://github.com/MaJerle/lwgsm/releases>`_ on Github
+* Downloading latest release from `releases area <https://github.com/MaJerle/lwcell/releases>`_ on Github
 * Cloning ``main`` branch for latest stable version
 * Cloning ``develop`` branch for latest development
 
 Download from releases
 **********************
 
-All releases are available on Github `releases area <https://github.com/MaJerle/lwgsm/releases>`_.
+All releases are available on Github `releases area <https://github.com/MaJerle/lwcell/releases>`_.
 
 Clone from Github
 *****************
@@ -36,9 +36,9 @@ This is used when you do not have yet local copy on your machine.
 * Open console and navigate to path in the system to clone repository to. Use command ``cd your_path``
 * Clone repository with one of available options below
 
-  * Run ``git clone --recurse-submodules https://github.com/MaJerle/lwgsm`` command to clone entire repository, including submodules
-  * Run ``git clone --recurse-submodules --branch develop https://github.com/MaJerle/lwgsm`` to clone `development` branch, including submodules
-  * Run ``git clone --recurse-submodules --branch main https://github.com/MaJerle/lwgsm`` to clone `latest stable` branch, including submodules
+  * Run ``git clone --recurse-submodules https://github.com/MaJerle/lwcell`` command to clone entire repository, including submodules
+  * Run ``git clone --recurse-submodules --branch develop https://github.com/MaJerle/lwcell`` to clone `development` branch, including submodules
+  * Run ``git clone --recurse-submodules --branch main https://github.com/MaJerle/lwcell`` to clone `latest stable` branch, including submodules
 
 * Navigate to ``examples`` directory and run favourite example
 
@@ -60,10 +60,10 @@ Add library to project
 At this point it is assumed that you have successfully download library, either cloned it or from releases page.
 Next step is to add the library to the project, by means of source files to compiler inputs and header files in search path
 
-* Copy ``lwgsm`` folder to your project, it contains library files
-* Add ``lwgsm/src/include`` folder to `include path` of your toolchain. This is where `C/C++` compiler can find the files during compilation process. Usually using ``-I`` flag
-* Add source files from ``lwgsm/src/`` folder to toolchain build. These files are built by `C/C++` compiler. CMake configuration comes with the library, allows users to include library in the project as **subdirectory** and **library**.
-* Copy ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h`` to project folder and rename it to ``lwgsm_opts.h``
+* Copy ``lwcell`` folder to your project, it contains library files
+* Add ``lwcell/src/include`` folder to `include path` of your toolchain. This is where `C/C++` compiler can find the files during compilation process. Usually using ``-I`` flag
+* Add source files from ``lwcell/src/`` folder to toolchain build. These files are built by `C/C++` compiler. CMake configuration comes with the library, allows users to include library in the project as **subdirectory** and **library**.
+* Copy ``lwcell/src/include/lwcell/lwcell_opts_template.h`` to project folder and rename it to ``lwcell_opts.h``
 * Build the project
 
 Configuration file
@@ -71,22 +71,22 @@ Configuration file
 
 Configuration file is used to overwrite default settings defined for the essential use case.
 Library comes with template config file, which can be modified according to needs.
-and it should be copied (or simply renamed in-place) and named ``lwgsm_opts.h``
+and it should be copied (or simply renamed in-place) and named ``lwcell_opts.h``
 
 .. note::
-    Default configuration template file location: ``lwgsm/src/include/lwgsm/lwgsm_opts_template.h``.
-    File must be renamed to ``lwgsm_opts.h`` first and then copied to the project directory where compiler
-    include paths have access to it by using ``#include "lwgsm_opts.h"``.
+    Default configuration template file location: ``lwcell/src/include/lwcell/lwcell_opts_template.h``.
+    File must be renamed to ``lwcell_opts.h`` first and then copied to the project directory where compiler
+    include paths have access to it by using ``#include "lwcell_opts.h"``.
 
-List of configuration options are available in the :ref:`api_lwgsm_opt` section.
+List of configuration options are available in the :ref:`api_lwcell_opt` section.
 If any option is about to be modified, it should be done in configuration file
 
-.. literalinclude:: ../../lwgsm/src/include/lwgsm/lwgsm_opts_template.h
+.. literalinclude:: ../../lwcell/src/include/lwcell/lwcell_opts_template.h
     :language: c
     :linenos:
     :caption: Template configuration file
 
 .. note::
     If you prefer to avoid using configuration file, application must define
-    a global symbol ``LWGSM_IGNORE_USER_OPTS``, visible across entire application.
+    a global symbol ``LWCELL_IGNORE_USER_OPTS``, visible across entire application.
     This can be achieved with ``-D`` compiler option.

@@ -1,6 +1,6 @@
-.. _api_lwgsm_buff:
+.. _api_lwcell_buff:
 
 Ring buffer
 ===========
 
-.. doxygengroup:: LWGSM_BUFF
+.. doxygengroup:: LWCELL_BUFF

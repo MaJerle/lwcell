@@ -32,7 +32,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 #include "sim_manager.h"
 #include "network_utils.h"
 #include "sms_send_receive_thread.h"
@@ -43,7 +43,7 @@ static void USART_Printf_Init(void);
 
 static void init_thread(void* arg);
 
-static lwgsmr_t lwgsm_callback_func(lwgsm_evt_t* evt);
+static lwcellr_t lwcell_callback_func(lwcell_evt_t* evt);
 
 /**
  * \brief           Program entry point
@@ -76,25 +76,25 @@ init_thread(void* arg) {
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
-    if (lwgsm_init(lwgsm_callback_func, 1) != lwgsmOK) {
-        printf("Cannot initialize LwGSM\r\n");
+    if (lwcell_init(lwcell_callback_func, 1) != lwcellOK) {
+        printf("Cannot initialize LwCELL\r\n");
         while (1) {}
     }
 
     /* Configure device by unlocking SIM card */
     if (configure_sim_card()) {
         printf("SIM card configured. Adding delay to stabilize SIM card.\r\n");
-        lwgsm_delay(10000);
+        lwcell_delay(10000);
     } else {
         printf("Cannot configure SIM card! Is it inserted, pin valid and not under PUK? Closing down...\r\n");
-        while (1) { lwgsm_delay(1000); }
+        while (1) { lwcell_delay(1000); }
     }
 
     /* Create SMS thread */
-    lwgsm_sys_thread_create(NULL, "lwgsm_sms", (lwgsm_sys_thread_fn)sms_send_receive_thread, NULL, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO);
+    lwcell_sys_thread_create(NULL, "lwcell_sms", (lwcell_sys_thread_fn)sms_send_receive_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
 
     while (1) {
-        lwgsm_delay(1000);
+        lwcell_delay(1000);
     }
 
     osThreadExit();
@@ -103,24 +103,24 @@ init_thread(void* arg) {
 /**
  * \brief           Event callback function for GSM stack
  * \param[in]       evt: Event information with data
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  */
-static lwgsmr_t
-lwgsm_callback_func(lwgsm_evt_t* evt) {
-    switch (lwgsm_evt_get_type(evt)) {
-        case LWGSM_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
+static lwcellr_t
+lwcell_callback_func(lwcell_evt_t* evt) {
+    switch (lwcell_evt_get_type(evt)) {
+        case LWCELL_EVT_INIT_FINISH: printf("Library initialized!\r\n"); break;
         /* Process and print registration change */
-        case LWGSM_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;
+        case LWCELL_EVT_NETWORK_REG_CHANGED: network_utils_process_reg_change(evt); break;
         /* Process current network operator */
-        case LWGSM_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
+        case LWCELL_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
         /* Process signal strength */
-        case LWGSM_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
+        case LWCELL_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
 
         /* Other user events here... */
 
         default: break;
     }
-    return lwgsmOK;
+    return lwcellOK;
 }
 
 /**

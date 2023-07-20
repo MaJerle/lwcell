@@ -26,17 +26,17 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Before you start using WIN32 implementation with USB and VCP,
- * check lwgsm_ll_win32.c implementation and choose your COM port!
+ * check lwcell_ll_win32.c implementation and choose your COM port!
  */
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 #include "sim_manager.h"
 #include "network_utils.h"
 #include "network_apn_settings.h"
 #include "mqtt_client_api.h"
-#include "examples_common_lwgsm_callback_func.h"
+#include "examples_common_lwcell_callback_func.h"
 
 /**
  * \brief           Program entry point
@@ -46,31 +46,31 @@ main(void) {
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
-    if (lwgsm_init(examples_common_lwgsm_callback_func, 1) != lwgsmOK) {
-        printf("Cannot initialize LwGSM\r\n");
+    if (lwcell_init(examples_common_lwcell_callback_func, 1) != lwcellOK) {
+        printf("Cannot initialize LwCELL\r\n");
     }
 
     /* Configure device by unlocking SIM card */
     if (configure_sim_card()) {
         printf("SIM card configured. Adding delay to stabilize SIM card.\r\n");
-        lwgsm_delay(10000);
+        lwcell_delay(10000);
     } else {
         printf("Cannot configure SIM card! Is it inserted, pin valid and not under PUK? Closing down...\r\n");
-        while (1) { lwgsm_delay(1000); }
+        while (1) { lwcell_delay(1000); }
     }
 
     /* Set APN credentials */
-    lwgsm_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
+    lwcell_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
     /* Start MQTT thread */
-    lwgsm_sys_thread_create(NULL, "mqtt_thread", (lwgsm_sys_thread_t)mqtt_client_api_thread, NULL, LWGSM_SYS_THREAD_SS, LWGSM_SYS_THREAD_PRIO);
+    lwcell_sys_thread_create(NULL, "mqtt_thread", (lwcell_sys_thread_t)mqtt_client_api_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
 
     /*
      * Do not stop program here.
      * New threads were created for GSM processing
      */
     while (1) {
-        lwgsm_delay(1000);
+        lwcell_delay(1000);
     }
 
     return 0;

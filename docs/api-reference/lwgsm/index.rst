@@ -1,6 +1,6 @@
-.. _api_lwgsm:
+.. _api_lwcell:
 
-LwGSM
+LwCELL
 =====
 
 .. toctree::
@@ -9,4 +9,4 @@ LwGSM
 
 	*
 
-.. doxygengroup:: LWGSM
+.. doxygengroup:: LWCELL

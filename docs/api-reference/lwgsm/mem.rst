@@ -1,6 +1,6 @@
-.. _api_lwgsm_mem:
+.. _api_lwcell_mem:
 
 Memory manager
 ==============
 
-.. doxygengroup:: LWGSM_MEM
+.. doxygengroup:: LWCELL_MEM

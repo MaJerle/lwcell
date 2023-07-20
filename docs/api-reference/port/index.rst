@@ -1,4 +1,4 @@
-.. _api_lwgsm_port:
+.. _api_lwcell_port:
 
 Platform specific
 =================

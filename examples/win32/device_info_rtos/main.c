@@ -26,16 +26,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of LwGSM - Lightweight GSM-AT library.
+ * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Before you start using WIN32 implementation with USB and VCP,
- * check lwgsm_ll_win32.c implementation and choose your COM port!
+ * check lwcell_ll_win32.c implementation and choose your COM port!
  */
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 #include "sim_manager.h"
 #include "network_utils.h"
 #include "device_info.h"
-#include "examples_common_lwgsm_callback_func.h"
+#include "examples_common_lwcell_callback_func.h"
 
 /**
  * \brief           Program entry point
@@ -45,8 +45,8 @@ main(void) {
     printf("Starting GSM application!\r\n");
 
     /* Initialize GSM with default callback function */
-    if (lwgsm_init(examples_common_lwgsm_callback_func, 1) != lwgsmOK) {
-        printf("Cannot initialize LwGSM\r\n");
+    if (lwcell_init(examples_common_lwcell_callback_func, 1) != lwcellOK) {
+        printf("Cannot initialize LwCELL\r\n");
     }
 
     /* Read device info */
@@ -57,7 +57,7 @@ main(void) {
      * New threads were created for GSM processing
      */
     while (1) {
-        lwgsm_delay(1000);
+        lwcell_delay(1000);
     }
 
     return 0;

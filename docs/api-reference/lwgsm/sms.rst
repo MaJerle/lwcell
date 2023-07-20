@@ -1,6 +1,6 @@
-.. _api_lwgsm_sms:
+.. _api_lwcell_sms:
 
 SMS
 ===
 
-.. doxygengroup:: LWGSM_SMS
+.. doxygengroup:: LWCELL_SMS

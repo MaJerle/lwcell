@@ -1,6 +1,6 @@
-.. _api_lwgsm_pb:
+.. _api_lwcell_pb:
 
 Phonebook
 =========
 
-.. doxygengroup:: LWGSM_PHONEBOOK
+.. doxygengroup:: LWCELL_PHONEBOOK

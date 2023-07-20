@@ -4,18 +4,18 @@
  * Waits for received SMS and then replies with
  */
 #include "sms_send_receive.h"
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 
-#if !LWGSM_CFG_SMS
+#if !LWCELL_CFG_SMS
 #error "SMS must be enabled to run this example"
-#endif /* !LWGSM_CFG_SMS */
+#endif /* !LWCELL_CFG_SMS */
 
-static lwgsmr_t sms_evt_func(lwgsm_evt_t* evt);
+static lwcellr_t sms_evt_func(lwcell_evt_t* evt);
 
 /**
  * \brief           SMS entry
  */
-static lwgsm_sms_entry_t sms_entry;
+static lwcell_sms_entry_t sms_entry;
 
 /**
  * \brief           Start SMS send receive procedure
@@ -23,10 +23,10 @@ static lwgsm_sms_entry_t sms_entry;
 void
 sms_send_receive_start(void) {
     /* Add custom callback */
-    lwgsm_evt_register(sms_evt_func);
+    lwcell_evt_register(sms_evt_func);
 
     /* First enable SMS functionality */
-    if (lwgsm_sms_enable(NULL, NULL, 1) == lwgsmOK) {
+    if (lwcell_sms_enable(NULL, NULL, 1) == lwcellOK) {
         printf("SMS enabled. Send new SMS from your phone to device.\r\n");
     } else {
         printf("Cannot enable SMS functionality!\r\n");
@@ -39,59 +39,59 @@ sms_send_receive_start(void) {
 /**
  * \brief           Event function for received SMS
  * \param[in]       evt: GSM event
- * \return          \ref lwgsmOK on success, member of \ref lwgsmr_t otherwise
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
  */
-static lwgsmr_t
-sms_evt_func(lwgsm_evt_t* evt) {
-    switch (lwgsm_evt_get_type(evt)) {
-        case LWGSM_EVT_SMS_READY: {             /* SMS is ready notification from device */
+static lwcellr_t
+sms_evt_func(lwcell_evt_t* evt) {
+    switch (lwcell_evt_get_type(evt)) {
+        case LWCELL_EVT_SMS_READY: {             /* SMS is ready notification from device */
             printf("SIM device SMS service is ready!\r\n");
             break;
         }
-        case LWGSM_EVT_SMS_RECV: {              /* New SMS received indicator */
-            lwgsmr_t res;
+        case LWCELL_EVT_SMS_RECV: {              /* New SMS received indicator */
+            lwcellr_t res;
 
             printf("New SMS received!\r\n");    /* Notify user */
 
             /* Try to read SMS */
-            res = lwgsm_sms_read(lwgsm_evt_sms_recv_get_mem(evt), lwgsm_evt_sms_recv_get_pos(evt), &sms_entry, 1, NULL, NULL, 0);
-            if (res == lwgsmOK) {
+            res = lwcell_sms_read(lwcell_evt_sms_recv_get_mem(evt), lwcell_evt_sms_recv_get_pos(evt), &sms_entry, 1, NULL, NULL, 0);
+            if (res == lwcellOK) {
                 printf("SMS read in progress!\r\n");
             } else {
                 printf("Cannot start SMS read procedure!\r\n");
             }
             break;
         }
-        case LWGSM_EVT_SMS_READ: {              /* SMS read event */
-            lwgsm_sms_entry_t* entry = lwgsm_evt_sms_read_get_entry(evt);
-            if (lwgsm_evt_sms_read_get_result(evt) == lwgsmOK && entry != NULL) {
+        case LWCELL_EVT_SMS_READ: {              /* SMS read event */
+            lwcell_sms_entry_t* entry = lwcell_evt_sms_read_get_entry(evt);
+            if (lwcell_evt_sms_read_get_result(evt) == lwcellOK && entry != NULL) {
                 /* Print SMS data */
                 printf("SMS read. From: %s, content: %s\r\n",
                        entry->number, entry->data);
 
                 /* Try to send SMS back */
-                if (lwgsm_sms_send(entry->number, entry->data, NULL, NULL, 0) == lwgsmOK) {
+                if (lwcell_sms_send(entry->number, entry->data, NULL, NULL, 0) == lwcellOK) {
                     printf("SMS send in progress!\r\n");
                 } else {
                     printf("Cannot start SMS send procedure!\r\n");
                 }
 
                 /* Delete SMS from device memory */
-                lwgsm_sms_delete(entry->mem, entry->pos, NULL, NULL, 0);
+                lwcell_sms_delete(entry->mem, entry->pos, NULL, NULL, 0);
             }
             break;
         }
-        case LWGSM_EVT_SMS_SEND: {              /* SMS send event */
-            if (lwgsm_evt_sms_send_get_result(evt) == lwgsmOK) {
+        case LWCELL_EVT_SMS_SEND: {              /* SMS send event */
+            if (lwcell_evt_sms_send_get_result(evt) == lwcellOK) {
                 printf("SMS has been successfully sent!\r\n");
             } else {
                 printf("SMS has not been sent successfully!\r\n");
             }
             break;
         }
-        case LWGSM_EVT_SMS_DELETE: {            /* SMS delete event */
-            if (lwgsm_evt_sms_delete_get_result(evt) == lwgsmOK) {
-                printf("SMS deleted, memory position: %d\r\n", (int)lwgsm_evt_sms_delete_get_pos(evt));
+        case LWCELL_EVT_SMS_DELETE: {            /* SMS delete event */
+            if (lwcell_evt_sms_delete_get_result(evt) == lwcellOK) {
+                printf("SMS deleted, memory position: %d\r\n", (int)lwcell_evt_sms_delete_get_pos(evt));
             } else {
                 printf("SMS delete operation failed!\r\n");
             }
@@ -101,5 +101,5 @@ sms_evt_func(lwgsm_evt_t* evt) {
             break;
     }
 
-    return lwgsmOK;
+    return lwcellOK;
 }

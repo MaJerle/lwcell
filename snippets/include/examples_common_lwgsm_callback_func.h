@@ -1,16 +1,16 @@
-#ifndef EXAMPLES_COMMON_LWGSM_CALLBACK_FUNC
-#define EXAMPLES_COMMON_LWGSM_CALLBACK_FUNC
+#ifndef EXAMPLES_COMMON_LWCELL_CALLBACK_FUNC
+#define EXAMPLES_COMMON_LWCELL_CALLBACK_FUNC
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#include "lwgsm/lwgsm.h"
+#include "lwcell/lwcell.h"
 
-lwgsmr_t examples_common_lwgsm_callback_func(lwgsm_evt_t* evt);
+lwcellr_t examples_common_lwcell_callback_func(lwcell_evt_t* evt);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* EXAMPLES_COMMON_LWGSM_CALLBACK_FUNC */
+#endif /* EXAMPLES_COMMON_LWCELL_CALLBACK_FUNC */
