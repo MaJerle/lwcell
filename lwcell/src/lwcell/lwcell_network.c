@@ -48,7 +48,7 @@
  */
 lwcellr_t
 lwcell_network_attach(const char* apn, const char* user, const char* pass, const lwcell_api_cmd_evt_fn evt_fn,
-                     void* const evt_arg, const uint32_t blocking) {
+                      void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_MSG_VAR_ALLOC(msg, blocking);

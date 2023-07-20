@@ -38,8 +38,8 @@
 
 #if !__DOXYGEN__
 #define CHECK_ENABLED()                                                                                                \
-    if (!(check_enabled() == lwcellOK)) {                                                                               \
-        return lwcellERRNOTENABLED;                                                                                     \
+    if (!(check_enabled() == lwcellOK)) {                                                                              \
+        return lwcellERRNOTENABLED;                                                                                    \
     }
 #endif /* !__DOXYGEN__ */
 
@@ -116,7 +116,8 @@ lwcell_call_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, con
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
 lwcellr_t
-lwcell_call_start(const char* number, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwcell_call_start(const char* number, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                  const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(number != NULL);

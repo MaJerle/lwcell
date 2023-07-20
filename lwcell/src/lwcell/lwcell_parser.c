@@ -167,7 +167,7 @@ void
 lwcelli_check_and_trim(const char** src) {
     const char* t = *src;
     if (*t != '"' && *t != '\r' && *t != ',') { /* Check if trim required */
-        lwcelli_parse_string(src, NULL, 0, 1);   /* Trim to the end */
+        lwcelli_parse_string(src, NULL, 0, 1);  /* Trim to the end */
     }
 }
 
@@ -295,7 +295,7 @@ lwcelli_parse_memories_string(const char** src, uint32_t* mem_dst) {
         ++str;
     }
     do {
-        mem = lwcelli_parse_memory(&str);            /* Parse memory string */
+        mem = lwcelli_parse_memory(&str);             /* Parse memory string */
         *mem_dst |= LWCELL_U32(1 << LWCELL_U32(mem)); /* Set as bit field */
     } while (*str && *str != ')');
     if (*str == ')') {
@@ -334,7 +334,7 @@ lwcelli_parse_creg(const char* str, uint8_t skip_first) {
 #if LWCELL_CFG_NETWORK
     } else if (lwcell_network_is_attached()) {
         lwcell_network_check_status(NULL, NULL, 0); /* Do the update */
-#endif                                             /* LWCELL_CFG_NETWORK */
+#endif                                              /* LWCELL_CFG_NETWORK */
     }
 
     /* Send callback event */
@@ -436,11 +436,11 @@ lwcelli_parse_cops(const char* str) {
             switch (lwcell.m.network.curr_operator.format) {
                 case LWCELL_OPERATOR_FORMAT_LONG_NAME:
                     lwcelli_parse_string(&str, lwcell.m.network.curr_operator.data.long_name,
-                                        sizeof(lwcell.m.network.curr_operator.data.long_name), 1);
+                                         sizeof(lwcell.m.network.curr_operator.data.long_name), 1);
                     break;
                 case LWCELL_OPERATOR_FORMAT_SHORT_NAME:
                     lwcelli_parse_string(&str, lwcell.m.network.curr_operator.data.short_name,
-                                        sizeof(lwcell.m.network.curr_operator.data.short_name), 1);
+                                         sizeof(lwcell.m.network.curr_operator.data.short_name), 1);
                     break;
                 case LWCELL_OPERATOR_FORMAT_NUMBER:
                     lwcell.m.network.curr_operator.data.num = LWCELL_U32(lwcelli_parse_number(&str));
@@ -452,9 +452,10 @@ lwcelli_parse_cops(const char* str) {
         lwcell.m.network.curr_operator.format = LWCELL_OPERATOR_FORMAT_INVALID;
     }
 
-    if (CMD_IS_DEF(LWCELL_CMD_COPS_GET) && lwcell.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
+    if (CMD_IS_DEF(LWCELL_CMD_COPS_GET)
+        && lwcell.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
         LWCELL_MEMCPY(lwcell.msg->msg.cops_get.curr, &lwcell.m.network.curr_operator,
-                     sizeof(*lwcell.msg->msg.cops_get.curr));
+                      sizeof(*lwcell.msg->msg.cops_get.curr));
     }
     return 1;
 }
@@ -478,7 +479,7 @@ lwcelli_parse_cops_scan(uint8_t ch, uint8_t reset) {
         } f;
     } u;
 
-    if (reset) {                           /* Check for reset status */
+    if (reset) {                            /* Check for reset status */
         LWCELL_MEMSET(&u, 0x00, sizeof(u)); /* Reset everything */
         u.f.ch_prev = 0;
         return 1;
@@ -492,16 +493,16 @@ lwcelli_parse_cops_scan(uint8_t ch, uint8_t reset) {
         }
     }
 
-    if (u.f.ccd ||                                                        /* Ignore data after 2 commas in a row */
+    if (u.f.ccd ||                                                          /* Ignore data after 2 commas in a row */
         lwcell.msg->msg.cops_scan.opsi >= lwcell.msg->msg.cops_scan.opsl) { /* or if array is full */
         return 1;
     }
 
-    if (u.f.bo) {                            /* Bracket already open */
-        if (ch == ')') {                     /* Close bracket check */
-            u.f.bo = 0;                      /* Clear bracket open flag */
-            u.f.tn = 0;                      /* Go to next term */
-            u.f.tp = 0;                      /* Go to beginning of next term */
+    if (u.f.bo) {                             /* Bracket already open */
+        if (ch == ')') {                      /* Close bracket check */
+            u.f.bo = 0;                       /* Clear bracket open flag */
+            u.f.tn = 0;                       /* Go to next term */
+            u.f.tp = 0;                       /* Go to beginning of next term */
             ++lwcell.msg->msg.cops_scan.opsi; /* Increase index */
             if (lwcell.msg->msg.cops_scan.opf != NULL) {
                 *lwcell.msg->msg.cops_scan.opf = lwcell.msg->msg.cops_scan.opsi;
@@ -693,7 +694,7 @@ lwcelli_parse_cmgl(const char* str) {
 
     e = &lwcell.msg->msg.sms_list.entries[lwcell.msg->msg.sms_list.ei];
     e->length = 0;
-    e->mem = lwcell.msg->msg.sms_list.mem;         /* Manually set memory */
+    e->mem = lwcell.msg->msg.sms_list.mem;          /* Manually set memory */
     e->pos = LWCELL_SZ(lwcelli_parse_number(&str)); /* Scan position */
     lwcelli_parse_sms_status(&str, &e->status);
     lwcelli_parse_string(&str, e->number, sizeof(e->number), 1);
@@ -747,9 +748,10 @@ lwcelli_parse_cpms(const char* str, uint8_t opt) {
         }
         case 1: {                     /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
             for (i = 0; i < 3; ++i) { /* 3 memories expected */
-                lwcell.m.sms.mem[i].current = lwcelli_parse_memory(&str); /* Parse memory string and save it as current */
-                lwcell.m.sms.mem[i].used = lwcelli_parse_number(&str);    /* Get used memory size */
-                lwcell.m.sms.mem[i].total = lwcelli_parse_number(&str);   /* Get total memory size */
+                lwcell.m.sms.mem[i].current =
+                    lwcelli_parse_memory(&str);                         /* Parse memory string and save it as current */
+                lwcell.m.sms.mem[i].used = lwcelli_parse_number(&str);  /* Get used memory size */
+                lwcell.m.sms.mem[i].total = lwcelli_parse_number(&str); /* Get total memory size */
             }
             break;
         }
@@ -790,7 +792,7 @@ lwcelli_parse_cpbs(const char* str, uint8_t opt) {
             lwcell.m.pb.mem.total = lwcelli_parse_number(&str);   /* Get total memory size */
             break;
         }
-        case 2: {                                             /* Received statement of set info: +CPBS: 10,20 */
+        case 2: {                                               /* Received statement of set info: +CPBS: 10,20 */
             lwcell.m.pb.mem.used = lwcelli_parse_number(&str);  /* Get used memory size */
             lwcell.m.pb.mem.total = lwcelli_parse_number(&str); /* Get total memory size */
             break;
@@ -932,8 +934,8 @@ lwcelli_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* con
 
     } else if (!strcmp(s_tmp, "CLOSING")) {
 
-    } else if (!strcmp(s_tmp, "CLOSED")) {            /* Connection closed */
-        if (conn->status.f.active) {                  /* Check if connection is not */
+    } else if (!strcmp(s_tmp, "CLOSED")) {             /* Connection closed */
+        if (conn->status.f.active) {                   /* Check if connection is not */
             lwcelli_conn_closed_process(conn->num, 0); /* Process closed event */
         }
     }
@@ -964,11 +966,11 @@ lwcelli_parse_ipd(const char* str) {
         }
     }
 
-    conn = lwcelli_parse_number(&str);                             /* Parse number for connection number */
-    len = lwcelli_parse_number(&str);                              /* Parse number for number of bytes to read */
+    conn = lwcelli_parse_number(&str);                              /* Parse number for connection number */
+    len = lwcelli_parse_number(&str);                               /* Parse number for number of bytes to read */
 
     c = conn < LWCELL_CFG_MAX_CONNS ? &lwcell.m.conns[conn] : NULL; /* Get connection handle */
-    if (c == NULL) {                                              /* Invalid connection number */
+    if (c == NULL) {                                                /* Invalid connection number */
         return 0;
     }
 

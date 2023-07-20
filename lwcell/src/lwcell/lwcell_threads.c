@@ -61,7 +61,7 @@ lwcell_thread_produce(void* const arg) {
         do {
             time = lwcell_sys_mbox_get(&e->mbox_producer, (void**)&msg, 0); /* Get message from queue */
         } while (time == LWCELL_SYS_TIMEOUT || msg == NULL);
-        LWCELL_THREAD_PRODUCER_HOOK(); /* Execute producer thread hook */
+        LWCELL_THREAD_PRODUCER_HOOK();                                      /* Execute producer thread hook */
         lwcell_core_lock();
 
         res = lwcellOK; /* Start with OK */
@@ -98,9 +98,9 @@ lwcell_thread_produce(void* const arg) {
             lwcell_core_unlock();
             lwcell_sys_sem_wait(&e->sem_sync, 0); /* First call */
             lwcell_core_lock();
-            res = msg->fn(msg);         /* Process this message, check if command started at least */
-            time = ~LWCELL_SYS_TIMEOUT; /* Reset time */
-            if (res == lwcellOK) {      /* We have valid data and data were sent */
+            res = msg->fn(msg);                   /* Process this message, check if command started at least */
+            time = ~LWCELL_SYS_TIMEOUT;           /* Reset time */
+            if (res == lwcellOK) {                /* We have valid data and data were sent */
                 lwcell_core_unlock();
                 time = lwcell_sys_sem_wait(
                     &e->sem_sync,
@@ -157,7 +157,7 @@ lwcell_thread_produce(void* const arg) {
         if (msg->evt_fn != NULL) {
             msg->evt_fn(msg->res, msg->evt_arg); /* Send event with user argument */
         }
-#endif /* LWCELL_CFG_USE_API_FUNC_EVT */
+#endif                                           /* LWCELL_CFG_USE_API_FUNC_EVT */
 
         /*
          * In case message is blocking,
@@ -203,7 +203,7 @@ lwcell_thread_process(void* const arg) {
         lwcell_core_lock();
 
         if (time == LWCELL_SYS_TIMEOUT || msg == NULL) {
-            LWCELL_UNUSED(time); /* Unused variable */
+            LWCELL_UNUSED(time);  /* Unused variable */
         }
         lwcelli_process_buffer(); /* Process input data */
 #else                             /* LWCELL_CFG_INPUT_USE_PROCESS */

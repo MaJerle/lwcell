@@ -38,8 +38,8 @@
 
 #if !__DOXYGEN__
 #define CHECK_ENABLED()                                                                                                \
-    if (!(check_enabled() == lwcellOK)) {                                                                               \
-        return lwcellERRNOTENABLED;                                                                                     \
+    if (!(check_enabled() == lwcellOK)) {                                                                              \
+        return lwcellERRNOTENABLED;                                                                                    \
     }
 #endif /* !__DOXYGEN__ */
 
@@ -125,7 +125,7 @@ lwcell_pb_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const
  */
 lwcellr_t
 lwcell_pb_add(lwcell_mem_t mem, const char* name, const char* num, lwcell_number_type_t type,
-             const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+              const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(name != NULL);
@@ -136,7 +136,7 @@ lwcell_pb_add(lwcell_mem_t mem, const char* name, const char* num, lwcell_number
     LWCELL_MSG_VAR_ALLOC(msg, blocking);
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPBW_SET;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_SET; /* First set memory */
@@ -163,7 +163,7 @@ lwcell_pb_add(lwcell_mem_t mem, const char* name, const char* num, lwcell_number
  */
 lwcellr_t
 lwcell_pb_read(lwcell_mem_t mem, size_t pos, lwcell_pb_entry_t* entry, const lwcell_api_cmd_evt_fn evt_fn,
-              void* const evt_arg, const uint32_t blocking) {
+               void* const evt_arg, const uint32_t blocking) {
     return lwcell_pb_list(mem, pos, entry, 1, NULL, evt_fn, evt_arg, blocking);
 }
 
@@ -181,7 +181,7 @@ lwcell_pb_read(lwcell_mem_t mem, size_t pos, lwcell_pb_entry_t* entry, const lwc
  */
 lwcellr_t
 lwcell_pb_edit(lwcell_mem_t mem, size_t pos, const char* name, const char* num, lwcell_number_type_t type,
-              const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+               const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(name != NULL);
@@ -192,7 +192,7 @@ lwcell_pb_edit(lwcell_mem_t mem, size_t pos, const char* name, const char* num, 
     LWCELL_MSG_VAR_ALLOC(msg, blocking);
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPBW_SET;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_SET; /* First set memory */
@@ -218,7 +218,7 @@ lwcell_pb_edit(lwcell_mem_t mem, size_t pos, const char* name, const char* num, 
  */
 lwcellr_t
 lwcell_pb_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                const uint32_t blocking) {
+                 const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(pos > 0);
@@ -228,7 +228,7 @@ lwcell_pb_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_f
     LWCELL_MSG_VAR_ALLOC(msg, blocking);
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPBW_SET;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_SET; /* First set memory */
@@ -255,7 +255,7 @@ lwcell_pb_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_f
  */
 lwcellr_t
 lwcell_pb_list(lwcell_mem_t mem, size_t start_index, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
-              const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+               const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(start_index);
@@ -270,9 +270,9 @@ lwcell_pb_list(lwcell_mem_t mem, size_t start_index, lwcell_pb_entry_t* entries,
     if (er != NULL) {
         *er = 0;
     }
-    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr); /* Reset data structure */
+    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPBR;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_SET; /* First set memory */
@@ -302,7 +302,7 @@ lwcell_pb_list(lwcell_mem_t mem, size_t start_index, lwcell_pb_entry_t* entries,
  */
 lwcellr_t
 lwcell_pb_search(lwcell_mem_t mem, const char* search, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
-                const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+                 const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(search != NULL);
@@ -317,9 +317,9 @@ lwcell_pb_search(lwcell_mem_t mem, const char* search, lwcell_pb_entry_t* entrie
     if (er != NULL) {
         *er = 0;
     }
-    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr); /* Reset data structure */
+    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPBF;
-    if (mem == LWCELL_MEM_CURRENT) {                      /* Should be always false */
+    if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_GET; /* First get memory */
     } else {
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_SET; /* First set memory */

@@ -42,7 +42,7 @@ typedef struct mem_block {
     struct mem_block* next; /*!< Pointer to next free block */
     size_t size;            /*!< Size of block */
 } mem_block_t;
-#endif /* !__DOXYGEN__ */
+#endif                      /* !__DOXYGEN__ */
 
 /**
  * \brief           Memory alignment bits and absolute number
@@ -136,7 +136,7 @@ mem_assignmem(const lwcell_mem_region_t* regions, size_t len) {
         if (mem_start_addr >= (uint8_t*)regions[i].start_addr) { /* Check if previous greater than current */
             return 0;                                            /* Return as invalid and failed */
         }
-        mem_start_addr = (uint8_t*)regions[i].start_addr; /* Save as previous address */
+        mem_start_addr = (uint8_t*)regions[i].start_addr;        /* Save as previous address */
     }
 
     for (; len > 0; --len, ++regions) {
@@ -149,7 +149,7 @@ mem_assignmem(const lwcell_mem_region_t* regions, size_t len) {
          * Get start address and check memory alignment
          * if necessary, decrease memory region size
          */
-        mem_start_addr = (uint8_t*)regions->start_addr;  /* Actual heap memory address */
+        mem_start_addr = (uint8_t*)regions->start_addr;   /* Actual heap memory address */
         if (LWCELL_SZ(mem_start_addr) & MEM_ALIGN_BITS) { /* Check alignment boundary */
             mem_start_addr += MEM_ALIGN_NUM - (LWCELL_SZ(mem_start_addr) & MEM_ALIGN_BITS);
             mem_size -= mem_start_addr - (uint8_t*)regions->start_addr;
@@ -270,10 +270,10 @@ mem_alloc(size_t size) {
              */
             mem_insertfreeblock(next); /* Insert free memory block to list of free memory blocks (linked list chain) */
         }
-        curr->size |= MEM_ALLOC_BIT; /* Set allocated bit = memory is allocated */
-        curr->next = NULL;           /* Clear next free block pointer as there is no one */
+        curr->size |= MEM_ALLOC_BIT;   /* Set allocated bit = memory is allocated */
+        curr->next = NULL;             /* Clear next free block pointer as there is no one */
 
-        mem_available_bytes -= size; /* Decrease available memory */
+        mem_available_bytes -= size;   /* Decrease available memory */
     } else {
         /* Allocation failed, no free blocks of required size */
     }
@@ -322,7 +322,7 @@ mem_calloc(size_t num, size_t size) {
     size_t tot_len = num * size;
 
     if ((ptr = mem_alloc(tot_len)) != NULL) { /* Try to allocate memory */
-        LWCELL_MEMSET(ptr, 0x00, tot_len);     /* Reset entire memory */
+        LWCELL_MEMSET(ptr, 0x00, tot_len);    /* Reset entire memory */
     }
     return ptr;
 }
@@ -344,11 +344,11 @@ mem_realloc(void* ptr, size_t size) {
         return mem_alloc(size); /* Only allocate memory */
     }
 
-    old_size = MEM_BLOCK_USER_SIZE(ptr); /* Get size of old pointer */
-    new_ptr = mem_alloc(size);           /* Try to allocate new memory block */
+    old_size = MEM_BLOCK_USER_SIZE(ptr);                         /* Get size of old pointer */
+    new_ptr = mem_alloc(size);                                   /* Try to allocate new memory block */
     if (new_ptr != NULL) {
         LWCELL_MEMCPY(new_ptr, ptr, LWCELL_MIN(size, old_size)); /* Copy old data to new array */
-        mem_free(ptr);                                         /* Free old pointer */
+        mem_free(ptr);                                           /* Free old pointer */
     }
     return new_ptr;
 }
@@ -365,10 +365,10 @@ lwcell_mem_malloc(size_t size) {
     lwcell_core_lock();
     ptr = mem_calloc(1, size); /* Allocate memory and return pointer */
     lwcell_core_unlock();
-    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL, "[LWCELL MEM] Allocation failed: %d bytes\r\n",
-                 (int)size);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL,
+                  "[LWCELL MEM] Allocation failed: %d bytes\r\n", (int)size);
     LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr != NULL,
-                 "[LWCELL MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+                  "[LWCELL MEM] Allocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
@@ -386,10 +386,10 @@ lwcell_mem_realloc(void* ptr, size_t size) {
     lwcell_core_lock();
     ptr = mem_realloc(ptr, size); /* Reallocate and return pointer */
     lwcell_core_unlock();
-    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL, "[LWCELL MEM] Reallocation failed: %d bytes\r\n",
-                 (int)size);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL,
+                  "[LWCELL MEM] Reallocation failed: %d bytes\r\n", (int)size);
     LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr != NULL,
-                 "[LWCELL MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
+                  "[LWCELL MEM] Reallocation OK: %d bytes, addr: %p\r\n", (int)size, ptr);
     return ptr;
 }
 
@@ -406,10 +406,10 @@ lwcell_mem_calloc(size_t num, size_t size) {
     lwcell_core_lock();
     ptr = mem_calloc(num, size); /* Allocate memory and clear it to 0. Then return pointer */
     lwcell_core_unlock();
-    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL, "[LWCELL MEM] Callocation failed: %d bytes\r\n",
-                 (int)size * (int)num);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr == NULL,
+                  "[LWCELL MEM] Callocation failed: %d bytes\r\n", (int)size * (int)num);
     LWCELL_DEBUGW(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, ptr != NULL,
-                 "[LWCELL MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
+                  "[LWCELL MEM] Callocation OK: %d bytes, addr: %p\r\n", (int)size * (int)num, ptr);
     return ptr;
 }
 
@@ -425,7 +425,7 @@ lwcell_mem_free(void* ptr) {
         return;
     }
     LWCELL_DEBUGF(LWCELL_CFG_DBG_MEM | LWCELL_DBG_TYPE_TRACE, "[LWCELL MEM] Free size: %d, address: %p\r\n",
-                 (int)MEM_BLOCK_USER_SIZE(ptr), ptr);
+                  (int)MEM_BLOCK_USER_SIZE(ptr), ptr);
     lwcell_core_lock();
     mem_free(ptr);
     lwcell_core_unlock();

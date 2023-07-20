@@ -48,10 +48,10 @@ get_next_timeout_diff(void) {
         return 0xFFFFFFFF;
     }
     diff = lwcell_sys_now() - last_timeout_time; /* Get difference between current time and last process time */
-    if (diff >= first_timeout->time) {          /* Are we over already? */
-        return 0;                               /* We have to immediately process this timeout */
+    if (diff >= first_timeout->time) {           /* Are we over already? */
+        return 0;                                /* We have to immediately process this timeout */
     }
-    return first_timeout->time - diff; /* Return remaining time for sleep */
+    return first_timeout->time - diff;           /* Return remaining time for sleep */
 }
 
 /**
@@ -95,10 +95,10 @@ uint32_t
 lwcelli_get_from_mbox_with_timeout_checks(lwcell_sys_mbox_t* b, void** m, uint32_t timeout) {
     uint32_t wait_time;
     do {
-        if (first_timeout == NULL) {                  /* We have no timeouts ready? */
+        if (first_timeout == NULL) {                   /* We have no timeouts ready? */
             return lwcell_sys_mbox_get(b, m, timeout); /* Get entry from message queue */
         }
-        wait_time = get_next_timeout_diff(); /* Get time to wait for next timeout execution */
+        wait_time = get_next_timeout_diff();           /* Get time to wait for next timeout execution */
         if (wait_time == 0 || lwcell_sys_mbox_get(b, m, wait_time) == LWCELL_SYS_TIMEOUT) {
             lwcell_core_lock();
             process_next_timeout(); /* Process with next timeout */
@@ -160,7 +160,7 @@ lwcell_timeout_add(uint32_t time, lwcell_timeout_fn fn, void* arg) {
             first_timeout = to;          /* Set new timeout as first */
         } else {                         /* Go somewhere in between current list */
             for (lwcell_timeout_t* t = first_timeout; t != NULL; t = t->next) {
-                to->time -= t->time; /* Decrease new timeout time by time in a linked list */
+                to->time -= t->time;     /* Decrease new timeout time by time in a linked list */
                 /*
                  * Enter between 2 entries on a list in case:
                  *

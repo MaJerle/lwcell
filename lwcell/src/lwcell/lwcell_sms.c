@@ -187,10 +187,10 @@ lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t
     LWCELL_MSG_VAR_ALLOC(msg, blocking);
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
-    LWCELL_MEMSET(entry, 0x00, sizeof(*entry)); /* Reset data structure */
+    LWCELL_MEMSET(entry, 0x00, sizeof(*entry));            /* Reset data structure */
 
-    entry->mem = mem; /* Set memory */
-    entry->pos = pos; /* Set device position */
+    entry->mem = mem;                                      /* Set memory */
+    entry->pos = pos;                                      /* Set device position */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CMGR;
     if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_GET; /* First get memory */
@@ -294,7 +294,7 @@ lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* 
     if (er != NULL) {
         *er = 0;
     }
-    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr); /* Reset data structure */
+    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CMGL;
     if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_GET; /* First get memory */

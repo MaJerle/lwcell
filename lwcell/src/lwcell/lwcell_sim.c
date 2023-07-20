@@ -57,7 +57,8 @@ lwcell_sim_get_current_state(void) {
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
 lwcellr_t
-lwcell_sim_pin_enter(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwcell_sim_pin_enter(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                     const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(pin != NULL);
@@ -106,7 +107,7 @@ lwcell_sim_pin_add(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* co
  */
 lwcellr_t
 lwcell_sim_pin_change(const char* pin, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                     const uint32_t blocking) {
+                      const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(pin != NULL);
@@ -130,7 +131,8 @@ lwcell_sim_pin_change(const char* pin, const char* new_pin, const lwcell_api_cmd
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
 lwcellr_t
-lwcell_sim_pin_remove(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking) {
+lwcell_sim_pin_remove(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                      const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(pin != NULL);
@@ -154,7 +156,7 @@ lwcell_sim_pin_remove(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void*
  */
 lwcellr_t
 lwcell_sim_puk_enter(const char* puk, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                    const uint32_t blocking) {
+                     const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(puk != NULL);

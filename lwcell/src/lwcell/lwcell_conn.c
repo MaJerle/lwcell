@@ -42,13 +42,13 @@
  */
 #define CONN_CHECK_CLOSED_IN_CLOSING(conn)                                                                             \
     do {                                                                                                               \
-        lwcellr_t r = lwcellOK;                                                                                          \
-        lwcell_core_lock();                                                                                             \
+        lwcellr_t r = lwcellOK;                                                                                        \
+        lwcell_core_lock();                                                                                            \
         if (conn->status.f.in_closing || !conn->status.f.active) {                                                     \
-            r = lwcellCLOSED;                                                                                           \
+            r = lwcellCLOSED;                                                                                          \
         }                                                                                                              \
-        lwcell_core_unlock();                                                                                           \
-        if (r != lwcellOK) {                                                                                            \
+        lwcell_core_unlock();                                                                                          \
+        if (r != lwcellOK) {                                                                                           \
             return r;                                                                                                  \
         }                                                                                                              \
     } while (0)
@@ -59,14 +59,14 @@
  */
 static void
 conn_timeout_cb(void* arg) {
-    lwcell_conn_p conn = arg;                  /* Argument is actual connection */
+    lwcell_conn_p conn = arg;                   /* Argument is actual connection */
 
-    if (conn->status.f.active) {              /* Handle only active connections */
+    if (conn->status.f.active) {                /* Handle only active connections */
         lwcell.evt.type = LWCELL_EVT_CONN_POLL; /* Poll connection event */
-        lwcell.evt.evt.conn_poll.conn = conn;  /* Set connection pointer */
-        lwcelli_send_conn_cb(conn, NULL);      /* Send connection callback */
+        lwcell.evt.evt.conn_poll.conn = conn;   /* Set connection pointer */
+        lwcelli_send_conn_cb(conn, NULL);       /* Send connection callback */
 
-        lwcelli_conn_start_timeout(conn);      /* Schedule new timeout */
+        lwcelli_conn_start_timeout(conn);       /* Schedule new timeout */
         LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Poll event: %p\r\n", (void*)conn);
     }
 }
@@ -159,7 +159,7 @@ flush_buff(lwcell_conn_p conn) {
         }
         if (res != lwcellOK) {
             LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer: %p\r\n",
-                         (void*)conn->buff.buff);
+                          (void*)conn->buff.buff);
             lwcell_mem_free_s((void**)&conn->buff.buff);
         }
         conn->buff.buff = NULL;
@@ -186,8 +186,8 @@ lwcelli_conn_init(void) {}
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
 lwcellr_t
-lwcell_conn_start(lwcell_conn_p* conn, lwcell_conn_type_t type, const char* const host, lwcell_port_t port, void* const arg,
-                 lwcell_evt_fn conn_evt_fn, const uint32_t blocking) {
+lwcell_conn_start(lwcell_conn_p* conn, lwcell_conn_type_t type, const char* const host, lwcell_port_t port,
+                  void* const arg, lwcell_evt_fn conn_evt_fn, const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_ASSERT(host != NULL);
@@ -229,12 +229,12 @@ lwcell_conn_close(lwcell_conn_p conn, const uint32_t blocking) {
     LWCELL_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
     LWCELL_MSG_VAR_REF(msg).msg.conn_close.val_id = lwcelli_conn_get_val_id(conn);
 
-    flush_buff(conn);                  /* First flush buffer */
+    flush_buff(conn);                   /* First flush buffer */
     res = lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 1000);
     if (res == lwcellOK && !blocking) { /* Function succedded in non-blocking mode */
         lwcell_core_lock();
-        LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Connection %d set to closing state\r\n",
-                     (int)conn->num);
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE,
+                      "[LWCELL CONN] Connection %d set to closing state\r\n", (int)conn->num);
         conn->status.f.in_closing = 1; /* Connection is in closing mode but not yet closed */
         lwcell_core_unlock();
     }
@@ -255,7 +255,7 @@ lwcell_conn_close(lwcell_conn_p conn, const uint32_t blocking) {
  */
 lwcellr_t
 lwcell_conn_sendto(lwcell_conn_p conn, const lwcell_ip_t* const ip, lwcell_port_t port, const void* data, size_t btw,
-                  size_t* bw, const uint32_t blocking) {
+                   size_t* bw, const uint32_t blocking) {
     LWCELL_ASSERT(conn != NULL);
 
     flush_buff(conn); /* Flush currently written memory if exists */
@@ -493,7 +493,7 @@ lwcell_conn_write(lwcell_conn_p conn, const void* data, size_t btw, uint8_t flus
             /* Try to send to processing queue in non-blocking way */
             if (conn_send(conn, NULL, 0, conn->buff.buff, conn->buff.ptr, NULL, 1, 0) != lwcellOK) {
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer: %p\r\n",
-                             conn->buff.buff);
+                              conn->buff.buff);
                 lwcell_mem_free_s((void**)&conn->buff.buff);
             }
             conn->buff.buff = NULL;
@@ -508,7 +508,7 @@ lwcell_conn_write(lwcell_conn_p conn, const void* data, size_t btw, uint8_t flus
             LWCELL_MEMCPY(buff, d, LWCELL_CFG_CONN_MAX_DATA_LEN); /* Copy data to buffer */
             if (conn_send(conn, NULL, 0, buff, LWCELL_CFG_CONN_MAX_DATA_LEN, NULL, 1, 0) != lwcellOK) {
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Free write buffer: %p\r\n",
-                             (void*)buff);
+                              (void*)buff);
                 lwcell_mem_free_s((void**)&buff);
                 return lwcellERRMEM;
             }
@@ -527,9 +527,9 @@ lwcell_conn_write(lwcell_conn_p conn, const void* data, size_t btw, uint8_t flus
         conn->buff.ptr = 0;
 
         LWCELL_DEBUGW(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, conn->buff.buff != NULL,
-                     "[LWCELL CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
+                      "[LWCELL CONN] New write buffer allocated, addr = %p\r\n", conn->buff.buff);
         LWCELL_DEBUGW(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, conn->buff.buff == NULL,
-                     "[LWCELL CONN] Cannot allocate new write buffer\r\n");
+                      "[LWCELL CONN] Cannot allocate new write buffer\r\n");
     }
     if (btw > 0) {
         if (conn->buff.buff != NULL) {
