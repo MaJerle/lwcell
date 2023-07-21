@@ -76,10 +76,10 @@ lwcell_pbuf_new(size_t len) {
     lwcell_pbuf_p p;
 
     p = lwcell_mem_malloc(SIZEOF_PBUF_STRUCT + sizeof(*p->payload) * len);
-    LWCELL_DEBUGW(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, p == NULL, "[LWCELL PBUF] Failed to allocate %u bytes\r\n",
-                 (unsigned)len);
+    LWCELL_DEBUGW(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, p == NULL,
+                  "[LWCELL PBUF] Failed to allocate %u bytes\r\n", (unsigned)len);
     LWCELL_DEBUGW(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, p != NULL, "[LWCELL PBUF] Allocated %u bytes on %p\r\n",
-                 (unsigned)len, (void*)p);
+                  (unsigned)len, (void*)p);
     if (p != NULL) {
         p->next = NULL;                                        /* No next element in chain */
         p->tot_len = len;                                      /* Set total length of pbuf chain */
@@ -119,12 +119,12 @@ lwcell_pbuf_free(lwcell_pbuf_p pbuf) {
         lwcell_core_unlock();
         if (ref == 0) { /* Did we reach 0 and are ready to free it? */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE,
-                         "[LWCELL PBUF] Deallocating %p with len/tot_len: %u/%u\r\n", (void*)p, (unsigned)p->len,
-                         (unsigned)p->tot_len);
-            pn = p->next;                 /* Save next entry */
+                          "[LWCELL PBUF] Deallocating %p with len/tot_len: %u/%u\r\n", (void*)p, (unsigned)p->len,
+                          (unsigned)p->tot_len);
+            pn = p->next;                  /* Save next entry */
             lwcell_mem_free_s((void**)&p); /* Free memory for pbuf */
-            p = pn;                       /* Restore with next entry */
-            ++cnt;                        /* Increase number of freed pbufs */
+            p = pn;                        /* Restore with next entry */
+            ++cnt;                         /* Increase number of freed pbufs */
         } else {
             break;
         }
@@ -177,8 +177,8 @@ lwcell_pbuf_cat(lwcell_pbuf_p head, const lwcell_pbuf_p tail) {
     for (; head->next != NULL; head = head->next) {
         head->tot_len += tail->tot_len; /* Increase total length of packet */
     }
-    head->tot_len += tail->tot_len; /* Increase total length of last packet in chain */
-    head->next = tail;              /* Set next packet buffer as next one */
+    head->tot_len += tail->tot_len;     /* Increase total length of last packet in chain */
+    head->next = tail;                  /* Set next packet buffer as next one */
 
     return lwcellOK;
 }
@@ -196,7 +196,7 @@ lwcell_pbuf_cat(lwcell_pbuf_p head, const lwcell_pbuf_p tail) {
  */
 lwcellr_t
 lwcell_pbuf_cat_s(lwcell_pbuf_p head, lwcell_pbuf_p* tail) {
-    lwcellr_t res;
+    lwcellr_t res = lwcellOK;
 
     LWCELL_ASSERT(head != NULL);
     LWCELL_ASSERT(tail != NULL);
@@ -230,9 +230,9 @@ lwcell_pbuf_chain(lwcell_pbuf_p head, lwcell_pbuf_p tail) {
      * To prevent issues with multi-thread access,
      * first reference pbuf and increase counter
      */
-    lwcell_pbuf_ref(tail);                                /* Reference tail pbuf by head pbuf now */
+    lwcell_pbuf_ref(tail);                                 /* Reference tail pbuf by head pbuf now */
     if ((res = lwcell_pbuf_cat(head, tail)) != lwcellOK) { /* Did we concatenate them together successfully? */
-        lwcell_pbuf_free(tail);                           /* Call free to decrease reference counter */
+        lwcell_pbuf_free(tail);                            /* Call free to decrease reference counter */
     }
     return res;
 }
@@ -252,8 +252,8 @@ lwcell_pbuf_unchain(lwcell_pbuf_p head) {
     if (head != NULL && head->next != NULL) { /* Check for valid pbuf */
         r = head->next;                       /* Set return value as next pbuf */
 
-        head->next = NULL;         /* Clear next pbuf */
-        head->tot_len = head->len; /* Set new length of head pbuf */
+        head->next = NULL;                    /* Clear next pbuf */
+        head->tot_len = head->len;            /* Set new length of head pbuf */
     }
     return r;
 }
@@ -305,17 +305,17 @@ lwcell_pbuf_take(lwcell_pbuf_p pbuf, const void* data, size_t len, size_t offset
     if (offset > 0) {
         copy_len = LWCELL_MIN(pbuf->len - offset, len);     /* Get length to copy to current pbuf */
         LWCELL_MEMCPY(pbuf->payload + offset, d, copy_len); /* Copy to memory with offset */
-        len -= copy_len;                                   /* Decrease remaining bytes to copy */
-        d += copy_len;                                     /* Increase data pointer */
-        pbuf = pbuf->next;                                 /* Go to next pbuf */
+        len -= copy_len;                                    /* Decrease remaining bytes to copy */
+        d += copy_len;                                      /* Increase data pointer */
+        pbuf = pbuf->next;                                  /* Go to next pbuf */
     }
 
     /* Copy user memory to sequence of pbufs */
     for (; len; pbuf = pbuf->next) {
         copy_len = LWCELL_MIN(len, pbuf->len);     /* Get copy length */
         LWCELL_MEMCPY(pbuf->payload, d, copy_len); /* Copy memory to pbuf payload */
-        len -= copy_len;                          /* Decrease number of remaining bytes to send */
-        d += copy_len;                            /* Increase data pointer */
+        len -= copy_len;                           /* Decrease number of remaining bytes to send */
+        d += copy_len;                             /* Increase data pointer */
     }
     return lwcellOK;
 }
@@ -403,7 +403,7 @@ lwcell_pbuf_memfind(const lwcell_pbuf_p pbuf, const void* needle, size_t len, si
          */
         for (size_t i = off; i <= pbuf->tot_len - len; ++i) {
             if (!lwcell_pbuf_memcmp(pbuf, needle, len, i)) { /* Check if identical */
-                return i;                                   /* We have a match! */
+                return i;                                    /* We have a match! */
             }
         }
     }
@@ -441,7 +441,7 @@ lwcell_pbuf_memcmp(const lwcell_pbuf_p pbuf, const void* data, size_t len, size_
 
     if (pbuf == NULL || data == NULL || len == 0 /* Input parameters check */
         || pbuf->tot_len < (offset + len)) {     /* Check of valid ranges */
-        return LWCELL_SIZET_MAX;                  /* Invalid check here */
+        return LWCELL_SIZET_MAX;                 /* Invalid check here */
     }
 
     /*
@@ -460,7 +460,7 @@ lwcell_pbuf_memcmp(const lwcell_pbuf_p pbuf, const void* data, size_t len, size_
      */
     for (size_t i = 0; i < len; ++i) {
         if (!lwcell_pbuf_get_at(p, offset + i, &el) || el != d[i]) { /* Get value from pbuf at specific offset */
-            return offset + 1;                                      /* Return value from offset where it failed */
+            return offset + 1;                                       /* Return value from offset where it failed */
         }
     }
     return 0; /* Memory matches at this point */
@@ -604,8 +604,8 @@ lwcell_pbuf_dump(lwcell_pbuf_p p, uint8_t seq) {
         LWCELL_DEBUGF(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE, "[LWCELL PBUF] Dump start: %p\r\n", (void*)p);
         for (; p != NULL; p = p->next) {
             LWCELL_DEBUGF(LWCELL_CFG_DBG_PBUF | LWCELL_DBG_TYPE_TRACE,
-                         "[LWCELL PBUF] Dump %p; ref: %u; len: %u; tot_len: %u, next: %p\r\n", (void*)p,
-                         (unsigned)p->ref, (unsigned)p->len, (unsigned)p->tot_len, (void*)p->next);
+                          "[LWCELL PBUF] Dump %p; ref: %u; len: %u; tot_len: %u, next: %p\r\n", (void*)p,
+                          (unsigned)p->ref, (unsigned)p->len, (unsigned)p->tot_len, (void*)p->next);
             if (!seq) {
                 break;
             }
