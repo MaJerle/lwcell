@@ -46,7 +46,9 @@
 #include "lwcell/lwcell_input.h"
 #include "lwcell/lwcell_mem.h"
 #include "lwcell/lwcell_types.h"
+#include "lwcell/lwcell_utils.h"
 #include "system/lwcell_ll.h"
+#include "system/lwcell_sys.h"
 
 #if !__DOXYGEN__
 
