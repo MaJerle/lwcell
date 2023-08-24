@@ -51,11 +51,11 @@
 
 #if !__DOXYGEN__
 
-#include "stm32f4xx_ll_bus.h"
-#include "stm32f4xx_ll_dma.h"
-#include "stm32f4xx_ll_gpio.h"
-#include "stm32f4xx_ll_rcc.h"
-#include "stm32f4xx_ll_usart.h"
+#include "stm32u5xx_ll_bus.h"
+#include "stm32u5xx_ll_dma.h"
+#include "stm32u5xx_ll_gpio.h"
+#include "stm32u5xx_ll_rcc.h"
+#include "stm32u5xx_ll_usart.h"
 
 /* USART */
 #define LWCELL_USART                   USART6
