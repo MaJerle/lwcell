@@ -46,7 +46,9 @@
 #include "lwcell/lwcell_input.h"
 #include "lwcell/lwcell_mem.h"
 #include "lwcell/lwcell_types.h"
+#include "lwcell/lwcell_utils.h"
 #include "system/lwcell_ll.h"
+#include "cmsis_os2.h"
 
 #if !__DOXYGEN__
 
@@ -94,9 +96,9 @@ usart_ll_thread(void* arg) {
 
         /* Read data */
 #if defined(LWCELL_USART_DMA_RX_STREAM)
-        pos = sizeof(usart_mem) - LL_DMA_GetDataLength(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
+        pos = sizeof(usart_mem) - LL_DMA_GetBlkDataLength(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_STREAM);
 #else
-        pos = sizeof(usart_mem) - LL_DMA_GetDataLength(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
+        pos = sizeof(usart_mem) - LL_DMA_GetBlkDataLength(LWCELL_USART_DMA, LWCELL_USART_DMA_RX_CH);
 #endif /* defined(LWCELL_USART_DMA_RX_STREAM) */
         if (pos != old_pos && is_running) {
             if (pos > old_pos) {

@@ -58,17 +58,17 @@
 #include "stm32u5xx_ll_usart.h"
 
 /* USART */
-#define LWCELL_USART                   USART6
-#define LWCELL_USART_CLK               LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART6)
-#define LWCELL_USART_IRQ               USART6_IRQn
-#define LWCELL_USART_IRQHANDLER        USART6_IRQHandler
-#define LWCELL_USART_RDR_NAME          DR
+#define LWCELL_USART                   USART3
+#define LWCELL_USART_CLK               LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
+#define LWCELL_USART_IRQ               USART3_IRQn
+#define LWCELL_USART_IRQHANDLER        USART3_IRQHandler
+// #define LWCELL_USART_RDR_NAME          DR
 
 /* DMA settings */
-#define LWCELL_USART_DMA               DMA2
-#define LWCELL_USART_DMA_CLK           LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2)
+#define LWCELL_USART_DMA               GPDMA1_NS
+#define LWCELL_USART_DMA_CLK           LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPDMA1)
 #define LWCELL_USART_DMA_RX_STREAM     LL_DMA_STREAM_1
-#define LWCELL_USART_DMA_RX_CH         LL_DMA_CHANNEL_5
+#define LWCELL_USART_DMA_RX_CH         LL_DMA_CHANNEL_6
 #define LWCELL_USART_DMA_RX_IRQ        DMA2_Stream1_IRQn
 #define LWCELL_USART_DMA_RX_IRQHANDLER DMA2_Stream1_IRQHandler
 
