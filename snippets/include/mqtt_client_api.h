@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-void mqtt_client_api_thread(void const* arg);
+void lwcell_mqtt_client_api_thread(void const* arg);
 
 #ifdef __cplusplus
 }

@@ -94,7 +94,7 @@ init_thread(void* arg) {
     lwcell_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
     /* Start MQTT thread */
-    lwcell_sys_thread_create(NULL, "mqtt_thread", (lwcell_sys_thread_fn)mqtt_client_api_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
+    lwcell_sys_thread_create(NULL, "mqtt_thread", (lwcell_sys_thread_fn)lwcell_mqtt_client_api_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
 
     while (1) {
         lwcell_delay(1000);

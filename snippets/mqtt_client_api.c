@@ -39,7 +39,7 @@ static char mqtt_topic_str[256];
  * \brief           Generate random number and write it to string
  * \param[out]      str: Output string with new number
  */
-void
+static void
 generate_random(char* str) {
     static uint32_t random_beg = 0x8916;
     random_beg = random_beg * 0x00123455 + 0x85654321;
@@ -50,7 +50,7 @@ generate_random(char* str) {
  * \brief           MQTT client API thread
  */
 void
-mqtt_client_api_thread(void const* arg) {
+lwcell_mqtt_client_api_thread(void const* arg) {
     lwcell_mqtt_client_api_p client;
     lwcell_mqtt_conn_status_t conn_status;
     lwcell_mqtt_client_api_buf_p buf;
@@ -111,7 +111,7 @@ mqtt_client_api_thread(void const* arg) {
                 generate_random(random_str);
                 sprintf(mqtt_topic_str, "v1/%s/things/%s/data/1", mqtt_client_info.user, mqtt_client_info.id);
                 lwcell_mqtt_client_api_publish(client, mqtt_topic_str, random_str, strlen(random_str),
-                                              LWCELL_MQTT_QOS_AT_LEAST_ONCE, 0);
+                                               LWCELL_MQTT_QOS_AT_LEAST_ONCE, 0);
             }
         }
         goto terminate;
