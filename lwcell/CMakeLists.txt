@@ -25,33 +25,33 @@ set(lwcell_core_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_unicode.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_ussd.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_utils.c
-    )
-    
+)
+
 # API sources
 set(lwcell_api_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/api/lwcell_netconn.c
     ${CMAKE_CURRENT_LIST_DIR}/src/api/lwcell_network_api.c
-    )
+)
 
 # MQTT
 set(lwcell_mqtt_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwcell_mqtt_client.c
     ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwcell_mqtt_client_api.c
     ${CMAKE_CURRENT_LIST_DIR}/src/apps/mqtt/lwcell_mqtt_client_evt.c
-    )
+)
 
 # All apps source files
 set(lwcell_allapps_SRCS
     ${lwcell_mqtt_SRCS}
-    )
+)
 
 # Setup include directories
 set(lwcell_include_DIRS
     ${CMAKE_CURRENT_LIST_DIR}/src/include
-    )
-    
+)
+
 # Add system port to core if user defined
-if (DEFINED LWCELL_SYS_PORT)
+if(DEFINED LWCELL_SYS_PORT)
     set(lwcell_core_SRCS ${lwcell_core_SRCS} ${CMAKE_CURRENT_LIST_DIR}/src/system/lwcell_sys_${LWCELL_SYS_PORT}.c)
     set(lwcell_include_DIRS ${lwcell_include_DIRS} ${CMAKE_CURRENT_LIST_DIR}/src/include/system/port/${LWCELL_SYS_PORT})
 endif()
@@ -69,4 +69,9 @@ target_include_directories(lwcell_api INTERFACE ${lwcell_include_DIRS})
 # Register apps to the system
 add_library(lwcell_apps INTERFACE)
 target_sources(lwcell_apps PUBLIC ${lwcell_allapps_SRCS})
-target_include_directories(lwcell_apps INTERFACE ${lwcell_include_DIRS})	
+target_include_directories(lwcell_apps INTERFACE ${lwcell_include_DIRS})
+
+# Create config file
+if(DEFINED LWCELL_OPTS_DIR AND NOT EXISTS ${LWCELL_OPTS_DIR}/lwcell_opts.h)
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/src/include/lwcell/lwcell_opts_template.h ${LWCELL_OPTS_DIR}/lwcell_opts.h COPYONLY)
+endif()

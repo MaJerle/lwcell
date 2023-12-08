@@ -45,6 +45,7 @@ else()
     )
 
     # Add subdir with lwcell and link to the project
+    set(LWCELL_OPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/dev)
     set(LWCELL_SYS_PORT "win32")
     add_subdirectory(lwcell)
     target_link_libraries(${PROJECT_NAME} lwcell)
