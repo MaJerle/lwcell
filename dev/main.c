@@ -187,7 +187,7 @@ input_thread(void* arg) {
             lwcell_pb_list(LWCELL_MEM_CURRENT, 1, pb_entries, LWCELL_ARRAYSIZE(pb_entries), &pb_entries_read, NULL, NULL, 1);
 #endif /* LWCELL_CFG_PHONEBOOK */
         } else if (IS_LINE("mqttthread")) {
-            lwcell_sys_thread_create(NULL, "mqtt_client_api", (lwcell_sys_thread_fn)mqtt_client_api_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
+            lwcell_sys_thread_create(NULL, "mqtt_client_api", (lwcell_sys_thread_fn)lwcell_mqtt_client_api_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
         } else if (IS_LINE("client")) {
             client_connect();
 #if LWCELL_CFG_USSD
