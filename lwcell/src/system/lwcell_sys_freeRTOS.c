@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2021 Tilen MAJERLE and Ilya Kargapolov
+ * Copyright (c) 2024 Tilen MAJERLE and Ilya Kargapolov
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
