@@ -1,14 +1,19 @@
 # 
+# LIB_PREFIX: LWCELL
+#
 # This file provides set of variables for end user
 # and also generates one (or more) libraries, that can be added to the project using target_link_libraries(...)
 #
 # Before this file is included to the root CMakeLists file (using include() function), user can set some variables:
 #
 # LWCELL_SYS_PORT: If defined, it will include port source file from the library, and include the necessary header file.
-# LWCELL_OPTS_DIR: If defined, it should set the folder path where options file shall be generated.
+# LWCELL_OPTS_FILE: If defined, it is the path to the user options file. If not defined, one will be generated for you automatically
 # LWCELL_COMPILE_OPTIONS: If defined, it provide compiler options for generated library.
 # LWCELL_COMPILE_DEFINITIONS: If defined, it provides "-D" definitions to the library build
 #
+
+# Custom include directory
+set(LWCELL_CUSTOM_INC_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib_inc)
 
 # Library core sources
 set(lwcell_core_SRCS
@@ -58,6 +63,7 @@ set(lwcell_allapps_SRCS
 # Setup include directories
 set(lwcell_include_DIRS
     ${CMAKE_CURRENT_LIST_DIR}/src/include
+    ${LWCELL_CUSTOM_INC_DIR}
 )
 
 # Add system port to core if user defined
@@ -87,7 +93,11 @@ target_include_directories(lwcell_apps INTERFACE ${lwcell_include_DIRS})
 target_compile_options(lwcell_apps PRIVATE ${LWCELL_COMPILE_OPTIONS})
 target_compile_definitions(lwcell_apps PRIVATE ${LWCELL_COMPILE_DEFINITIONS})
 
-# Create config file
-if(DEFINED LWCELL_OPTS_DIR AND NOT EXISTS ${LWCELL_OPTS_DIR}/lwcell_opts.h)
-    configure_file(${CMAKE_CURRENT_LIST_DIR}/src/include/lwcell/lwcell_opts_template.h ${LWCELL_OPTS_DIR}/lwcell_opts.h COPYONLY)
+# Create config file if user didn't provide one info himself
+if(NOT LWCELL_OPTS_FILE)
+    message(STATUS "Using default lwcell_opts.h file")
+    set(LWCELL_OPTS_FILE ${CMAKE_CURRENT_LIST_DIR}/src/include/lwcell/lwcell_opts_template.h)
+else()
+    message(STATUS "Using custom lwcell_opts.h file from ${LWCELL_OPTS_FILE}")
 endif()
+configure_file(${LWCELL_OPTS_FILE} ${LWCELL_CUSTOM_INC_DIR}/lwcell_opts.h COPYONLY)
