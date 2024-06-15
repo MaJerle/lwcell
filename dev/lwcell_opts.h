@@ -63,6 +63,8 @@
 
 #define LWCELL_CFG_MEM_CUSTOM        1
 
+#define LWCELL_CFG_MQTT              1
+
 #if defined(WIN32)
 #define LWCELL_CFG_SYS_PORT LWCELL_SYS_PORT_WIN32
 #endif

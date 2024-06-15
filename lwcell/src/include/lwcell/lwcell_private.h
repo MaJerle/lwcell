@@ -264,12 +264,12 @@ typedef enum {
  */
 typedef struct lwcell_conn {
     lwcell_conn_type_t type;   /*!< Connection type */
-    uint8_t num;              /*!< Connection number */
+    uint8_t num;               /*!< Connection number */
     lwcell_ip_t remote_ip;     /*!< Remote IP address */
     lwcell_port_t remote_port; /*!< Remote port number */
     lwcell_port_t local_port;  /*!< Local IP address */
     lwcell_evt_fn evt_func;    /*!< Callback function for connection */
-    void* arg;                /*!< User custom argument */
+    void* arg;                 /*!< User custom argument */
 
     uint8_t val_id; /*!< Validation ID number. It is increased each time a new connection is established.
                                                      It protects sending data to wrong connection in case we have data in send queue,
@@ -297,10 +297,10 @@ typedef struct lwcell_conn {
  */
 typedef struct lwcell_pbuf {
     struct lwcell_pbuf* next; /*!< Next pbuf in chain list */
-    size_t tot_len;          /*!< Total length of pbuf chain */
-    size_t len;              /*!< Length of payload */
-    size_t ref;              /*!< Number of references to this structure */
-    uint8_t* payload;        /*!< Pointer to payload memory */
+    size_t tot_len;           /*!< Total length of pbuf chain */
+    size_t len;               /*!< Length of payload */
+    size_t ref;               /*!< Number of references to this structure */
+    uint8_t* payload;         /*!< Pointer to payload memory */
     lwcell_ip_t ip;           /*!< Remote address for received IPD data */
     lwcell_port_t port;       /*!< Remote port for received IPD data */
 } lwcell_pbuf_t;
@@ -309,12 +309,12 @@ typedef struct lwcell_pbuf {
  * \brief           Incoming network data read structure
  */
 typedef struct {
-    uint8_t read;      /*!< Set to 1 when we should process input data as connection data */
-    size_t tot_len;    /*!< Total length of packet */
-    size_t rem_len;    /*!< Remaining bytes to read in current +IPD statement */
+    uint8_t read;       /*!< Set to 1 when we should process input data as connection data */
+    size_t tot_len;     /*!< Total length of packet */
+    size_t rem_len;     /*!< Remaining bytes to read in current +IPD statement */
     lwcell_conn_p conn; /*!< Pointer to connection for network data */
 
-    size_t buff_ptr;   /*!< Buffer pointer to save data to.
+    size_t buff_ptr;    /*!< Buffer pointer to save data to.
                                                      When set to `NULL` while `read = 1`, reading should ignore incoming data */
     lwcell_pbuf_p buff; /*!< Pointer to data buffer used for receiving data */
 } lwcell_ipd_t;
@@ -335,17 +335,17 @@ typedef enum {
 typedef struct lwcell_msg {
     lwcell_cmd_t cmd_def; /*!< Default message type received from queue */
     lwcell_cmd_t cmd;     /*!< Since some commands can have different subcommands, sub command is used here */
-    uint8_t i;           /*!< Variable to indicate order number of subcommands */
+    uint8_t i;            /*!< Variable to indicate order number of subcommands */
     lwcell_sys_sem_t sem; /*!< Semaphore for the message */
-    uint8_t is_blocking; /*!< Status if command is blocking */
-    uint32_t block_time; /*!< Maximal blocking time in units of milliseconds. Use 0 to for non-blocking call */
+    uint8_t is_blocking;  /*!< Status if command is blocking */
+    uint32_t block_time;  /*!< Maximal blocking time in units of milliseconds. Use 0 to for non-blocking call */
     lwcellr_t res;        /*!< Result of message operation */
     lwcellr_t (*fn)(struct lwcell_msg*); /*!< Processing callback function to process packet */
 
 #if LWCELL_CFG_USE_API_FUNC_EVT
     lwcell_api_cmd_evt_fn evt_fn; /*!< Command callback API function */
-    void* evt_arg;               /*!< Command callback API callback parameter */
-#endif                           /* LWCELL_CFG_USE_API_FUNC_EVT */
+    void* evt_arg;                /*!< Command callback API callback parameter */
+#endif                            /* LWCELL_CFG_USE_API_FUNC_EVT */
 
     union {
         struct {
@@ -396,58 +396,58 @@ typedef struct lwcell_msg {
         } csq;             /*!< Signal strength */
 
         struct {
-            uint8_t read;          /*!< Flag indicating we can read the COPS actual data */
+            uint8_t read;           /*!< Flag indicating we can read the COPS actual data */
             lwcell_operator_t* ops; /*!< Pointer to operators array */
-            size_t opsl;           /*!< Length of operators array */
-            size_t opsi;           /*!< Current operator index array */
-            size_t* opf;           /*!< Pointer to number of operators found */
-        } cops_scan;               /*!< Scan operators */
+            size_t opsl;            /*!< Length of operators array */
+            size_t opsi;            /*!< Current operator index array */
+            size_t* opf;            /*!< Pointer to number of operators found */
+        } cops_scan;                /*!< Scan operators */
 
         struct {
             lwcell_operator_curr_t* curr; /*!< Pointer to output current operator */
-        } cops_get;                      /*!< Get current operator info */
+        } cops_get;                       /*!< Get current operator info */
 
         struct {
             lwcell_operator_mode_t mode;     /*!< COPS mode */
             lwcell_operator_format_t format; /*!< Operator format to print */
-            const char* name;               /*!< Short or long name, according to format */
-            uint32_t num;                   /*!< Number in case format is number */
-        } cops_set;                         /*!< Set operator settings */
+            const char* name;                /*!< Short or long name, according to format */
+            uint32_t num;                    /*!< Number in case format is number */
+        } cops_set;                          /*!< Set operator settings */
 
 #if LWCELL_CFG_CONN || __DOXYGEN__
         /* Connection based commands */
         struct {
             lwcell_conn_t** conn;               /*!< Pointer to pointer to save connection used */
-            const char* host;                  /*!< Host to use for connection */
+            const char* host;                   /*!< Host to use for connection */
             lwcell_port_t port;                 /*!< Remote port used for connection */
             lwcell_conn_type_t type;            /*!< Connection type */
-            void* arg;                         /*!< Connection custom argument */
+            void* arg;                          /*!< Connection custom argument */
             lwcell_evt_fn evt_func;             /*!< Callback function to use on connection */
-            uint8_t num;                       /*!< Connection number used for start */
+            uint8_t num;                        /*!< Connection number used for start */
             lwcell_conn_connect_res_t conn_res; /*!< Connection result status */
-        } conn_start;                          /*!< Structure for starting new connection */
+        } conn_start;                           /*!< Structure for starting new connection */
 
         struct {
             lwcell_conn_t* conn; /*!< Pointer to connection to close */
-            uint8_t val_id;     /*!< Connection current validation ID when command was sent to queue */
-        } conn_close;           /*!< Close connection */
+            uint8_t val_id;      /*!< Connection current validation ID when command was sent to queue */
+        } conn_close;            /*!< Close connection */
 
         struct {
             lwcell_conn_t* conn;          /*!< Pointer to connection to send data */
-            size_t btw;                  /*!< Number of remaining bytes to write */
-            size_t ptr;                  /*!< Current write pointer for data */
-            const uint8_t* data;         /*!< Data to send */
-            size_t sent;                 /*!< Number of bytes sent in last packet */
-            size_t sent_all;             /*!< Number of bytes sent all together */
-            uint8_t tries;               /*!< Number of tries used for last packet */
-            uint8_t wait_send_ok_err;    /*!< Set to 1 when we wait for SEND OK or SEND ERROR */
+            size_t btw;                   /*!< Number of remaining bytes to write */
+            size_t ptr;                   /*!< Current write pointer for data */
+            const uint8_t* data;          /*!< Data to send */
+            size_t sent;                  /*!< Number of bytes sent in last packet */
+            size_t sent_all;              /*!< Number of bytes sent all together */
+            uint8_t tries;                /*!< Number of tries used for last packet */
+            uint8_t wait_send_ok_err;     /*!< Set to 1 when we wait for SEND OK or SEND ERROR */
             const lwcell_ip_t* remote_ip; /*!< Remote IP address for UDP connection */
             lwcell_port_t remote_port;    /*!< Remote port address for UDP connection */
-            uint8_t fau;                 /*!< Free after use flag to free memory after data are sent (or not) */
-            size_t* bw;                  /*!< Number of bytes written so far */
-            uint8_t val_id;              /*!< Connection current validation ID when command was sent to queue */
-        } conn_send;                     /*!< Structure to send data on connection */
-#endif                                   /* LWCELL_CFG_CONN || __DOXYGEN__ */
+            uint8_t fau;                  /*!< Free after use flag to free memory after data are sent (or not) */
+            size_t* bw;                   /*!< Number of bytes written so far */
+            uint8_t val_id;               /*!< Connection current validation ID when command was sent to queue */
+        } conn_send;                      /*!< Structure to send data on connection */
+#endif                                    /* LWCELL_CFG_CONN || __DOXYGEN__ */
 #if LWCELL_CFG_SMS || __DOXYGEN__
         struct {
             const char* num;  /*!< Phone number */
@@ -458,38 +458,38 @@ typedef struct lwcell_msg {
 
         struct {
             lwcell_mem_t mem;          /*!< Memory to read from */
-            size_t pos;               /*!< SMS position in memory */
+            size_t pos;                /*!< SMS position in memory */
             lwcell_sms_entry_t* entry; /*!< Pointer to entry to write info */
-            uint8_t update;           /*!< Update SMS status after read operation */
-            uint8_t format;           /*!< SMS format, `0 = PDU`, `1 = text` */
-            uint8_t read;             /*!< Read the data flag */
-        } sms_read;                   /*!< Read single SMS */
+            uint8_t update;            /*!< Update SMS status after read operation */
+            uint8_t format;            /*!< SMS format, `0 = PDU`, `1 = text` */
+            uint8_t read;              /*!< Read the data flag */
+        } sms_read;                    /*!< Read single SMS */
 
         struct {
             lwcell_mem_t mem; /*!< Memory to delete from */
-            size_t pos;      /*!< SMS position in memory */
-        } sms_delete;        /*!< Delete SMS message */
+            size_t pos;       /*!< SMS position in memory */
+        } sms_delete;         /*!< Delete SMS message */
 
         struct {
             lwcell_sms_status_t status; /*!< SMS status to delete */
-        } sms_delete_all;              /*!< Mass delete SMS messages */
+        } sms_delete_all;               /*!< Mass delete SMS messages */
 
         struct {
             lwcell_mem_t mem;            /*!< Memory to use for read */
             lwcell_sms_status_t status;  /*!< SMS entries status */
             lwcell_sms_entry_t* entries; /*!< Pointer to entries */
-            size_t etr;                 /*!< Entries to read (array length) */
-            size_t ei;                  /*!< Current entry index in array */
-            size_t* er;                 /*!< Final entries read pointer for user */
-            uint8_t update;             /*!< Update SMS status after read operation */
-            uint8_t format;             /*!< SMS format, `0 = PDU`, `1 = text` */
-            uint8_t read;               /*!< Read the data flag */
-        } sms_list;                     /*!< List SMS messages */
+            size_t etr;                  /*!< Entries to read (array length) */
+            size_t ei;                   /*!< Current entry index in array */
+            size_t* er;                  /*!< Final entries read pointer for user */
+            uint8_t update;              /*!< Update SMS status after read operation */
+            uint8_t format;              /*!< SMS format, `0 = PDU`, `1 = text` */
+            uint8_t read;                /*!< Read the data flag */
+        } sms_list;                      /*!< List SMS messages */
 
         struct {
             lwcell_mem_t mem[3]; /*!< Array of memories */
-        } sms_memory;           /*!< Set preferred memories */
-#endif                          /* LWCELL_CFG_SMS || __DOXYGEN__ */
+        } sms_memory;            /*!< Set preferred memories */
+#endif                           /* LWCELL_CFG_SMS || __DOXYGEN__ */
 #if LWCELL_CFG_CALL || __DOXYGEN__
         struct {
             const char* number; /*!< Phone number to dial */
@@ -498,31 +498,31 @@ typedef struct lwcell_msg {
 #if LWCELL_CFG_PHONEBOOK || __DOXYGEN__
         struct {
             lwcell_mem_t mem;          /*!< Memory to use */
-            size_t pos;               /*!< Memory position. Set to 0 to use new one or SIZE_T MAX to delete entry */
-            const char* name;         /*!< Entry name */
-            const char* num;          /*!< Entry number */
+            size_t pos;                /*!< Memory position. Set to 0 to use new one or SIZE_T MAX to delete entry */
+            const char* name;          /*!< Entry name */
+            const char* num;           /*!< Entry number */
             lwcell_number_type_t type; /*!< Entry phone number type */
-            uint8_t del;              /*!< Flag indicates delete */
-        } pb_write;                   /*!< Write/Edit/Delete entry */
+            uint8_t del;               /*!< Flag indicates delete */
+        } pb_write;                    /*!< Write/Edit/Delete entry */
 
         struct {
             lwcell_mem_t mem;           /*!< Memory to use */
-            size_t start_index;        /*!< Start index in phonebook to read */
+            size_t start_index;         /*!< Start index in phonebook to read */
             lwcell_pb_entry_t* entries; /*!< Pointer to entries array */
-            size_t etr;                /*!< NUmber of entries to read */
-            size_t ei;                 /*!< Current entry index */
-            size_t* er;                /*!< Final entries read pointer for user */
-        } pb_list;                     /*!< List phonebook entries */
+            size_t etr;                 /*!< NUmber of entries to read */
+            size_t ei;                  /*!< Current entry index */
+            size_t* er;                 /*!< Final entries read pointer for user */
+        } pb_list;                      /*!< List phonebook entries */
 
         struct {
             lwcell_mem_t mem;           /*!< Memory to use */
             lwcell_pb_entry_t* entries; /*!< Pointer to entries array */
-            size_t etr;                /*!< NUmber of entries to read */
-            size_t ei;                 /*!< Current entry index */
-            size_t* er;                /*!< Final entries read pointer for user */
-            const char* search;        /*!< Search string */
-        } pb_search;                   /*!< Search phonebook entries */
-#endif                                 /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
+            size_t etr;                 /*!< NUmber of entries to read */
+            size_t ei;                  /*!< Current entry index */
+            size_t* er;                 /*!< Final entries read pointer for user */
+            const char* search;         /*!< Search string */
+        } pb_search;                    /*!< Search phonebook entries */
+#endif                                  /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
         struct {
             const char* code;      /*!< Code to send */
             char* resp;            /*!< Response array */
@@ -555,9 +555,9 @@ typedef struct {
  * \brief           Link connection active info
  */
 typedef struct {
-    uint8_t failed;           /*!< Status if connection successful */
-    uint8_t num;              /*!< Connection number */
-    uint8_t is_server;        /*!< Status if connection is client or server */
+    uint8_t failed;            /*!< Status if connection successful */
+    uint8_t num;               /*!< Connection number */
+    uint8_t is_server;         /*!< Status if connection is client or server */
     lwcell_conn_type_t type;   /*!< Connection type */
     lwcell_ip_t remote_ip;     /*!< Remote IP address */
     lwcell_port_t remote_port; /*!< Remote port */
@@ -578,7 +578,7 @@ typedef struct lwcell_evt_func {
  */
 typedef struct {
     uint32_t mem_available; /*!< Bit field of available memories */
-    lwcell_mem_t current;    /*!< Current memory choice */
+    lwcell_mem_t current;   /*!< Current memory choice */
     size_t total;           /*!< Size of memory in units of entries */
     size_t used;            /*!< Number of used entries */
 } lwcell_sms_mem_t;
@@ -600,7 +600,7 @@ typedef struct {
  */
 typedef struct {
     uint32_t mem_available; /*!< Bit field of available memories */
-    lwcell_mem_t current;    /*!< Current memory choice */
+    lwcell_mem_t current;   /*!< Current memory choice */
     size_t total;           /*!< Size of memory in units of entries */
     size_t used;            /*!< Number of used entries */
 } lwcell_pb_mem_t;
@@ -631,7 +631,7 @@ typedef struct {
     lwcell_operator_curr_t curr_operator; /*!< Current operator information */
 
     uint8_t is_attached; /*!< Flag indicating device is attached and PDP context is active */
-    lwcell_ip_t ip_addr;  /*!< Device IP address when network PDP context is enabled */
+    lwcell_ip_t ip_addr; /*!< Device IP address when network PDP context is enabled */
 } lwcell_network_t;
 
 /**
@@ -643,30 +643,30 @@ typedef struct {
     char model_number[20];        /*!< Device model number */
     char model_serial_number[20]; /*!< Device serial number */
     char model_revision[20];      /*!< Device revision */
-    lwcell_device_model_t model;   /*!< Device model */
+    lwcell_device_model_t model;  /*!< Device model */
 
     /* Network&operator specific */
     lwcell_sim_t sim;         /*!< SIM data */
     lwcell_network_t network; /*!< Network status */
-    int16_t rssi;            /*!< RSSI signal strength. `0` = invalid, `-53 % -113` = valid */
+    int16_t rssi;             /*!< RSSI signal strength. `0` = invalid, `-53 % -113` = valid */
 
     /* Device specific */
 #if LWCELL_CFG_CONN || __DOXYGEN__
     uint8_t active_conns_cur_parse_num; /*!< Current connection number used for parsing */
 
     lwcell_conn_t conns[LWCELL_CFG_MAX_CONNS]; /*!< Array of all connection structures */
-    lwcell_ipd_t ipd;                         /*!< Connection incoming data structure */
-    uint8_t conn_val_id;                     /*!< Validation ID increased each time device connects to network */
-#endif                                       /* LWCELL_CFG_CONNS || __DOXYGEN__ */
+    lwcell_ipd_t ipd;                          /*!< Connection incoming data structure */
+    uint8_t conn_val_id;                       /*!< Validation ID increased each time device connects to network */
+#endif                                         /* LWCELL_CFG_CONNS || __DOXYGEN__ */
 #if LWCELL_CFG_SMS || __DOXYGEN__
     lwcell_sms_t sms; /*!< SMS information */
-#endif               /* LWCELL_CFG_SMS || __DOXYGEN__ */
+#endif                /* LWCELL_CFG_SMS || __DOXYGEN__ */
 #if LWCELL_CFG_PHONEBOOK || __DOXYGEN__
     lwcell_pb_t pb; /*!< Phonebook information */
-#endif             /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
+#endif              /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
 #if LWCELL_CFG_CALL || __DOXYGEN__
     lwcell_call_t call; /*!< Call information */
-#endif                 /* LWCELL_CFG_CALL || __DOXYGEN__ */
+#endif                  /* LWCELL_CFG_CALL || __DOXYGEN__ */
 } lwcell_modules_t;
 
 /**
@@ -682,7 +682,7 @@ typedef struct {
     lwcell_sys_thread_t thread_process; /*!< Processing thread handle */
 #if !LWCELL_CFG_INPUT_USE_PROCESS || __DOXYGEN__
     lwcell_buff_t buff; /*!< Input processing buffer */
-#endif                 /* !LWCELL_CFG_INPUT_USE_PROCESS || __DOXYGEN__ */
+#endif                  /* !LWCELL_CFG_INPUT_USE_PROCESS || __DOXYGEN__ */
     lwcell_ll_t ll;     /*!< Low level functions */
 
     lwcell_msg_t* msg; /*!< Pointer to current user message being executed */
@@ -704,7 +704,7 @@ typedef struct {
  * \brief           Memory mapping structure between string and value in app
  */
 typedef struct {
-    lwcell_mem_t mem;     /*!< Mem indication */
+    lwcell_mem_t mem;    /*!< Mem indication */
     const char* mem_str; /*!< Memory string */
 } lwcell_dev_mem_map_t;
 
@@ -713,9 +713,10 @@ typedef struct {
  */
 typedef struct {
     lwcell_device_model_t model; /*!< Device model */
-    const char* id_str;         /*!< Model string identification */
-    uint8_t is_2g;              /*!< Status if modem is 2G */
-    uint8_t is_lte;             /*!< Status if modem is LTE */
+    const char* id_str;          /*!< Model string identification */
+    uint8_t is_2g;               /*!< Status if modem is 2G */
+    uint8_t is_lte;              /*!< Status if modem is LTE */
+    uint8_t has_mqtt_native;     /*!< Status if modem supports native MQTT commands */
 } lwcell_dev_model_map_t;
 
 /**
@@ -739,56 +740,56 @@ extern const size_t lwcell_dev_mem_map_size;
 extern const lwcell_dev_model_map_t lwcell_dev_model_map[];
 extern const size_t lwcell_dev_model_map_size;
 
-#define CMD_IS_CUR(c)              (lwcell.msg != NULL && lwcell.msg->cmd == (c))
-#define CMD_IS_DEF(c)              (lwcell.msg != NULL && lwcell.msg->cmd_def == (c))
-#define CMD_GET_CUR()              ((lwcell_cmd_t)(((lwcell.msg != NULL) ? lwcell.msg->cmd : LWCELL_CMD_IDLE)))
-#define CMD_GET_DEF()              ((lwcell_cmd_t)(((lwcell.msg != NULL) ? lwcell.msg->cmd_def : LWCELL_CMD_IDLE)))
+#define CMD_IS_CUR(c)               (lwcell.msg != NULL && lwcell.msg->cmd == (c))
+#define CMD_IS_DEF(c)               (lwcell.msg != NULL && lwcell.msg->cmd_def == (c))
+#define CMD_GET_CUR()               ((lwcell_cmd_t)(((lwcell.msg != NULL) ? lwcell.msg->cmd : LWCELL_CMD_IDLE)))
+#define CMD_GET_DEF()               ((lwcell_cmd_t)(((lwcell.msg != NULL) ? lwcell.msg->cmd_def : LWCELL_CMD_IDLE)))
 
-#define CRLF                       "\r\n"
-#define CRLF_LEN                   2
+#define CRLF                        "\r\n"
+#define CRLF_LEN                    2
 
 #define LWCELL_MSG_VAR_DEFINE(name) lwcell_msg_t* name
-#define LWCELL_MSG_VAR_ALLOC(name, blocking)                                                                            \
+#define LWCELL_MSG_VAR_ALLOC(name, blocking)                                                                           \
     do {                                                                                                               \
-        (name) = lwcell_mem_malloc(sizeof(*(name)));                                                                    \
-        LWCELL_DEBUGW(LWCELL_CFG_DBG_VAR | LWCELL_DBG_TYPE_TRACE, (name) != NULL,                                         \
-                     "[MSG VAR] Allocated %d bytes at %p\r\n", (int)sizeof(*(name)), (void*)(name));                   \
-        LWCELL_DEBUGW(LWCELL_CFG_DBG_VAR | LWCELL_DBG_TYPE_TRACE, (name) == NULL,                                         \
-                     "[MSG VAR] Error allocating %d bytes\r\n", (int)sizeof(*(name)));                                 \
+        (name) = lwcell_mem_malloc(sizeof(*(name)));                                                                   \
+        LWCELL_DEBUGW(LWCELL_CFG_DBG_VAR | LWCELL_DBG_TYPE_TRACE, (name) != NULL,                                      \
+                      "[MSG VAR] Allocated %d bytes at %p\r\n", (int)sizeof(*(name)), (void*)(name));                  \
+        LWCELL_DEBUGW(LWCELL_CFG_DBG_VAR | LWCELL_DBG_TYPE_TRACE, (name) == NULL,                                      \
+                      "[MSG VAR] Error allocating %d bytes\r\n", (int)sizeof(*(name)));                                \
         if ((name) == NULL) {                                                                                          \
-            return lwcellERRMEM;                                                                                        \
+            return lwcellERRMEM;                                                                                       \
         }                                                                                                              \
-        LWCELL_MEMSET((name), 0x00, sizeof(*(name)));                                                                   \
-        (name)->is_blocking = LWCELL_U8((blocking) > 0);                                                                \
+        LWCELL_MEMSET((name), 0x00, sizeof(*(name)));                                                                  \
+        (name)->is_blocking = LWCELL_U8((blocking) > 0);                                                               \
     } while (0)
 #define LWCELL_MSG_VAR_REF(name) (*(name))
-#define LWCELL_MSG_VAR_FREE(name)                                                                                       \
+#define LWCELL_MSG_VAR_FREE(name)                                                                                      \
     do {                                                                                                               \
-        LWCELL_DEBUGF(LWCELL_CFG_DBG_VAR | LWCELL_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (void*)(name));        \
-        if (lwcell_sys_sem_isvalid(&((name)->sem))) {                                                                   \
-            lwcell_sys_sem_delete(&((name)->sem));                                                                      \
-            lwcell_sys_sem_invalid(&((name)->sem));                                                                     \
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_VAR | LWCELL_DBG_TYPE_TRACE, "[MSG VAR] Free memory: %p\r\n", (void*)(name));     \
+        if (lwcell_sys_sem_isvalid(&((name)->sem))) {                                                                  \
+            lwcell_sys_sem_delete(&((name)->sem));                                                                     \
+            lwcell_sys_sem_invalid(&((name)->sem));                                                                    \
         }                                                                                                              \
-        lwcell_mem_free_s((void**)&(name));                                                                             \
+        lwcell_mem_free_s((void**)&(name));                                                                            \
     } while (0)
 #if LWCELL_CFG_USE_API_FUNC_EVT
-#define LWCELL_MSG_VAR_SET_EVT(name, e_fn, e_arg)                                                                       \
+#define LWCELL_MSG_VAR_SET_EVT(name, e_fn, e_arg)                                                                      \
     do {                                                                                                               \
         (name)->evt_fn = (e_fn);                                                                                       \
         (name)->evt_arg = (e_arg);                                                                                     \
     } while (0)
 #else /* LWCELL_CFG_USE_API_FUNC_EVT */
-#define LWCELL_MSG_VAR_SET_EVT(name, e_fn, e_arg)                                                                       \
+#define LWCELL_MSG_VAR_SET_EVT(name, e_fn, e_arg)                                                                      \
     do {                                                                                                               \
-        LWCELL_UNUSED(e_fn);                                                                                            \
-        LWCELL_UNUSED(e_arg);                                                                                           \
+        LWCELL_UNUSED(e_fn);                                                                                           \
+        LWCELL_UNUSED(e_arg);                                                                                          \
     } while (0)
 #endif /* !LWCELL_CFG_USE_API_FUNC_EVT */
 
 #define LWCELL_CHARISNUM(x)    ((x) >= '0' && (x) <= '9')
 #define LWCELL_CHARTONUM(x)    ((x) - '0')
 #define LWCELL_CHARISHEXNUM(x) (((x) >= '0' && (x) <= '9') || ((x) >= 'a' && (x) <= 'f') || ((x) >= 'A' && (x) <= 'F'))
-#define LWCELL_CHARHEXTONUM(x)                                                                                          \
+#define LWCELL_CHARHEXTONUM(x)                                                                                         \
     (((x) >= '0' && (x) <= '9')                                                                                        \
          ? ((x) - '0')                                                                                                 \
          : (((x) >= 'a' && (x) <= 'f') ? ((x) - 'a' + 10) : (((x) >= 'A' && (x) <= 'F') ? ((x) - 'A' + 10) : 0)))
@@ -805,7 +806,7 @@ lwcellr_t lwcelli_send_cb(lwcell_evt_type_t type);
 lwcellr_t lwcelli_send_conn_cb(lwcell_conn_t* conn, lwcell_evt_fn cb);
 void lwcelli_conn_init(void);
 lwcellr_t lwcelli_send_msg_to_producer_mbox(lwcell_msg_t* msg, lwcellr_t (*process_fn)(lwcell_msg_t*),
-                                          uint32_t max_block_time);
+                                            uint32_t max_block_time);
 uint32_t lwcelli_get_from_mbox_with_timeout_checks(lwcell_sys_mbox_t* b, void** m, uint32_t timeout);
 uint8_t lwcelli_conn_closed_process(uint8_t conn_num, uint8_t forced);
 void lwcelli_conn_start_timeout(lwcell_conn_p conn);

@@ -254,7 +254,7 @@
  *                  Called with format and optional parameters for printf style debug
  */
 #ifndef LWCELL_CFG_DBG_OUT
-#define LWCELL_CFG_DBG_OUT(fmt, ...)                                                                                    \
+#define LWCELL_CFG_DBG_OUT(fmt, ...)                                                                                   \
     do {                                                                                                               \
         extern int printf(const char* format, ...);                                                                    \
         printf(fmt, ##__VA_ARGS__);                                                                                    \
@@ -534,7 +534,7 @@
 
 /**
  * \defgroup        LWCELL_OPT_MODULES_MQTT MQTT client module
- * \brief           Configuration of MQTT and MQTT API client modules
+ * \brief           Configuration of MQTT and MQTT API client modules, that are build on top of the TCP API
  * \{
  */
 
@@ -663,6 +663,15 @@
  */
 #ifndef LWCELL_CFG_USSD
 #define LWCELL_CFG_USSD 0
+#endif
+
+/**
+ * \brief           Enables `1` or disables `0` MQTT API.
+ * \note            When enabled, it enables the MQTT native API with AT commands from the module
+ *                  and does not use MQTT library implementation on top of TCP/IP API
+ */
+#ifndef LWCELL_CFG_MQTT
+#define LWCELL_CFG_MQTT 0
 #endif
 
 /**

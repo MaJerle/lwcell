@@ -28,6 +28,7 @@ set(lwcell_core_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_input.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_int.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_mem.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_mqtt.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_network.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_operator.c
     ${CMAKE_CURRENT_LIST_DIR}/src/lwcell/lwcell_parser.c

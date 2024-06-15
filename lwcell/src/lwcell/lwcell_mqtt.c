@@ -1,6 +1,6 @@
 /**
- * \file            lwcell_models.h
- * \brief           Supported GSM devices
+ * \file            lwcell_mqtt.c
+ * \brief           MQTT API
  */
 
 /*
@@ -31,12 +31,36 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v0.1.1
  */
+#include "lwcell/lwcell_mqtt.h"
+#include "lwcell/lwcell_private.h"
 
-/* Order: Device name; Device model identification, Is_2G, Is_LTE */
-LWCELL_DEVICE_MODEL_ENTRY(SIM800x, "SIM800", 1, 0, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM900x, "SIM900", 1, 0, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM7070G, "7070G", 0, 1, 0)
-//LWCELL_DEVICE_MODEL_ENTRY(SIM7000x, "SIM7000", 1, 0)
-//LWCELL_DEVICE_MODEL_ENTRY(SIM7020x, "SIM7020", 1, 0)
+#if LWCELL_CFG_MQTT || __DOXYGEN__
 
-#undef LWCELL_DEVICE_MODEL_ENTRY
+lwcellr_t
+lwcell_mqtt_connect(lwcell_mqtt_t** instance, const lwcell_mqtt_conn_desc_t* desc, lwcell_evt_fn evt_fn,
+                    const uint32_t blocking) {
+    return lwcellERRNOTENABLED;
+}
+
+lwcellr_t
+lwcell_mqtt_disconnect(lwcell_mqtt_t* instance, const uint32_t blocking) {
+    return lwcellERRNOTENABLED;
+}
+
+lwcellr_t
+lwcell_mqtt_subscribe(lwcell_mqtt_t* instance, const char* topic, uint8_t qos, const uint32_t blocking) {
+    return lwcellERRNOTENABLED;
+}
+
+lwcellr_t
+lwcell_mqtt_unsubscribe(lwcell_mqtt_t* instance, const char* topic, const uint32_t blocking) {
+    return lwcellERRNOTENABLED;
+}
+
+lwcellr_t
+lwcell_mqtt_publish(lwcell_mqtt_t* instance, const char* topic, const void* data, size_t data_len,
+                    const uint32_t blocking) {
+    return lwcellERRNOTENABLED;
+}
+
+#endif /* LWCELL_CFG_MQTT || __DOXYGEN__ */

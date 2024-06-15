@@ -61,17 +61,17 @@ extern "C" {
  * \brief           Result enumeration used across application functions
  */
 typedef enum {
-    lwcellOK = 0,              /*!< Function returned OK */
-    lwcellOKIGNOREMORE,        /*!< Function succedded, should continue as \ref lwcellOK
+    lwcellOK = 0,       /*!< Function returned OK */
+    lwcellOKIGNOREMORE, /*!< Function succedded, should continue as \ref lwcellOK
                                                         but ignore sending more data.
                                                         This result is possible on connection data receive callback */
-    lwcellERR,                 /*!< Generic error */
-    lwcellERRPAR,              /*!< Wrong parameters on function call */
-    lwcellERRMEM,              /*!< Memory error occurred */
-    lwcellTIMEOUT,             /*!< Timeout occurred on command */
-    lwcellCONT,                /*!< There is still some command to be processed in current command */
-    lwcellCLOSED,              /*!< Connection just closed */
-    lwcellINPROG,              /*!< Operation is in progress */
+    lwcellERR,          /*!< Generic error */
+    lwcellERRPAR,       /*!< Wrong parameters on function call */
+    lwcellERRMEM,       /*!< Memory error occurred */
+    lwcellTIMEOUT,      /*!< Timeout occurred on command */
+    lwcellCONT,         /*!< There is still some command to be processed in current command */
+    lwcellCLOSED,       /*!< Connection just closed */
+    lwcellINPROG,       /*!< Operation is in progress */
 
     lwcellERRNOTENABLED,       /*!< Feature not enabled error */
     lwcellERRNOIP,             /*!< Station does not have IP address */
@@ -91,7 +91,7 @@ typedef enum {
  */
 typedef enum {
 
-#define LWCELL_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte) LWCELL_DEVICE_MODEL_##name,
+#define LWCELL_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte, has_mqtt_native) LWCELL_DEVICE_MODEL_##name,
 #include "lwcell/lwcell_models.h"
     LWCELL_DEVICE_MODEL_END,     /*!< End of device model */
     LWCELL_DEVICE_MODEL_UNKNOWN, /*!< Unknown device model */
@@ -187,13 +187,13 @@ typedef enum {
  */
 typedef struct {
     lwcell_mem_t mem;           /*!< Memory storage */
-    size_t pos;                /*!< Memory position */
-    struct tm dt;              /*!< Date and time */
+    size_t pos;                 /*!< Memory position */
+    struct tm dt;               /*!< Date and time */
     lwcell_sms_status_t status; /*!< Message status */
-    char number[26];           /*!< Phone number */
-    char name[20];             /*!< Name in phonebook if exists */
-    char data[161];            /*!< Data memory */
-    size_t length;             /*!< Length of SMS data */
+    char number[26];            /*!< Phone number */
+    char name[20];              /*!< Name in phonebook if exists */
+    char data[161];             /*!< Data memory */
+    size_t length;              /*!< Length of SMS data */
 } lwcell_sms_entry_t;
 
 /**
@@ -202,9 +202,9 @@ typedef struct {
  */
 typedef struct {
     lwcell_mem_t mem;          /*!< Memory position */
-    size_t pos;               /*!< Position in memory */
-    char name[20];            /*!< Name of phonebook entry */
-    char number[26];          /*!< Phone number */
+    size_t pos;                /*!< Position in memory */
+    char name[20];             /*!< Name of phonebook entry */
+    char number[26];           /*!< Phone number */
     lwcell_number_type_t type; /*!< Phone number type */
 } lwcell_pb_entry_t;
 
@@ -247,9 +247,9 @@ typedef enum {
  */
 typedef struct {
     lwcell_operator_status_t stat; /*!< Operator status */
-    char long_name[20];           /*!< Operator long name */
-    char short_name[20];          /*!< Operator short name */
-    uint32_t num;                 /*!< Operator numeric value */
+    char long_name[20];            /*!< Operator long name */
+    char short_name[20];           /*!< Operator short name */
+    uint32_t num;                  /*!< Operator numeric value */
 } lwcell_operator_t;
 
 /**
@@ -320,17 +320,17 @@ typedef enum {
  * \note            Data received on `+CLCC` info
  */
 typedef struct {
-    uint8_t ready;            /*!< Flag indicating feature ready by device */
-    uint8_t enabled;          /*!< Flag indicating feature enabled */
+    uint8_t ready;   /*!< Flag indicating feature ready by device */
+    uint8_t enabled; /*!< Flag indicating feature enabled */
 
-    uint8_t id;               /*!< Call identification number, 0-7 */
+    uint8_t id;                /*!< Call identification number, 0-7 */
     lwcell_call_dir_t dir;     /*!< Call direction */
     lwcell_call_state_t state; /*!< Call state */
     lwcell_call_type_t type;   /*!< Call type */
-    char number[20];          /*!< Phone number */
-    char is_multipart;        /*!< Multipart status */
-    uint8_t addr_type;        /*!< Address type */
-    char name[20];            /*!< Phone book name if exists for current number */
+    char number[20];           /*!< Phone number */
+    char is_multipart;         /*!< Multipart status */
+    uint8_t addr_type;         /*!< Address type */
+    char name[20];             /*!< Phone book name if exists for current number */
 } lwcell_call_t;
 
 /* Forward declarations */
@@ -363,34 +363,34 @@ typedef lwcellr_t (*lwcell_evt_fn)(struct lwcell_evt* evt);
  * \brief           List of possible callback types received to user
  */
 typedef enum lwcell_cb_type_t {
-    LWCELL_EVT_INIT_FINISH,              /*!< Initialization has been finished at this point */
+    LWCELL_EVT_INIT_FINISH, /*!< Initialization has been finished at this point */
 
-    LWCELL_EVT_RESET,                    /*!< Device reset operation finished */
-    LWCELL_EVT_RESTORE,                  /*!< Device restore operation finished */
+    LWCELL_EVT_RESET,   /*!< Device reset operation finished */
+    LWCELL_EVT_RESTORE, /*!< Device restore operation finished */
 
-    LWCELL_EVT_CMD_TIMEOUT,              /*!< Timeout on command.
+    LWCELL_EVT_CMD_TIMEOUT, /*!< Timeout on command.
                                                         When application receives this event,
                                                         it may reset system as there was (maybe) a problem in device */
 
-    LWCELL_EVT_DEVICE_PRESENT,           /*!< Notification when device present status changes */
-    LWCELL_EVT_DEVICE_IDENTIFIED,        /*!< Device identified event */
+    LWCELL_EVT_DEVICE_PRESENT,    /*!< Notification when device present status changes */
+    LWCELL_EVT_DEVICE_IDENTIFIED, /*!< Device identified event */
 
-    LWCELL_EVT_KEEP_ALIVE,               /*!< Generic keep-alive event type, used as periodic timeout.
+    LWCELL_EVT_KEEP_ALIVE, /*!< Generic keep-alive event type, used as periodic timeout.
                                                     Optionally enabled with \ref LWCELL_CFG_KEEP_ALIVE */
 
-    LWCELL_EVT_SIGNAL_STRENGTH,          /*!< Signal strength event */
+    LWCELL_EVT_SIGNAL_STRENGTH, /*!< Signal strength event */
 
-    LWCELL_EVT_SIM_STATE_CHANGED,        /*!< SIM card state changed */
+    LWCELL_EVT_SIM_STATE_CHANGED, /*!< SIM card state changed */
 
-    LWCELL_EVT_OPERATOR_SCAN,            /*!< Operator scan finished event */
+    LWCELL_EVT_OPERATOR_SCAN, /*!< Operator scan finished event */
 
     LWCELL_EVT_NETWORK_OPERATOR_CURRENT, /*!< Current operator event */
     LWCELL_EVT_NETWORK_REG_CHANGED,      /*!< Network registration changed.
                                                          Available even when \ref LWCELL_CFG_NETWORK is disabled */
 #if LWCELL_CFG_NETWORK || __DOXYGEN__
-    LWCELL_EVT_NETWORK_ATTACHED,         /*!< Attached to network, PDP context active and ready for TCP/IP application */
-    LWCELL_EVT_NETWORK_DETACHED,         /*!< Detached from network, PDP context not active anymore */
-#endif                                  /* LWCELL_CFG_NETWORK || __DOXYGEN__ */
+    LWCELL_EVT_NETWORK_ATTACHED, /*!< Attached to network, PDP context active and ready for TCP/IP application */
+    LWCELL_EVT_NETWORK_DETACHED, /*!< Detached from network, PDP context not active anymore */
+#endif                           /* LWCELL_CFG_NETWORK || __DOXYGEN__ */
 
 #if LWCELL_CFG_CONN || __DOXYGEN__
     LWCELL_EVT_CONN_RECV,   /*!< Connection data received */
@@ -399,17 +399,17 @@ typedef enum lwcell_cb_type_t {
     LWCELL_EVT_CONN_ERROR,  /*!< Client connection start was not successful */
     LWCELL_EVT_CONN_CLOSE,  /*!< Connection close event. Check status if successful */
     LWCELL_EVT_CONN_POLL,   /*!< Poll for connection if there are any changes */
-#endif                     /* LWCELL_CFG_CONN || __DOXYGEN__ */
+#endif                      /* LWCELL_CFG_CONN || __DOXYGEN__ */
 
 #if LWCELL_CFG_SMS || __DOXYGEN__
-    LWCELL_EVT_SMS_ENABLE,      /*!< SMS enable event */
-    LWCELL_EVT_SMS_READY,       /*!< SMS ready event */
-    LWCELL_EVT_SMS_SEND,        /*!< SMS send event */
-    LWCELL_EVT_SMS_RECV,        /*!< SMS received */
-    LWCELL_EVT_SMS_READ,        /*!< SMS read */
-    LWCELL_EVT_SMS_DELETE,      /*!< SMS delete */
-    LWCELL_EVT_SMS_LIST,        /*!< SMS list */
-#endif                         /* LWCELL_CFG_SMS || __DOXYGEN__ */
+    LWCELL_EVT_SMS_ENABLE, /*!< SMS enable event */
+    LWCELL_EVT_SMS_READY,  /*!< SMS ready event */
+    LWCELL_EVT_SMS_SEND,   /*!< SMS send event */
+    LWCELL_EVT_SMS_RECV,   /*!< SMS received */
+    LWCELL_EVT_SMS_READ,   /*!< SMS read */
+    LWCELL_EVT_SMS_DELETE, /*!< SMS delete */
+    LWCELL_EVT_SMS_LIST,   /*!< SMS list */
+#endif                     /* LWCELL_CFG_SMS || __DOXYGEN__ */
 #if LWCELL_CFG_CALL || __DOXYGEN__
     LWCELL_EVT_CALL_ENABLE,     /*!< Call enable event */
     LWCELL_EVT_CALL_READY,      /*!< Call ready event */
@@ -417,12 +417,12 @@ typedef enum lwcell_cb_type_t {
     LWCELL_EVT_CALL_RING,       /*!< Call is ringing event */
     LWCELL_EVT_CALL_BUSY,       /*!< Call is busy */
     LWCELL_EVT_CALL_NO_CARRIER, /*!< No carrier to make a call */
-#endif                         /* LWCELL_CFG_CALL || __DOXYGEN__ */
+#endif                          /* LWCELL_CFG_CALL || __DOXYGEN__ */
 #if LWCELL_CFG_PHONEBOOK || __DOXYGEN__
-    LWCELL_EVT_PB_ENABLE,       /*!< Phonebook enable event */
-    LWCELL_EVT_PB_LIST,         /*!< Phonebook list event */
-    LWCELL_EVT_PB_SEARCH,       /*!< Phonebook search event */
-#endif                         /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
+    LWCELL_EVT_PB_ENABLE, /*!< Phonebook enable event */
+    LWCELL_EVT_PB_LIST,   /*!< Phonebook list event */
+    LWCELL_EVT_PB_SEARCH, /*!< Phonebook search event */
+#endif                    /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
 } lwcell_evt_type_t;
 
 /**
@@ -435,15 +435,15 @@ typedef struct lwcell_evt {
     union {
         struct {
             lwcellr_t res; /*!< Reset operation result */
-        } reset;          /*!< Reset sequence finish. Use with \ref LWCELL_EVT_RESET event */
+        } reset;           /*!< Reset sequence finish. Use with \ref LWCELL_EVT_RESET event */
 
         struct {
             lwcellr_t res; /*!< Restore operation result */
-        } restore;        /*!< Restore sequence finish. Use with \ref LWCELL_EVT_RESTORE event */
+        } restore;         /*!< Restore sequence finish. Use with \ref LWCELL_EVT_RESTORE event */
 
         struct {
             lwcell_sim_state_t state; /*!< SIM state */
-        } cpin;                      /*!< CPIN event */
+        } cpin;                       /*!< CPIN event */
 
         struct {
             const lwcell_operator_curr_t* operator_current; /*!< Current operator info */
@@ -451,9 +451,9 @@ typedef struct lwcell_evt {
 
         struct {
             lwcell_operator_t* ops; /*!< Pointer to operators */
-            size_t opf;            /*!< Number of operators found */
+            size_t opf;             /*!< Number of operators found */
             lwcellr_t res;          /*!< Scan operation result */
-        } operator_scan;           /*!< Operator scan event. Use with \ref LWCELL_EVT_OPERATOR_SCAN event */
+        } operator_scan;            /*!< Operator scan event. Use with \ref LWCELL_EVT_OPERATOR_SCAN event */
 
         struct {
             int16_t rssi; /*!< Strength in units of dBm */
@@ -463,26 +463,26 @@ typedef struct lwcell_evt {
         struct {
             lwcell_conn_p conn; /*!< Connection where data were received */
             lwcell_pbuf_p buff; /*!< Pointer to received data */
-        } conn_data_recv;      /*!< Network data received. Use with \ref LWCELL_EVT_CONN_RECV event */
+        } conn_data_recv;       /*!< Network data received. Use with \ref LWCELL_EVT_CONN_RECV event */
 
         struct {
             lwcell_conn_p conn; /*!< Connection where data were sent */
-            size_t sent;       /*!< Number of bytes sent on connection */
+            size_t sent;        /*!< Number of bytes sent on connection */
             lwcellr_t res;      /*!< Send data result */
-        } conn_data_send;      /*!< Data successfully sent. Use with \ref LWCELL_EVT_CONN_SEND event */
+        } conn_data_send;       /*!< Data successfully sent. Use with \ref LWCELL_EVT_CONN_SEND event */
 
         struct {
-            const char* host;       /*!< Host to use for connection */
+            const char* host;        /*!< Host to use for connection */
             lwcell_port_t port;      /*!< Remote port used for connection */
             lwcell_conn_type_t type; /*!< Connection type */
-            void* arg;              /*!< Connection argument used on connection */
+            void* arg;               /*!< Connection argument used on connection */
             lwcellr_t err;           /*!< Error value */
-        } conn_error;               /*!< Client connection start error. Use with \ref LWCELL_EVT_CONN_ERROR event */
+        } conn_error;                /*!< Client connection start error. Use with \ref LWCELL_EVT_CONN_ERROR event */
 
         struct {
             lwcell_conn_p conn; /*!< Pointer to connection */
-            uint8_t client;    /*!< Set to `1` if connection is/was client mode */
-            uint8_t forced;    /*!< Set to `1` if connection action was forced */
+            uint8_t client;     /*!< Set to `1` if connection is/was client mode */
+            uint8_t forced;     /*!< Set to `1` if connection action was forced */
             lwcellr_t res;      /*!< Result of close event. Set to \ref lwcellOK on success. */
         } conn_active_close; /*!< Process active and closed statuses at the same time. Use with \ref LWCELL_EVT_CONN_ACTIVE or \ref LWCELL_EVT_CONN_CLOSE events */
 
@@ -494,66 +494,66 @@ typedef struct lwcell_evt {
 #if LWCELL_CFG_SMS || __DOXYGEN__
         struct {
             lwcellr_t status; /*!< Enable status */
-        } sms_enable;        /*!< SMS enable event. Use with \ref LWCELL_EVT_SMS_ENABLE event */
+        } sms_enable;         /*!< SMS enable event. Use with \ref LWCELL_EVT_SMS_ENABLE event */
 
         struct {
-            size_t pos;   /*!< Position in memory */
+            size_t pos;    /*!< Position in memory */
             lwcellr_t res; /*!< SMS send result information */
-        } sms_send;       /*!< SMS sent info. Use with \ref LWCELL_EVT_SMS_SEND event */
+        } sms_send;        /*!< SMS sent info. Use with \ref LWCELL_EVT_SMS_SEND event */
 
         struct {
             lwcell_mem_t mem; /*!< Memory of received message */
-            size_t pos;      /*!< Received position in memory for sent SMS */
-        } sms_recv;          /*!< SMS received info. Use with \ref LWCELL_EVT_SMS_RECV event */
+            size_t pos;       /*!< Received position in memory for sent SMS */
+        } sms_recv;           /*!< SMS received info. Use with \ref LWCELL_EVT_SMS_RECV event */
 
         struct {
             lwcell_sms_entry_t* entry; /*!< SMS entry */
             lwcellr_t res;             /*!< SMS read result information */
-        } sms_read;                   /*!< SMS read. Use with \ref LWCELL_EVT_SMS_READ event */
+        } sms_read;                    /*!< SMS read. Use with \ref LWCELL_EVT_SMS_READ event */
 
         struct {
             lwcell_mem_t mem; /*!< Memory of deleted message */
-            size_t pos;      /*!< Deleted position in memory for sent SMS */
+            size_t pos;       /*!< Deleted position in memory for sent SMS */
             lwcellr_t res;    /*!< Operation success */
-        } sms_delete;        /*!< SMS delete. Use with \ref LWCELL_EVT_SMS_DELETE event */
+        } sms_delete;         /*!< SMS delete. Use with \ref LWCELL_EVT_SMS_DELETE event */
 
         struct {
             lwcell_mem_t mem;            /*!< Memory used for scan */
             lwcell_sms_entry_t* entries; /*!< Pointer to entries */
-            size_t size;                /*!< Number of valid entries */
+            size_t size;                 /*!< Number of valid entries */
             lwcellr_t res;               /*!< Result on command */
-        } sms_list;                     /*!< SMS list. Use with \ref LWCELL_EVT_SMS_LIST event */
-#endif                                  /* LWCELL_CFG_SMS || __DOXYGEN__ */
+        } sms_list;                      /*!< SMS list. Use with \ref LWCELL_EVT_SMS_LIST event */
+#endif                                   /* LWCELL_CFG_SMS || __DOXYGEN__ */
 #if LWCELL_CFG_CALL || __DOXYGEN__
         struct {
             lwcellr_t res; /*!< Enable status */
-        } call_enable;    /*!< Call enable event. Use with \ref LWCELL_EVT_CALL_ENABLE event */
+        } call_enable;     /*!< Call enable event. Use with \ref LWCELL_EVT_CALL_ENABLE event */
 
         struct {
             const lwcell_call_t* call; /*!< Call information */
-        } call_changed;               /*!< Call changed info. Use with \ref LWCELL_EVT_CALL_CHANGED event */
-#endif                                /* LWCELL_CFG_CALL || __DOXYGEN__ */
+        } call_changed;                /*!< Call changed info. Use with \ref LWCELL_EVT_CALL_CHANGED event */
+#endif                                 /* LWCELL_CFG_CALL || __DOXYGEN__ */
 #if LWCELL_CFG_PHONEBOOK || __DOXYGEN__
         struct {
             lwcellr_t res; /*!< Enable status */
-        } pb_enable;      /*!< Phonebook enable event. Use with \ref LWCELL_EVT_PB_ENABLE event */
+        } pb_enable;       /*!< Phonebook enable event. Use with \ref LWCELL_EVT_PB_ENABLE event */
 
         struct {
             lwcell_mem_t mem;           /*!< Memory used for scan */
             lwcell_pb_entry_t* entries; /*!< Pointer to entries */
-            size_t size;               /*!< Number of valid entries */
+            size_t size;                /*!< Number of valid entries */
             lwcellr_t res;              /*!< Operation success */
-        } pb_list;                     /*!< Phonebok list. Use with \ref LWCELL_EVT_PB_LIST event */
+        } pb_list;                      /*!< Phonebok list. Use with \ref LWCELL_EVT_PB_LIST event */
 
         struct {
-            const char* search;        /*!< Search string */
+            const char* search;         /*!< Search string */
             lwcell_mem_t mem;           /*!< Memory used for scan */
             lwcell_pb_entry_t* entries; /*!< Pointer to entries */
-            size_t size;               /*!< Number of valid entries */
+            size_t size;                /*!< Number of valid entries */
             lwcellr_t res;              /*!< Operation success */
-        } pb_search;                   /*!< Phonebok search list. Use with \ref LWCELL_EVT_PB_SEARCH event */
-#endif                                 /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
-    } evt;                             /*!< Callback event union */
+        } pb_search;                    /*!< Phonebok search list. Use with \ref LWCELL_EVT_PB_SEARCH event */
+#endif                                  /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
+    } evt;                              /*!< Callback event union */
 } lwcell_evt_t;
 
 #define LWCELL_SIZET_MAX ((size_t)(-1)) /*!< Maximal value of size_t variable type */
@@ -606,8 +606,8 @@ typedef void (*lwcell_timeout_fn)(void* arg);
  */
 typedef struct lwcell_timeout {
     struct lwcell_timeout* next; /*!< Pointer to next timeout entry */
-    uint32_t time;              /*!< Time difference from previous entry */
-    void* arg;                  /*!< Argument to pass to callback function */
+    uint32_t time;               /*!< Time difference from previous entry */
+    void* arg;                   /*!< Argument to pass to callback function */
     lwcell_timeout_fn fn;        /*!< Callback function for timeout */
 } lwcell_timeout_t;
 
@@ -652,8 +652,25 @@ typedef struct {
     uint8_t ch[4]; /*!< UTF-8 max characters */
     uint8_t t;     /*!< Total expected length in UTF-8 sequence */
     uint8_t r;     /*!< Remaining bytes in UTF-8 sequence */
-    lwcellr_t res;  /*!< Current result of processing */
+    lwcellr_t res; /*!< Current result of processing */
 } lwcell_unicode_t;
+
+/**
+ * \ingroup         LWCELL_MQTT
+ * \brief           MQTT connection descriptor structure
+ */
+typedef struct {
+    const char* device_id; /*!< Device ID */
+    const char* username;  /*!< Username */
+    const char* password;  /*!< Password */
+} lwcell_mqtt_conn_desc_t;
+
+/**
+ * \brief           MQTT instance
+ */
+typedef struct {
+    void* arg;
+} lwcell_mqtt_t;
 
 #ifdef __cplusplus
 }

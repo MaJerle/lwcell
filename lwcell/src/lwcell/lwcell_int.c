@@ -136,7 +136,8 @@ const size_t lwcell_dev_mem_map_size = LWCELL_ARRAYSIZE(lwcell_dev_mem_map);
  * \brief           List of supported devices
  */
 const lwcell_dev_model_map_t lwcell_dev_model_map[] = {
-#define LWCELL_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte) {LWCELL_DEVICE_MODEL_##name, str_id, is_2g, is_lte},
+#define LWCELL_DEVICE_MODEL_ENTRY(name, str_id, is_2g, is_lte, has_mqtt_native)                                        \
+    {LWCELL_DEVICE_MODEL_##name, str_id, is_2g, is_lte, has_mqtt_native},
 #include "lwcell/lwcell_models.h"
 };
 
@@ -304,9 +305,9 @@ lwcelli_send_ip_mac(const void* d, uint8_t is_ip, uint8_t q, uint8_t c) {
         } else {                                       /* ... in case of MAC ... */
             lwcell_u8_to_hex_str(mac->mac[i], str, 2); /* ... go to HEX format */
         }
-        AT_PORT_SEND_STR(str);                         /* Send str */
-        if (i < (is_ip ? 4 : 6) - 1) {                 /* Check end if characters */
-            AT_PORT_SEND_CHR(&ch);                     /* Send character */
+        AT_PORT_SEND_STR(str);         /* Send str */
+        if (i < (is_ip ? 4 : 6) - 1) { /* Check end if characters */
+            AT_PORT_SEND_CHR(&ch);     /* Send character */
         }
     }
     AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
@@ -323,15 +324,15 @@ void
 lwcelli_send_string(const char* str, uint8_t e, uint8_t q, uint8_t c) {
     char special = '\\';
 
-    AT_PORT_SEND_COMMA_COND(c);                                   /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);                                   /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
     if (str != NULL) {
         if (e) {                                                  /* Do we have to escape string? */
             while (*str) {                                        /* Go through string */
                 if (*str == ',' || *str == '"' || *str == '\\') { /* Check for special character */
                     AT_PORT_SEND_CHR(&special);                   /* Send special character */
                 }
-                AT_PORT_SEND_CHR(str);                            /* Send character */
+                AT_PORT_SEND_CHR(str); /* Send character */
                 ++str;
             }
         } else {
@@ -353,10 +354,10 @@ lwcelli_send_number(uint32_t num, uint8_t q, uint8_t c) {
 
     lwcell_u32_to_str(num, str); /* Convert digit to decimal string */
 
-    AT_PORT_SEND_COMMA_COND(c);  /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);  /* Send quote */
-    AT_PORT_SEND_STR(str);       /* Send string with number */
-    AT_PORT_SEND_QUOTE_COND(q);  /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
+    AT_PORT_SEND_STR(str);      /* Send string with number */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -371,10 +372,10 @@ lwcelli_send_port(lwcell_port_t port, uint8_t q, uint8_t c) {
 
     lwcell_u16_to_str(LWCELL_PORT2NUM(port), str); /* Convert digit to decimal string */
 
-    AT_PORT_SEND_COMMA_COND(c);                    /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);                    /* Send quote */
-    AT_PORT_SEND_STR(str);                         /* Send string with number */
-    AT_PORT_SEND_QUOTE_COND(q);                    /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
+    AT_PORT_SEND_STR(str);      /* Send string with number */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -389,10 +390,10 @@ lwcelli_send_signed_number(int32_t num, uint8_t q, uint8_t c) {
 
     lwcell_i32_to_str(num, str); /* Convert digit to decimal string */
 
-    AT_PORT_SEND_COMMA_COND(c);  /* Send comma */
-    AT_PORT_SEND_QUOTE_COND(q);  /* Send quote */
-    AT_PORT_SEND_STR(str);       /* Send string with number */
-    AT_PORT_SEND_QUOTE_COND(q);  /* Send quote */
+    AT_PORT_SEND_COMMA_COND(c); /* Send comma */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
+    AT_PORT_SEND_STR(str);      /* Send string with number */
+    AT_PORT_SEND_QUOTE_COND(q); /* Send quote */
 }
 
 /**
@@ -603,8 +604,8 @@ lwcelli_tcpip_process_data_sent(uint8_t sent) {
             *lwcell.msg->msg.conn_send.bw += lwcell.msg->msg.conn_send.sent;
         }
         lwcell.msg->msg.conn_send.tries = 0;
-    } else {                                  /* We were not successful */
-        ++lwcell.msg->msg.conn_send.tries;    /* Increase number of tries */
+    } else {                               /* We were not successful */
+        ++lwcell.msg->msg.conn_send.tries; /* Increase number of tries */
         if (lwcell.msg->msg.conn_send.tries
             == LWCELL_CFG_MAX_SEND_RETRIES) { /* In case we reached max number of retransmissions */
             return 1;                         /* Return 1 and indicate error */
@@ -614,9 +615,9 @@ lwcelli_tcpip_process_data_sent(uint8_t sent) {
         if (lwcelli_tcpip_process_send_data() != lwcellOK) { /* Check if we can continue */
             return 1;                                        /* Finish at this point */
         }
-        return 0;                                            /* We still have data to send */
+        return 0; /* We still have data to send */
     }
-    return 1;                                                /* Everything was sent, we can stop execution */
+    return 1; /* Everything was sent, we can stop execution */
 }
 
 /**
@@ -738,10 +739,10 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
     }
 
     /* Check error response */
-    if (!stat.is_ok) {                                                        /* If still not ok, check if error? */
+    if (!stat.is_ok) { /* If still not ok, check if error? */
         stat.is_error =
-            rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10);     /* First check +CME coded errors */
-        if (!stat.is_error) {                                                 /* Check basic error aswell */
+            rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10); /* First check +CME coded errors */
+        if (!stat.is_error) {                                             /* Check basic error aswell */
             stat.is_error =
                 rcv->data[0] == '+' && !strncmp(rcv->data, "+CMS ERROR", 10); /* First check +CME coded errors */
             if (!stat.is_error) {
@@ -768,15 +769,15 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
         } else if (!strncmp(rcv->data, "+CPIN", 5)) { /* Check for +CPIN indication for SIM */
             lwcelli_parse_cpin(rcv->data, 1 /* !CMD_IS_DEF(LWCELL_CMD_CPIN_SET) */); /* Parse +CPIN response */
         } else if (CMD_IS_CUR(LWCELL_CMD_COPS_GET) && !strncmp(rcv->data, "+COPS", 5)) {
-            lwcelli_parse_cops(rcv->data);                                           /* Parse current +COPS */
+            lwcelli_parse_cops(rcv->data); /* Parse current +COPS */
 #if LWCELL_CFG_SMS
         } else if (CMD_IS_CUR(LWCELL_CMD_CMGS) && !strncmp(rcv->data, "+CMGS", 5)) {
             lwcelli_parse_cmgs(rcv->data, &lwcell.msg->msg.sms_send.pos); /* Parse +CMGS response */
         } else if (CMD_IS_CUR(LWCELL_CMD_CMGR) && !strncmp(rcv->data, "+CMGR", 5)) {
-            if (lwcelli_parse_cmgr(rcv->data)) {                          /* Parse +CMGR response */
-                lwcell.msg->msg.sms_read.read = 2;                        /* Set read flag and process the data */
+            if (lwcelli_parse_cmgr(rcv->data)) {   /* Parse +CMGR response */
+                lwcell.msg->msg.sms_read.read = 2; /* Set read flag and process the data */
             } else {
-                lwcell.msg->msg.sms_read.read = 1;                        /* Read but ignore data */
+                lwcell.msg->msg.sms_read.read = 1; /* Read but ignore data */
             }
         } else if (CMD_IS_CUR(LWCELL_CMD_CMGL) && !strncmp(rcv->data, "+CMGL", 5)) {
             if (lwcelli_parse_cmgl(rcv->data)) {   /* Parse +CMGL response */
@@ -805,10 +806,10 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBS_SET) && !strncmp(rcv->data, "+CPBS", 5)) {
             lwcelli_parse_cpbs(rcv->data, 2); /* Parse +CPBS response */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBR) && !strncmp(rcv->data, "+CPBR", 5)) {
-            lwcelli_parse_cpbr(rcv->data);    /* Parse +CPBR statement */
+            lwcelli_parse_cpbr(rcv->data); /* Parse +CPBR statement */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
-            lwcelli_parse_cpbf(rcv->data);    /* Parse +CPBR statement */
-#endif                                        /* LWCELL_CFG_PHONEBOOK */
+            lwcelli_parse_cpbf(rcv->data); /* Parse +CPBR statement */
+#endif                                     /* LWCELL_CFG_PHONEBOOK */
         }
 
         /* Messages not starting with '+' sign */
@@ -841,14 +842,14 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
 #if LWCELL_CFG_CALL
         } else if (rcv->data[0] == 'C' && !strncmp(rcv->data, "Call Ready" CRLF, 10 + CRLF_LEN)) {
             lwcell.m.call.ready = 1;
-            lwcelli_send_cb(LWCELL_EVT_CALL_READY);      /* Send CALL ready event */
+            lwcelli_send_cb(LWCELL_EVT_CALL_READY); /* Send CALL ready event */
         } else if (rcv->data[0] == 'R' && !strncmp(rcv->data, "RING" CRLF, 4 + CRLF_LEN)) {
-            lwcelli_send_cb(LWCELL_EVT_CALL_RING);       /* Send call ring */
+            lwcelli_send_cb(LWCELL_EVT_CALL_RING); /* Send call ring */
         } else if (rcv->data[0] == 'N' && !strncmp(rcv->data, "NO CARRIER" CRLF, 10 + CRLF_LEN)) {
             lwcelli_send_cb(LWCELL_EVT_CALL_NO_CARRIER); /* Send call no carrier event */
         } else if (rcv->data[0] == 'B' && !strncmp(rcv->data, "BUSY" CRLF, 4 + CRLF_LEN)) {
-            lwcelli_send_cb(LWCELL_EVT_CALL_BUSY);       /* Send call busy message */
-#endif                                                   /* LWCELL_CFG_CALL */
+            lwcelli_send_cb(LWCELL_EVT_CALL_BUSY); /* Send call busy message */
+#endif                                             /* LWCELL_CFG_CALL */
 #if LWCELL_CFG_SMS
         } else if (rcv->data[0] == 'S' && !strncmp(rcv->data, "SMS Ready" CRLF, 9 + CRLF_LEN)) {
             lwcell.m.sms.ready = 1;                /* SMS ready flag */
@@ -1013,10 +1014,10 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
      */
     if (stat.is_ok || stat.is_error) {
         lwcellr_t res = lwcellOK;
-        if (lwcell.msg != NULL) {                /* Do we have active message? */
+        if (lwcell.msg != NULL) { /* Do we have active message? */
             res = lwcelli_process_sub_cmd(lwcell.msg, &stat);
-            if (res != lwcellCONT) {             /* Shall we continue with next subcommand under this one? */
-                if (stat.is_ok) {                /* Check OK status */
+            if (res != lwcellCONT) { /* Shall we continue with next subcommand under this one? */
+                if (stat.is_ok) {    /* Check OK status */
                     res = lwcell.msg->res = lwcellOK;
                 } else {                         /* Or error status */
                     res = lwcell.msg->res = res; /* Set the error status */
@@ -1110,9 +1111,10 @@ lwcelli_process(const void* data, size_t data_len) {
             --lwcell.m.ipd.rem_len;
 
             /* Try to read more data directly from buffer */
-            len = LWCELL_MIN(d_len, LWCELL_MIN(lwcell.m.ipd.rem_len, lwcell.m.ipd.buff != NULL ? (
-                                                                         lwcell.m.ipd.buff->len - lwcell.m.ipd.buff_ptr)
-                                                                                               : lwcell.m.ipd.rem_len));
+            len = LWCELL_MIN(d_len,
+                             LWCELL_MIN(lwcell.m.ipd.rem_len, lwcell.m.ipd.buff != NULL
+                                                                  ? (lwcell.m.ipd.buff->len - lwcell.m.ipd.buff_ptr)
+                                                                  : lwcell.m.ipd.rem_len));
             LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] New length to read: %d bytes\r\n",
                           (int)len);
             if (len > 0) {
@@ -1136,7 +1138,7 @@ lwcelli_process(const void* data, size_t data_len) {
                 lwcellr_t res = lwcellOK;
 
                 /* Call user callback function with received data */
-                if (lwcell.m.ipd.buff != NULL) {    /* Do we have valid buffer? */
+                if (lwcell.m.ipd.buff != NULL) { /* Do we have valid buffer? */
                     lwcell.m.ipd.conn->total_recved +=
                         lwcell.m.ipd.buff->tot_len; /* Increase number of bytes received */
 
@@ -1153,7 +1155,7 @@ lwcelli_process(const void* data, size_t data_len) {
 
                     lwcell_pbuf_free(lwcell.m.ipd.buff); /* Free packet buffer at this point */
                     LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] Free packet buffer\r\n");
-                    if (res == lwcellOKIGNOREMORE) {     /* We should ignore more data */
+                    if (res == lwcellOKIGNOREMORE) { /* We should ignore more data */
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE,
                                       "[LWCELL IPD] Ignoring more data from this IPD if available\r\n");
                         lwcell.m.ipd.buff = NULL; /* Set to NULL to ignore more data if possibly available */
@@ -1188,9 +1190,9 @@ lwcelli_process(const void* data, size_t data_len) {
                     lwcell.m.ipd.buff = NULL;    /* Reset buffer pointer */
                     lwcell.m.ipd.read = 0;       /* Stop reading data */
                 }
-                lwcell.m.ipd.buff_ptr = 0;       /* Reset input buffer pointer */
+                lwcell.m.ipd.buff_ptr = 0; /* Reset input buffer pointer */
             }
-#endif                                           /* LWCELL_CFG_CONN */
+#endif /* LWCELL_CFG_CONN */
             /*
              * Check if operators scan command is active
              * and if we are ready to read the incoming data
@@ -1258,7 +1260,7 @@ lwcelli_process(const void* data, size_t data_len) {
              */
         } else {
             lwcellr_t res = lwcellERR;
-            if (LWCELL_ISVALIDASCII(ch)) {                  /* Manually check if valid ASCII character */
+            if (LWCELL_ISVALIDASCII(ch)) { /* Manually check if valid ASCII character */
                 res = lwcellOK;
                 unicode.t = 1;                              /* Manually set total to 1 */
                 unicode.r = 0;                              /* Reset remaining bytes */
@@ -1269,9 +1271,9 @@ lwcelli_process(const void* data, size_t data_len) {
             if (res == lwcellERR) { /* In case of an ERROR */
                 unicode.r = 0;
             }
-            if (res == lwcellOK) {                          /* Can we process the character(s) */
-                if (unicode.t == 1) {                       /* Totally 1 character? */
-                    RECV_ADD(ch);                           /* Any ASCII valid character */
+            if (res == lwcellOK) {    /* Can we process the character(s) */
+                if (unicode.t == 1) { /* Totally 1 character? */
+                    RECV_ADD(ch);     /* Any ASCII valid character */
                     if (ch == '\n') {
                         lwcelli_parse_received(&recv_buff); /* Parse received string */
                         RECV_RESET();                       /* Reset received string */
@@ -1309,7 +1311,7 @@ lwcelli_process(const void* data, size_t data_len) {
                         lwcell.m.ipd.conn->status.f.data_received = 1; /* We have first received data */
                         lwcell.m.ipd.buff_ptr = 0;                     /* Reset buffer write pointer */
                     }
-#endif                                                                 /* LWCELL_CFG_CONN */
+#endif /* LWCELL_CFG_CONN */
 
                     /*
                      * Do we have a special sequence "> "?
@@ -1326,8 +1328,8 @@ lwcelli_process(const void* data, size_t data_len) {
                             AT_PORT_SEND_WITH_FLUSH(&lwcell.msg->msg.conn_send.data[lwcell.msg->msg.conn_send.ptr],
                                                     lwcell.msg->msg.conn_send.sent);
                             lwcell.msg->msg.conn_send.wait_send_ok_err =
-                                1;                                /* Now we are waiting for "SEND OK" or "SEND ERROR" */
-#endif                                                            /* LWCELL_CFG_CONN */
+                                1; /* Now we are waiting for "SEND OK" or "SEND ERROR" */
+#endif                             /* LWCELL_CFG_CONN */
 #if LWCELL_CFG_SMS
                         } else if (CMD_IS_CUR(LWCELL_CMD_CMGS)) { /* Send SMS? */
                             AT_PORT_SEND(lwcell.msg->msg.sms_send.text, strlen(lwcell.msg->msg.sms_send.text));
@@ -1347,9 +1349,9 @@ lwcelli_process(const void* data, size_t data_len) {
                             RECV_RESET();                  /* Reset incoming buffer */
                             lwcell.msg->msg.ussd.read = 1; /* Start reading incoming bytes */
                         }
-#endif                                                     /* LWCELL_CFG_USSD */
+#endif /* LWCELL_CFG_USSD */
                     }
-                } else {                                   /* We have sequence of unicode characters */
+                } else { /* We have sequence of unicode characters */
                     /*
                      * Unicode sequence characters are not "meta" characters
                      * so it is safe to just add them to receive array without checking
@@ -1397,7 +1399,7 @@ static lwcellr_t
 lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
     lwcell_cmd_t n_cmd = LWCELL_CMD_IDLE;
     if (CMD_IS_DEF(LWCELL_CMD_RESET)) {
-        switch (CMD_GET_CUR()) {                                                     /* Check current command */
+        switch (CMD_GET_CUR()) { /* Check current command */
             case LWCELL_CMD_RESET: {
                 lwcelli_reset_everything(1);                                         /* Reset everything */
                 SET_NEW_CMD(LWCELL_CFG_AT_ECHO ? LWCELL_CMD_ATE1 : LWCELL_CMD_ATE0); /* Set ECHO mode */
@@ -1455,7 +1457,7 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         }
     } else if (CMD_IS_DEF(LWCELL_CMD_CPIN_SET)) { /* Set PIN code */
         switch (CMD_GET_CUR()) {
-            case LWCELL_CMD_CPIN_GET: {           /* Get own phone number */
+            case LWCELL_CMD_CPIN_GET: { /* Get own phone number */
                 if (msg->i == 0) {
                     if (stat->is_ok && lwcell.m.sim.state == LWCELL_SIM_STATE_PIN) {
                         SET_NEW_CMD(LWCELL_CMD_CPIN_SET); /* Set command to write PIN */
@@ -1495,24 +1497,24 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
             case LWCELL_CMD_CPMS_GET: break;
             default: break;
         }
-        if (!stat->is_ok || n_cmd == LWCELL_CMD_IDLE) {      /* Stop execution on any command */
+        if (!stat->is_ok || n_cmd == LWCELL_CMD_IDLE) { /* Stop execution on any command */
             SET_NEW_CMD(LWCELL_CMD_IDLE);
             lwcell.m.sms.enabled = n_cmd == LWCELL_CMD_IDLE; /* Set enabled status */
             lwcell.evt.evt.sms_enable.status = lwcell.m.sms.enabled ? lwcellOK : lwcellERR;
-            lwcelli_send_cb(LWCELL_EVT_SMS_ENABLE);          /* Send to user */
+            lwcelli_send_cb(LWCELL_EVT_SMS_ENABLE); /* Send to user */
         }
-    } else if (CMD_IS_DEF(LWCELL_CMD_CMGS)) {                /* Send SMS default command */
-        if (CMD_IS_CUR(LWCELL_CMD_CMGF) && stat->is_ok) {    /* Set message format current command */
-            SET_NEW_CMD(LWCELL_CMD_CMGS);                    /* Now send actual message */
+    } else if (CMD_IS_DEF(LWCELL_CMD_CMGS)) {             /* Send SMS default command */
+        if (CMD_IS_CUR(LWCELL_CMD_CMGF) && stat->is_ok) { /* Set message format current command */
+            SET_NEW_CMD(LWCELL_CMD_CMGS);                 /* Now send actual message */
         }
 
         /* Send event on finish */
         if (n_cmd == LWCELL_CMD_IDLE) {
             SMS_SEND_SEND_EVT(lwcell.msg, stat->is_ok ? lwcellOK : lwcellERR);
         }
-    } else if (CMD_IS_DEF(LWCELL_CMD_CMGR)) {                    /* Read SMS message */
+    } else if (CMD_IS_DEF(LWCELL_CMD_CMGR)) { /* Read SMS message */
         if (CMD_IS_CUR(LWCELL_CMD_CPMS_GET) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CPMS_SET);                    /* Set memory */
+            SET_NEW_CMD(LWCELL_CMD_CPMS_SET); /* Set memory */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPMS_SET) && stat->is_ok) {
             SET_NEW_CMD(LWCELL_CMD_CMGF);                        /* Set text mode */
         } else if (CMD_IS_CUR(LWCELL_CMD_CMGF) && stat->is_ok) { /* Set message format current command*/
@@ -1529,7 +1531,7 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         if (CMD_IS_CUR(LWCELL_CMD_CPMS_GET) && stat->is_ok) {
             SET_NEW_CMD(LWCELL_CMD_CPMS_SET); /* Set memory */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPMS_SET) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CMGD);     /* Delete message */
+            SET_NEW_CMD(LWCELL_CMD_CMGD); /* Delete message */
         }
 
         /* Send event on finish */
@@ -1538,15 +1540,15 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         }
     } else if (CMD_IS_DEF(LWCELL_CMD_CMGDA)) {
         if (CMD_IS_CUR(LWCELL_CMD_CMGF) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CMGDA);    /* Mass storage */
+            SET_NEW_CMD(LWCELL_CMD_CMGDA); /* Mass storage */
         }
     } else if (CMD_IS_DEF(LWCELL_CMD_CMGL)) { /* List SMS messages */
         if (CMD_IS_CUR(LWCELL_CMD_CPMS_GET) && stat->is_ok) {
             SET_NEW_CMD(LWCELL_CMD_CPMS_SET); /* Set memory */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPMS_SET) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CMGF);     /* Set text format */
+            SET_NEW_CMD(LWCELL_CMD_CMGF); /* Set text format */
         } else if (CMD_IS_CUR(LWCELL_CMD_CMGF) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CMGL);     /* List messages */
+            SET_NEW_CMD(LWCELL_CMD_CMGL); /* List messages */
         }
 
         /* Send event on finish */
@@ -1555,31 +1557,31 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         }
     } else if (CMD_IS_DEF(LWCELL_CMD_CPMS_SET)) { /* Set preferred memory */
         if (CMD_IS_CUR(LWCELL_CMD_CPMS_GET) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CPMS_SET);     /* Now set the command */
+            SET_NEW_CMD(LWCELL_CMD_CPMS_SET); /* Now set the command */
         }
-#endif                                            /* LWCELL_CFG_SMS */
+#endif /* LWCELL_CFG_SMS */
 #if LWCELL_CFG_CALL
     } else if (CMD_IS_DEF(LWCELL_CMD_CALL_ENABLE)) {
-        lwcell.m.call.enabled = stat->is_ok;     /* Set enabled status */
+        lwcell.m.call.enabled = stat->is_ok; /* Set enabled status */
         lwcell.evt.evt.call_enable.res = lwcell.m.call.enabled ? lwcellOK : lwcellERR;
         lwcelli_send_cb(LWCELL_EVT_CALL_ENABLE); /* Send to user */
 #endif                                           /* LWCELL_CFG_CALL */
 #if LWCELL_CFG_PHONEBOOK
     } else if (CMD_IS_DEF(LWCELL_CMD_PHONEBOOK_ENABLE)) {
-        lwcell.m.pb.enabled = stat->is_ok;                    /* Set enabled status */
+        lwcell.m.pb.enabled = stat->is_ok; /* Set enabled status */
         lwcell.evt.evt.pb_enable.res = lwcell.m.pb.enabled ? lwcellOK : lwcellERR;
         lwcelli_send_cb(LWCELL_EVT_PB_ENABLE);                /* Send to user */
     } else if (CMD_IS_DEF(LWCELL_CMD_CPBW_SET)) {             /* Write phonebook entry */
         if (CMD_IS_CUR(LWCELL_CMD_CPBS_GET) && stat->is_ok) { /* Get current memory */
             SET_NEW_CMD(LWCELL_CMD_CPBS_SET);                 /* Set current memory */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBS_SET) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CPBW_SET);                 /* Write entry to phonebook */
+            SET_NEW_CMD(LWCELL_CMD_CPBW_SET); /* Write entry to phonebook */
         }
     } else if (CMD_IS_DEF(LWCELL_CMD_CPBR)) {
         if (CMD_IS_CUR(LWCELL_CMD_CPBS_GET) && stat->is_ok) { /* Get current memory */
             SET_NEW_CMD(LWCELL_CMD_CPBS_SET);                 /* Set current memory */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBS_SET) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CPBR);                     /* Read entries */
+            SET_NEW_CMD(LWCELL_CMD_CPBR); /* Read entries */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBR)) {
             lwcell.evt.evt.pb_list.mem = lwcell.m.pb.mem.current;
             lwcell.evt.evt.pb_list.entries = lwcell.msg->msg.pb_list.entries;
@@ -1591,7 +1593,7 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         if (CMD_IS_CUR(LWCELL_CMD_CPBS_GET) && stat->is_ok) { /* Get current memory */
             SET_NEW_CMD(LWCELL_CMD_CPBS_SET);                 /* Set current memory */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBS_SET) && stat->is_ok) {
-            SET_NEW_CMD(LWCELL_CMD_CPBF);                     /* Read entries */
+            SET_NEW_CMD(LWCELL_CMD_CPBF); /* Read entries */
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBF)) {
             lwcell.evt.evt.pb_search.mem = lwcell.m.pb.mem.current;
             lwcell.evt.evt.pb_search.search = lwcell.msg->msg.pb_search.search;
@@ -1638,10 +1640,10 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
     } else if (CMD_IS_DEF(LWCELL_CMD_CIPSTART)) {
         if (!msg->i && CMD_IS_CUR(LWCELL_CMD_CIPSTATUS)) { /* Was the current command status info? */
             if (stat->is_ok) {
-                SET_NEW_CMD(LWCELL_CMD_CIPSSL);            /* Set SSL */
+                SET_NEW_CMD(LWCELL_CMD_CIPSSL); /* Set SSL */
             }
         } else if (msg->i == 1 && CMD_IS_CUR(LWCELL_CMD_CIPSSL)) {
-            SET_NEW_CMD(LWCELL_CMD_CIPSTART);  /* Now actually start connection */
+            SET_NEW_CMD(LWCELL_CMD_CIPSTART); /* Now actually start connection */
         } else if (msg->i == 2 && CMD_IS_CUR(LWCELL_CMD_CIPSTART)) {
             SET_NEW_CMD(LWCELL_CMD_CIPSTATUS); /* Go to status mode */
             if (stat->is_error) {
@@ -1653,7 +1655,7 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
                 case LWCELL_CONN_CONNECT_OK: {                                      /* Successfully connected */
                     lwcell_conn_t* conn = &lwcell.m.conns[msg->msg.conn_start.num]; /* Get connection number */
 
-                    lwcell.evt.type = LWCELL_EVT_CONN_ACTIVE;                       /* Connection just active */
+                    lwcell.evt.type = LWCELL_EVT_CONN_ACTIVE; /* Connection just active */
                     lwcell.evt.evt.conn_active_close.client = 1;
                     lwcell.evt.evt.conn_active_close.conn = conn;
                     lwcell.evt.evt.conn_active_close.forced = 1;
@@ -1663,8 +1665,8 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
                 }
                 case LWCELL_CONN_CONNECT_ERROR: { /* Connection error */
                     lwcelli_send_conn_error_cb(msg, lwcellERRCONNFAIL);
-                    stat->is_error = 1;           /* Manually set error */
-                    stat->is_ok = 0;              /* Reset success */
+                    stat->is_error = 1; /* Manually set error */
+                    stat->is_ok = 0;    /* Reset success */
                     break;
                 }
                 default: {
@@ -1990,13 +1992,13 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
         case LWCELL_CMD_CIPSEND: {                    /* Send data to connection */
             return lwcelli_tcpip_process_send_data(); /* Process send data */
         }
-        case LWCELL_CMD_CIPSTATUS: {                  /* Get status of device and all connections */
+        case LWCELL_CMD_CIPSTATUS: { /* Get status of device and all connections */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CIPSTATUS");
             AT_PORT_SEND_END_AT();
             break;
         }
-#endif                          /* LWCELL_CFG_CONN */
+#endif /* LWCELL_CFG_CONN */
 #if LWCELL_CFG_SMS
         case LWCELL_CMD_CMGF: { /* Select SMS message format */
             AT_PORT_SEND_BEGIN_AT();
@@ -2099,7 +2101,7 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-#endif                         /* LWCELL_CFG_SMS */
+#endif /* LWCELL_CFG_SMS */
 #if LWCELL_CFG_CALL
         case LWCELL_CMD_ATD: { /* Start new call */
             AT_PORT_SEND_BEGIN_AT();
@@ -2121,7 +2123,7 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
             AT_PORT_SEND_END_AT();
             break;
         }
-#endif                                  /* LWCELL_CFG_CALL */
+#endif /* LWCELL_CFG_CALL */
 #if LWCELL_CFG_PHONEBOOK
         case LWCELL_CMD_CPBS_GET_OPT: { /* Get available phonebook storages */
             AT_PORT_SEND_BEGIN_AT();
@@ -2257,7 +2259,7 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
 #endif                             /* LWCELL_CFG_USSD */
         default: return lwcellERR; /* Invalid command */
     }
-    return lwcellOK;               /* Valid command */
+    return lwcellOK; /* Valid command */
 }
 
 /**
@@ -2293,11 +2295,11 @@ lwcelli_send_msg_to_producer_mbox(lwcell_msg_t* msg, lwcellr_t (*process_fn)(lwc
             return lwcellERRMEM;
         }
     }
-    if (!msg->cmd) {                                     /* Set start command if not set by user */
-        msg->cmd = msg->cmd_def;                         /* Set it as default */
+    if (!msg->cmd) {             /* Set start command if not set by user */
+        msg->cmd = msg->cmd_def; /* Set it as default */
     }
-    msg->block_time = max_block_time;                    /* Set blocking status if necessary */
-    msg->fn = process_fn;                                /* Save processing function to be called as callback */
+    msg->block_time = max_block_time; /* Set blocking status if necessary */
+    msg->fn = process_fn;             /* Save processing function to be called as callback */
     if (msg->is_blocking) {
         lwcell_sys_mbox_put(&lwcell.mbox_producer, msg); /* Write message to producer queue and wait forever */
     } else {
@@ -2306,15 +2308,15 @@ lwcelli_send_msg_to_producer_mbox(lwcell_msg_t* msg, lwcellr_t (*process_fn)(lwc
             return lwcellERRMEM;
         }
     }
-    if (res == lwcellOK && msg->is_blocking) {    /* In case we have blocking request */
+    if (res == lwcellOK && msg->is_blocking) { /* In case we have blocking request */
         uint32_t time;
         time = lwcell_sys_sem_wait(&msg->sem, 0); /* Wait forever for semaphore */
         if (time == LWCELL_SYS_TIMEOUT) {         /* If semaphore was not accessed within given time */
             res = lwcellTIMEOUT;                  /* Semaphore not released in time */
         } else {
-            res = msg->res;                       /* Set response status from message response */
+            res = msg->res; /* Set response status from message response */
         }
-        LWCELL_MSG_VAR_FREE(msg);                 /* Release message */
+        LWCELL_MSG_VAR_FREE(msg); /* Release message */
     }
     return res;
 }
