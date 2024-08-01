@@ -69,7 +69,8 @@ typedef struct lwcell_netconn* lwcell_netconn_p;
 typedef enum {
     LWCELL_NETCONN_TYPE_TCP = LWCELL_CONN_TYPE_TCP, /*!< TCP connection */
     LWCELL_NETCONN_TYPE_UDP = LWCELL_CONN_TYPE_UDP, /*!< UDP connection */
-    LWCELL_NETCONN_TYPE_SSL = LWCELL_CONN_TYPE_SSL, /*!< TCP connection over SSL */
+    LWCELL_NETCONN_TYPE_SSL = LWCELL_CONN_TYPE_SSL, /*!< TCP connection over SSL 
+                                                         Note: This option is unstable on SIM868 devices due to firmware issues */
 } lwcell_netconn_type_t;
 
 lwcell_netconn_p lwcell_netconn_new(lwcell_netconn_type_t type);
