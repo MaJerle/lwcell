@@ -13,6 +13,7 @@
 - Add `.clang-format` draft
 - Delete `lwgsm_datetime_t` and use generic `struct tm` instead
 - Rename project from `lwgsm` to `lwcell`, indicating cellular
+- Rework library CMake with removed INTERFACE type
 
 ## v0.1.1
 

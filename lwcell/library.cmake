@@ -1,4 +1,4 @@
-# 
+#
 # LIB_PREFIX: LWCELL
 #
 # This file provides set of variables for end user
@@ -74,23 +74,23 @@ if(DEFINED LWCELL_SYS_PORT)
 endif()
 
 # Register core library to the system
-add_library(lwcell INTERFACE)
-target_sources(lwcell PUBLIC ${lwcell_core_SRCS})
-target_include_directories(lwcell INTERFACE ${lwcell_include_DIRS})
+add_library(lwcell)
+target_sources(lwcell PRIVATE ${lwcell_core_SRCS})
+target_include_directories(lwcell PUBLIC ${lwcell_include_DIRS})
 target_compile_options(lwcell PRIVATE ${LWCELL_COMPILE_OPTIONS})
 target_compile_definitions(lwcell PRIVATE ${LWCELL_COMPILE_DEFINITIONS})
 
 # Register API to the system
-add_library(lwcell_api INTERFACE)
-target_sources(lwcell_api PUBLIC ${lwcell_api_SRCS})
-target_include_directories(lwcell_api INTERFACE ${lwcell_include_DIRS})
+add_library(lwcell_api)
+target_sources(lwcell_api PRIVATE ${lwcell_api_SRCS})
+target_include_directories(lwcell_api PUBLIC ${lwcell_include_DIRS})
 target_compile_options(lwcell_api PRIVATE ${LWCELL_COMPILE_OPTIONS})
 target_compile_definitions(lwcell_api PRIVATE ${LWCELL_COMPILE_DEFINITIONS})
 
 # Register apps to the system
-add_library(lwcell_apps INTERFACE)
-target_sources(lwcell_apps PUBLIC ${lwcell_allapps_SRCS})
-target_include_directories(lwcell_apps INTERFACE ${lwcell_include_DIRS})
+add_library(lwcell_apps)
+target_sources(lwcell_apps PRIVATE ${lwcell_allapps_SRCS})
+target_include_directories(lwcell_apps PUBLIC ${lwcell_include_DIRS})
 target_compile_options(lwcell_apps PRIVATE ${LWCELL_COMPILE_OPTIONS})
 target_compile_definitions(lwcell_apps PRIVATE ${LWCELL_COMPILE_DEFINITIONS})
 
@@ -101,4 +101,5 @@ if(NOT LWCELL_OPTS_FILE)
 else()
     message(STATUS "Using custom lwcell_opts.h file from ${LWCELL_OPTS_FILE}")
 endif()
+
 configure_file(${LWCELL_OPTS_FILE} ${LWCELL_CUSTOM_INC_DIR}/lwcell_opts.h COPYONLY)
