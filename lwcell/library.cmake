@@ -86,6 +86,7 @@ target_sources(lwcell_api PRIVATE ${lwcell_api_SRCS})
 target_include_directories(lwcell_api PUBLIC ${lwcell_include_DIRS})
 target_compile_options(lwcell_api PRIVATE ${LWCELL_COMPILE_OPTIONS})
 target_compile_definitions(lwcell_api PRIVATE ${LWCELL_COMPILE_DEFINITIONS})
+target_link_libraries(lwcell_api PUBLIC lwcell)
 
 # Register apps to the system
 add_library(lwcell_apps)
@@ -93,6 +94,7 @@ target_sources(lwcell_apps PRIVATE ${lwcell_allapps_SRCS})
 target_include_directories(lwcell_apps PUBLIC ${lwcell_include_DIRS})
 target_compile_options(lwcell_apps PRIVATE ${LWCELL_COMPILE_OPTIONS})
 target_compile_definitions(lwcell_apps PRIVATE ${LWCELL_COMPILE_DEFINITIONS})
+target_link_libraries(lwcell_api PUBLIC lwcell)
 
 # Create config file if user didn't provide one info himself
 if(NOT LWCELL_OPTS_FILE)
