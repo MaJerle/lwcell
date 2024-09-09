@@ -113,7 +113,7 @@ typedef enum {
 #define MQTT_RCV_GET_PACKET_TYPE(d)     ((mqtt_msg_type_t)(((d) >> 0x04) & 0x0F))
 #define MQTT_RCV_GET_PACKET_QOS(d)      ((lwcell_mqtt_qos_t)(((d) >> 0x01) & 0x03))
 #define MQTT_RCV_GET_PACKET_DUP(d)      (((d) >> 0x03) & 0x01)
-#define MQTT_RCV_GET_PACKET_RETAIN(d)   ((d & 0x01))
+#define MQTT_RCV_GET_PACKET_RETAIN(d)   (((d) & 0x01))
 
 /* Requests status */
 #define MQTT_REQUEST_FLAG_IN_USE        0x01 /*!< Request object is allocated and in use */
