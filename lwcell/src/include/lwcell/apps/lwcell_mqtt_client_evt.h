@@ -211,6 +211,15 @@ extern "C" {
 #define lwcell_mqtt_client_evt_publish_recv_get_qos(client, evt)      ((evt)->evt.publish_recv.qos)
 
 /**
+ * \brief           Get received retain
+ * \param[in]       client: MQTT client
+ * \param[in]       evt: Event handle
+ * \return          `1` if retained, `0` otherwise
+ * \hideinitializer
+ */
+#define lwcell_mqtt_client_evt_publish_recv_get_retain(client, evt)   ((evt)->evt.publish_recv.retain)
+
+/**
  * \}
  */
 

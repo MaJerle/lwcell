@@ -170,6 +170,7 @@ typedef struct {
             size_t payload_len;    /*!< Length of topic payload */
             uint8_t dup;           /*!< Duplicate flag if message was sent again */
             lwcell_mqtt_qos_t qos; /*!< Received packet quality of service */
+            uint8_t retain;        /*!< Retain status of the received packet */
         } publish_recv;            /*!< Publish received event */
     } evt;                         /*!< Event data parameters */
 } lwcell_mqtt_evt_t;

@@ -62,6 +62,7 @@ typedef struct lwcell_mqtt_client_api_buf {
     uint8_t* payload;      /*!< Payload data */
     size_t payload_len;    /*!< Payload length */
     lwcell_mqtt_qos_t qos; /*!< Quality of service */
+    uint8_t retain;        /*!< Retain status of the packet */
 } lwcell_mqtt_client_api_buf_t;
 
 /**

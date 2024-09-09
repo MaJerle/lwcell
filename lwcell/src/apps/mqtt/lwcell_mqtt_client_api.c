@@ -117,10 +117,11 @@ prv_mqtt_evt(lwcell_mqtt_client_p client, lwcell_mqtt_evt_t* evt) {
             const uint8_t* payload = lwcell_mqtt_client_evt_publish_recv_get_payload(client, evt);
             size_t payload_len = lwcell_mqtt_client_evt_publish_recv_get_payload_len(client, evt);
             lwcell_mqtt_qos_t qos = lwcell_mqtt_client_evt_publish_recv_get_qos(client, evt);
+            uint8_t retain = lwcell_mqtt_client_evt_publish_recv_get_retain(client, evt);
 
             /* Print debug message */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE, "[MQTT API] New publish received on topic %.*s\r\n",
-                         (int)topic_len, topic);
+                          (int)topic_len, topic);
 
             /* Calculate memory sizes */
             buf_size = LWCELL_MEM_ALIGN(sizeof(*buf));
@@ -135,6 +136,7 @@ prv_mqtt_evt(lwcell_mqtt_client_p client, lwcell_mqtt_evt_t* evt) {
                 buf->topic_len = topic_len;
                 buf->payload_len = payload_len;
                 buf->qos = qos;
+                buf->retain = retain;
 
                 /* Copy content to new memory */
                 LWCELL_MEMCPY(buf->topic, topic, sizeof(*topic) * topic_len);
@@ -143,12 +145,12 @@ prv_mqtt_evt(lwcell_mqtt_client_p client, lwcell_mqtt_evt_t* evt) {
                 /* Write to receive queue */
                 if (!lwcell_sys_mbox_putnow(&api_client->rcv_mbox, buf)) {
                     LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_WARNING,
-                                 "[MQTT API] Cannot put new received MQTT publish to queue\r\n");
+                                  "[MQTT API] Cannot put new received MQTT publish to queue\r\n");
                     lwcell_mem_free_s((void**)&buf);
                 }
             } else {
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_WARNING,
-                             "[MQTT API] Cannot allocate memory for packet buffer of size %d bytes\r\n", (int)size);
+                              "[MQTT API] Cannot allocate memory for packet buffer of size %d bytes\r\n", (int)size);
             }
             break;
         }
@@ -156,21 +158,21 @@ prv_mqtt_evt(lwcell_mqtt_client_p client, lwcell_mqtt_evt_t* evt) {
             api_client->sub_pub_resp = lwcell_mqtt_client_evt_publish_get_result(client, evt);
             prv_release_sem(api_client); /* Release semaphore */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE, "[MQTT API] Publish event with response: %d\r\n",
-                         (int)api_client->sub_pub_resp);
+                          (int)api_client->sub_pub_resp);
             break;
         }
         case LWCELL_MQTT_EVT_SUBSCRIBE: {
             api_client->sub_pub_resp = lwcell_mqtt_client_evt_subscribe_get_result(client, evt);
             prv_release_sem(api_client); /* Release semaphore */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE, "[MQTT API] Subscribe event with response: %d\r\n",
-                         (int)api_client->sub_pub_resp);
+                          (int)api_client->sub_pub_resp);
             break;
         }
         case LWCELL_MQTT_EVT_UNSUBSCRIBE: {
             api_client->sub_pub_resp = lwcell_mqtt_client_evt_unsubscribe_get_result(client, evt);
             prv_release_sem(api_client); /* Release semaphore */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE, "[MQTT API] Unsubscribe event with response: %d\r\n",
-                         (int)api_client->sub_pub_resp);
+                          (int)api_client->sub_pub_resp);
             break;
         }
         case LWCELL_MQTT_EVT_DISCONNECT: {
@@ -278,7 +280,7 @@ lwcell_mqtt_client_api_delete(lwcell_mqtt_client_api_p client) {
  */
 lwcell_mqtt_conn_status_t
 lwcell_mqtt_client_api_connect(lwcell_mqtt_client_api_p client, const char* host, lwcell_port_t port,
-                              const lwcell_mqtt_client_info_t* info) {
+                               const lwcell_mqtt_client_info_t* info) {
     if (client == NULL || host == NULL || !port || info == NULL) {
         LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_WARNING, "[MQTT API] Invalid parameters in function\r\n");
         return LWCELL_MQTT_CONN_STATUS_TCP_FAILED;
@@ -396,7 +398,7 @@ lwcell_mqtt_client_api_unsubscribe(lwcell_mqtt_client_api_p client, const char* 
  */
 lwcellr_t
 lwcell_mqtt_client_api_publish(lwcell_mqtt_client_api_p client, const char* topic, const void* data, size_t btw,
-                              lwcell_mqtt_qos_t qos, uint8_t retain) {
+                               lwcell_mqtt_qos_t qos, uint8_t retain) {
     lwcellr_t res = lwcellERR;
 
     LWCELL_ASSERT(client != NULL);
