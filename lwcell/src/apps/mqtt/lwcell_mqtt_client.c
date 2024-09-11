@@ -113,6 +113,7 @@ typedef enum {
 #define MQTT_RCV_GET_PACKET_TYPE(d)     ((mqtt_msg_type_t)(((d) >> 0x04) & 0x0F))
 #define MQTT_RCV_GET_PACKET_QOS(d)      ((lwcell_mqtt_qos_t)(((d) >> 0x01) & 0x03))
 #define MQTT_RCV_GET_PACKET_DUP(d)      (((d) >> 0x03) & 0x01)
+#define MQTT_RCV_GET_PACKET_RETAIN(d)   (((d) & 0x01))
 
 /* Requests status */
 #define MQTT_REQUEST_FLAG_IN_USE        0x01 /*!< Request object is allocated and in use */
@@ -298,7 +299,7 @@ prv_write_fixed_header(lwcell_mqtt_client_p client, mqtt_msg_type_t type, uint8_
     lwcell_buff_write(&client->tx_buff, &b, 1); /* Write start of packet parameters */
 
     LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] Writing packet type %s to output buffer\r\n",
-                 prv_mqtt_msg_type_to_str(type));
+                  prv_mqtt_msg_type_to_str(type));
 
     do { /* Encode length, we must write a len byte even if 0 */
         /*
@@ -381,11 +382,11 @@ prv_write_ack_rec_rel_resp(lwcell_mqtt_client_p client, mqtt_msg_type_t msg_type
         prv_write_u16(client, pkt_id);                          /* Write packet ID */
         prv_send_data(client);                                  /* Flush data to output */
         LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] Response %s written to output memory\r\n",
-                     prv_mqtt_msg_type_to_str(msg_type));
+                      prv_mqtt_msg_type_to_str(msg_type));
         return 1;
     } else {
         LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] No memory to write %s packet\r\n",
-                     prv_mqtt_msg_type_to_str(msg_type));
+                      prv_mqtt_msg_type_to_str(msg_type));
     }
     return 0;
 }
@@ -424,7 +425,7 @@ prv_send_data(lwcell_mqtt_client_p client) {
             client->is_sending = 1;       /* Remember active sending flag */
         } else {
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE_WARNING, "[LWCELL MQTT] Cannot send data with error: %d\r\n",
-                         (int)res);
+                          (int)res);
         }
     } else {
         /*
@@ -525,7 +526,7 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
 
     /* Debug message */
     LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_STATE, "[LWCELL MQTT] Processing packet type %s\r\n",
-                 prv_mqtt_msg_type_to_str(msg_type));
+                  prv_mqtt_msg_type_to_str(msg_type));
 
     /* Check received packet type */
     switch (msg_type) {
@@ -544,16 +545,17 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
             } else {
                 /* Protocol violation here */
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE,
-                             "[LWCELL MQTT] Protocol violation. CONNACK received when already connected!\r\n");
+                              "[LWCELL MQTT] Protocol violation. CONNACK received when already connected!\r\n");
             }
             break;
         }
         case MQTT_MSG_TYPE_PUBLISH: {
             uint16_t topic_len, data_len;
-            uint8_t *topic, *data, dup;
+            uint8_t *topic, *data, dup, retain;
 
-            qos = MQTT_RCV_GET_PACKET_QOS(client->msg_hdr_byte); /* Get QoS from received packet */
-            dup = MQTT_RCV_GET_PACKET_DUP(client->msg_hdr_byte); /* Get duplicate flag */
+            qos = MQTT_RCV_GET_PACKET_QOS(client->msg_hdr_byte);       /* Get QoS from received packet */
+            dup = MQTT_RCV_GET_PACKET_DUP(client->msg_hdr_byte);       /* Get duplicate flag */
+            retain = MQTT_RCV_GET_PACKET_RETAIN(client->msg_hdr_byte); /* Get retain flag */
 
             topic_len = (client->rx_buff[0] << 8) | client->rx_buff[1];
             topic = &client->rx_buff[2]; /* Start of topic */
@@ -570,8 +572,8 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
             data_len = client->msg_rem_len - (data - client->rx_buff); /* Calculate length of remaining data */
 
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE,
-                         "[LWCELL MQTT] Publish packet received on topic %.*s; QoS: %d; pkt_id: %d; data_len: %d\r\n",
-                         (int)topic_len, (const char*)topic, (int)qos, (int)pkt_id, (int)data_len);
+                          "[LWCELL MQTT] Publish packet received on topic %.*s; QoS: %d; pkt_id: %d; data_len: %d\r\n",
+                          (int)topic_len, (const char*)topic, (int)qos, (int)pkt_id, (int)data_len);
 
             /*
              * We have to send respond to command if
@@ -583,7 +585,7 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
             if (qos > 0) { /* We have to reply on QoS > 0 */
                 mqtt_msg_type_t rlwcell_msg_type = qos == 1 ? MQTT_MSG_TYPE_PUBACK : MQTT_MSG_TYPE_PUBREC;
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] Sending publish resp: %s on pkt_id: %d\r\n",
-                             prv_mqtt_msg_type_to_str(rlwcell_msg_type), (int)pkt_id);
+                              prv_mqtt_msg_type_to_str(rlwcell_msg_type), (int)pkt_id);
                 prv_write_ack_rec_rel_resp(client, rlwcell_msg_type, pkt_id, qos);
             }
 
@@ -595,6 +597,7 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
             client->evt.evt.publish_recv.payload_len = data_len;
             client->evt.evt.publish_recv.dup = dup;
             client->evt.evt.publish_recv.qos = qos;
+            client->evt.evt.publish_recv.retain = retain;
             client->evt_fn(client, &client->evt);
             break;
         }
@@ -652,7 +655,7 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
                 } else {
                     /* Protocol violation at this point! */
                     LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE,
-                                 "[LWCELL MQTT] Protocol violation. Received ACK without sent packet\r\n");
+                                  "[LWCELL MQTT] Protocol violation. Received ACK without sent packet\r\n");
                 }
             }
             break;
@@ -684,8 +687,8 @@ prv_mqtt_parse_incoming(lwcell_mqtt_client_p client, lwcell_pbuf_p pbuf) {
             switch (client->parser_state) {    /* Check parser state */
                 case MQTT_PARSER_STATE_INIT: { /* We are waiting for start byte and packet type */
                     LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_STATE,
-                                 "[LWCELL MQTT] Parser init state, received first byte of packet 0x%02X\r\n",
-                                 (unsigned)ch);
+                                  "[LWCELL MQTT] Parser init state, received first byte of packet 0x%02X\r\n",
+                                  (unsigned)ch);
 
                     /* Save other info about message */
                     client->msg_hdr_byte = ch;    /* Save first entry */
@@ -703,7 +706,7 @@ prv_mqtt_parse_incoming(lwcell_mqtt_client_p client, lwcell_pbuf_p pbuf) {
 
                     if (!(ch & 0x80)) { /* Is this last entry? */
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_STATE, "[LWCELL MQTT] Remaining length received: %d bytes\r\n",
-                                     (int)client->msg_rem_len);
+                                      (int)client->msg_rem_len);
 
                         if (client->msg_rem_len > 0) {
                             /*
@@ -750,12 +753,12 @@ prv_mqtt_parse_incoming(lwcell_mqtt_client_p client, lwcell_pbuf_p pbuf) {
                         if (client->msg_curr_pos
                             <= client->rx_buff_len) { /* Check if it was possible to write all data to rx buffer */
                             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_STATE,
-                                         "[LWCELL MQTT] Packet parsed and ready for processing\r\n");
+                                          "[LWCELL MQTT] Packet parsed and ready for processing\r\n");
 
                             prv_mqtt_process_incoming_message(client); /* Process incoming packet */
                         } else {
                             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE_WARNING,
-                                         "[LWCELL MQTT] Packet too big for rx buffer. Packet discarded\r\n");
+                                          "[LWCELL MQTT] Packet too big for rx buffer. Packet discarded\r\n");
                         }
                         client->parser_state =
                             MQTT_PARSER_STATE_INIT; /* Go to initial state and listen for next received packet */
@@ -889,7 +892,7 @@ prv_mqtt_data_sent_cb(lwcell_mqtt_client_p client, size_t sent_len, uint8_t succ
     if (!successful) {
         prv_mqtt_close(client);
         LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE_WARNING,
-                     "[LWCELL MQTT] Failed to send %d bytes. Manually closing down..\r\n", (int)sent_len);
+                      "[LWCELL MQTT] Failed to send %d bytes. Manually closing down..\r\n", (int)sent_len);
         return 0;
     }
     lwcell_buff_skip(&client->tx_buff, sent_len); /* Skip buffer for actual sent data */
@@ -1131,7 +1134,7 @@ lwcell_mqtt_client_delete(lwcell_mqtt_client_p client) {
  */
 lwcellr_t
 lwcell_mqtt_client_connect(lwcell_mqtt_client_p client, const char* host, lwcell_port_t port, lwcell_mqtt_evt_fn evt_fn,
-                          const lwcell_mqtt_client_info_t* info) {
+                           const lwcell_mqtt_client_info_t* info) {
     lwcellr_t res = lwcellERR;
 
     LWCELL_ASSERT(client != NULL); /* t input parameters */
@@ -1194,7 +1197,7 @@ lwcell_mqtt_client_subscribe(lwcell_mqtt_client_p client, const char* topic, lwc
 lwcellr_t
 lwcell_mqtt_client_unsubscribe(lwcell_mqtt_client_p client, const char* topic, void* arg) {
     return prv_sub_unsub(client, topic, (lwcell_mqtt_qos_t)0, arg, 0) == 1 ? lwcellOK
-                                                                          : lwcellERR; /* Unsubscribe from topic */
+                                                                           : lwcellERR; /* Unsubscribe from topic */
 }
 
 /**
@@ -1210,7 +1213,7 @@ lwcell_mqtt_client_unsubscribe(lwcell_mqtt_client_p client, const char* topic, v
  */
 lwcellr_t
 lwcell_mqtt_client_publish(lwcell_mqtt_client_p client, const char* topic, const void* payload, uint16_t payload_len,
-                          lwcell_mqtt_qos_t qos, uint8_t retain, void* arg) {
+                           lwcell_mqtt_qos_t qos, uint8_t retain, void* arg) {
     lwcellr_t res = lwcellOK;
     lwcell_mqtt_request_t* request = NULL;
     uint32_t rem_len, raw_len;
@@ -1257,7 +1260,7 @@ lwcell_mqtt_client_publish(lwcell_mqtt_client_p client, const char* topic, const
             prv_request_set_pending(client, request); /* Set request as pending waiting for server reply */
             prv_send_data(client);                    /* Try to send data */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] Pkt publish start. QoS: %d, pkt_id: %d\r\n",
-                         (int)qos_u8, (int)pkt_id);
+                          (int)qos_u8, (int)pkt_id);
         } else {
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] No free request available to publish message\r\n");
             res = lwcellERRMEM;
