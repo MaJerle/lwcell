@@ -214,7 +214,7 @@ prv_request_delete(lwcell_mqtt_client_p client, lwcell_mqtt_request_t* request) 
 static void
 prv_request_set_pending(lwcell_mqtt_client_p client, lwcell_mqtt_request_t* request) {
     request->timeout_start_time = lwcell_sys_now(); /* Set timeout start time */
-    request->status |= MQTT_REQUEST_FLAG_PENDING;  /* Set pending flag */
+    request->status |= MQTT_REQUEST_FLAG_PENDING;   /* Set pending flag */
     LWCELL_UNUSED(client);
 }
 
@@ -308,7 +308,7 @@ prv_write_fixed_header(lwcell_mqtt_client_p client, mqtt_msg_type_t type, uint8_
          */
         b = LWCELL_U8((rem_len & 0x7F) | (rem_len > 0x7F ? 0x80 : 0));
         lwcell_buff_write(&client->tx_buff, &b, 1); /* Write single byte */
-        rem_len >>= 7;                             /* Go to next 127 bytes */
+        rem_len >>= 7;                              /* Go to next 127 bytes */
     } while (rem_len > 0);
 }
 
@@ -399,7 +399,7 @@ prv_write_ack_rec_rel_resp(lwcell_mqtt_client_p client, mqtt_msg_type_t msg_type
  */
 static void
 prv_write_string(lwcell_mqtt_client_p client, const char* str, uint16_t len) {
-    prv_write_u16(client, len);                   /* Write string length */
+    prv_write_u16(client, len);                    /* Write string length */
     lwcell_buff_write(&client->tx_buff, str, len); /* Write string to buffer */
 }
 
@@ -417,7 +417,7 @@ prv_send_data(lwcell_mqtt_client_p client) {
     }
 
     len = lwcell_buff_get_linear_block_read_length(&client->tx_buff); /* Get length of linear memory */
-    if (len > 0) {                                                   /* Anything to send? */
+    if (len > 0) {                                                    /* Anything to send? */
         lwcellr_t res;
         addr = lwcell_buff_get_linear_block_read_address(&client->tx_buff); /* Get address of linear memory */
         if ((res = lwcell_conn_send(client->conn, addr, len, NULL, 0)) == lwcellOK) {
@@ -497,8 +497,9 @@ prv_sub_unsub(lwcell_mqtt_client_p client, const char* topic, lwcell_mqtt_qos_t 
             prv_write_u16(client, pkt_id);              /* Write packet ID */
             prv_write_string(client, topic, len_topic); /* Write topic string to packet */
             if (sub) {                                  /* Send quality of service only on subscribe */
-                prv_write_u8(client, LWCELL_MIN(LWCELL_U8(qos),
-                                               LWCELL_U8(LWCELL_MQTT_QOS_EXACTLY_ONCE))); /* Write quality of service */
+                prv_write_u8(
+                    client,
+                    LWCELL_MIN(LWCELL_U8(qos), LWCELL_U8(LWCELL_MQTT_QOS_EXACTLY_ONCE))); /* Write quality of service */
             }
 
             request->status |= sub ? MQTT_REQUEST_FLAG_SUBSCRIBE : MQTT_REQUEST_FLAG_UNSUBSCRIBE;
@@ -536,7 +537,8 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
                 if (err == LWCELL_MQTT_CONN_STATUS_ACCEPTED) {
                     client->conn_state = LWCELL_MQTT_CONNECTED;
                 }
-                LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] CONNACK received with result: %d\r\n", (int)err);
+                LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_TRACE, "[LWCELL MQTT] CONNACK received with result: %d\r\n",
+                              (int)err);
 
                 /* Notify user layer */
                 client->evt.type = LWCELL_MQTT_EVT_CONNECT;
@@ -619,7 +621,7 @@ prv_mqtt_process_incoming_message(lwcell_mqtt_client_p client) {
             if (msg_type == MQTT_MSG_TYPE_PUBREC) { /* Publish record received from server */
                 prv_write_ack_rec_rel_resp(client, MQTT_MSG_TYPE_PUBREL, pkt_id,
                                            (lwcell_mqtt_qos_t)1); /* Send back publish release message */
-            } else if (msg_type == MQTT_MSG_TYPE_PUBREL) {       /* Publish release was received */
+            } else if (msg_type == MQTT_MSG_TYPE_PUBREL) {        /* Publish release was received */
                 prv_write_ack_rec_rel_resp(client, MQTT_MSG_TYPE_PUBCOMP, pkt_id,
                                            (lwcell_mqtt_qos_t)0); /* Send back publish complete */
             } else if (msg_type == MQTT_MSG_TYPE_SUBACK || msg_type == MQTT_MSG_TYPE_UNSUBACK
@@ -677,7 +679,7 @@ prv_mqtt_parse_incoming(lwcell_mqtt_client_p client, lwcell_pbuf_p pbuf) {
     uint8_t ch, *d;
 
     do {
-        buff_offset += buff_len;                                      /* Calculate new offset of buffer */
+        buff_offset += buff_len;                                       /* Calculate new offset of buffer */
         d = lwcell_pbuf_get_linear_addr(pbuf, buff_offset, &buff_len); /* Get address pointer */
         if (d == NULL) {
             break;
@@ -705,7 +707,8 @@ prv_mqtt_parse_incoming(lwcell_mqtt_client_p client, lwcell_pbuf_p pbuf) {
                     ++client->msg_rem_len_mult;
 
                     if (!(ch & 0x80)) { /* Is this last entry? */
-                        LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_STATE, "[LWCELL MQTT] Remaining length received: %d bytes\r\n",
+                        LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_STATE,
+                                      "[LWCELL MQTT] Remaining length received: %d bytes\r\n",
                                       (int)client->msg_rem_len);
 
                         if (client->msg_rem_len > 0) {
@@ -798,7 +801,7 @@ prv_mqtt_connected_cb(lwcell_mqtt_client_p client) {
     rem_len = 10; /* Set remaining length of fixed header */
 
     len_id = LWCELL_U16(strlen(client->info->id)); /* Get cliend ID length */
-    rem_len += len_id + 2;                        /* Add client id length including length entries */
+    rem_len += len_id + 2;                         /* Add client id length including length entries */
 
     if (client->info->will_topic != NULL && client->info->will_message != NULL) {
         flags |= MQTT_FLAG_CONNECT_WILL;
@@ -815,14 +818,14 @@ prv_mqtt_connected_cb(lwcell_mqtt_client_p client) {
         flags |= MQTT_FLAG_CONNECT_USERNAME; /* Username is included */
 
         len_user = LWCELL_U16(strlen(client->info->user)); /* Get username length */
-        rem_len += len_user + 2;                          /* Add username length including length entries */
+        rem_len += len_user + 2;                           /* Add username length including length entries */
     }
 
     if (client->info->pass != NULL) {        /* Check for password */
         flags |= MQTT_FLAG_CONNECT_PASSWORD; /* Password is included */
 
         len_pass = LWCELL_U16(strlen(client->info->pass)); /* Get username length */
-        rem_len += len_pass + 2;                          /* Add password length including length entries */
+        rem_len += len_pass + 2;                           /* Add password length including length entries */
     }
 
     if (!prv_output_check_enough_memory(client, rem_len)) { /* Is there enough memory to write everything? */
@@ -849,7 +852,7 @@ prv_mqtt_connected_cb(lwcell_mqtt_client_p client) {
 
     client->parser_state = MQTT_PARSER_STATE_INIT; /* Reset parser state */
 
-    client->poll_time = 0;                      /* Reset kep alive time */
+    client->poll_time = 0;                       /* Reset kep alive time */
     client->conn_state = LWCELL_MQTT_CONNECTING; /* MQTT is connecting to server */
 
     prv_send_data(client); /* Flush and send the actual data */
@@ -863,7 +866,7 @@ prv_mqtt_connected_cb(lwcell_mqtt_client_p client) {
  */
 static uint8_t
 prv_mqtt_data_recv_cb(lwcell_mqtt_client_p client, lwcell_pbuf_p pbuf) {
-    prv_mqtt_parse_incoming(client, pbuf); /* We need to process incoming data */
+    prv_mqtt_parse_incoming(client, pbuf);  /* We need to process incoming data */
     lwcell_conn_recved(client->conn, pbuf); /* Notify stack about received data */
     return 1;
 }
@@ -984,8 +987,8 @@ prv_mqtt_closed_cb(lwcell_mqtt_client_p client, lwcellr_t res, uint8_t forced) {
     client->evt.evt.disconnect.is_accepted =
         state == LWCELL_MQTT_CONNECTED || state == LWCELL_MQTT_CONN_DISCONNECTING; /* Set connection state */
     client->evt.type = LWCELL_MQTT_EVT_DISCONNECT; /* Connection disconnected from server */
-    client->evt_fn(client, &client->evt);         /* Notify upper layer about closed connection */
-    client->conn = NULL;                          /* Reset connection handle */
+    client->evt_fn(client, &client->evt);          /* Notify upper layer about closed connection */
+    client->conn = NULL;                           /* Reset connection handle */
 
     /* Check all requests */
     while ((request = prv_request_get_pending(client, -1)) != NULL) {
@@ -1248,13 +1251,13 @@ lwcell_mqtt_client_publish(lwcell_mqtt_client_p client, const char* topic, const
             request->expected_sent_len = client->written_total + raw_len;
 
             prv_write_fixed_header(client, MQTT_MSG_TYPE_PUBLISH, 0,
-                                   (lwcell_mqtt_qos_t)LWCELL_MIN(qos_u8, LWCELL_U8(LWCELL_MQTT_QOS_EXACTLY_ONCE)), retain,
-                                   rem_len);
+                                   (lwcell_mqtt_qos_t)LWCELL_MIN(qos_u8, LWCELL_U8(LWCELL_MQTT_QOS_EXACTLY_ONCE)),
+                                   retain, rem_len);
             prv_write_string(client, topic, len_topic); /* Write topic string to packet */
             if (qos_u8) {
                 prv_write_u16(client, pkt_id); /* Write packet ID */
             }
-            if (payload != NULL && payload_len) {
+            if (payload != NULL && payload_len > 0) {
                 prv_write_data(client, payload, payload_len); /* Write RAW topic payload */
             }
             prv_request_set_pending(client, request); /* Set request as pending waiting for server reply */

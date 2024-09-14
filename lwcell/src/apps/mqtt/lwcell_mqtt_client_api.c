@@ -49,7 +49,7 @@ struct lwcell_mqtt_client_api {
     lwcell_sys_mbox_t rcv_mbox;             /*!< Received data mbox */
     lwcell_sys_sem_t sync_sem;              /*!< Synchronization semaphore */
     lwcell_sys_mutex_t mutex;               /*!< Mutex handle */
-    uint8_t release_sem;                   /*!< Set to `1` to release semaphore */
+    uint8_t release_sem;                    /*!< Set to `1` to release semaphore */
     lwcell_mqtt_conn_status_t connect_resp; /*!< Response when connecting to server */
     lwcellr_t sub_pub_resp;                 /*!< Subscribe/Unsubscribe/Publish response */
 } lwcell_mqtt_client_api_t;
@@ -220,7 +220,8 @@ lwcell_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len) {
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE, "[MQTT API] Cannot allocate mutex\r\n");
                     }
                 } else {
-                    LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE, "[MQTT API] Cannot allocate sync semaphore\r\n");
+                    LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE,
+                                  "[MQTT API] Cannot allocate sync semaphore\r\n");
                 }
             } else {
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE, "[MQTT API] Cannot allocate receive queue\r\n");
@@ -403,8 +404,6 @@ lwcell_mqtt_client_api_publish(lwcell_mqtt_client_api_p client, const char* topi
 
     LWCELL_ASSERT(client != NULL);
     LWCELL_ASSERT(topic != NULL);
-    LWCELL_ASSERT(data != NULL);
-    LWCELL_ASSERT(btw > 0);
 
     lwcell_sys_mutex_lock(&client->mutex);
     lwcell_sys_sem_wait(&client->sync_sem, 0);
