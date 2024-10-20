@@ -39,27 +39,45 @@
 lwcellr_t
 lwcell_mqtt_connect(lwcell_mqtt_t** instance, const lwcell_mqtt_conn_desc_t* desc, lwcell_evt_fn evt_fn,
                     const uint32_t blocking) {
+    LWCELL_UNUSED(instance);
+    LWCELL_UNUSED(desc);
+    LWCELL_UNUSED(evt_fn);
+    LWCELL_UNUSED(blocking);
     return lwcellERRNOTENABLED;
 }
 
 lwcellr_t
 lwcell_mqtt_disconnect(lwcell_mqtt_t* instance, const uint32_t blocking) {
+    LWCELL_UNUSED(instance);
+    LWCELL_UNUSED(blocking);
     return lwcellERRNOTENABLED;
 }
 
 lwcellr_t
 lwcell_mqtt_subscribe(lwcell_mqtt_t* instance, const char* topic, uint8_t qos, const uint32_t blocking) {
+    LWCELL_UNUSED(instance);
+    LWCELL_UNUSED(topic);
+    LWCELL_UNUSED(qos);
+    LWCELL_UNUSED(blocking);
     return lwcellERRNOTENABLED;
 }
 
 lwcellr_t
 lwcell_mqtt_unsubscribe(lwcell_mqtt_t* instance, const char* topic, const uint32_t blocking) {
+    LWCELL_UNUSED(instance);
+    LWCELL_UNUSED(topic);
+    LWCELL_UNUSED(blocking);
     return lwcellERRNOTENABLED;
 }
 
 lwcellr_t
 lwcell_mqtt_publish(lwcell_mqtt_t* instance, const char* topic, const void* data, size_t data_len,
                     const uint32_t blocking) {
+    LWCELL_UNUSED(instance);
+    LWCELL_UNUSED(topic);
+    LWCELL_UNUSED(data);
+    LWCELL_UNUSED(data_len);
+    LWCELL_UNUSED(blocking);
     return lwcellERRNOTENABLED;
 }
 
