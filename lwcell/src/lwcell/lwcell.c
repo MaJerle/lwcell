@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -100,37 +100,42 @@ lwcell_init(lwcell_evt_fn evt_func, const uint32_t blocking) {
     }
 
     if (!lwcell_sys_sem_create(&lwcell.sem_sync, 1)) { /* Create sync semaphore between threads */
-        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
-                     "[LWCELL CORE] Cannot allocate sync semaphore!\r\n");
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE, "[LWCELL CORE] Cannot "
+                                                                                           "allocate sync "
+                                                                                           "semaphore!\r\n");
         goto cleanup;
     }
 
     /* Create message queues */
     if (!lwcell_sys_mbox_create(&lwcell.mbox_producer, LWCELL_CFG_THREAD_PRODUCER_MBOX_SIZE)) {
-        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
-                     "[LWCELL CORE] Cannot allocate producer mbox queue!\r\n");
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE, "[LWCELL CORE] Cannot "
+                                                                                           "allocate producer mbox "
+                                                                                           "queue!\r\n");
         goto cleanup;
     }
     if (!lwcell_sys_mbox_create(&lwcell.mbox_process, LWCELL_CFG_THREAD_PROCESS_MBOX_SIZE)) {
-        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
-                     "[LWCELL CORE] Cannot allocate process mbox queue!\r\n");
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE, "[LWCELL CORE] Cannot "
+                                                                                           "allocate process mbox "
+                                                                                           "queue!\r\n");
         goto cleanup;
     }
 
     /* Create threads */
     lwcell_sys_sem_wait(&lwcell.sem_sync, 0);
     if (!lwcell_sys_thread_create(&lwcell.thread_produce, "lwcell_produce", lwcell_thread_produce, &lwcell.sem_sync,
-                                 LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO)) {
-        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
-                     "[LWCELL CORE] Cannot create producing thread!\r\n");
+                                  LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO)) {
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE, "[LWCELL CORE] Cannot "
+                                                                                           "create producing "
+                                                                                           "thread!\r\n");
         lwcell_sys_sem_release(&lwcell.sem_sync); /* Release semaphore and return */
         goto cleanup;
     }
     lwcell_sys_sem_wait(&lwcell.sem_sync, 0); /* Wait semaphore, should be unlocked in produce thread */
     if (!lwcell_sys_thread_create(&lwcell.thread_process, "lwcell_process", lwcell_thread_process, &lwcell.sem_sync,
-                                 LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO)) {
-        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE,
-                     "[LWCELL CORE] Cannot create processing thread!\r\n");
+                                  LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO)) {
+        LWCELL_DEBUGF(LWCELL_CFG_DBG_INIT | LWCELL_DBG_LVL_SEVERE | LWCELL_DBG_TYPE_TRACE, "[LWCELL CORE] Cannot "
+                                                                                           "create processing "
+                                                                                           "thread!\r\n");
         lwcell_sys_thread_terminate(&lwcell.thread_produce); /* Delete produce thread */
         lwcell_sys_sem_release(&lwcell.sem_sync);            /* Release semaphore and return */
         goto cleanup;
@@ -144,7 +149,7 @@ lwcell_init(lwcell_evt_fn evt_func, const uint32_t blocking) {
 
 #if !LWCELL_CFG_INPUT_USE_PROCESS
     lwcell_buff_init(&lwcell.buff, LWCELL_CFG_RCV_BUFF_SIZE); /* Init buffer for input data */
-#endif                                                     /* !LWCELL_CFG_INPUT_USE_PROCESS */
+#endif                                                        /* !LWCELL_CFG_INPUT_USE_PROCESS */
 
     lwcell.status.f.initialized = 1; /* We are initialized now */
     lwcell.status.f.dev_present = 1; /* We assume device is present at this point */
@@ -163,8 +168,8 @@ lwcell_init(lwcell_evt_fn evt_func, const uint32_t blocking) {
 #if LWCELL_CFG_RESET_ON_INIT
     if (lwcell.status.f.dev_present) {
         lwcell_core_unlock();
-        res = lwcell_reset_with_delay(LWCELL_CFG_RESET_DELAY_DEFAULT, NULL, NULL,
-                                     blocking); /* Send reset sequence with delay */
+        res = lwcell_reset_with_delay(LWCELL_CFG_RESET_DELAY_DEFAULT, NULL, NULL, blocking); /* Send reset sequence with
+                                                                                                delay */
         lwcell_core_lock();
     }
 #else  /* LWCELL_CFG_RESET_ON_INIT */
@@ -212,7 +217,7 @@ lwcell_reset(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint
  */
 lwcellr_t
 lwcell_reset_with_delay(uint32_t delay, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                       const uint32_t blocking) {
+                        const uint32_t blocking) {
     LWCELL_MSG_VAR_DEFINE(msg);
 
     LWCELL_MSG_VAR_ALLOC(msg, blocking);
@@ -317,7 +322,7 @@ lwcell_set_func_mode(uint8_t mode, const lwcell_api_cmd_evt_fn evt_fn, void* con
  */
 lwcellr_t
 lwcell_device_set_present(uint8_t present, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                         const uint32_t blocking) {
+                          const uint32_t blocking) {
     lwcellr_t res = lwcellOK;
     lwcell_core_lock();
     present = present ? 1 : 0;
@@ -330,8 +335,8 @@ lwcell_device_set_present(uint8_t present, const lwcell_api_cmd_evt_fn evt_fn, v
         } else {
 #if LWCELL_CFG_RESET_ON_DEVICE_PRESENT
             lwcell_core_unlock();
-            res =
-                lwcell_reset_with_delay(LWCELL_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with delay */
+            res = lwcell_reset_with_delay(LWCELL_CFG_RESET_DELAY_DEFAULT, evt_fn, evt_arg, blocking); /* Reset with
+                                                                                                         delay */
             lwcell_core_lock();
 #endif /* LWCELL_CFG_RESET_ON_DEVICE_PRESENT */
         }

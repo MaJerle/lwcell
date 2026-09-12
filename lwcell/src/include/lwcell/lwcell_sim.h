@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -48,16 +48,16 @@ extern "C" {
  */
 
 lwcell_sim_state_t lwcell_sim_get_current_state(void);
-lwcellr_t lwcell_sim_pin_enter(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                             const uint32_t blocking);
-lwcellr_t lwcell_sim_pin_add(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                           const uint32_t blocking);
+lwcellr_t
+lwcell_sim_pin_enter(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t
+lwcell_sim_pin_add(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_sim_pin_remove(const char* pin, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                              const uint32_t blocking);
+                                const uint32_t blocking);
 lwcellr_t lwcell_sim_pin_change(const char* pin, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn,
-                              void* const evt_arg, const uint32_t blocking);
+                                void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_sim_puk_enter(const char* puk, const char* new_pin, const lwcell_api_cmd_evt_fn evt_fn,
-                             void* const evt_arg, const uint32_t blocking);
+                               void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -168,7 +168,8 @@ lwcell_sms_send(const char* num, const char* text, const lwcell_api_cmd_evt_fn e
  * \param[in]       mem: Memory used to read message from
  * \param[in]       pos: Position number in memory to read
  * \param[out]      entry: Pointer to SMS entry structure to fill data to
- * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
+ * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as
+ * is
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -187,10 +188,10 @@ lwcell_sms_read(lwcell_mem_t mem, size_t pos, lwcell_sms_entry_t* entry, uint8_t
     LWCELL_MSG_VAR_ALLOC(msg, blocking);
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
 
-    LWCELL_MEMSET(entry, 0x00, sizeof(*entry));            /* Reset data structure */
+    LWCELL_MEMSET(entry, 0x00, sizeof(*entry)); /* Reset data structure */
 
-    entry->mem = mem;                                      /* Set memory */
-    entry->pos = pos;                                      /* Set device position */
+    entry->mem = mem; /* Set memory */
+    entry->pos = pos; /* Set device position */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CMGR;
     if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_GET; /* First get memory */
@@ -240,7 +241,8 @@ lwcell_sms_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_
 
 /**
  * \brief           Delete all SMS entries with specific status
- * \param[in]       status: SMS status. This parameter can be one of all possible types in \ref lwcell_sms_status_t enumeration
+ * \param[in]       status: SMS status. This parameter can be one of all possible types in \ref lwcell_sms_status_t
+ * enumeration
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -271,7 +273,8 @@ lwcell_sms_delete_all(lwcell_sms_status_t status, const lwcell_api_cmd_evt_fn ev
  * \param[out]      entries: Pointer to array to save SMS entries
  * \param[in]       etr: Number of entries to read
  * \param[out]      er: Pointer to output variable to save number of entries in array
- * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as is
+ * \param[in]       update: Flag indicates update. Set to `1` to change `UNREAD` messages to `READ` or `0` to leave as
+ * is
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used
  * \param[in]       evt_arg: Custom argument for event callback function
  * \param[in]       blocking: Status whether command should be blocking or not
@@ -294,7 +297,7 @@ lwcell_sms_list(lwcell_mem_t mem, lwcell_sms_status_t stat, lwcell_sms_entry_t* 
     if (er != NULL) {
         *er = 0;
     }
-    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr); /* Reset data structure */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CMGL;
     if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPMS_GET; /* First get memory */

@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,7 +36,8 @@
 
 /**
  * \brief           Get current cached SIM state from stack
- * \note            Information is always valid, starting after successful device reset using \ref lwcell_reset function call
+ * \note            Information is always valid, starting after successful device reset using \ref lwcell_reset function
+ * call
  * \return          Member of \ref lwcell_sim_state_t enumeration
  */
 lwcell_sim_state_t

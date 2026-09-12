@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -48,7 +48,7 @@ extern "C" {
  */
 
 lwcellr_t lwcell_ussd_run(const char* code, char* resp, size_t resp_len, const lwcell_api_cmd_evt_fn evt_fn,
-                        void* const evt_arg, const uint32_t blocking);
+                          void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

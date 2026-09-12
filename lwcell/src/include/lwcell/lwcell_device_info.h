@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -47,14 +47,14 @@ extern "C" {
  * \{
  */
 
-lwcellr_t lwcell_device_get_manufacturer(char* manuf, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                                       const uint32_t blocking);
+lwcellr_t lwcell_device_get_manufacturer(char* manuf, size_t len, const lwcell_api_cmd_evt_fn evt_fn,
+                                         void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_device_get_model(char* model, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                                const uint32_t blocking);
+                                  const uint32_t blocking);
 lwcellr_t lwcell_device_get_revision(char* rev, size_t len, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                                   const uint32_t blocking);
+                                     const uint32_t blocking);
 lwcellr_t lwcell_device_get_serial_number(char* serial, size_t len, const lwcell_api_cmd_evt_fn evt_fn,
-                                        void* const evt_arg, const uint32_t blocking);
+                                          void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

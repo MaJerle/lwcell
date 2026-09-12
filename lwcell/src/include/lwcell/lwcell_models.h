@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,7 +36,7 @@
 LWCELL_DEVICE_MODEL_ENTRY(SIM800x, "SIM800", 1, 0, 0)
 LWCELL_DEVICE_MODEL_ENTRY(SIM900x, "SIM900", 1, 0, 0)
 LWCELL_DEVICE_MODEL_ENTRY(SIM7070G, "7070G", 0, 1, 0)
-//LWCELL_DEVICE_MODEL_ENTRY(SIM7000x, "SIM7000", 1, 0)
-//LWCELL_DEVICE_MODEL_ENTRY(SIM7020x, "SIM7020", 1, 0)
+// LWCELL_DEVICE_MODEL_ENTRY(SIM7000x, "SIM7000", 1, 0)
+// LWCELL_DEVICE_MODEL_ENTRY(SIM7020x, "SIM7020", 1, 0)
 
 #undef LWCELL_DEVICE_MODEL_ENTRY

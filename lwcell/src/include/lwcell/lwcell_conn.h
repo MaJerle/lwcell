@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -48,11 +48,11 @@ extern "C" {
  */
 
 lwcellr_t lwcell_conn_start(lwcell_conn_p* conn, lwcell_conn_type_t type, const char* const host, lwcell_port_t port,
-                          void* const arg, lwcell_evt_fn conn_evt_fn, const uint32_t blocking);
+                            void* const arg, lwcell_evt_fn conn_evt_fn, const uint32_t blocking);
 lwcellr_t lwcell_conn_close(lwcell_conn_p conn, const uint32_t blocking);
 lwcellr_t lwcell_conn_send(lwcell_conn_p conn, const void* data, size_t btw, size_t* const bw, const uint32_t blocking);
 lwcellr_t lwcell_conn_sendto(lwcell_conn_p conn, const lwcell_ip_t* const ip, lwcell_port_t port, const void* data,
-                           size_t btw, size_t* bw, const uint32_t blocking);
+                             size_t btw, size_t* bw, const uint32_t blocking);
 lwcellr_t lwcell_conn_set_arg(lwcell_conn_p conn, void* const arg);
 void* lwcell_conn_get_arg(lwcell_conn_p conn);
 uint8_t lwcell_conn_is_client(lwcell_conn_p conn);
@@ -61,7 +61,8 @@ uint8_t lwcell_conn_is_closed(lwcell_conn_p conn);
 int8_t lwcell_conn_getnum(lwcell_conn_p conn);
 lwcellr_t lwcell_get_conns_status(const uint32_t blocking);
 lwcell_conn_p lwcell_conn_get_from_evt(lwcell_evt_t* evt);
-lwcellr_t lwcell_conn_write(lwcell_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
+lwcellr_t
+lwcell_conn_write(lwcell_conn_p conn, const void* data, size_t btw, uint8_t flush, size_t* const mem_available);
 lwcellr_t lwcell_conn_recved(lwcell_conn_p conn, lwcell_pbuf_p pbuf);
 size_t lwcell_conn_get_total_recved_count(lwcell_conn_p conn);
 

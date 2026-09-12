@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -59,14 +59,14 @@
  */
 static void
 conn_timeout_cb(void* arg) {
-    lwcell_conn_p conn = arg;                   /* Argument is actual connection */
+    lwcell_conn_p conn = arg; /* Argument is actual connection */
 
     if (conn->status.f.active) {                /* Handle only active connections */
         lwcell.evt.type = LWCELL_EVT_CONN_POLL; /* Poll connection event */
         lwcell.evt.evt.conn_poll.conn = conn;   /* Set connection pointer */
         lwcelli_send_conn_cb(conn, NULL);       /* Send connection callback */
 
-        lwcelli_conn_start_timeout(conn);       /* Schedule new timeout */
+        lwcelli_conn_start_timeout(conn); /* Schedule new timeout */
         LWCELL_DEBUGF(LWCELL_CFG_DBG_CONN | LWCELL_DBG_TYPE_TRACE, "[LWCELL CONN] Poll event: %p\r\n", (void*)conn);
     }
 }
@@ -97,7 +97,8 @@ lwcelli_conn_get_val_id(lwcell_conn_p conn) {
 
 /**
  * \brief           Send data on already active connection of type UDP to specific remote IP and port
- * \note            In case IP and port values are not set, it will behave as normal send function (suitable for TCP too)
+ * \note            In case IP and port values are not set, it will behave as normal send function (suitable for TCP
+ * too)
  * \param[in]       conn: Pointer to connection to send data
  * \param[in]       ip: Remote IP address for UDP connection
  * \param[in]       port: Remote port connection
@@ -229,7 +230,7 @@ lwcell_conn_close(lwcell_conn_p conn, const uint32_t blocking) {
     LWCELL_MSG_VAR_REF(msg).msg.conn_close.conn = conn;
     LWCELL_MSG_VAR_REF(msg).msg.conn_close.val_id = lwcelli_conn_get_val_id(conn);
 
-    flush_buff(conn);                   /* First flush buffer */
+    flush_buff(conn); /* First flush buffer */
     res = lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 1000);
     if (res == lwcellOK && !blocking) { /* Function succedded in non-blocking mode */
         lwcell_core_lock();
@@ -243,7 +244,8 @@ lwcell_conn_close(lwcell_conn_p conn, const uint32_t blocking) {
 
 /**
  * \brief           Send data on active connection of type UDP to specific remote IP and port
- * \note            In case IP and port values are not set, it will behave as normal send function (suitable for TCP too)
+ * \note            In case IP and port values are not set, it will behave as normal send function (suitable for TCP
+ * too)
  * \param[in]       conn: Connection handle to send data
  * \param[in]       ip: Remote IP address for UDP connection
  * \param[in]       port: Remote port connection
@@ -268,7 +270,8 @@ lwcell_conn_sendto(lwcell_conn_p conn, const lwcell_ip_t* const ip, lwcell_port_
  * \param[in]       data: Data to send
  * \param[in]       btw: Number of bytes to send
  * \param[out]      bw: Pointer to output variable to save number of sent data when successfully sent.
- *                      Parameter value might not be accurate if you combine \ref lwcell_conn_write and \ref lwcell_conn_send functions
+ *                      Parameter value might not be accurate if you combine \ref lwcell_conn_write and \ref
+ * lwcell_conn_send functions
  * \param[in]       blocking: Status whether command should be blocking or not
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */

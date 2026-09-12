@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,11 +31,11 @@
  * Before you start using WIN32 implementation with USB and VCP,
  * check lwcell_ll_win32.c implementation and choose your COM port!
  */
-#include "lwcell/lwcell.h"
-#include "sim_manager.h"
-#include "network_utils.h"
 #include "device_info.h"
 #include "examples_common_lwcell_callback_func.h"
+#include "lwcell/lwcell.h"
+#include "network_utils.h"
+#include "sim_manager.h"
 
 /**
  * \brief           Program entry point

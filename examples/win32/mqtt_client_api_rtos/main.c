@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,12 +31,12 @@
  * Before you start using WIN32 implementation with USB and VCP,
  * check lwcell_ll_win32.c implementation and choose your COM port!
  */
-#include "lwcell/lwcell.h"
-#include "sim_manager.h"
-#include "network_utils.h"
-#include "network_apn_settings.h"
-#include "mqtt_client_api.h"
 #include "examples_common_lwcell_callback_func.h"
+#include "lwcell/lwcell.h"
+#include "mqtt_client_api.h"
+#include "network_apn_settings.h"
+#include "network_utils.h"
+#include "sim_manager.h"
 
 /**
  * \brief           Program entry point
@@ -56,14 +56,17 @@ main(void) {
         lwcell_delay(10000);
     } else {
         printf("Cannot configure SIM card! Is it inserted, pin valid and not under PUK? Closing down...\r\n");
-        while (1) { lwcell_delay(1000); }
+        while (1) {
+            lwcell_delay(1000);
+        }
     }
 
     /* Set APN credentials */
     lwcell_network_set_credentials(NETWORK_APN, NETWORK_APN_USER, NETWORK_APN_PASS);
 
     /* Start MQTT thread */
-    lwcell_sys_thread_create(NULL, "mqtt_thread", (lwcell_sys_thread_t)lwcell_mqtt_client_api_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
+    lwcell_sys_thread_create(NULL, "mqtt_thread", (lwcell_sys_thread_t)lwcell_mqtt_client_api_thread, NULL,
+                             LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
 
     /*
      * Do not stop program here.

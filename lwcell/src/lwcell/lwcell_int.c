@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -213,10 +213,10 @@ const size_t lwcell_dev_model_map_size = LWCELL_ARRAYSIZE(lwcell_dev_model_map);
     } while (0)
 
 /**
-* \brief           Send SMS delete operation event
-* \param[in]       m: SMS delete message
-* \param[in]       err: Error of type \ref lwcellr_t
-*/
+ * \brief           Send SMS delete operation event
+ * \param[in]       m: SMS delete message
+ * \param[in]       err: Error of type \ref lwcellr_t
+ */
 #define SMS_SEND_DELETE_EVT(m, err)                                                                                    \
     do {                                                                                                               \
         lwcell.evt.evt.sms_delete.res = err;                                                                           \
@@ -527,8 +527,8 @@ lwcelli_send_cb(lwcell_evt_type_t type) {
  */
 lwcellr_t
 lwcelli_send_conn_cb(lwcell_conn_t* conn, lwcell_evt_fn evt) {
-    if (conn->status.f.in_closing
-        && lwcell.evt.type != LWCELL_EVT_CONN_CLOSE) { /* Do not continue if in closing mode */
+    if (conn->status.f.in_closing && lwcell.evt.type != LWCELL_EVT_CONN_CLOSE) { /* Do not continue if in closing mode
+                                                                                  */
         /* return lwcellOK; */
     }
 
@@ -604,11 +604,11 @@ lwcelli_tcpip_process_data_sent(uint8_t sent) {
             *lwcell.msg->msg.conn_send.bw += lwcell.msg->msg.conn_send.sent;
         }
         lwcell.msg->msg.conn_send.tries = 0;
-    } else {                               /* We were not successful */
-        ++lwcell.msg->msg.conn_send.tries; /* Increase number of tries */
-        if (lwcell.msg->msg.conn_send.tries
-            == LWCELL_CFG_MAX_SEND_RETRIES) { /* In case we reached max number of retransmissions */
-            return 1;                         /* Return 1 and indicate error */
+    } else {                                                                  /* We were not successful */
+        ++lwcell.msg->msg.conn_send.tries;                                    /* Increase number of tries */
+        if (lwcell.msg->msg.conn_send.tries == LWCELL_CFG_MAX_SEND_RETRIES) { /* In case we reached max number of
+                                                                                 retransmissions */
+            return 1;                                                         /* Return 1 and indicate error */
         }
     }
     if (lwcell.msg->msg.conn_send.btw > 0) {                 /* Do we still have data to send? */
@@ -740,11 +740,11 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
 
     /* Check error response */
     if (!stat.is_ok) { /* If still not ok, check if error? */
-        stat.is_error =
-            rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10); /* First check +CME coded errors */
-        if (!stat.is_error) {                                             /* Check basic error aswell */
-            stat.is_error =
-                rcv->data[0] == '+' && !strncmp(rcv->data, "+CMS ERROR", 10); /* First check +CME coded errors */
+        stat.is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CME ERROR", 10); /* First check +CME coded errors
+                                                                                       */
+        if (!stat.is_error) {                                                         /* Check basic error aswell */
+            stat.is_error = rcv->data[0] == '+' && !strncmp(rcv->data, "+CMS ERROR", 10); /* First check +CME coded
+                                                                                             errors */
             if (!stat.is_error) {
                 stat.is_error = !strcmp(rcv->data, "ERROR" CRLF) || !strcmp(rcv->data, "FAIL" CRLF);
             }
@@ -1138,9 +1138,9 @@ lwcelli_process(const void* data, size_t data_len) {
                 lwcellr_t res = lwcellOK;
 
                 /* Call user callback function with received data */
-                if (lwcell.m.ipd.buff != NULL) { /* Do we have valid buffer? */
-                    lwcell.m.ipd.conn->total_recved +=
-                        lwcell.m.ipd.buff->tot_len; /* Increase number of bytes received */
+                if (lwcell.m.ipd.buff != NULL) {                                   /* Do we have valid buffer? */
+                    lwcell.m.ipd.conn->total_recved += lwcell.m.ipd.buff->tot_len; /* Increase number of bytes received
+                                                                                    */
 
                     /*
                      * Send data buffer to upper layer
@@ -1156,8 +1156,8 @@ lwcelli_process(const void* data, size_t data_len) {
                     lwcell_pbuf_free(lwcell.m.ipd.buff); /* Free packet buffer at this point */
                     LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] Free packet buffer\r\n");
                     if (res == lwcellOKIGNOREMORE) { /* We should ignore more data */
-                        LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE,
-                                      "[LWCELL IPD] Ignoring more data from this IPD if available\r\n");
+                        LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE, "[LWCELL IPD] Ignoring more data "
+                                                                                  "from this IPD if available\r\n");
                         lwcell.m.ipd.buff = NULL; /* Set to NULL to ignore more data if possibly available */
                     }
 
@@ -1169,8 +1169,9 @@ lwcelli_process(const void* data, size_t data_len) {
                      */
                     if (lwcell.m.ipd.buff != NULL && lwcell.m.ipd.rem_len > 0
                         && !lwcell.m.ipd.conn->status.f.in_closing) {
-                        size_t new_len = LWCELL_MIN(lwcell.m.ipd.rem_len,
-                                                    LWCELL_CFG_CONN_MAX_DATA_LEN); /* Calculate new buffer length */
+                        size_t new_len = LWCELL_MIN(lwcell.m.ipd.rem_len, LWCELL_CFG_CONN_MAX_DATA_LEN); /* Calculate
+                                                                                                            new buffer
+                                                                                                            length */
 
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_IPD | LWCELL_DBG_TYPE_TRACE,
                                       "[LWCELL IPD] Allocating new packet buffer of size: %d bytes\r\n", (int)new_len);
@@ -1327,9 +1328,9 @@ lwcelli_process(const void* data, size_t data_len) {
                             /* Now actually send the data prepared before */
                             AT_PORT_SEND_WITH_FLUSH(&lwcell.msg->msg.conn_send.data[lwcell.msg->msg.conn_send.ptr],
                                                     lwcell.msg->msg.conn_send.sent);
-                            lwcell.msg->msg.conn_send.wait_send_ok_err =
-                                1; /* Now we are waiting for "SEND OK" or "SEND ERROR" */
-#endif                             /* LWCELL_CFG_CONN */
+                            lwcell.msg->msg.conn_send.wait_send_ok_err = 1; /* Now we are waiting for "SEND OK" or "SEND
+                                                                               ERROR" */
+#endif                                                                      /* LWCELL_CFG_CONN */
 #if LWCELL_CFG_SMS
                         } else if (CMD_IS_CUR(LWCELL_CMD_CMGS)) { /* Send SMS? */
                             AT_PORT_SEND(lwcell.msg->msg.sms_send.text, strlen(lwcell.msg->msg.sms_send.text));
@@ -1466,12 +1467,12 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
                         stat->is_error = 1;
                     }
                 } else {
-                    /* 
+                    /*
                      * This else will only get executed when CPIN_GET is requested after CPIN has been set.
                      * This is indicated by msg command counter (msg->i > 0).
-                     * 
+                     *
                      * We try several times to acquire status, each time with different delays in-between.
-                     * This allows to immediately stop execution on fast modems, 
+                     * This allows to immediately stop execution on fast modems,
                      * while it allows slow modems to take more time to handle the situation
                      */
                     if ((stat->is_error || lwcell.m.sim.state != LWCELL_SIM_STATE_READY) && msg->i < 5) {
@@ -1690,8 +1691,8 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
             lwcell.evt.evt.conn_active_close.conn = msg->msg.conn_close.conn;
             lwcell.evt.evt.conn_active_close.forced = 1;
             lwcell.evt.evt.conn_active_close.res = lwcellERR;
-            lwcell.evt.evt.conn_active_close.client =
-                msg->msg.conn_close.conn->status.f.active && msg->msg.conn_close.conn->status.f.client;
+            lwcell.evt.evt.conn_active_close.client = msg->msg.conn_close.conn->status.f.active
+                                                      && msg->msg.conn_close.conn->status.f.client;
             lwcelli_send_conn_cb(msg->msg.conn_close.conn, NULL);
         }
 #endif /* LWCELL_CFG_CONN */
@@ -2089,9 +2090,9 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
                 lwcelli_send_dev_memory(msg->msg.sms_list.mem == LWCELL_MEM_CURRENT ? lwcell.m.sms.mem[0].current
                                                                                     : msg->msg.sms_list.mem,
                                         1, 0);
-            } else if (CMD_IS_DEF(
-                           LWCELL_CMD_CPMS_SET)) { /* Do we want to set memory for read/delete,sent/write,receive? */
-                for (size_t i = 0; i < 3; ++i) {   /* Write 3 memories */
+            } else if (CMD_IS_DEF(LWCELL_CMD_CPMS_SET)) { /* Do we want to set memory for
+                                                             read/delete,sent/write,receive? */
+                for (size_t i = 0; i < 3; ++i) {          /* Write 3 memories */
                     lwcelli_send_dev_memory(msg->msg.sms_memory.mem[i] == LWCELL_MEM_CURRENT
                                                 ? lwcell.m.sms.mem[i].current
                                                 : msg->msg.sms_memory.mem[i],

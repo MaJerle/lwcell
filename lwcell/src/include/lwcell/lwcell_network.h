@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -48,13 +48,13 @@ extern "C" {
  */
 
 /* Basic commands, always available */
-lwcellr_t lwcell_network_rssi(int16_t* rssi, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                            const uint32_t blocking);
+lwcellr_t
+lwcell_network_rssi(int16_t* rssi, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 lwcell_network_reg_status_t lwcell_network_get_reg_status(void);
 
 /* TCP/IP related commands */
 lwcellr_t lwcell_network_attach(const char* apn, const char* user, const char* pass, const lwcell_api_cmd_evt_fn evt_fn,
-                              void* const evt_arg, const uint32_t blocking);
+                                void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_network_detach(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 uint8_t lwcell_network_is_attached(void);
 lwcellr_t lwcell_network_copy_ip(lwcell_ip_t* ip);

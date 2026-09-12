@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -103,7 +103,8 @@ typedef enum {
     LWCELL_CMD_ATS5,    /*!< Set Command Line Editing Character */
     LWCELL_CMD_ATS6,    /*!< Pause Before Blind */
     LWCELL_CMD_ATS7,    /*!< Set Number of Seconds to Wait for Connection Completion */
-    LWCELL_CMD_ATS8, /*!< Set Number of Seconds to Wait for Comma Dial Modifier Encountered in Dial String of D Command */
+    LWCELL_CMD_ATS8,  /*!< Set Number of Seconds to Wait for Comma Dial Modifier Encountered in Dial String of D Command
+                       */
     LWCELL_CMD_ATS10, /*!< Set Disconnect Delay after Indicating the Absence of Data Carrier */
     LWCELL_CMD_ATT,   /*!< Select Tone Dialing */
     LWCELL_CMD_ATV,   /*!< TA Response Format */
@@ -272,8 +273,8 @@ typedef struct lwcell_conn {
     void* arg;                 /*!< User custom argument */
 
     uint8_t val_id; /*!< Validation ID number. It is increased each time a new connection is established.
-                                                     It protects sending data to wrong connection in case we have data in send queue,
-                                                     and connection was closed and active again in between. */
+                                                     It protects sending data to wrong connection in case we have data
+                       in send queue, and connection was closed and active again in between. */
 
     lwcell_linbuff_t buff; /*!< Linear buffer structure */
 
@@ -285,7 +286,8 @@ typedef struct lwcell_conn {
             uint8_t client        : 1; /*!< Status whether connection is in client mode */
             uint8_t data_received : 1; /*!< Status whether first data were received on connection */
             uint8_t in_closing    : 1; /*!< Status if connection is in closing mode.
-                                                    When in closing mode, ignore any possible received data from function */
+                                                    When in closing mode, ignore any possible received data from function
+                                        */
             uint8_t bearer        : 1; /*!< Bearer used. Can be `1` or `0` */
         } f;                           /*!< Connection flags */
     } status;                          /*!< Connection status union with flag bits */
@@ -315,7 +317,8 @@ typedef struct {
     lwcell_conn_p conn; /*!< Pointer to connection for network data */
 
     size_t buff_ptr;    /*!< Buffer pointer to save data to.
-                                                     When set to `NULL` while `read = 1`, reading should ignore incoming data */
+                                                     When set to `NULL` while `read = 1`, reading should ignore incoming
+                           data */
     lwcell_pbuf_p buff; /*!< Pointer to data buffer used for receiving data */
 } lwcell_ipd_t;
 
@@ -805,8 +808,8 @@ uint8_t lwcelli_is_valid_conn_ptr(lwcell_conn_p conn);
 lwcellr_t lwcelli_send_cb(lwcell_evt_type_t type);
 lwcellr_t lwcelli_send_conn_cb(lwcell_conn_t* conn, lwcell_evt_fn cb);
 void lwcelli_conn_init(void);
-lwcellr_t lwcelli_send_msg_to_producer_mbox(lwcell_msg_t* msg, lwcellr_t (*process_fn)(lwcell_msg_t*),
-                                            uint32_t max_block_time);
+lwcellr_t
+lwcelli_send_msg_to_producer_mbox(lwcell_msg_t* msg, lwcellr_t (*process_fn)(lwcell_msg_t*), uint32_t max_block_time);
 uint32_t lwcelli_get_from_mbox_with_timeout_checks(lwcell_sys_mbox_t* b, void** m, uint32_t timeout);
 uint8_t lwcelli_conn_closed_process(uint8_t conn_num, uint8_t forced);
 void lwcelli_conn_start_timeout(lwcell_conn_p conn);

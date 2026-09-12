@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -144,8 +144,8 @@ prv_mqtt_evt(lwcell_mqtt_client_p client, lwcell_mqtt_evt_t* evt) {
 
                 /* Write to receive queue */
                 if (!lwcell_sys_mbox_putnow(&api_client->rcv_mbox, buf)) {
-                    LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_WARNING,
-                                  "[MQTT API] Cannot put new received MQTT publish to queue\r\n");
+                    LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_WARNING, "[MQTT API] Cannot put new received MQTT "
+                                                                         "publish to queue\r\n");
                     lwcell_mem_free_s((void**)&buf);
                 }
             } else {
@@ -178,7 +178,7 @@ prv_mqtt_evt(lwcell_mqtt_client_p client, lwcell_mqtt_evt_t* evt) {
         case LWCELL_MQTT_EVT_DISCONNECT: {
             uint8_t is_accepted = lwcell_mqtt_client_evt_disconnect_is_accepted(client, evt);
             /* Disconnect event happened */
-            //api_client->connect_resp = MQTT_CONN_STATUS_TCP_FAILED;
+            // api_client->connect_resp = MQTT_CONN_STATUS_TCP_FAILED;
 
             /* Print debug message */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE, "[MQTT API] Disconnect event\r\n");
@@ -220,8 +220,8 @@ lwcell_mqtt_client_api_new(size_t tx_buff_len, size_t rx_buff_len) {
                         LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE, "[MQTT API] Cannot allocate mutex\r\n");
                     }
                 } else {
-                    LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE,
-                                  "[MQTT API] Cannot allocate sync semaphore\r\n");
+                    LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE, "[MQTT API] Cannot allocate sync "
+                                                                        "semaphore\r\n");
                 }
             } else {
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_MQTT_API_TRACE_SEVERE, "[MQTT API] Cannot allocate receive queue\r\n");

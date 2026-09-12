@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -96,7 +96,7 @@ lwcell_pbuf_new(size_t len) {
  *                  It is advised to immediately set pointer to `NULL` or to call.
  *                  Alternatively, call \ref lwcell_pbuf_free_s, which will reset the pointer
  *                  after free operation has been completed
- *                  
+ *
  * \param[in]       pbuf: Packet buffer to free
  * \return          Number of freed pbufs from head
  * \sa              lwcell_pbuf_free_s
@@ -136,7 +136,7 @@ lwcell_pbuf_free(lwcell_pbuf_p pbuf) {
  * \brief           Free previously allocated packet buffer in safe way.
  *                  Function accepts pointer to pointer and will set the pointer to `NULL`
  *                  after the successful allocation
- * 
+ *
  * \param[in,out]   pbuf_ptr: Pointer to pointer to packet buffer
  * \return          Number of packet buffers freed in the chain
  */
@@ -157,8 +157,8 @@ lwcell_pbuf_free_s(lwcell_pbuf_p* pbuf_ptr) {
  * \brief           Concatenate `2` packet buffers together to one big packet
  * \note            After `tail` pbuf has been added to `head` pbuf chain,
  *                  it must not be referenced by user anymore as it is now completely controlled by `head` pbuf.
- *                  In simple words, when user calls this function, it should not call \ref lwcell_pbuf_free function anymore,
- *                  as it might make memory undefined for `head` pbuf.
+ *                  In simple words, when user calls this function, it should not call \ref lwcell_pbuf_free function
+ * anymore, as it might make memory undefined for `head` pbuf.
  * \param[in]       head: Head packet buffer to append new pbuf to
  * \param[in]       tail: Tail packet buffer to append to head pbuf
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
@@ -177,8 +177,8 @@ lwcell_pbuf_cat(lwcell_pbuf_p head, const lwcell_pbuf_p tail) {
     for (; head->next != NULL; head = head->next) {
         head->tot_len += tail->tot_len; /* Increase total length of packet */
     }
-    head->tot_len += tail->tot_len;     /* Increase total length of last packet in chain */
-    head->next = tail;                  /* Set next packet buffer as next one */
+    head->tot_len += tail->tot_len; /* Increase total length of last packet in chain */
+    head->next = tail;              /* Set next packet buffer as next one */
 
     return lwcellOK;
 }
@@ -252,8 +252,8 @@ lwcell_pbuf_unchain(lwcell_pbuf_p head) {
     if (head != NULL && head->next != NULL) { /* Check for valid pbuf */
         r = head->next;                       /* Set return value as next pbuf */
 
-        head->next = NULL;                    /* Clear next pbuf */
-        head->tot_len = head->len;            /* Set new length of head pbuf */
+        head->next = NULL;         /* Clear next pbuf */
+        head->tot_len = head->len; /* Set new length of head pbuf */
     }
     return r;
 }

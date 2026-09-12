@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -52,12 +52,12 @@ extern "C" {
  * \brief           Quality of service enumeration
  */
 typedef enum {
-    LWCELL_MQTT_QOS_AT_MOST_ONCE =
-        0x00, /*!< Delivery is not guaranteed to arrive, but can arrive `up to 1 time` = non-critical packets where losses are allowed */
-    LWCELL_MQTT_QOS_AT_LEAST_ONCE =
-        0x01, /*!< Delivery is quaranteed `at least once`, but it may be delivered multiple times with the same content */
-    LWCELL_MQTT_QOS_EXACTLY_ONCE =
-        0x02, /*!< Delivery is quaranteed `exactly once` = very critical packets such as billing informations or similar */
+    LWCELL_MQTT_QOS_AT_MOST_ONCE = 0x00,  /*!< Delivery is not guaranteed to arrive, but can arrive `up to 1 time` =
+                                             non-critical packets where losses are allowed */
+    LWCELL_MQTT_QOS_AT_LEAST_ONCE = 0x01, /*!< Delivery is quaranteed `at least once`, but it may be delivered multiple
+                                             times with the same content */
+    LWCELL_MQTT_QOS_EXACTLY_ONCE = 0x02,  /*!< Delivery is quaranteed `exactly once` = very critical packets such as
+                                             billing informations or similar */
 } lwcell_mqtt_qos_t;
 
 struct lwcell_mqtt_client;
@@ -117,9 +117,10 @@ typedef enum {
     LWCELL_MQTT_EVT_SUBSCRIBE,    /*!< MQTT client subscribed to specific topic */
     LWCELL_MQTT_EVT_UNSUBSCRIBE,  /*!< MQTT client unsubscribed from specific topic */
     LWCELL_MQTT_EVT_PUBLISH,      /*!< MQTT client publish message to server event.
-                                                    \note   When publishing packet with quality of service \ref LWCELL_MQTT_QOS_AT_MOST_ONCE,
-                                                            you may not receive event, even if packet was successfully sent,
-                                                            thus do not rely on this event for packet with `qos = LWCELL_MQTT_QOS_AT_MOST_ONCE` */
+                                                    \note   When publishing packet with quality of service \ref
+                                     LWCELL_MQTT_QOS_AT_MOST_ONCE, you may not receive event, even if packet was successfully
+                                     sent, thus do not rely on this event for packet with `qos =
+                                     LWCELL_MQTT_QOS_AT_MOST_ONCE` */
     LWCELL_MQTT_EVT_PUBLISH_RECV, /*!< MQTT client received a publish message from server */
     LWCELL_MQTT_EVT_DISCONNECT,   /*!< MQTT client disconnected from MQTT server */
     LWCELL_MQTT_EVT_KEEP_ALIVE,   /*!< MQTT keep-alive sent to server and reply received */
@@ -190,8 +191,8 @@ lwcellr_t lwcell_mqtt_client_connect(lwcell_mqtt_client_p client, const char* ho
 lwcellr_t lwcell_mqtt_client_disconnect(lwcell_mqtt_client_p client);
 uint8_t lwcell_mqtt_client_is_connected(lwcell_mqtt_client_p client);
 
-lwcellr_t lwcell_mqtt_client_subscribe(lwcell_mqtt_client_p client, const char* topic, lwcell_mqtt_qos_t qos,
-                                       void* arg);
+lwcellr_t
+lwcell_mqtt_client_subscribe(lwcell_mqtt_client_p client, const char* topic, lwcell_mqtt_qos_t qos, void* arg);
 lwcellr_t lwcell_mqtt_client_unsubscribe(lwcell_mqtt_client_p client, const char* topic, void* arg);
 
 lwcellr_t lwcell_mqtt_client_publish(lwcell_mqtt_client_p client, const char* topic, const void* payload, uint16_t len,

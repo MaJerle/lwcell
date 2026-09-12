@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -201,7 +201,8 @@ uart_thread(void* param) {
  *                  It is important that every configuration except AT baudrate is configured only once!
  *
  * \note            This function may be called from different threads in GSM stack when using OS.
- *                  When \ref LWCELL_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
+ *                  When \ref LWCELL_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART
+ * thread.
  *
  * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
@@ -219,8 +220,8 @@ lwcell_ll_init(lwcell_ll_t* ll) {
      */
     lwcell_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
     if (!initialized) {
-        lwcell_mem_assignmemory(mem_regions,
-                               LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
+        lwcell_mem_assignmemory(mem_regions, LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM
+                                                                                library */
     }
 #endif /* !LWCELL_CFG_MEM_CUSTOM */
 

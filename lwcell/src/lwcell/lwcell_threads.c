@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -61,7 +61,7 @@ lwcell_thread_produce(void* const arg) {
         do {
             time = lwcell_sys_mbox_get(&e->mbox_producer, (void**)&msg, 0); /* Get message from queue */
         } while (time == LWCELL_SYS_TIMEOUT || msg == NULL);
-        LWCELL_THREAD_PRODUCER_HOOK();                                      /* Execute producer thread hook */
+        LWCELL_THREAD_PRODUCER_HOOK(); /* Execute producer thread hook */
         lwcell_core_lock();
 
         res = lwcellOK; /* Start with OK */
@@ -98,13 +98,13 @@ lwcell_thread_produce(void* const arg) {
             lwcell_core_unlock();
             lwcell_sys_sem_wait(&e->sem_sync, 0); /* First call */
             lwcell_core_lock();
-            res = msg->fn(msg);                   /* Process this message, check if command started at least */
-            time = ~LWCELL_SYS_TIMEOUT;           /* Reset time */
-            if (res == lwcellOK) {                /* We have valid data and data were sent */
+            res = msg->fn(msg);         /* Process this message, check if command started at least */
+            time = ~LWCELL_SYS_TIMEOUT; /* Reset time */
+            if (res == lwcellOK) {      /* We have valid data and data were sent */
                 lwcell_core_unlock();
-                time = lwcell_sys_sem_wait(
-                    &e->sem_sync,
-                    msg->block_time); /* Second call; Wait for synchronization semaphore from processing thread or timeout */
+                time = lwcell_sys_sem_wait(&e->sem_sync, msg->block_time); /* Second call; Wait for synchronization
+                                                                              semaphore from processing thread or
+                                                                              timeout */
                 lwcell_core_lock();
                 if (time == LWCELL_SYS_TIMEOUT) { /* Sync timeout occurred? */
                     res = lwcellTIMEOUT;          /* Timeout on command */
@@ -116,9 +116,9 @@ lwcell_thread_produce(void* const arg) {
                 lwcelli_send_cb(LWCELL_EVT_CMD_TIMEOUT);
             }
 
-            LWCELL_DEBUGW(
-                LWCELL_CFG_DBG_THREAD | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_SEVERE, res == lwcellTIMEOUT,
-                "[LWCELL THREAD] Timeout in produce thread waiting for command to finish in process thread\r\n");
+            LWCELL_DEBUGW(LWCELL_CFG_DBG_THREAD | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_SEVERE, res == lwcellTIMEOUT,
+                          "[LWCELL THREAD] Timeout in produce thread waiting for command to finish in process "
+                          "thread\r\n");
             LWCELL_DEBUGW(LWCELL_CFG_DBG_THREAD | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_SEVERE,
                           res != lwcellOK && res != lwcellTIMEOUT,
                           "[LWCELL THREAD] Could not start execution for command %d\r\n", (int)msg->cmd);
@@ -157,7 +157,7 @@ lwcell_thread_produce(void* const arg) {
         if (msg->evt_fn != NULL) {
             msg->evt_fn(msg->res, msg->evt_arg); /* Send event with user argument */
         }
-#endif                                           /* LWCELL_CFG_USE_API_FUNC_EVT */
+#endif /* LWCELL_CFG_USE_API_FUNC_EVT */
 
         /*
          * In case message is blocking,
@@ -203,7 +203,7 @@ lwcell_thread_process(void* const arg) {
         lwcell_core_lock();
 
         if (time == LWCELL_SYS_TIMEOUT || msg == NULL) {
-            LWCELL_UNUSED(time);  /* Unused variable */
+            LWCELL_UNUSED(time); /* Unused variable */
         }
         lwcelli_process_buffer(); /* Process input data */
 #else                             /* LWCELL_CFG_INPUT_USE_PROCESS */

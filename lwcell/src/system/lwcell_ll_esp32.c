@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE and Ilya Kargapolov
+ * Copyright (c) 2026 Tilen MAJERLE and Ilya Kargapolov
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -72,7 +72,7 @@ send_data(const void* data, size_t len) {
     /* Implement send function here */
     if (len) {
         len = uart_write_bytes(GSM_UART_NUM, (const char*)data, len);
-        //uart_wait_tx_done(GSM_UART_NUM, portMAX_DELAY);
+        // uart_wait_tx_done(GSM_UART_NUM, portMAX_DELAY);
         ESP_LOG_BUFFER_HEXDUMP(">", data, len, ESP_LOG_DEBUG);
     }
     return len; /* Return number of bytes actually sent to AT port */
@@ -84,7 +84,7 @@ uart_event_task(void* pvParameters) {
     size_t buffer_len;
 
     for (;;) {
-        //Waiting for UART event.
+        // Waiting for UART event.
         if (xQueueReceive(gsm_uart_queue, (void*)&event, (portTickType)portMAX_DELAY)) {
             switch (event.type) {
                 case UART_DATA:
@@ -140,7 +140,8 @@ configure_uart(uint32_t baudrate) {
  *                  It is important that every configuration except AT baudrate is configured only once!
  *
  * \note            This function may be called from different threads in GSM stack when using OS.
- *                  When \ref LWCELL_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART thread.
+ *                  When \ref LWCELL_CFG_INPUT_USE_PROCESS is set to 1, this function may be called from user UART
+ * thread.
  *
  * \param[in,out]   ll: Pointer to \ref lwcell_ll_t structure to fill data for communication functions
  * \return          lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
@@ -158,8 +159,8 @@ lwcell_ll_init(lwcell_ll_t* ll) {
      */
     lwcell_mem_region_t mem_regions[] = {{memory, sizeof(memory)}};
     if (!initialized) {
-        lwcell_mem_assignmemory(mem_regions,
-                                LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM library */
+        lwcell_mem_assignmemory(mem_regions, LWCELL_ARRAYSIZE(mem_regions)); /* Assign memory for allocations to GSM
+                                                                                library */
     }
 #endif /* !LWCELL_CFG_MEM_CUSTOM */
 

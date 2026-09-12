@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -270,7 +270,7 @@ lwcell_pb_list(lwcell_mem_t mem, size_t start_index, lwcell_pb_entry_t* entries,
     if (er != NULL) {
         *er = 0;
     }
-    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr); /* Reset data structure */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPBR;
     if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_GET; /* First get memory */
@@ -317,7 +317,7 @@ lwcell_pb_search(lwcell_mem_t mem, const char* search, lwcell_pb_entry_t* entrie
     if (er != NULL) {
         *er = 0;
     }
-    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr);  /* Reset data structure */
+    LWCELL_MEMSET(entries, 0x00, sizeof(*entries) * etr); /* Reset data structure */
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_CPBF;
     if (mem == LWCELL_MEM_CURRENT) {                       /* Should be always false */
         LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_CPBS_GET; /* First get memory */

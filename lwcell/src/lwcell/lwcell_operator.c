@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -58,7 +58,8 @@ lwcell_operator_get(lwcell_operator_curr_t* curr, const lwcell_api_cmd_evt_fn ev
 /**
  * \brief           Set current operator
  * \param[in]       mode: Operator mode. This parameter can be a value of \ref lwcell_operator_mode_t enumeration
- * \param[in]       format: Operator data format. This parameter can be a value of \ref lwcell_operator_format_t enumeration
+ * \param[in]       format: Operator data format. This parameter can be a value of \ref lwcell_operator_format_t
+ * enumeration
  * \param[in]       name: Operator name. This parameter must be valid according to `format` parameter
  * \param[in]       num: Operator number. This parameter must be valid according to `format` parameter
  * \param[in]       evt_fn: Callback function called when command has finished. Set to `NULL` when not used

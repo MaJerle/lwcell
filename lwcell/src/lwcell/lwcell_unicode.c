@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -44,22 +44,22 @@
  */
 lwcellr_t
 lwcelli_unicode_decode(lwcell_unicode_t* s, uint8_t c) {
-    if (s->r == 0) {                     /* Are we expecting a first character? */
-        s->t = 0;                        /* Reset sequence */
-        s->ch[0] = c;                    /* Save current character */
-        if (c < 0x80) {                  /* One byte only in UTF-8 representation */
-            s->r = 0;                    /* Remaining bytes */
+    if (s->r == 0) {    /* Are we expecting a first character? */
+        s->t = 0;       /* Reset sequence */
+        s->ch[0] = c;   /* Save current character */
+        if (c < 0x80) { /* One byte only in UTF-8 representation */
+            s->r = 0;   /* Remaining bytes */
             s->t = 1;
-            return lwcellOK;             /* Return OK */
+            return lwcellOK; /* Return OK */
         }
-        if ((c & 0xE0) == 0xC0) {        /* 1 additional byte in a row = 110x xxxx */
+        if ((c & 0xE0) == 0xC0) { /* 1 additional byte in a row = 110x xxxx */
             s->r = 1;
         } else if ((c & 0xF0) == 0xE0) { /* 2 additional bytes in a row = 1110 xxxx */
             s->r = 2;
         } else if ((c & 0xF8) == 0xF0) { /* 3 additional bytes in a row = 1111 0xxx */
             s->r = 3;
         } else {
-            return lwcellERR;        /* Error parsing unicode byte */
+            return lwcellERR; /* Error parsing unicode byte */
         }
         s->t = s->r + 1;             /* Number of bytes is 1 byte more than remaining in sequence */
         return lwcellINPROG;         /* Return in progress status */
@@ -69,7 +69,7 @@ lwcelli_unicode_decode(lwcell_unicode_t* s, uint8_t c) {
         if (s->r == 0) {             /* Did we finish? */
             return lwcellOK;         /* Return OK, we are ready to proceed */
         }
-        return lwcellINPROG;         /* Still in progress */
+        return lwcellINPROG; /* Still in progress */
     }
-    return lwcellERR;                /* An error, unknown UTF-8 character entered */
+    return lwcellERR; /* An error, unknown UTF-8 character entered */
 }

@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -484,7 +484,8 @@ typedef struct lwcell_evt {
             uint8_t client;     /*!< Set to `1` if connection is/was client mode */
             uint8_t forced;     /*!< Set to `1` if connection action was forced */
             lwcellr_t res;      /*!< Result of close event. Set to \ref lwcellOK on success. */
-        } conn_active_close; /*!< Process active and closed statuses at the same time. Use with \ref LWCELL_EVT_CONN_ACTIVE or \ref LWCELL_EVT_CONN_CLOSE events */
+        } conn_active_close;    /*!< Process active and closed statuses at the same time. Use with \ref
+                                   LWCELL_EVT_CONN_ACTIVE or \ref LWCELL_EVT_CONN_CLOSE events */
 
         struct {
             lwcell_conn_p conn; /*!< Set connection pointer */
@@ -621,9 +622,11 @@ typedef struct {
     size_t size;   /*!< Size of buffer data.
                                                         Size of actual buffer is `1` byte less than this value */
     size_t r;      /*!< Next read pointer.
-                                                        Buffer is considered empty when `r == w` and full when `w == r - 1` */
+                                                        Buffer is considered empty when `r == w` and full when `w == r - 1`
+                    */
     size_t w;      /*!< Next write pointer.
-                                                        Buffer is considered empty when `r == w` and full when `w == r - 1` */
+                                                        Buffer is considered empty when `r == w` and full when `w == r - 1`
+                    */
 } lwcell_buff_t;
 
 /**
