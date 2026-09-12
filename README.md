@@ -7,11 +7,10 @@ Module is written in C11 and is independent from used platform. Its main targets
 
 ## Features
 
+* Written in C (C11), compatible with `stdint.h` data types
 * Supports ``SIM800/SIM900 (2G)`` and ``SIM7000/SIM7020 (NB-Iot LTE)`` modules
 * Platform independent and very easy to port
-    * Development of library under Win32 platform
     * Provided examples for ARM Cortex-M or Win32 platforms
-* Written in C language (C11)
 * Allows different configurations to optimize user requirements
 * Supports implementation with operating systems with advanced inter-thread communications
     * Currently only OS mode is supported
