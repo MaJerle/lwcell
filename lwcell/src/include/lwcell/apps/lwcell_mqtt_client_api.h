@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -85,8 +85,8 @@ lwcellr_t lwcell_mqtt_client_api_unsubscribe(lwcell_mqtt_client_api_p client, co
 lwcellr_t lwcell_mqtt_client_api_publish(lwcell_mqtt_client_api_p client, const char* topic, const void* data,
                                          size_t btw, lwcell_mqtt_qos_t qos, uint8_t retain);
 uint8_t lwcell_mqtt_client_api_is_connected(lwcell_mqtt_client_api_p client);
-lwcellr_t lwcell_mqtt_client_api_receive(lwcell_mqtt_client_api_p client, lwcell_mqtt_client_api_buf_p* p,
-                                         uint32_t timeout);
+lwcellr_t
+lwcell_mqtt_client_api_receive(lwcell_mqtt_client_api_p client, lwcell_mqtt_client_api_buf_p* p, uint32_t timeout);
 void lwcell_mqtt_client_api_buf_free(lwcell_mqtt_client_api_buf_p p);
 
 /**

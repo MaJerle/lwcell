@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -62,7 +62,7 @@ BUF_PREF(buff_init)(BUF_PREF(buff_t) * buff, size_t size) {
     buff->size = size;                                          /* Set default values */
     buff->buff = lwcell_mem_malloc(sizeof(*buff->buff) * size); /* Allocate memory for buffer */
 
-    if (buff->buff == NULL) {                                   /* Check allocation */
+    if (buff->buff == NULL) { /* Check allocation */
         return 0;
     }
     return 1; /* Initialized OK */

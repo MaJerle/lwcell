@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -69,8 +69,9 @@ typedef struct lwcell_netconn* lwcell_netconn_p;
 typedef enum {
     LWCELL_NETCONN_TYPE_TCP = LWCELL_CONN_TYPE_TCP, /*!< TCP connection */
     LWCELL_NETCONN_TYPE_UDP = LWCELL_CONN_TYPE_UDP, /*!< UDP connection */
-    LWCELL_NETCONN_TYPE_SSL = LWCELL_CONN_TYPE_SSL, /*!< TCP connection over SSL 
-                                                         Note: This option is unstable on SIM868 devices due to firmware issues */
+    LWCELL_NETCONN_TYPE_SSL = LWCELL_CONN_TYPE_SSL, /*!< TCP connection over SSL
+                                                         Note: This option is unstable on SIM868 devices due to firmware
+                                                       issues */
 } lwcell_netconn_type_t;
 
 lwcell_netconn_p lwcell_netconn_new(lwcell_netconn_type_t type);
@@ -89,8 +90,8 @@ lwcellr_t lwcell_netconn_flush(lwcell_netconn_p nc);
 
 /* UDP only */
 lwcellr_t lwcell_netconn_send(lwcell_netconn_p nc, const void* data, size_t btw);
-lwcellr_t lwcell_netconn_sendto(lwcell_netconn_p nc, const lwcell_ip_t* ip, lwcell_port_t port, const void* data,
-                              size_t btw);
+lwcellr_t
+lwcell_netconn_sendto(lwcell_netconn_p nc, const lwcell_ip_t* ip, lwcell_port_t port, const void* data, size_t btw);
 
 /**
  * \}

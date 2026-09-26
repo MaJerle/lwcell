@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -77,7 +77,7 @@ static TX_MUTEX sys_mutex;
 
 /* Macros to convert from milliseconds to ticks and opposite */
 #define TICKS_TO_MS(ticks) ((ticks) * (1000 / TX_TIMER_TICKS_PER_SECOND))
-#define MS_TO_TICKS(ms)    ((ms)*TX_TIMER_TICKS_PER_SECOND / 1000)
+#define MS_TO_TICKS(ms)    ((ms) * TX_TIMER_TICKS_PER_SECOND / 1000)
 
 uint8_t
 lwcell_sys_init(void) {
@@ -237,7 +237,7 @@ lwcell_sys_mbox_invalid(lwcell_sys_mbox_t* b) {
 
 uint8_t
 lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func, void* const arg,
-                        size_t stack_size, lwcell_sys_thread_prio_t prio) {
+                         size_t stack_size, lwcell_sys_thread_prio_t prio) {
     void* stack_ptr = NULL;
     lwcell_sys_thread_t* t_handle;
     uint8_t t_handle_dynamic = 0;
@@ -258,7 +258,7 @@ lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_th
     }
 
     /* Allocate thread stack */
-    if (tx_thread_create(t_handle, (CHAR*)name, (VOID(*)(ULONG))(thread_func), (ULONG)arg, stack_ptr, stack_size, prio,
+    if (tx_thread_create(t_handle, (CHAR*)name, (VOID (*)(ULONG))(thread_func), (ULONG)arg, stack_ptr, stack_size, prio,
                          0, TX_NO_TIME_SLICE, TX_AUTO_START)
         != TX_SUCCESS) {
         goto cleanup;
@@ -313,14 +313,14 @@ lwcell_sys_thread_terminate(lwcell_sys_thread_t* t) {
 
 uint8_t
 lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func, void* const arg,
-                        size_t stack_size, lwcell_sys_thread_prio_t prio) {
+                         size_t stack_size, lwcell_sys_thread_prio_t prio) {
 
     typedef VOID (*threadx_entry_t)(ULONG);
     uint8_t rt = 0;
 
     void* stack_mem = lwcell_mem_malloc(stack_size);
     if (stack_mem != NULL) {
-        if (tx_thread_create(t, (CHAR*)name, (VOID(*)(ULONG))(thread_func), (ULONG)arg, stack_mem, stack_size, prio,
+        if (tx_thread_create(t, (CHAR*)name, (VOID (*)(ULONG))(thread_func), (ULONG)arg, stack_mem, stack_size, prio,
                              prio, TX_NO_TIME_SLICE, TX_AUTO_START)
             == TX_SUCCESS) {
             rt = 1;

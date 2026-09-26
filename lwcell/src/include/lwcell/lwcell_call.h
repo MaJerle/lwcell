@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -50,8 +50,8 @@ extern "C" {
 lwcellr_t lwcell_call_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_call_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-lwcellr_t lwcell_call_start(const char* number, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                          const uint32_t blocking);
+lwcellr_t
+lwcell_call_start(const char* number, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_call_answer(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_call_hangup(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 

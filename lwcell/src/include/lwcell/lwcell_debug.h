@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -58,11 +58,11 @@ extern "C" {
  * \param[in]       fmt: Formatted string for debug
  * \param[in]       ...: Variable parameters for formatted string
  */
-#define LWCELL_DEBUGF(c, fmt, ...)                                                                                      \
+#define LWCELL_DEBUGF(c, fmt, ...)                                                                                     \
     do {                                                                                                               \
-        if (((c) & (LWCELL_DBG_ON)) && ((c) & (LWCELL_CFG_DBG_TYPES_ON))                                                 \
-            && ((c)&LWCELL_DBG_LVL_MASK) >= (LWCELL_CFG_DBG_LVL_MIN)) {                                                  \
-            LWCELL_CFG_DBG_OUT(fmt, ##__VA_ARGS__);                                                                     \
+        if (((c) & (LWCELL_DBG_ON)) && ((c) & (LWCELL_CFG_DBG_TYPES_ON))                                               \
+            && ((c) & LWCELL_DBG_LVL_MASK) >= (LWCELL_CFG_DBG_LVL_MIN)) {                                              \
+            LWCELL_CFG_DBG_OUT(fmt, ##__VA_ARGS__);                                                                    \
         }                                                                                                              \
     } while (0)
 
@@ -73,10 +73,10 @@ extern "C" {
  * \param[in]       fmt: Formatted string for debug
  * \param[in]       ...: Variable parameters for formatted string
  */
-#define LWCELL_DEBUGW(c, cond, fmt, ...)                                                                                \
+#define LWCELL_DEBUGW(c, cond, fmt, ...)                                                                               \
     do {                                                                                                               \
         if (cond) {                                                                                                    \
-            LWCELL_DEBUGF(c, fmt, ##__VA_ARGS__);                                                                       \
+            LWCELL_DEBUGF(c, fmt, ##__VA_ARGS__);                                                                      \
         }                                                                                                              \
     } while (0)
 #else

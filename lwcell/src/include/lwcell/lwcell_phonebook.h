@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -51,17 +51,17 @@ lwcellr_t lwcell_pb_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_a
 lwcellr_t lwcell_pb_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 lwcellr_t lwcell_pb_add(lwcell_mem_t mem, const char* name, const char* num, lwcell_number_type_t type,
-                      const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+                        const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 lwcellr_t lwcell_pb_edit(lwcell_mem_t mem, size_t pos, const char* name, const char* num, lwcell_number_type_t type,
-                       const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwcellr_t lwcell_pb_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
-                         const uint32_t blocking);
-lwcellr_t lwcell_pb_read(lwcell_mem_t mem, size_t pos, lwcell_pb_entry_t* entry, const lwcell_api_cmd_evt_fn evt_fn,
-                       void* const evt_arg, const uint32_t blocking);
-lwcellr_t lwcell_pb_list(lwcell_mem_t mem, size_t start_index, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
-                       const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
-lwcellr_t lwcell_pb_search(lwcell_mem_t mem, const char* search, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
                          const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_delete(lwcell_mem_t mem, size_t pos, const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg,
+                           const uint32_t blocking);
+lwcellr_t lwcell_pb_read(lwcell_mem_t mem, size_t pos, lwcell_pb_entry_t* entry, const lwcell_api_cmd_evt_fn evt_fn,
+                         void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_list(lwcell_mem_t mem, size_t start_index, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
+                         const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_pb_search(lwcell_mem_t mem, const char* search, lwcell_pb_entry_t* entries, size_t etr, size_t* er,
+                           const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
 /**
  * \}

@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -33,8 +33,8 @@
 #include "cmsis_os.h"
 
 #include "lwcell/lwcell.h"
-#include "sim_manager.h"
 #include "network_utils.h"
+#include "sim_manager.h"
 #include "sms_send_receive_thread.h"
 
 static void LL_Init(void);
@@ -50,17 +50,15 @@ static lwcellr_t lwcell_callback_func(lwcell_evt_t* evt);
  */
 int
 main(void) {
-    LL_Init();                                  /* Reset of all peripherals, initializes the Flash interface and the Systick. */
-    SystemClock_Config();                       /* Configure the system clock */
-    USART_Printf_Init();                        /* Init USART for printf */
+    LL_Init();            /* Reset of all peripherals, initializes the Flash interface and the Systick. */
+    SystemClock_Config(); /* Configure the system clock */
+    USART_Printf_Init();  /* Init USART for printf */
 
     printf("Application running on STM32F429ZI-Nucleo!\r\n");
 
     /* Initialize, create first thread and start kernel */
     osKernelInitialize();
-    const osThreadAttr_t attr = {
-            .stack_size = 512
-    };
+    const osThreadAttr_t attr = {.stack_size = 512};
     osThreadNew(init_thread, NULL, &attr);
     osKernelStart();
 
@@ -87,11 +85,14 @@ init_thread(void* arg) {
         lwcell_delay(10000);
     } else {
         printf("Cannot configure SIM card! Is it inserted, pin valid and not under PUK? Closing down...\r\n");
-        while (1) { lwcell_delay(1000); }
+        while (1) {
+            lwcell_delay(1000);
+        }
     }
 
     /* Create SMS thread */
-    lwcell_sys_thread_create(NULL, "lwcell_sms", (lwcell_sys_thread_fn)sms_send_receive_thread, NULL, LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
+    lwcell_sys_thread_create(NULL, "lwcell_sms", (lwcell_sys_thread_fn)sms_send_receive_thread, NULL,
+                             LWCELL_SYS_THREAD_SS, LWCELL_SYS_THREAD_PRIO);
 
     while (1) {
         lwcell_delay(1000);
@@ -114,9 +115,11 @@ lwcell_callback_func(lwcell_evt_t* evt) {
         /* Process current network operator */
         case LWCELL_EVT_NETWORK_OPERATOR_CURRENT: network_utils_process_curr_operator(evt); break;
         /* Process signal strength */
-        case LWCELL_EVT_SIGNAL_STRENGTH: network_utils_process_rssi(evt); break;
+        case LWCELL_EVT_SIGNAL_STRENGTH:
+            network_utils_process_rssi(evt);
+            break;
 
-        /* Other user events here... */
+            /* Other user events here... */
 
         default: break;
     }
@@ -170,7 +173,7 @@ SystemClock_Config(void) {
 
     /* Configure system clock */
     LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
-    while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) {}
+    while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) {}
 
     /* Configure systick */
     LL_Init1msTick(168000000);
@@ -224,9 +227,11 @@ USART_Printf_Init(void) {
  * \return          Written character
  */
 #ifdef __GNUC__
-int __io_putchar(int ch) {
+int
+__io_putchar(int ch) {
 #else
-int fputc(int ch, FILE* fil) {
+int
+fputc(int ch, FILE* fil) {
 #endif
     LL_USART_TransmitData8(USART3, (uint8_t)ch);
     while (!LL_USART_IsActiveFlag_TXE(USART3)) {}

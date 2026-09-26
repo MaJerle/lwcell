@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -438,7 +438,7 @@ lwcelli_parse_csq(const char* str) {
     } else {
         rssi = 0;
     }
-    lwcell.m.rssi = rssi;                 /* Save RSSI to global variable */
+    lwcell.m.rssi = rssi; /* Save RSSI to global variable */
     if (lwcell.msg->cmd_def == LWCELL_CMD_CSQ_GET && lwcell.msg->msg.csq.rssi != NULL) {
         *lwcell.msg->msg.csq.rssi = rssi; /* Save to user variable */
     }
@@ -529,8 +529,8 @@ lwcelli_parse_cops(const char* str) {
         lwcell.m.network.curr_operator.format = LWCELL_OPERATOR_FORMAT_INVALID;
     }
 
-    if (CMD_IS_DEF(LWCELL_CMD_COPS_GET)
-        && lwcell.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable */
+    if (CMD_IS_DEF(LWCELL_CMD_COPS_GET) && lwcell.msg->msg.cops_get.curr != NULL) { /* Check and copy to user variable
+                                                                                     */
         LWCELL_MEMCPY(lwcell.msg->msg.cops_get.curr, &lwcell.m.network.curr_operator,
                       sizeof(*lwcell.msg->msg.cops_get.curr));
     }
@@ -562,8 +562,8 @@ lwcelli_parse_cops_scan(uint8_t ch, uint8_t reset) {
         return 1;
     }
 
-    if (u.f.ch_prev == 0) {     /* Check if this is first character */
-        if (ch == ' ') {        /* Skip leading spaces */
+    if (u.f.ch_prev == 0) { /* Check if this is first character */
+        if (ch == ' ') {    /* Skip leading spaces */
             return 1;
         } else if (ch == ',') { /* If first character is comma, no operators available */
             u.f.ccd = 1;        /* Fake double commas in a row */
@@ -825,10 +825,10 @@ lwcelli_parse_cpms(const char* str, uint8_t opt) {
         }
         case 1: {                     /* Received statement of current info: +CPMS: "ME",10,20,"SE",2,20,"... */
             for (i = 0; i < 3; ++i) { /* 3 memories expected */
-                lwcell.m.sms.mem[i].current =
-                    lwcelli_parse_memory(&str);                         /* Parse memory string and save it as current */
-                lwcell.m.sms.mem[i].used = lwcelli_parse_number(&str);  /* Get used memory size */
-                lwcell.m.sms.mem[i].total = lwcelli_parse_number(&str); /* Get total memory size */
+                lwcell.m.sms.mem[i].current = lwcelli_parse_memory(&str); /* Parse memory string and save it as current
+                                                                           */
+                lwcell.m.sms.mem[i].used = lwcelli_parse_number(&str);    /* Get used memory size */
+                lwcell.m.sms.mem[i].total = lwcelli_parse_number(&str);   /* Get total memory size */
             }
             break;
         }
@@ -1147,8 +1147,8 @@ lwcelli_parse_ipd(const char* str) {
         }
     }
 
-    conn = lwcelli_parse_number(&str);                              /* Parse number for connection number */
-    len = lwcelli_parse_number(&str);                               /* Parse number for number of bytes to read */
+    conn = lwcelli_parse_number(&str); /* Parse number for connection number */
+    len = lwcelli_parse_number(&str);  /* Parse number for number of bytes to read */
 
     c = conn < LWCELL_CFG_MAX_CONNS ? &lwcell.m.conns[conn] : NULL; /* Get connection handle */
     if (c == NULL) {                                                /* Invalid connection number */

@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -49,28 +49,30 @@ extern "C" {
 
 /**
  * \brief           Assert an input parameter if in valid range
- * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref lwcellr_t enumeration
+ * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref
+ * lwcellr_t enumeration
  * \param[in]       c: Condition to test
  */
-#define LWCELL_ASSERT(c)                                                                                                \
+#define LWCELL_ASSERT(c)                                                                                               \
     do {                                                                                                               \
         if (!(c)) {                                                                                                    \
-            LWCELL_DEBUGF(LWCELL_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__, (int)__LINE__, \
-                         #c);                                                                                          \
-            return lwcellERRPAR;                                                                                        \
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__,              \
+                          (int)__LINE__, #c);                                                                          \
+            return lwcellERRPAR;                                                                                       \
         }                                                                                                              \
     } while (0)
 
 /**
  * \brief           Assert an input parameter if in valid range, return 0 from function on failure
- * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref lwcellr_t enumeration
+ * \note            Since this is a macro, it may only be used on a functions where return status is of type \ref
+ * lwcellr_t enumeration
  * \param[in]       c: Condition to test
  */
-#define LWCELL_ASSERT0(c)                                                                                               \
+#define LWCELL_ASSERT0(c)                                                                                              \
     do {                                                                                                               \
         if (!(c)) {                                                                                                    \
-            LWCELL_DEBUGF(LWCELL_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__, (int)__LINE__, \
-                         #c);                                                                                          \
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_ASSERT, "Assert failed in file %s on line %d: %s\r\n", __FILE__,              \
+                          (int)__LINE__, #c);                                                                          \
             return 0;                                                                                                  \
         }                                                                                                              \
     } while (0)

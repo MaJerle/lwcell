@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -107,7 +107,8 @@
 #define LWCELL_USART_RX_PORT_CLK_EN     LL_AHB1_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOF)
 #define LWCELL_USART_RX_PIN_AF          LL_GPIO_AF_7
 
-/* TX data buffers, must be 32-bytes aligned (cache) and in dma buffer section to make sure DMA has access to the memory region */
+/* TX data buffers, must be 32-bytes aligned (cache) and in dma buffer section to make sure DMA has access to the memory
+ * region */
 ALIGN_32BYTES(static uint8_t __attribute__((section(".dma_buffer"))) lwcell_tx_rb_data[2048]);
 static lwrb_t lwcell_tx_rb;
 volatile size_t lwcell_tx_len;
@@ -155,14 +156,15 @@ prv_lwcell_read_thread_entry(ULONG arg) {
         tx_event_flags_get(&lwcell_ll_event_group, (ULONG)-1, TX_OR_CLEAR, &flags, TX_WAIT_FOREVER);
 
         /* Read data */
-        pos = sizeof(lwcell_usart_rx_dma_buffer) - LL_DMA_GetDataLength(LWCELL_USART_DMA_RX, LWCELL_USART_DMA_RX_STREAM);
+        pos = sizeof(lwcell_usart_rx_dma_buffer)
+              - LL_DMA_GetDataLength(LWCELL_USART_DMA_RX, LWCELL_USART_DMA_RX_STREAM);
         if (pos != lwcell_read_old_pos && lwcell_is_running) {
             SCB_InvalidateDCache_by_Addr(lwcell_usart_rx_dma_buffer, sizeof(lwcell_usart_rx_dma_buffer));
             if (pos > lwcell_read_old_pos) {
                 lwcell_input_process(&lwcell_usart_rx_dma_buffer[lwcell_read_old_pos], pos - lwcell_read_old_pos);
             } else {
                 lwcell_input_process(&lwcell_usart_rx_dma_buffer[lwcell_read_old_pos],
-                                    sizeof(lwcell_usart_rx_dma_buffer) - lwcell_read_old_pos);
+                                     sizeof(lwcell_usart_rx_dma_buffer) - lwcell_read_old_pos);
                 if (pos > 0) {
                     lwcell_input_process(&lwcell_usart_rx_dma_buffer[0], pos);
                 }
@@ -335,11 +337,11 @@ prv_configure_uart(uint32_t baudrate) {
 
         lwcell_is_running = 1;
     } else {
-        //tx_thread_sleep(10);
-        //LL_USART_Disable(LWCELL_USART);
-        //usart_init.BaudRate = baudrate;
-        //LL_USART_Init(LWCELL_USART, &usart_init);
-        //LL_USART_Enable(LWCELL_USART);
+        // tx_thread_sleep(10);
+        // LL_USART_Disable(LWCELL_USART);
+        // usart_init.BaudRate = baudrate;
+        // LL_USART_Init(LWCELL_USART, &usart_init);
+        // LL_USART_Enable(LWCELL_USART);
     }
 }
 
@@ -352,9 +354,9 @@ prv_configure_uart(uint32_t baudrate) {
 static uint8_t
 prv_reset_device(uint8_t state) {
     if (state) { /* Activate reset line */
-        //LL_GPIO_ResetOutputPin(LWCELL_RESET_PORT, LWCELL_RESET_PIN);
+        // LL_GPIO_ResetOutputPin(LWCELL_RESET_PORT, LWCELL_RESET_PIN);
     } else {
-        //LL_GPIO_SetOutputPin(LWCELL_RESET_PORT, LWCELL_RESET_PIN);
+        // LL_GPIO_SetOutputPin(LWCELL_RESET_PORT, LWCELL_RESET_PIN);
     }
     return 1;
 }

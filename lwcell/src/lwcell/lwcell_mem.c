@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -42,7 +42,7 @@ typedef struct mem_block {
     struct mem_block* next; /*!< Pointer to next free block */
     size_t size;            /*!< Size of block */
 } mem_block_t;
-#endif                      /* !__DOXYGEN__ */
+#endif /* !__DOXYGEN__ */
 
 /**
  * \brief           Memory alignment bits and absolute number
@@ -94,10 +94,9 @@ mem_insertfreeblock(mem_block_t* nb) {
         if (ptr->next == end_block) { /* Does it points to the end? */
             nb->next = end_block;     /* Set end block pointer */
         } else {
-            nb->size +=
-                ptr->next
-                    ->size; /* Expand of current block for size of next free block which is right behind new block */
-            nb->next = ptr->next->next; /* Next free is pointed to the next one of previous next */
+            nb->size += ptr->next->size; /* Expand of current block for size of next free block which is right behind
+                                            new block */
+            nb->next = ptr->next->next;  /* Next free is pointed to the next one of previous next */
         }
     } else {
         nb->next = ptr->next; /* Our next element is now from pointer next element */
@@ -136,7 +135,7 @@ mem_assignmem(const lwcell_mem_region_t* regions, size_t len) {
         if (mem_start_addr >= (uint8_t*)regions[i].start_addr) { /* Check if previous greater than current */
             return 0;                                            /* Return as invalid and failed */
         }
-        mem_start_addr = (uint8_t*)regions[i].start_addr;        /* Save as previous address */
+        mem_start_addr = (uint8_t*)regions[i].start_addr; /* Save as previous address */
     }
 
     for (; len > 0; --len, ++regions) {
@@ -257,12 +256,11 @@ mem_alloc(size_t size) {
          * then split big block by 2 blocks (one used, second available)
          * There should be available memory for at least 2 metadata block size = 8 bytes of useful memory
          */
-        if ((curr->size - size)
-            > (2
-               * MEMBLOCK_METASIZE)) { /* There is more available memory then required = split memory to one free block */
-            next = (mem_block_t*)(((uint8_t*)curr) + size); /* Create next memory block which is still free */
-            next->size = curr->size - size;                 /* Set new block size for remaining of before and used */
-            curr->size = size;                              /* Set block size for used block */
+        if ((curr->size - size) > (2 * MEMBLOCK_METASIZE)) { /* There is more available memory then required = split
+                                                                memory to one free block */
+            next = (mem_block_t*)(((uint8_t*)curr) + size);  /* Create next memory block which is still free */
+            next->size = curr->size - size;                  /* Set new block size for remaining of before and used */
+            curr->size = size;                               /* Set block size for used block */
 
             /*
              * Add virtual block to list of free blocks.
@@ -270,10 +268,10 @@ mem_alloc(size_t size) {
              */
             mem_insertfreeblock(next); /* Insert free memory block to list of free memory blocks (linked list chain) */
         }
-        curr->size |= MEM_ALLOC_BIT;   /* Set allocated bit = memory is allocated */
-        curr->next = NULL;             /* Clear next free block pointer as there is no one */
+        curr->size |= MEM_ALLOC_BIT; /* Set allocated bit = memory is allocated */
+        curr->next = NULL;           /* Clear next free block pointer as there is no one */
 
-        mem_available_bytes -= size;   /* Decrease available memory */
+        mem_available_bytes -= size; /* Decrease available memory */
     } else {
         /* Allocation failed, no free blocks of required size */
     }
@@ -344,8 +342,8 @@ mem_realloc(void* ptr, size_t size) {
         return mem_alloc(size); /* Only allocate memory */
     }
 
-    old_size = MEM_BLOCK_USER_SIZE(ptr);                         /* Get size of old pointer */
-    new_ptr = mem_alloc(size);                                   /* Try to allocate new memory block */
+    old_size = MEM_BLOCK_USER_SIZE(ptr); /* Get size of old pointer */
+    new_ptr = mem_alloc(size);           /* Try to allocate new memory block */
     if (new_ptr != NULL) {
         LWCELL_MEMCPY(new_ptr, ptr, LWCELL_MIN(size, old_size)); /* Copy old data to new array */
         mem_free(ptr);                                           /* Free old pointer */

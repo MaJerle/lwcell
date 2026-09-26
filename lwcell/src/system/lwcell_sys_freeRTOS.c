@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE and Ilya Kargapolov
+ * Copyright (c) 2026 Tilen MAJERLE and Ilya Kargapolov
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -209,7 +209,7 @@ lwcell_sys_mbox_invalid(lwcell_sys_mbox_t* b) {
 
 uint8_t
 lwcell_sys_thread_create(lwcell_sys_thread_t* t, const char* name, lwcell_sys_thread_fn thread_func, void* const arg,
-                        size_t stack_size, lwcell_sys_thread_prio_t prio) {
+                         size_t stack_size, lwcell_sys_thread_prio_t prio) {
     return xTaskCreate(thread_func, name, stack_size / sizeof(portSTACK_TYPE), arg, prio, t) == pdPASS ? 1 : 0;
 }
 

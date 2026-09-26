@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (c) 2024 Tilen MAJERLE
+ * Copyright (c) 2026 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -51,21 +51,21 @@
  * \brief           Sequential API structure
  */
 typedef struct lwcell_netconn {
-    struct lwcell_netconn* next;    /*!< Linked list entry */
+    struct lwcell_netconn* next; /*!< Linked list entry */
 
-    lwcell_netconn_type_t type;     /*!< Netconn type */
+    lwcell_netconn_type_t type; /*!< Netconn type */
 
-    size_t rcv_packets;            /*!< Number of received packets so far on this connection */
-    lwcell_conn_p conn;             /*!< Pointer to actual connection */
+    size_t rcv_packets; /*!< Number of received packets so far on this connection */
+    lwcell_conn_p conn; /*!< Pointer to actual connection */
 
     lwcell_sys_mbox_t mbox_receive; /*!< Message queue for receive mbox */
 
-    lwcell_linbuff_t buff;          /*!< Linear buffer structure */
+    lwcell_linbuff_t buff; /*!< Linear buffer structure */
 
-    uint16_t conn_timeout;         /*!< Connection timeout in units of seconds when
-                                                    netconn is in server (listen) mode.
-                                                    Connection will be automatically closed if there is no
-                                                    data exchange in time. Set to `0` when timeout feature is disabled. */
+    uint16_t conn_timeout; /*!< Connection timeout in units of seconds when
+                                            netconn is in server (listen) mode.
+                                            Connection will be automatically closed if there is no
+                                            data exchange in time. Set to `0` when timeout feature is disabled. */
 
 #if LWCELL_CFG_NETCONN_RECEIVE_TIMEOUT || __DOXYGEN__
     uint32_t rcv_timeout; /*!< Receive timeout in unit of milliseconds */
@@ -121,13 +121,13 @@ netconn_evt(lwcell_evt_t* evt) {
             if (lwcell_conn_is_client(conn)) {  /* Was connection started by us? */
                 nc = lwcell_conn_get_arg(conn); /* Argument should be already set */
                 if (nc != NULL) {
-                    nc->conn = conn;           /* Save actual connection */
+                    nc->conn = conn; /* Save actual connection */
                 } else {
-                    close = 1;                 /* Close this connection, invalid netconn */
+                    close = 1; /* Close this connection, invalid netconn */
                 }
             } else {
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_WARNING,
-                             "[LWCELL NETCONN] Closing connection, it is not in client mode!\r\n");
+                              "[LWCELL NETCONN] Closing connection, it is not in client mode!\r\n");
                 close = 1; /* Close the connection at this point */
             }
 
@@ -137,7 +137,7 @@ netconn_evt(lwcell_evt_t* evt) {
                     lwcell_conn_set_arg(conn, NULL); /* Reset argument */
                     lwcell_netconn_delete(nc);       /* Free memory for API */
                 }
-                lwcell_conn_close(conn, 0);          /* Close the connection */
+                lwcell_conn_close(conn, 0); /* Close the connection */
                 close = 0;
             }
             break;
@@ -153,19 +153,19 @@ netconn_evt(lwcell_evt_t* evt) {
             nc = lwcell_conn_get_arg(conn);            /* Get API from connection */
             pbuf = lwcell_evt_conn_recv_get_buff(evt); /* Get received buff */
 
-            lwcell_conn_recved(conn, pbuf);            /* Notify stack about received data */
+            lwcell_conn_recved(conn, pbuf); /* Notify stack about received data */
 
-            lwcell_pbuf_ref(pbuf);                     /* Increase reference counter */
+            lwcell_pbuf_ref(pbuf); /* Increase reference counter */
             if (nc == NULL || !lwcell_sys_mbox_isvalid(&nc->mbox_receive)
                 || !lwcell_sys_mbox_putnow(&nc->mbox_receive, pbuf)) {
                 LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN, "[LWCELL NETCONN] Ignoring more data for receive!\r\n");
                 lwcell_pbuf_free_s(&pbuf); /* Free pbuf */
                 return lwcellOKIGNOREMORE; /* Return OK to free the memory and ignore further data */
             }
-            ++nc->rcv_packets;            /* Increase number of received packets */
+            ++nc->rcv_packets; /* Increase number of received packets */
             LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN | LWCELL_DBG_TYPE_TRACE,
-                         "[LWCELL NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
-                         (int)lwcell_pbuf_length(pbuf, 0));
+                          "[LWCELL NETCONN] Received pbuf contains %d bytes. Handle written to receive mbox\r\n",
+                          (int)lwcell_pbuf_length(pbuf, 0));
             break;
         }
 
@@ -220,13 +220,14 @@ lwcell_netconn_new(lwcell_netconn_type_t type) {
     lwcell_core_unlock();
     a = lwcell_mem_calloc(1, sizeof(*a)); /* Allocate memory for core object */
     if (a != NULL) {
-        a->type = type;                  /* Save netconn type */
-        a->conn_timeout = 0;             /* Default connection timeout */
-        if (!lwcell_sys_mbox_create(
-                &a->mbox_receive,
-                LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN)) { /* Allocate memory for receiving message box */
-            LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_DANGER,
-                         "[LWCELL NETCONN] Cannot create receive MBOX\r\n");
+        a->type = type;      /* Save netconn type */
+        a->conn_timeout = 0; /* Default connection timeout */
+        if (!lwcell_sys_mbox_create(&a->mbox_receive, LWCELL_CFG_NETCONN_RECEIVE_QUEUE_LEN)) { /* Allocate memory for
+                                                                                                  receiving message box
+                                                                                                */
+            LWCELL_DEBUGF(LWCELL_CFG_DBG_NETCONN | LWCELL_DBG_TYPE_TRACE | LWCELL_DBG_LVL_DANGER, "[LWCELL NETCONN] "
+                                                                                                  "Cannot create "
+                                                                                                  "receive MBOX\r\n");
             goto free_ret;
         }
         lwcell_core_lock();
@@ -336,7 +337,7 @@ lwcell_netconn_write(lwcell_netconn_p nc, const void* data, size_t btw) {
      */
 
     /* Step 1 */
-    if (nc->buff.buff != NULL) {                           /* Is there a write buffer ready to accept more data? */
+    if (nc->buff.buff != NULL) {                            /* Is there a write buffer ready to accept more data? */
         len = LWCELL_MIN(nc->buff.len - nc->buff.ptr, btw); /* Get number of bytes we can write to buffer */
         if (len > 0) {
             LWCELL_MEMCPY(&nc->buff.buff[nc->buff.ptr], data, len); /* Copy memory to temporary write buffer */
@@ -375,17 +376,17 @@ lwcell_netconn_write(lwcell_netconn_p nc, const void* data, size_t btw) {
     }
 
     /* Step 3 */
-    if (nc->buff.buff == NULL) {                    /* Check if we should allocate a new buffer */
+    if (nc->buff.buff == NULL) { /* Check if we should allocate a new buffer */
         nc->buff.buff = lwcell_mem_malloc(sizeof(*nc->buff.buff) * LWCELL_CFG_CONN_MAX_DATA_LEN);
         nc->buff.len = LWCELL_CFG_CONN_MAX_DATA_LEN; /* Save buffer length */
-        nc->buff.ptr = 0;                           /* Save buffer pointer */
+        nc->buff.ptr = 0;                            /* Save buffer pointer */
     }
 
     /* Step 4 */
-    if (nc->buff.buff != NULL) {                              /* Memory available? */
-        LWCELL_MEMCPY(&nc->buff.buff[nc->buff.ptr], d, btw);   /* Copy data to buffer */
+    if (nc->buff.buff != NULL) {                             /* Memory available? */
+        LWCELL_MEMCPY(&nc->buff.buff[nc->buff.ptr], d, btw); /* Copy data to buffer */
         nc->buff.ptr += btw;
-    } else {                                                  /* Still no memory available? */
+    } else {                                                   /* Still no memory available? */
         return lwcell_conn_send(nc->conn, data, btw, NULL, 1); /* Simply send directly blocking */
     }
     return lwcellOK;
@@ -394,9 +395,9 @@ lwcell_netconn_write(lwcell_netconn_p nc, const void* data, size_t btw) {
 /**
  * \brief           Extended version of \ref lwcell_netconn_write with additional
  *                  option to set custom flags.
- * 
- * \note            It is recommended to use this for full features support 
- * 
+ *
+ * \note            It is recommended to use this for full features support
+ *
  * \param[in]       nc: Netconn handle used to write data to
  * \param[in]       data: Pointer to data to write
  * \param[in]       btw: Number of bytes to write
@@ -431,8 +432,8 @@ lwcell_netconn_flush(lwcell_netconn_p nc) {
      * In case we have data in write buffer,
      * flush them out to network
      */
-    if (nc->buff.buff != NULL) {                                             /* Check remaining data */
-        if (nc->buff.ptr > 0) {                                              /* Do we have data in current buffer? */
+    if (nc->buff.buff != NULL) {                                              /* Check remaining data */
+        if (nc->buff.ptr > 0) {                                               /* Do we have data in current buffer? */
             lwcell_conn_send(nc->conn, nc->buff.buff, nc->buff.ptr, NULL, 1); /* Send data */
         }
         lwcell_mem_free_s((void**)&nc->buff.buff);
@@ -535,7 +536,7 @@ lwcell_netconn_close(lwcell_netconn_p nc) {
 
     lwcell_conn_set_arg(conn, NULL); /* Reset argument */
     lwcell_conn_close(conn, 1);      /* Close the connection */
-    flush_mboxes(nc, 1);            /* Flush message queues */
+    flush_mboxes(nc, 1);             /* Flush message queues */
     return lwcellOK;
 }
 
