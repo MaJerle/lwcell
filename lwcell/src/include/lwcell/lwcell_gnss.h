@@ -29,7 +29,7 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- *                  Harald LESCHNER <picohari@googlemail.com>    
+ *                  Harald LESCHNER <picohari@googlemail.com>
  * Version:         v0.1.2
  */
 #ifndef LWCELL_GNSS_HDR_H

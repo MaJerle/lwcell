@@ -960,13 +960,13 @@ lwcelli_parse_datetime_cgnsinf(const char** src, struct tm* dt, uint16_t* ms) {
     LWCELL_MEMSET(dt, 0x00, sizeof(*dt));
 
     dt->tm_year = parse_fixed_digits(&p, 4) - 1900; /* Full year, struct tm expects years since 1900 */
-    dt->tm_mon  = parse_fixed_digits(&p, 2) - 1;    /* Month 1-12 -> 0-11 */
+    dt->tm_mon = parse_fixed_digits(&p, 2) - 1;     /* Month 1-12 -> 0-11 */
     dt->tm_mday = parse_fixed_digits(&p, 2);        /* Day of month */
     dt->tm_hour = parse_fixed_digits(&p, 2);        /* Hour */
-    dt->tm_min  = parse_fixed_digits(&p, 2);        /* Minute */
-    dt->tm_sec  = parse_fixed_digits(&p, 2);        /* Second */
+    dt->tm_min = parse_fixed_digits(&p, 2);         /* Minute */
+    dt->tm_sec = parse_fixed_digits(&p, 2);         /* Second */
 
-    if (*p == '.') {         /* Optional milliseconds part */
+    if (*p == '.') { /* Optional milliseconds part */
         ++p;
         if (ms != NULL) {
             *ms = (uint16_t)parse_fixed_digits(&p, 3);
@@ -982,7 +982,6 @@ lwcelli_parse_datetime_cgnsinf(const char** src, struct tm* dt, uint16_t* ms) {
     lwcelli_check_and_trim(src); /* Trim remaining text to the end, e.g. trailing comma */
     return 1;
 }
-
 
 uint8_t
 lwcelli_parse_gnssinfo(const char* str) {
@@ -1035,12 +1034,11 @@ lwcelli_parse_gnssinfo(const char* str) {
     info->vpa = lwcelli_parse_float(&str);
 
     /* Some event info */
-    lwcell.evt.evt.gnss_parse.gnss = info;      /* Assign GNSS data to pointer for events */
-    lwcelli_send_cb(LWCELL_EVT_GNSS_READY);     /* Send to user */
+    lwcell.evt.evt.gnss_parse.gnss = info;  /* Assign GNSS data to pointer for events */
+    lwcelli_send_cb(LWCELL_EVT_GNSS_READY); /* Send to user */
 
     return 1;
 }
-
 
 #endif /* LWCELL_CFG_GNSS || __DOXYGEN__ */
 

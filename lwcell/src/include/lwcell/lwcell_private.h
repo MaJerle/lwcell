@@ -547,10 +547,10 @@ typedef struct lwcell_msg {
 #endif                        /* LWCELL_CFG_NETWORK || __DOXYGEN__ */
 #if LWCELL_CFG_GNSS || __DOXYGEN__
         struct {
-            uint8_t enable;   /*!< GNSS power mode */
-        } gnss_power;         /*!< Set GNSS power mode */
-#endif                        /* LWCELL_CFG_GNSS || __DOXYGEN__ */
-    } msg;                    /*!< Group of different possible message contents */
+            uint8_t enable; /*!< GNSS power mode */
+        } gnss_power;       /*!< Set GNSS power mode */
+#endif                      /* LWCELL_CFG_GNSS || __DOXYGEN__ */
+    } msg;                  /*!< Group of different possible message contents */
 } lwcell_msg_t;
 
 /**

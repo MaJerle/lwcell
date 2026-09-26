@@ -72,8 +72,7 @@ lwcell_gnss_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, cons
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_GNSS_ENABLE;
     LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_GNSS_CGNSPWR;
-    LWCELL_MSG_VAR_REF(msg).msg.gnss_power.enable = 1;  /* Turn on GNSS power supply  */
-
+    LWCELL_MSG_VAR_REF(msg).msg.gnss_power.enable = 1; /* Turn on GNSS power supply  */
 
     return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 1000);
 }
@@ -93,11 +92,10 @@ lwcell_gnss_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, con
     LWCELL_MSG_VAR_SET_EVT(msg, evt_fn, evt_arg);
     LWCELL_MSG_VAR_REF(msg).cmd_def = LWCELL_CMD_GNSS_ENABLE;
     LWCELL_MSG_VAR_REF(msg).cmd = LWCELL_CMD_GNSS_CGNSPWR;
-    LWCELL_MSG_VAR_REF(msg).msg.gnss_power.enable = 0;  /* Turn off GNSS power supply  */
+    LWCELL_MSG_VAR_REF(msg).msg.gnss_power.enable = 0; /* Turn off GNSS power supply  */
 
     return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 1000);
 }
-
 
 /**
  * \brief           Read GNSS/GPS data
@@ -119,7 +117,6 @@ lwcell_gnss_info(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const 
 
     return lwcelli_send_msg_to_producer_mbox(&LWCELL_MSG_VAR_REF(msg), lwcelli_initiate_cmd, 1000);
 }
-
 
 /**
  * \brief           Get a thread-safe snapshot of the last known GNSS date/time
