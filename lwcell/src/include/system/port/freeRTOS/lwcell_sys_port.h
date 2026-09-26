@@ -51,10 +51,10 @@ extern "C" {
 #if LWCELL_CFG_OS && !__DOXYGEN__
 
 /* Include any OS specific features */
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "semphr.h"
+#include "task.h"
 
 /**
  * \brief           System mutex type
