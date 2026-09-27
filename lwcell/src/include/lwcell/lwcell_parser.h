@@ -29,7 +29,7 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ * Version:         v0.1.2
  */
 #ifndef LWCELL_PARSER_HDR_H
 #define LWCELL_PARSER_HDR_H
@@ -68,6 +68,8 @@ uint8_t lwcelli_parse_cpbf(const char* str);
 uint8_t lwcelli_parse_cipstatus_conn(const char* str, uint8_t is_conn_line, uint8_t* continueScan);
 
 uint8_t lwcelli_parse_ipd(const char* str);
+
+uint8_t lwcelli_parse_gnssinfo(const char* str);
 
 #if defined(__cplusplus)
 }

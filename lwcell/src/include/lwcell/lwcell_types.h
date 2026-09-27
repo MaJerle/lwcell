@@ -29,7 +29,7 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ * Version:         v0.1.2
  */
 #ifndef LWCELL_TYPES_HDR_H
 #define LWCELL_TYPES_HDR_H
@@ -333,6 +333,39 @@ typedef struct {
     char name[20];             /*!< Phone book name if exists for current number */
 } lwcell_call_t;
 
+/**
+ * \ingroup         LWCELL_GNSS
+ * \brief           GNSS/GPS information
+ * \note            Data received on `+CGNSINF` info
+ */
+typedef struct {
+    uint8_t enabled; /*!< Flag indicating feature enabled */
+
+    uint8_t run_status; /*!< GNSS run status */
+    uint8_t fix_status; /*!< GNSS fix status */
+    struct tm dt;       /*!< UTC date and time */
+    uint16_t ms;        /*!< Milliseconds, as fraction of s */
+
+    float latitude;   /*!< Latitude */
+    float longitude;  /*!< Longitude */
+    float altitude;   /*!< Altitude [m] */
+    float speed;      /*!< Speed in [km/h] */
+    float course;     /*!< Course over ground [°] */
+    uint8_t fix_mode; /*!< Fix mode [0,1,2] */
+
+    float hdop; /*!< Horizontal dilution of precision */
+    float pdop; /*!< Position dilution of precision */
+    float vdop; /*!< Vertical dilution of precision */
+
+    uint8_t gnss_sats_in_view; /*!< Number of satellites in view */
+    uint8_t gps_sats_used;     /*!< Number of satellites used for fix */
+    uint8_t glonas_sats_used;  /*!< Satellites info for GLONASS */
+
+    uint8_t cn0; /*!< C/N0 ratio in [dBHz] */
+    float hpa;   /*!< Horizontal position accuracy [m] */
+    float vpa;   /*!< Vertical position accuracy [m] */
+} lwcell_gnss_t;
+
 /* Forward declarations */
 struct lwcell_evt;
 struct lwcell_conn;
@@ -423,6 +456,11 @@ typedef enum lwcell_cb_type_t {
     LWCELL_EVT_PB_LIST,   /*!< Phonebook list event */
     LWCELL_EVT_PB_SEARCH, /*!< Phonebook search event */
 #endif                    /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
+#if LWCELL_CFG_GNSS || __DOXYGEN__
+    LWCELL_EVT_GNSS_ENABLE, /*!< GNSS enable event */
+    LWCELL_EVT_GNSS_POWER,  /*!< GNSS power mode changed event */
+    LWCELL_EVT_GNSS_READY,  /*!< GNSS ready event */
+#endif                      /* LWCELL_CFG_GNSS || __DOXYGEN__ */
 } lwcell_evt_type_t;
 
 /**
@@ -554,7 +592,18 @@ typedef struct lwcell_evt {
             lwcellr_t res;              /*!< Operation success */
         } pb_search;                    /*!< Phonebok search list. Use with \ref LWCELL_EVT_PB_SEARCH event */
 #endif                                  /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
-    } evt;                              /*!< Callback event union */
+#if LWCELL_CFG_GNSS || __DOXYGEN__
+        struct {
+            lwcellr_t res;   /*!< Ready status */
+            lwcellr_t power; /*!< Power/Enable change event */
+        } gnss_enable;       /*!< GNSS enable event. Use with \ref LWCELL_EVT_GNSS_ENABLE event */
+
+        struct {
+            lwcellr_t res;       /*!< Ready status */
+            lwcell_gnss_t* gnss; /*!< Pointer to GNSS data */
+        } gnss_parse;            /*!< GNSS ready event. Use with \ref LWCELL_EVT_GNSS_READY event */
+#endif                           /* LWCELL_CFG_GNSS || __DOXYGEN__ */
+    } evt;                       /*!< Callback event union */
 } lwcell_evt_t;
 
 #define LWCELL_SIZET_MAX ((size_t)(-1)) /*!< Maximal value of size_t variable type */

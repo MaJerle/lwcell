@@ -1,10 +1,10 @@
 /**
- * \file            lwcell_models.h
- * \brief           Supported GSM devices
+ * \file            lwcell_gnss.h
+ * \brief           GNSS/GPS API
  */
 
 /*
- * Copyright (c) 2026 Tilen MAJERLE
+ * Copyright (c) 2024 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -29,14 +29,39 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ *                  Harald LESCHNER <picohari@googlemail.com>
+ * Version:         v0.1.2
+ */
+#ifndef LWCELL_GNSS_HDR_H
+#define LWCELL_GNSS_HDR_H
+
+#include "lwcell/lwcell_types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+/**
+ * \ingroup         LWCELL
+ * \defgroup        LWCELL_GNSS GPS API
+ * \brief           GNSS manager
+ * \{
  */
 
-/* Order: Device name; Device model identification, Is_2G, Is_LTE, Has_MQTT */
-LWCELL_DEVICE_MODEL_ENTRY(SIM800x, "SIM800", 1, 0, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM900x, "SIM900", 1, 0, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM7070G, "7070G", 0, 1, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM7000x, "SIM7000", 1, 1, 1)
-// LWCELL_DEVICE_MODEL_ENTRY(SIM7020x, "SIM7020", 1, 0)
+/* Base commands */
+lwcellr_t lwcell_gnss_enable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+lwcellr_t lwcell_gnss_disable(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
 
-#undef LWCELL_DEVICE_MODEL_ENTRY
+/* GNSS commands */
+lwcellr_t lwcell_gnss_info(const lwcell_api_cmd_evt_fn evt_fn, void* const evt_arg, const uint32_t blocking);
+uint8_t lwcell_gnss_get_time(struct tm* dt, uint16_t* ms, uint8_t* fix_status);
+
+/**
+ * \}
+ */
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* LWCELL_GNSS_HDR_H */

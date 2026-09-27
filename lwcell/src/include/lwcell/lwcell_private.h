@@ -29,7 +29,7 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ * Version:         v0.1.2
  */
 #ifndef LWCELL_PRIV_HDR_H
 #define LWCELL_PRIV_HDR_H
@@ -256,6 +256,10 @@ typedef enum {
     LWCELL_CMD_CSDH,         /*!< Show SMS Text Mode Parameters */
     LWCELL_CMD_CSMP,         /*!< Set SMS Text Mode Parameters */
     LWCELL_CMD_CSMS,         /*!< Select Message Service */
+
+    LWCELL_CMD_GNSS_ENABLE,
+    LWCELL_CMD_GNSS_CGNSPWR, /*!< GNSS Power Mode */
+    LWCELL_CMD_GNSS_CGNSINF, /*!< GNSS Information */
 
     LWCELL_CMD_END, /*!< Last CMD entry */
 } lwcell_cmd_t;
@@ -541,7 +545,12 @@ typedef struct lwcell_msg {
             const char* pass; /*!< APN password */
         } network_attach;     /*!< Settings for network attach */
 #endif                        /* LWCELL_CFG_NETWORK || __DOXYGEN__ */
-    } msg;                    /*!< Group of different possible message contents */
+#if LWCELL_CFG_GNSS || __DOXYGEN__
+        struct {
+            uint8_t enable; /*!< GNSS power mode */
+        } gnss_power;       /*!< Set GNSS power mode */
+#endif                      /* LWCELL_CFG_GNSS || __DOXYGEN__ */
+    } msg;                  /*!< Group of different possible message contents */
 } lwcell_msg_t;
 
 /**
@@ -670,6 +679,9 @@ typedef struct {
 #if LWCELL_CFG_CALL || __DOXYGEN__
     lwcell_call_t call; /*!< Call information */
 #endif                  /* LWCELL_CFG_CALL || __DOXYGEN__ */
+#if LWCELL_CFG_GNSS || __DOXYGEN__
+    lwcell_gnss_t gnss; /*!< GNSS information */
+#endif                  /* LWCELL_CFG_GNSS || __DOXYGEN__ */
 } lwcell_modules_t;
 
 /**

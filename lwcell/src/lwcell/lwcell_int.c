@@ -29,11 +29,12 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ * Version:         v0.1.2
  */
 #include "lwcell/lwcell_int.h"
 #include "lwcell/lwcell_private.h"
 #include "system/lwcell_ll.h"
+
 
 #if !__DOXYGEN__
 /**
@@ -810,7 +811,11 @@ lwcelli_parse_received(lwcell_recv_t* rcv) {
         } else if (CMD_IS_CUR(LWCELL_CMD_CPBF) && !strncmp(rcv->data, "+CPBF", 5)) {
             lwcelli_parse_cpbf(rcv->data); /* Parse +CPBR statement */
 #endif                                     /* LWCELL_CFG_PHONEBOOK */
+#if LWCELL_CFG_GNSS
+        } else if (CMD_IS_CUR(LWCELL_CMD_GNSS_CGNSINF) && !strncmp(rcv->data, "+CGNSINF", 8)) {
+            lwcelli_parse_gnssinfo(rcv->data); /* Parse +CGNSINF statement */
         }
+#endif                                     /* LWCELL_CFG_GNSS */
 
         /* Messages not starting with '+' sign */
     } else {
@@ -1404,7 +1409,13 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
             case LWCELL_CMD_RESET: {
                 lwcelli_reset_everything(1);                                         /* Reset everything */
                 SET_NEW_CMD(LWCELL_CFG_AT_ECHO ? LWCELL_CMD_ATE1 : LWCELL_CMD_ATE0); /* Set ECHO mode */
-                lwcell_delay(LWCELL_CFG_RESET_DELAY_AFTER); /* Delay for some time before we can continue after reset */
+                /*
+                 * After AT+CFUN=1,1 the module performs an internal reboot and
+                 * re-arms its autobaud detector. Keep sending plain "AT\r" (without \n) during
+                 * the wait period so the module can re-sync to the current
+                 * baud rate as soon as it comes back up.
+                 */
+                lwcell_ll_wait_module_ready(LWCELL_CFG_RESET_DELAY_AFTER, 2000);
                 break;
             }
             case LWCELL_CMD_ATE0:
@@ -1421,13 +1432,18 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
                  * to select between device drivers
                  */
                 lwcelli_send_cb(LWCELL_EVT_DEVICE_IDENTIFIED);
+                osDelay(1000);
 
                 SET_NEW_CMD(LWCELL_CMD_CREG_SET); /* Enable unsolicited code for CREG */
                 break;
             }
+            #if 0 /* Disabled for now, as CALL is not implemented on SIM7000 */  
             case LWCELL_CMD_CREG_SET: SET_NEW_CMD(LWCELL_CMD_CLCC_SET); break; /* Set call state */
             case LWCELL_CMD_CLCC_SET: SET_NEW_CMD(LWCELL_CMD_CPIN_GET); break; /* Get SIM state */
+            case LWCELL_CMD_CREG_SET: SET_NEW_CMD(LWCELL_CMD_CPIN_GET); break; /* Get SIM state */
+            #endif
             case LWCELL_CMD_CPIN_GET: break;
+            
             default: break;
         }
 
@@ -1705,8 +1721,30 @@ lwcelli_process_sub_cmd(lwcell_msg_t* msg, lwcell_status_flags_t* stat) {
         }
         /* The rest is handled in one layer above */
 #endif /* LWCELL_CFG_USSD */
+#if LWCELL_CFG_GNSS
+    /* GNSS module */
+    } else if (CMD_IS_DEF(LWCELL_CMD_GNSS_ENABLE)) {
+        if (CMD_IS_CUR(LWCELL_CMD_GNSS_CGNSPWR)) {
+            if (stat->is_ok) {
+                /* Only update state to the value that was actually requested,
+                 * NOT to stat->is_ok - this correctly handles both enable
+                 * AND disable, since they share the same cmd_def */
+                lwcell.m.gnss.enabled = lwcell.msg->msg.gnss_power.enable;
+            }
+            lwcell.evt.evt.gnss_enable.res = stat->is_ok ? lwcellOK : lwcellERR;
+            lwcell.evt.evt.gnss_enable.power = lwcell.m.gnss.enabled;
+            lwcelli_send_cb(LWCELL_EVT_GNSS_POWER);     /* Send to user */
+        }
+    } else if (CMD_IS_DEF(LWCELL_CMD_GNSS_CGNSINF)) {
+        if (CMD_IS_CUR(LWCELL_CMD_GNSS_CGNSINF)) {
+            /* GNSS data itself is already parsed directly into lwcell.m.gnss
+             * during reception (lwcelli_parse_cgnsinf) - here we only report
+             * the AT command result to the user */
+            lwcell.evt.evt.gnss_parse.res = stat->is_ok ? lwcellOK : lwcellERR;
+            //lwcelli_send_cb(LWCELL_EVT_GNSS_INFO);
+        }
     }
-
+#endif
     /* Check if new command was set for execution */
     if (n_cmd != LWCELL_CMD_IDLE) {
         lwcellr_t res;
@@ -2139,7 +2177,7 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
             break;
         }
         case LWCELL_CMD_CPBS_SET: { /* Get current memory info */
-            lwcell_mem_t mem;
+            lwcell_mem_t mem = LWCELL_MEM_CURRENT;   /* must better be initialized! */
             AT_PORT_SEND_BEGIN_AT();
             AT_PORT_SEND_CONST_STR("+CPBS=");
             switch (CMD_GET_DEF()) {
@@ -2258,6 +2296,21 @@ lwcelli_initiate_cmd(lwcell_msg_t* msg) {
             break;
         }
 #endif                             /* LWCELL_CFG_USSD */
+#if LWCELL_CFG_GNSS
+        case LWCELL_CMD_GNSS_CGNSPWR: { /* Enable/disable GNSS power */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+CGNSPWR=");
+            lwcelli_send_number(LWCELL_U32(msg->msg.gnss_power.enable), 0, 0);
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+        case LWCELL_CMD_GNSS_CGNSINF: { /* Get GNSS information */
+            AT_PORT_SEND_BEGIN_AT();
+            AT_PORT_SEND_CONST_STR("+CGNSINF");
+            AT_PORT_SEND_END_AT();
+            break;
+        }
+#endif /* LWCELL_CFG_GNSS */
         default: return lwcellERR; /* Invalid command */
     }
     return lwcellOK; /* Valid command */
@@ -2393,6 +2446,20 @@ lwcelli_process_events_for_timeout_or_error(lwcell_msg_t* msg, lwcellr_t err) {
             break;
         }
 #endif /* LWCELL_CFG_SMS */
+
+#if LWCELL_CFG_GNSS
+        case LWCELL_CMD_GNSS_ENABLE: {
+            lwcell.evt.evt.gnss_enable.res = err;
+            lwcell.evt.evt.gnss_enable.power = lwcell.m.gnss.enabled;
+            lwcelli_send_cb(LWCELL_EVT_GNSS_ENABLE);
+            break;
+        }
+        case LWCELL_CMD_GNSS_CGNSINF: {
+            lwcell.evt.evt.gnss_parse.res = err;
+            lwcelli_send_cb(LWCELL_EVT_GNSS_READY);
+            break;
+        }
+#endif /* LWCELL_CFG_GNSS */
 
         default: break;
     }

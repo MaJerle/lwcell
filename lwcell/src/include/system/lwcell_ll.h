@@ -29,7 +29,7 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ * Version:         v0.1.2
  */
 #ifndef LWCELL_LL_HDR_H
 #define LWCELL_LL_HDR_H
@@ -67,6 +67,34 @@ lwcellr_t lwcell_ll_init(lwcell_ll_t* ll);
  * \return          \ref lwcellOK on success, member of \ref lwcellr_t enumeration otherwise
  */
 lwcellr_t lwcell_ll_deinit(lwcell_ll_t* ll);
+
+/**
+ * \brief           Wait until modem responds to AT autobaud sync attempts,
+ *                  or until timeout expires.
+ *
+ * Implementation is platform-specific and must be provided by the
+ * low-level driver (see \ref lwcell_ll_init).
+ *
+ * \param[in]       max_wait_ms: Maximum time to wait for first response, in ms
+ * \param[in]       settle_ms: Extra time to wait after first response is seen
+ * \return          `1` if module responded within max_wait_ms, `0` on timeout
+ */
+uint8_t lwcell_ll_wait_module_ready(uint32_t max_wait_ms, uint32_t settle_ms);
+
+/**
+ * \brief           Discard any pending/unprocessed data in the platform's
+ *                  RX buffer and reset RX position tracking.
+ *
+ * Used after autobaud sync (cold power-up or warm reset via AT+CFUN=1,1)
+ * to make sure lwcell starts parsing from a clean state, without any
+ * leftover "OK" responses from the sync "AT\r" pings still pending.
+ *
+ * Implementation is platform-specific and must be provided by the
+ * low-level driver (see \ref lwcell_ll_init).
+ *
+ * \return          \ref lwcellOK on success, member of \ref lwcellr_t otherwise
+ */
+lwcellr_t lwcell_ll_rx_clear(void);
 
 /**
  * \}

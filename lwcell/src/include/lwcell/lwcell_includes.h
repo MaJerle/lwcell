@@ -29,7 +29,7 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ * Version:         v0.1.2
  */
 #ifndef LWCELL_INCLUDES_HDR_H
 #define LWCELL_INCLUDES_HDR_H
@@ -67,6 +67,9 @@
 #if LWCELL_CFG_USSD || __DOXYGEN__
 #include "lwcell/lwcell_ussd.h"
 #endif /* LWCELL_CFG_USSD || __DOXYGEN__ */
+#if LWCELL_CFG_GNSS || __DOXYGEN__
+#include "lwcell/lwcell_gnss.h"
+#endif /* LWCELL_CFG_GNSS || __DOXYGEN__ */ 
 
 #ifdef __cplusplus
 extern "C" {

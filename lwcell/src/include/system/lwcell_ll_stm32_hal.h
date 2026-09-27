@@ -1,10 +1,10 @@
 /**
- * \file            lwcell_models.h
- * \brief           Supported GSM devices
+ * \file            lwcell_ll.h
+ * \brief           Low-level communication implementation
  */
 
 /*
- * Copyright (c) 2026 Tilen MAJERLE
+ * Copyright (c) 2024 Tilen MAJERLE
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -29,14 +29,23 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ *                  Harald LESCHNER <picohari@googlemail.com>
+ * Version:         v0.1.2
  */
+#ifndef __LWCELL_LL_STM32_HAL_H__
+#define __LWCELL_LL_STM32_HAL_H__
 
-/* Order: Device name; Device model identification, Is_2G, Is_LTE, Has_MQTT */
-LWCELL_DEVICE_MODEL_ENTRY(SIM800x, "SIM800", 1, 0, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM900x, "SIM900", 1, 0, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM7070G, "7070G", 0, 1, 0)
-LWCELL_DEVICE_MODEL_ENTRY(SIM7000x, "SIM7000", 1, 1, 1)
-// LWCELL_DEVICE_MODEL_ENTRY(SIM7020x, "SIM7020", 1, 0)
+#include "cmsis_os2.h"
 
-#undef LWCELL_DEVICE_MODEL_ENTRY
+/* Message queue ID */
+extern osMessageQueueId_t usart_rx_dma_queue_id;
+
+/* Set once lwcell_init() succeeded - other tasks can wait on this
+ * before calling any lwcell_*() API function */
+extern osEventFlagsId_t lwcell_ready_evt_id;
+#define LWCELL_READY_FLAG (1U << 0)
+
+/* Thread function prototypes */
+void LWCELL_thread(void* arg);
+
+#endif /* __LWCELL_LL_STM32_HAL_H__ */

@@ -29,7 +29,7 @@
  * This file is part of LwCELL - Lightweight cellular modem AT library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v0.1.1
+ * Version:         v0.1.2
  */
 #include "lwcell/lwcell_parser.h"
 #include "lwcell/lwcell_private.h"
@@ -70,6 +70,64 @@ lwcelli_parse_number(const char** str) {
     }
     while (LWCELL_CHARISNUM(*p)) { /* Parse until character is valid number */
         val = val * 10 + LWCELL_CHARTONUM(*p);
+        ++p;
+    }
+    if (*p == '"') { /* Skip trailling quotes */
+        ++p;
+    }
+    *str = p; /* Save new pointer with new offset */
+
+    return minus ? -val : val;
+}
+
+/**
+ * \brief           Parse floating point number from string
+ * \note            Input string pointer is changed and number is skipped
+ * \param[in,out]   str: Pointer to pointer to string to parse
+ * \return          Parsed float number
+ */
+float
+lwcelli_parse_float(const char** str) {
+    float val = 0.0f;
+    float frac_div = 1.0f;
+    uint8_t minus = 0;
+    uint8_t in_frac = 0;
+    const char* p = *str; /*  */
+
+    if (*p == '"') { /* Skip leading quotes */
+        ++p;
+    }
+    if (*p == ',') { /* Skip leading comma */
+        ++p;
+    }
+    if (*p == '"') { /* Skip leading quotes */
+        ++p;
+    }
+    if (*p == '/') { /* Skip '/' character, used in datetime */
+        ++p;
+    }
+    if (*p == ':') { /* Skip ':' character, used in datetime */
+        ++p;
+    }
+    if (*p == '+') { /* Skip '+' character, used in datetime */
+        ++p;
+    }
+    if (*p == '-') { /* Check negative number */
+        minus = 1;
+        ++p;
+    }
+    while (LWCELL_CHARISNUM(*p) || (*p == '.' && !in_frac)) { /* Parse until character is valid number or first dot */
+        if (*p == '.') {
+            in_frac = 1; /* Switch to fractional part parsing */
+            ++p;
+            continue;
+        }
+        if (in_frac) {
+            frac_div *= 10.0f;
+            val += LWCELL_CHARTONUM(*p) / frac_div;
+        } else {
+            val = val * 10.0f + LWCELL_CHARTONUM(*p);
+        }
         ++p;
     }
     if (*p == '"') { /* Skip trailling quotes */
@@ -157,6 +215,25 @@ lwcelli_parse_string(const char** src, char* dst, size_t dst_len, uint8_t trim) 
     }
     *src = p;
     return 1;
+}
+
+/**
+ * \brief           Parse fixed-width digit field from string
+ * \param[in,out]   str: Pointer to pointer to string to parse from
+ * \param[in]       width: Number of digits to read
+ * \return          Parsed number
+ */
+int32_t
+parse_fixed_digits(const char** str, size_t width) {
+    int32_t val = 0;
+    const char* p = *str;
+    size_t i;
+
+    for (i = 0; i < width && LWCELL_CHARISNUM(*p); ++i, ++p) {
+        val = val * 10 + LWCELL_CHARTONUM(*p);
+    }
+    *str = p;
+    return val;
 }
 
 /**
@@ -862,6 +939,108 @@ lwcelli_parse_cpbf(const char* str) {
 }
 
 #endif /* LWCELL_CFG_PHONEBOOK || __DOXYGEN__ */
+
+#if LWCELL_CFG_GNSS || __DOXYGEN__
+
+/**
+ * \brief           Parse datetime in format yyyyMMddhhmmss.sss (GNSS UTC format, e.g. +CGNSINF)
+ * \param[in,out]   src: Pointer to pointer to input string
+ * \param[out]      dt: Date time structure
+ * \param[out]      ms: Optional pointer to store milliseconds part, or `NULL` to skip
+ * \return          1 on success, 0 otherwise
+ */
+uint8_t
+lwcelli_parse_datetime_cgnsinf(const char** src, struct tm* dt, uint16_t* ms) {
+    const char* p = *src;
+
+    if (*p == ',') { /* Skip leading comma */
+        ++p;
+    }
+
+    LWCELL_MEMSET(dt, 0x00, sizeof(*dt));
+
+    dt->tm_year = parse_fixed_digits(&p, 4) - 1900; /* Full year, struct tm expects years since 1900 */
+    dt->tm_mon = parse_fixed_digits(&p, 2) - 1;     /* Month 1-12 -> 0-11 */
+    dt->tm_mday = parse_fixed_digits(&p, 2);        /* Day of month */
+    dt->tm_hour = parse_fixed_digits(&p, 2);        /* Hour */
+    dt->tm_min = parse_fixed_digits(&p, 2);         /* Minute */
+    dt->tm_sec = parse_fixed_digits(&p, 2);         /* Second */
+
+    if (*p == '.') { /* Optional milliseconds part */
+        ++p;
+        if (ms != NULL) {
+            *ms = (uint16_t)parse_fixed_digits(&p, 3);
+        } else {
+            parse_fixed_digits(&p, 3); /* Skip without saving */
+        }
+    } else if (ms != NULL) {
+        *ms = 0;
+    }
+
+    *src = p; /* Save new pointer with new offset */
+
+    lwcelli_check_and_trim(src); /* Trim remaining text to the end, e.g. trailing comma */
+    return 1;
+}
+
+uint8_t
+lwcelli_parse_gnssinfo(const char* str) {
+    lwcell_gnss_t* info = &lwcell.m.gnss;
+
+    /* Some info about parsing +CGNSINF response:
+
+    No fix: '+CGNSINF: 1,0,,,,,,,0,,,,,,,,,,,,,'
+    Fix 1 : '+CGNSINF: 1,1,20260905215302.000,50.772444,6.076615,179.200,0.00,0.0,1,,8.3,8.3,1.0,,22,2,2,,,32,,'
+    Fix 2 : '+CGNSINF: 1,1,20260906132722.000,50.772539,6.077133,171.200,0.00,304.7,1,,3.4,3.6,1.0,,23,4,1,,,38,,
+'
+    parse_number   skips the ','
+    parse_datetime operates by fixed digits
+    parse_float    skips the ',' and parses float, returns 0.0 if no number is found
+    */
+
+    if (*str == '+') {
+        str += 10; /* Skip +CGNSINF: to first char */
+    }
+
+    /* Fix and time */
+    info->run_status = (uint8_t)lwcelli_parse_number(&str);
+    info->fix_status = (uint8_t)lwcelli_parse_number(&str);
+    lwcelli_parse_datetime_cgnsinf(&str, &info->dt, &info->ms);
+
+    /* Position, speed and course */
+    info->latitude = lwcelli_parse_float(&str);
+    info->longitude = lwcelli_parse_float(&str);
+    info->altitude = lwcelli_parse_float(&str);
+    info->speed = lwcelli_parse_float(&str);
+    info->course = lwcelli_parse_float(&str);
+    info->fix_mode = (uint8_t)lwcelli_parse_number(&str);
+    str += 1; /* Skip Reserved 1 */
+
+    /* Precision */
+    info->hdop = lwcelli_parse_float(&str);
+    info->pdop = lwcelli_parse_float(&str);
+    info->vdop = lwcelli_parse_float(&str);
+    str += 1; /* Skip Reserved 2 */
+
+    /* Satellites */
+    info->gnss_sats_in_view = (uint8_t)lwcelli_parse_number(&str);
+    info->gps_sats_used = (uint8_t)lwcelli_parse_number(&str);
+    info->glonas_sats_used = (uint8_t)lwcelli_parse_number(&str);
+    str += 1; /* Skip Reserved 3 */
+
+    /* Signals .. */
+    info->cn0 = (uint8_t)lwcelli_parse_number(&str);
+    info->hpa = lwcelli_parse_float(&str);
+    info->vpa = lwcelli_parse_float(&str);
+
+    /* Some event info */
+    lwcell.evt.evt.gnss_parse.gnss = info;  /* Assign GNSS data to pointer for events */
+    lwcelli_send_cb(LWCELL_EVT_GNSS_READY); /* Send to user */
+
+    return 1;
+}
+
+#endif /* LWCELL_CFG_GNSS || __DOXYGEN__ */
 
 #if LWCELL_CFG_CONN
 
